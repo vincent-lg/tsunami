@@ -106,17 +106,17 @@ class Test(BaseObj):
     def tests(self):
         """Retourne le test."""
         return self.__tests
-    
+
     @property
     def sc_tests(self):
         """Retourne le test sans couleurs sous la forme d'une chaîne.
-        
+
         Il s'agit de la chaîne de test scripting tel qu'elle
         est affichée dans l'éditeur, mais sans couleurs.
-        
+
         """
         return supprimer_couleurs(str(self.__tests))
-    
+
     def get_cache(self):
         """Calcul le cache Python si nécessaire.
 
@@ -161,6 +161,7 @@ class Test(BaseObj):
         self.dernier_niveau = instruction.get_niveau_suivant()
         self.__instructions.append(instruction)
         self.calculer_cache()
+        return instruction
 
     def ajouter_instructions(self, instructions):
         """Ajoute plusieurs instructions.
@@ -270,9 +271,9 @@ class Test(BaseObj):
             res = bool(eval(py_code, globales))
         except Exception as err:
             self.erreur_execution(str(err))
-        
+
         return res
-        
+
 
     def get_globales(self, evenement):
         """Retourne le dictionnaire des globales d'exécution."""
@@ -303,7 +304,7 @@ class Test(BaseObj):
         no_ligne = -1
         if reg:
             no_ligne = int(reg.groups()[-1]) - 1
-        
+
         if no_ligne > 0:
             ligne = echapper_accolades(str(self.__instructions[no_ligne - 1]))
         else:
@@ -340,7 +341,7 @@ class Test(BaseObj):
                 return
 
         t1 = time()
-        
+
         # Exécution
         if bloquant and not bloquant.complet:
             nom = "script_dif<" + str(id(code)) + ">"
@@ -348,7 +349,7 @@ class Test(BaseObj):
                     self.executer_code, evenement, code, personnage,
                     alarme, False, bloquant, jeton)
             return
-        
+
         importeur.scripting.execute_test.append(self)
         try:
             ret = next(code)

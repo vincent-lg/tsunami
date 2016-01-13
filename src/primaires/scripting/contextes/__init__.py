@@ -28,27 +28,5 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Package contenant la commande 'scripting'."""
+"""Paquet des contextes du module primaire scripting."""
 
-from primaires.interpreteur.commande.commande import Commande
-from .alerte import PrmAlerte
-from .exec import PrmExec
-
-class CmdScripting(Commande):
-
-    """Commande 'scripting'"""
-
-    def __init__(self):
-        """Constructeur de la commande"""
-        Commande.__init__(self, "scripting", "scripting")
-        self.groupe = "administrateur"
-        self.nom_categorie = "batisseur"
-        self.aide_courte = "manipule les scripts"
-        self.aide_longue = \
-            "Cette commande permet de manipuler les scripting, de " \
-            "consulter les alertes envoyés lors d'une erreur de script."
-
-    def ajouter_parametres(self):
-        """Ajout des paramètres."""
-        self.ajouter_parametre(PrmAlerte())
-        self.ajouter_parametre(PrmExec())

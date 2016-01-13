@@ -28,27 +28,33 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Package contenant la commande 'scripting'."""
+"""Package contenant la commande 'scripting exec'."""
 
-from primaires.interpreteur.commande.commande import Commande
-from .alerte import PrmAlerte
-from .exec import PrmExec
+from primaires.interpreteur.masque.parametre import Parametre
+from primaires.scripting.contextes.exec import Exec
 
-class CmdScripting(Commande):
+class PrmExec(Parametre):
 
-    """Commande 'scripting'"""
+    """Commande 'scripting exec'"""
 
     def __init__(self):
-        """Constructeur de la commande"""
-        Commande.__init__(self, "scripting", "scripting")
-        self.groupe = "administrateur"
-        self.nom_categorie = "batisseur"
-        self.aide_courte = "manipule les scripts"
+        """Constructeur du paramètre."""
+        Parametre.__init__(self, "exec", "exec")
+        self.aide_courte = "entre dans la console scripting"
         self.aide_longue = \
-            "Cette commande permet de manipuler les scripting, de " \
-            "consulter les alertes envoyés lors d'une erreur de script."
+            "Cette commande permet d'ouvrir la console scripting, " \
+            "qui permet d'entrer du scripting à la volée et l'exécuter " \
+            "tout de suite. L'avantage est de pouvoir tester certaines " \
+            "manipulations, ainsi que faire des modifications à la " \
+            "volée, comme changer les coordonnées de plusieurs salles, " \
+            "les passer en intérieur, ou donner une affection à tous " \
+            "les joueurs dans une zone, etc. C'est une commande " \
+            "potentiellement aussi puissante que |cmd|système|ff|, et qu'il " \
+            "faut donc utiliser avec prudence quand il s'agit de " \
+            "modifications de masse. Les alertes générées par le " \
+            "script seront affichées directement dans la console."
 
-    def ajouter_parametres(self):
-        """Ajout des paramètres."""
-        self.ajouter_parametre(PrmAlerte())
-        self.ajouter_parametre(PrmExec())
+    def interpreter(self, personnage, dic_masques):
+        """Méthode d'interprétation de commande"""
+        contexte = Exec(personnage.instance_connexion)
+        personnage.contexte_actuel.migrer_contexte(contexte)
