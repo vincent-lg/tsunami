@@ -840,20 +840,16 @@ class Salle(BaseObj):
 
     def appliquer_structure(self, structure):
         """Applique la structure passée en paramètre."""
-        if structure.zone:
-            self.nom_zone = structure.zone
-
-        if structure.mnemonique:
-            self.mnemonic = structure.mneomnique
-
-        if structure.terrain:
-            self.changer_terrain(structure.terrain)
-
-        if structure.titre:
-            self.titre = structure.titre
-
-        if structure.interieur:
-            self.interieur = bool(structure.interieur)
-
-        if structure.illuminee:
-            self.illuminee = bool(structure.illuminee)
+        for cle, valeur in structure.donnees.items():
+            if cle == "zone":
+                self.nom_zone = str(valeur)
+            elif cle == "mnemonique":
+                self.mnemonic = str(valeur)
+            elif cle == "terrain":
+                self.changer_terrain(str(valeur))
+            elif cle == "titre":
+                self.titre = str(valeur)
+            elif cle == "interieur":
+                self.interieur = bool(valeur)
+            elif cle == "illuminee":
+                self.illuminee = bool(valeur)

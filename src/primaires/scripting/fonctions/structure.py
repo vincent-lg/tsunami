@@ -40,6 +40,7 @@ class ClasseFonction(Fonction):
     @classmethod
     def init_types(cls):
         cls.ajouter_types(cls.structure, "str", "Fraction")
+        cls.ajouter_types(cls.structure_salle, "Salle")
 
     @staticmethod
     def structure(groupe, id):
@@ -77,3 +78,41 @@ class ClasseFonction(Fonction):
                     "{} est introuvable".format(repr(groupe), int(id)))
 
         return structure
+
+    @staticmethod
+    def structure_salle(salle):
+        """Retourne une structure simple représentant la salle spécifiée.
+
+        Les structures sont extrêmement pratiques pour modifier
+        certaines informations, quand les actions ou fonctions existantes
+        ne suffisent pas. Ces modifications peuvent être parfois très
+        spécifiques, comme par exemple, dans ce contexte, changer
+        le flag de salle en intérieur ou extérieur, ou bien la placer
+        en salle illuminée ou non.
+
+        Paramètres à entrer :
+
+          * salle : la salle dont on veut obtenir la structure.
+
+        Cases de la structure :
+
+            * titre : le titre de la salle ;
+            * zone : le nom de zone de la salle ;
+            * mnemonique : le mnémonique de la salle ;
+            * terrain : le nom du terrain de la salle ;
+            * interieur : 0 pour extérieur, 1 pour intérieur ;
+            * illuminee : 0 pour obscure, 1 pour illuminée.
+
+        Exemples d'utilisation :
+
+          # Récupère la structure de la salle dans la variable 'salle'
+          structure = structure(salle)
+          # Modifie le titre de la salle
+          ecrire structure "titre" "Un champ de lave pétrifié"
+          # Passe la salle en extérieur
+          ecrire structure "interieur" 0
+          # Enregistre les modifications
+          appliquer salle structure
+
+        """
+        return salle.get_structure()
