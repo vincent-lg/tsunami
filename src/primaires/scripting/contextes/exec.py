@@ -64,6 +64,15 @@ class Exec(Contexte):
         self.console = InteractiveConsole(variables)
         self.py_prompt = ">>> "
 
+        if pere:
+            variables = self.evenement.espaces.variables
+            joueur = pere.joueur
+            salle = joueur.salle
+            variables.update({
+                    "joueur": joueur,
+                    "salle": salle,
+            })
+
     def __getstate__(self):
         attrs = Contexte.__getstate__(self)
         attrs["py_prompt"] = ">>> "
