@@ -221,8 +221,7 @@ class Combat:
                         except DepassementStat:
                             combattu.envoyer("|att|C'en est trop ! Vous " \
                                     "plongez dans l'inconscience.|ff|")
-                            combattu.salle.envoyer("{} s'écroule sur le sol, " \
-                                    "baignant dans son sang.", combattu)
+                            combattu.salle.envoyer("{} s'écroule sur le sol.", combattu)
                             combattant.tuer(combattu)
                             combattu.mourir(adversaire=combattant)
                 else:
