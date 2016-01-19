@@ -298,7 +298,7 @@ class Magasin(BaseObj):
 
         if self.max_vente_total >= 0 and self.valeur_inventaire + \
                 valeur_achat * qtt > self.max_vente_total:
-            vendeur.envoyer("{} vous dit : je n'ai rien besoin de plus, " \
+            vendeur.envoyer("{} vous dit : je n'ai besoin de rien de plus, " \
                     "merci.", acheteur)
             return False
 
