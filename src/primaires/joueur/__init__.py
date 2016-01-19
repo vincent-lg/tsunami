@@ -252,6 +252,21 @@ class Module(BaseModule):
                 j.derniere_connexion).total_seconds() <= depuis]
         return joueurs
 
+    def renommer_joueur(self, joueur, nom):
+        """Change le nom du joueur précisé."""
+        sa_nom = supprimer_accents(nom).lower()
+        if supprimer_accents(joueur.nom).lower() == sa_nom:
+            # Pas beosin de changer le nom, c'est le même
+            return
+
+        if self.joueur_existe(nom):
+            raise ValueError("il y a déjà un joueur nommé {}".format(
+                    repr(nom)))
+
+        del self.joueurs[joueur.nom]
+        joueur.nom = nom.capitalize()
+        self.joueurs[joueur.nom] = joueur
+
     def migrer_ctx_creation(self, contexte):
         """Cherche le contexte de création suivant.
 

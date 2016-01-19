@@ -40,6 +40,7 @@ class ClasseAction(Action):
     @classmethod
     def init_types(cls):
         cls.ajouter_types(cls.appliquer_salle, "Salle", "Structure")
+        cls.ajouter_types(cls.appliquer_personnage, "Personnage", "Structure")
 
     @staticmethod
     def appliquer_salle(salle, structure):
@@ -74,3 +75,37 @@ class ClasseAction(Action):
 
         """
         salle.appliquer_structure(structure)
+
+    @staticmethod
+    def appliquer_personnage(personnage, structure):
+        """Applique la structure spécifiée sur le personnage.
+
+        Cette action est utile pour apporter des modifications à un
+        personnage grâce aux structures. Voir les exemples plus bas
+        pour une démonstration de leur utilité.
+
+        Paramètres à entrer :
+
+          * personnage : le personnage que l'on veut modifier ;
+          * structure : la structure à appliquer sur le personnage.
+
+        La structure peut contenir toutes les informations d'un
+        personnage joueur on PNJ (son nom, sa race, son niveau, ...). Si
+        la structure n'est pas si complète, seules les informations
+        précisées sont utilisées. Cette action peut générer des
+        alertes si la structure n'est pas du bon format, ou bien dans
+        certains autres cas particuliers. Par exemple, si vous souhaitez
+        modifier le nom d'un joueur, mais que ce nom est déjà utilisé,
+        une alerte sera générée.
+
+        Exemples d'utilisation :
+
+          # Récupère la structure du personnage
+          structure = structure(personnage)
+          # Désactive le flag PK du personnage
+          ecrire structure "pk" 0
+          # Applique les modifications
+          appliquer personnage structure
+
+        """
+        personnage.appliquer_structure(structure)

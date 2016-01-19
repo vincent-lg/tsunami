@@ -357,3 +357,16 @@ class Joueur(Personnage):
     def mourir(self, adversaire=None, recompenser=True):
         Personnage.mourir(self, adversaire, recompenser)
         self.cpt_mort = 0
+
+    def get_structure(self):
+        """Retourne la structure simple du personnage."""
+        structure = Personnage.get_structure(self)
+        structure.nom = self.nom
+        return structure
+
+    def appliquer_structure(self, structure):
+        """Applique la structure passée en paramètre."""
+        Personnage.appliquer_structure(self, structure)
+        for cle, valeur in structure.donnees.items():
+            if cle == "nom":
+                importeur.joueur.renommer_joueur(self, valeur)

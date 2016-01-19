@@ -41,6 +41,7 @@ class ClasseFonction(Fonction):
     def init_types(cls):
         cls.ajouter_types(cls.structure, "str", "Fraction")
         cls.ajouter_types(cls.structure_salle, "Salle")
+        cls.ajouter_types(cls.structure_personnage, "Personnage")
 
     @staticmethod
     def structure(groupe, id):
@@ -116,3 +117,57 @@ class ClasseFonction(Fonction):
 
         """
         return salle.get_structure()
+
+    @staticmethod
+    def structure_personnage(personnage):
+        """Retourne une structure simple représentant le personnage spécifié.
+
+        Les structures sont extrêmement pratiques pour modifier
+        certaines informations, quand les actions ou fonctions existantes
+        ne suffisent pas. Ces modifications peuvent être parfois très
+        spécifiques, comme par exemple, dans ce contexte, changer
+        le flag pk d'un joueur, ou bien lui donner faim ou soif.
+
+        Paramètres à entrer :
+
+          * personnage : le personnage dont on veut obtenir la structure.
+
+        Cases de la structure : les cases de la structure peuvent
+        être différentes en fonction de si vous lui passez en paramètre
+        un joueur ou un PNJ. Les trois cas sont détaillés plus bas :
+        les cases communes aux joueurs ou PNJ, les cases propres aux
+        joueurs et les cases propres aux PNJ. Notez que le signe
+        **ls** placé entre parenthèse indique que cette case est
+        en lecture seule : vous pouvez récupérer sa valeur, mais
+        vous ne pouvez la changer pour des raisons de sécurité.
+
+        Cases pour joueurs et PNJ :
+
+          * groupe (ls) : le nom du groupe auquel appartient le personnage ;
+          * salle : la salle (type salle) où le personnage se trouve ;
+          * race : le nom de la race du personnage (une chaîne) ;
+          * genre (ls) : le nom du genre du personnage (une chaîne) ;
+          * soif : un nombre entre 0 (pas soif) et 100 (presque mort0 ;
+          * faim : un nombre entre 0 (pas faim) et 100 (presque mort0 ;
+          * estomac : le poids de l'estomac (0 = vide, 3 = poids maximum) ;
+          * niveau : le niveau principal du personnage (entre 1 et 100) ;
+          * xp : l'XP principale du personnage ;
+          * pk : le flag PK du personnage (0 = off, 1 = on).
+
+        Cases propres aux joueurs :
+
+          * nom : le nom du joueur (une chaîne) ;
+
+        Exemples d'utilisation :
+
+          joueur = joueur("Kredh")
+          structure = structure(joueur)
+          # Modifie le nom du joueur
+          ecrire structure "nom" "Oscar"
+          # Retire le flag PK du joueur
+          ecrire structure "pk" 0
+          # Enregistre les modifications
+          appliquer joueur structure
+
+        """
+        return personnage.get_structure()

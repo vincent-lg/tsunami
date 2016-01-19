@@ -30,6 +30,7 @@
 
 """Fichier contenant la classe Personnage, détaillée plus bas."""
 
+from fractions import Fraction
 import random
 from textwrap import wrap
 
@@ -41,6 +42,7 @@ from primaires.interpreteur.commande.commande import Commande
 from primaires.interpreteur.file import FileContexte
 from primaires.interpreteur.groupe.groupe import *
 from primaires.objet.conteneur import SurPoids
+from primaires.scripting.structure import StructureSimple
 
 from .race import Race
 from .equipement import Equipement
@@ -1392,3 +1394,39 @@ class Personnage(BaseObj):
         elif self.degre_noyade == 60:
             self.sans_prompt()
             self << "|att|Il ne vous reste plus beaucoup d'air...|ff|"
+
+    def get_structure(self):
+        """Retourne la structure simple du personnage."""
+        structure = StructureSimple()
+        structure.groupe = self.nom_groupe
+        structure.salle = self._salle
+        structure.race = self._race and self._race.nom or ""
+        structure.genre = self.genre
+        structure.soif = Fraction(self.soif)
+        structure.faim = Fraction(self.faim)
+        structure.estomac = Fraction(self.estomac)
+        structure.niveau = Fraction(self.niveau)
+        structure.xp = Fraction(self.xp)
+        structure.pk = Fraction(self.pk)
+        return structure
+
+    def appliquer_structure(self, structure):
+        """Applique la structure passée en paramètre."""
+        for cle, valeur in structure.donnees.items():
+            if cle == "salle":
+                self._salle = valeur
+            elif cle == "race":
+                race = importeur.perso.get_race(structure.race)
+                self._race = race
+            elif cle == "soif":
+                self.soif = round(float(valeur), 2)
+            elif cle == "faim":
+                self.faim = round(float(valeur), 2)
+            elif cle == "estomac":
+                self.soif = round(float(valeur), 2)
+            elif cle == "niveau":
+                self.niveau = int(valeur)
+            elif cle == "xp":
+                self.xp = int(valeur)
+            elif cle == "pk":
+                self.pk = bool(valeur)

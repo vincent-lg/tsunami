@@ -260,6 +260,21 @@ class Module(BaseModule):
         del self.squelettes[cle]
         squelette.detruire()
 
+    def get_race(self, nom_race):
+        """Retourne la race correspondante.
+
+        Lève une exception ValueError si la race ne peut être trouvée.
+        La recherche se fait indépendemment des majuscules ou accents.
+
+        """
+        sa_nom_race = supprimer_accents(nom_race).lower()
+        for race in self.races:
+            if supprimer_accents(race.nom).lower() == sa_nom_race:
+                return race
+
+        raise ValeuError("la race {} est introuvable".format(
+                repr(nom_race)))
+
     def creer_race(self, nom):
         """Crée la race du nom indiqué"""
         race = Race(nom)
