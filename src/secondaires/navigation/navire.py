@@ -1100,7 +1100,7 @@ class Navire(Vehicule):
         if elt_passerelle:
             elt_passerelle.replier()
 
-        # Cherche la salle la plus proche du nauffrage
+        # Cherche la salle la plus proche du naufrage
         x, y, z = self.position.tuple
         salles = [s for s in importeur.salle._coords.values() if \
                 hasattr(s, "coords") and s.coords.z == z and s.nom_terrain in \
