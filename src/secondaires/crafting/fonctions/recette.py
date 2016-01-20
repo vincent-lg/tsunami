@@ -47,9 +47,9 @@ class ClasseFonction(Fonction):
     def recette(personnage, cle_guilde, ingredients, nom=""):
         """Cherche et fabrique la recette si trouvée.
 
-        Si la recette n'est pas trouvé dans la guilde, retourne
-        une variable vide. Sinon, retourne l'objet nouvellement
-        créé.
+        Si la recette n'est pas trouvée dans la guilde, retourne
+        une liste vide. Sinon, retourne la liste des objets nouvellement
+        créés.
 
         Paramètres à préciser :
 
@@ -64,10 +64,11 @@ class ClasseFonction(Fonction):
 
         Exemple d'utilisation :
 
-          resultat = recette(personnage, "forgerons", ingredients)
-          si resultat:
-              # 'resultat' est un objet
-              poser salle resultat
+          resultats = recette(personnage, "forgerons", ingredients)
+          si resultats:
+              # 'resultats' est une liste non vide d'objets
+              pour chaque objet dans resultats:
+                  poser salle objet
 
         """
         nom = supprimer_accents(nom).lower()
@@ -79,7 +80,7 @@ class ClasseFonction(Fonction):
         guilde = importeur.crafting.guildes[cle_guilde]
 
         if personnage not in guilde.membres:
-            return
+            return []
 
         # On ne cherche que les rangs parents
         rangs_parents = guilde.membres[personnage].rang.rangs_parents
@@ -94,4 +95,4 @@ class ClasseFonction(Fonction):
                             recette.nom).lower():
                         return recette.creer_resultat(personnage, ingredients)
 
-        return None
+        return []

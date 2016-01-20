@@ -84,6 +84,23 @@ class GldRecetteEdit(Presentation):
             "demander précisément au joueur ce qu'il veut fabriquer, d'où\n" \
             "l'utilité des noms.\n\nNom actuel : |bc|{valeur}|ff|"
 
+        # Quantité de résultat
+        quantite = self.ajouter_choix("quantité d'objets à créer",
+                "q", Entier, recette, "quantite", 1)
+        quantite.parent = self
+        quantite.apercu = "{valeur}"
+        quantite.prompt = "Quantité d'objets à créer sur le prototype " \
+                "'resultat' : "
+        quantite.aide_courte = \
+            "Entrez |ent|la quantité d'objets|ff| à créer " \
+            "ou |cmd|/|ff| pour revenir\nà la fenêtre parente.\n\n" \
+            "Ce paramètre détermine le nombre de fois que le résultat " \
+            "sera créé\ndans la salle. Si la quantité est de 1, seul " \
+            "un objet sera créé.\nSi la quantite est de 3, trois objets " \
+            "sur le prototype du résultat\nprécisé seront créés. Les " \
+            "attributs seront copiés dans tous ces objets.\n\n" \
+            "Quantité actuelle : {valeur}"
+
         # Nombre nécessaire pour la progression
         nb_max = self.ajouter_choix("nombre d'objets nécessaires " \
                 "pour progresser dans le rang", "b", Entier, recette,

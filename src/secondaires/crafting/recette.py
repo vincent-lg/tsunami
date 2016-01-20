@@ -63,6 +63,7 @@ class Recette(BaseObj):
         self.ingredients_objets = {}
         self.ingredients_types = {}
         self.resultat = ""
+        self.quantite = 1
         self.script = ScriptRecette(self)
         self._construire()
 
@@ -178,7 +179,9 @@ class Recette(BaseObj):
                     ingredients, repr(self.resultat)))
 
         prototype = importeur.objet.prototypes[self.resultat]
-        objet = importeur.objet.creer_objet(prototype)
+        objets = []
+        for i in range(self.quantite):
+            objets.append(importeur.objet.creer_objet(prototype))
 
         # Transfert des attributs
         attributs = {}
@@ -196,16 +199,17 @@ class Recette(BaseObj):
         for cle, valeur in attributs.items():
             sa_attributs[supprimer_accents(cle).lower()] = valeur
 
-        importeur.crafting.configuration[objet].attributs = sa_attributs
-
-        personnage.salle.objets_sol.ajouter(objet)
-        self.script["fabrique"].executer(personnage=personnage,
-                objet=objet, ingredients=ingredients)
+        for objet in objets:
+            importeur.crafting.configuration[objet].attributs = dict(
+                    sa_attributs)
+            personnage.salle.objets_sol.ajouter(objet)
+            self.script["fabrique"].executer(personnage=personnage,
+                    objet=objet, ingredients=ingredients)
 
         for ingredient in ingredients:
             importeur.objet.supprimer_objet(ingredient.identifiant)
 
-        return objet
+        return objets
 
 class ScriptRecette(Script):
 

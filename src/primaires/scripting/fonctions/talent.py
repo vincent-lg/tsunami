@@ -73,4 +73,4 @@ class ClasseFonction(Fonction):
             raise ErreurExecution("talent inconnu : {}".format(repr(
                     nom_talent)))
 
-        return  Fraction(personnage.talents.get(cle, 0))
+        return Fraction(personnage.talents.get(cle, 0))
