@@ -48,6 +48,7 @@ class Action(Extension):
 
     extension = "action"
     aide = "une action scriptable quittant l'éditeur"
+    nom_scripting = "l'action d'éditeur"
 
     def __init__(self, structure, nom):
         Extension.__init__(self, structure, nom)

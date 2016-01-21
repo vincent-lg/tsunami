@@ -50,6 +50,7 @@ class Liste(Extension):
 
     extension = "liste"
     aide = "une liste de structures externes"
+    nom_scripting = "la liste d'éditeur"
 
     def __init__(self, structure, nom):
         Extension.__init__(self, structure, nom)

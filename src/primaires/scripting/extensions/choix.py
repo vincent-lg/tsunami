@@ -49,6 +49,7 @@ class Choix(Extension):
 
     extension = "choix"
     aide = "un choix entre plusieurs valeurs"
+    nom_scripting = "le choix d'éditeur"
 
     def __init__(self, structure, nom):
         Extension.__init__(self, structure, nom)
