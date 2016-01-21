@@ -99,7 +99,13 @@ class Exec(Contexte):
             et mnémonique).
 
             Les alertes seront affichées directement dans la console
-            plutôt qu'envoyées au système.""".lstrip("\n"))
+            plutôt qu'envoyées au système.
+
+            Options disponibles :
+             |cmd|/?a|ff| pour avoir de l'aide sur les actions existantes
+             |cmd|/?f|ff| pour avoir de l'aide sur les fonctions existantes
+             |cmd|/v|ent| (<variable>)|ff| pour voir le contenu d'une variable
+             |cmd|/q|ff| pour quitter cette console.""".lstrip("\n"))
 
         return res
 
@@ -109,6 +115,7 @@ class Exec(Contexte):
             msg = msg[1:]
             parties = msg.split(" ")
             opt = parties[0].lower()
+            opt = opt.replace("?", "")
             reste = " ".join(parties[1:])
             if hasattr(self, "opt_{}".format(opt)):
                 getattr(self, "opt_{}".format(opt))(reste)
@@ -144,7 +151,7 @@ class Exec(Contexte):
     def opt_q(self, arguments):
         """Quitte le contexte."""
         self.fermer()
-        self.pere << "Fermeture de la console Python."
+        self.pere << "Fermeture de la console scripting."
 
     def opt_v(self, arguments):
         """Affiche les variables.
@@ -176,3 +183,26 @@ class Exec(Contexte):
         variables = tuple(variables.keys())
         variables = sorted(variables)
         self.pere << "Variables définies : {}".format(" ".join(variables))
+
+    def opt_f(self, arguments):
+        """Donne de l'aide sur les fonctions existantes.
+
+        Syntaxes :
+            /?f -- liste les fonctions
+            /?f fonction -- affiche l'aide d'une fonction
+            /?f fonction no -- affiche l'aide d'une méthode de la fonction
+
+        """
+        self.pere << importeur.scripting.aide_fonction(arguments)
+
+    def opt_a(self, arguments):
+        """Donne de l'aide sur les actions existantes.
+
+        Syntaxes :
+            /?a -- liste les actions
+            /?a action -- affiche l'aide d'une action
+            /?a action no -- affiche l'aide d'une méthode de l'action
+
+        """
+        self.pere << importeur.scripting.aide_action(arguments)
+

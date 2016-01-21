@@ -448,6 +448,160 @@ class Module(BaseModule):
             fichier.write(msg)
             fichier.close()
 
+    def aide_action(self, arguments):
+        """Retourne l'aide de l'action."""
+        arguments = arguments.strip()
+        nom_action = action = no = methode = None
+        if arguments:
+            arguments = arguments.split(" ")
+            nom_action = arguments[0]
+            if len(arguments) >= 2:
+                no = arguments[1]
+                try:
+                    no = int(no)
+                    assert no >= 1
+                except (ValueError, AssertionError):
+                    return "|err|Ce numéro est invalide.|ff|"
+                    return
+
+        if nom_action:
+            # On cherche l'action
+            try:
+                action = self.actions[nom_action]
+            except KeyError:
+                return "|err|L'action {} est inconnue.|ff|".format(
+                        nom_action)
+
+            if no:
+                try:
+                    methode = action.get_methode(no - 1)
+                except IndexError:
+                    return "|err|Ce numéro est invalide.|ff|"
+
+        # Affichage
+        if methode:
+            # On affiche l'aide de la méthode
+            nom = action.nom
+            try:
+                args = " ".join(inspect.getargspec(methode).args)
+            except ValueError:
+                args = ""
+            args = args.replace(" variables", "")
+            doc = inspect.getdoc(methode)
+            return "Action {} |vr|{}|ff| :\n{}".format(nom, args, doc)
+        elif action:
+            # Une action est précisée mais pas de méthode
+            nom = action.nom
+            doc = inspect.getdoc(action).split("\n")
+            resume = doc[0]
+            description = "\n".join(doc[1:])
+            doc_methodes = []
+            for i, methode in enumerate(action._parametres_possibles.values()):
+                try:
+                    args = " ".join(inspect.getargspec(methode).args)
+                except ValueError:
+                    args = ""
+                args = args.replace(" variables", "")
+                doc_methodes.append("{}. |vr|{}|ff|".format(i + 1, args))
+
+            doc = "\n".join(doc_methodes)
+            return "Action |ent|{}|ff| ({}){}\nUsages :\n{}".format(
+                    nom, resume[0].lower() + resume[1:-1], description, doc)
+        else:
+            # Aucune action n'est précisée, on affiche la liste
+            actions = sorted(self.actions.values(),
+                    key=lambda a: a.nom.lower())
+            lignes = []
+            for action in actions:
+                nom = action.nom
+                doc = inspect.getdoc(action).split("\n")
+                resume = doc[0]
+                lignes.append("|ent|{}|ff| : {}".format(nom,
+                        resume[0].lower() + resume[1:-1]))
+
+            lignes = "  " + "\n  ".join(lignes)
+            return \
+                "Ci-dessous se trouve la liste des actions existantes.\n" \
+                "Pour obtenir de l'aide sur une action, entrez " \
+                "|cmd|/?a action|ff| ; pour obtenir de\n" \
+                "l'aide sur un des usages possibles " \
+                "de l'action, entrez |cmd|/?a action numero|ff|.\n\n" \
+                "{}".format(lignes)
+
+    def aide_fonction(self, arguments):
+        """Affiche l'aide de la fonction."""
+        arguments = arguments.strip()
+        nom_fonction = fonction = no = methode = None
+        if arguments:
+            arguments = arguments.split(" ")
+            nom_fonction = arguments[0]
+            if len(arguments) >= 2:
+                no = arguments[1]
+                try:
+                    no = int(no)
+                    assert no >= 1
+                except (ValueError, AssertionError):
+                    return "|err|Ce numéro est invalide.|ff|"
+
+        if nom_fonction:
+            # On cherche la fonction
+            try:
+                fonction = self.fonctions[nom_fonction]
+            except KeyError:
+                return "|err|La fonction {} est inconnue.|ff|".format(
+                        nom_fonction)
+
+            if no:
+                try:
+                    methode = fonction.get_methode(no - 1)
+                except IndexError:
+                    return "|err|Ce numéro est invalide.|ff|"
+
+        # Affichage
+        if methode:
+            # On affiche l'aide de la méthode
+            nom = fonction.nom
+            t_args = inspect.getargspec(methode)
+            args = "|ff|, |vr|".join(t_args.args)
+            doc = inspect.getdoc(methode)
+            return "Fonction {}(|vr|{}|ff|) :\n{}".format(nom,
+                    args, doc)
+        elif fonction:
+            # Une fonction est précisée mais pas de méthode
+            nom = fonction.nom
+            doc = inspect.getdoc(fonction).split("\n")
+            resume = doc[0]
+            description = "\n".join(doc[1:])
+            doc_methodes = []
+            for i, methode in enumerate(fonction._parametres_possibles.values()):
+                args = "|ff|, |vr|".join(inspect.getargspec(methode).args)
+                doc_methodes.append("{:>2}. (|vr|{}|ff|)".format(i + 1, args))
+
+            doc = "\n".join(doc_methodes)
+            return "Fonction |ent|{}|ff| ({}){}\nUsages :\n{}".format(
+                    nom, resume[0].lower() + resume[1:-1], description, doc)
+        else:
+            # Aucune fonction n'est précisée, on affiche la liste
+            fonctions = \
+                    sorted(self.fonctions.values(),
+                    key=lambda f: f.nom.lower())
+            lignes = []
+            for fonction in fonctions:
+                nom = fonction.nom
+                doc = inspect.getdoc(fonction).split("\n")
+                resume = doc[0]
+                lignes.append("|ent|{}|ff| : {}".format(nom,
+                        resume[0].lower() + resume[1:-1]))
+
+            lignes = "  " + "\n  ".join(lignes)
+            return \
+                "Ci-dessous se trouve la liste des fonctions existantes.\n" \
+                "Pour obtenir de l'aide sur une fonction, entrez " \
+                "|cmd|/?f fonction|ff| ; pour obtenir de\nl'aide sur un des " \
+                "usages possibles " \
+                "de la fonction, entrez |cmd|/?f fonction numero|ff|.\n\n" \
+                "{}".format(lignes)
+
     def nettoyer_memoires(self):
         """Nettoie périodiquement les mémoires."""
         importeur.diffact.ajouter_action("eff_memoires", 60,
