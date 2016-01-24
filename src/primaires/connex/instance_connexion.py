@@ -39,6 +39,7 @@ import telnetlib as tlib
 OPTIONS = {
     "masquer": tlib.IAC + tlib.WILL + tlib.ECHO,
     "afficher": tlib.IAC + tlib.WONT + tlib.ECHO,
+    "hello": tlib.IAC + tlib.AYT,
 }
 
 class InstanceConnexion(BaseObj):

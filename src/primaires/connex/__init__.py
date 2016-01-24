@@ -57,12 +57,14 @@ class Module(BaseModule):
         self.instances = {}
         self.cnx_logger = type(self.importeur).man_logs.creer_logger( \
                 "connex", "connexions")
+
         # Comptes
         self.comptes = {}
         self.cpt_logger = type(self.importeur).man_logs.creer_logger( \
                 "connex", "comptes")
         self.joueurs_bannis = []
         self.bannissements_temporaires = {}
+        self.table_logger = importeur.man_logs.creer_logger("connex", "table")
         type(importeur).espace["comptes"] = self.comptes
 
     def config(self):

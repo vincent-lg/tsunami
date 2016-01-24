@@ -280,6 +280,9 @@ class Joueur(Personnage):
 
     def tick(self):
         """Méthode appelée à chaque tick."""
+        if self.instance_connexion:
+            self.instance_connexion.envoyer_options("hello")
+
         if self.afk:
             return
 

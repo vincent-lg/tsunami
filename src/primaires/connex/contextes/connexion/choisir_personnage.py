@@ -153,6 +153,11 @@ class ChoisirPersonnage(Contexte):
                 joueur.compte = self.pere.compte
                 joueur.instance_connexion = self.pere
 
+                # On log la connexion
+                importeur.connex.table_logger.info(
+                        "{} se connecte sur {}".format(joueur.nom,
+                        self.pere.adresse_ip))
+
                 races = type(self).importeur.perso.races
                 if joueur.race is None and len(races) > 0:
                     self.migrer_contexte("personnage:creation:choix_race")
