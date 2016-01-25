@@ -92,7 +92,7 @@ class Bloc(BaseObj):
 
         return self.__test
 
-    def ajouter_variable(self, nom, str_type, aide):
+    def ajouter_variable(self, nom, str_type, aide, controller_type=True):
         """Ajoute une variable.
 
         Le type est précisé en nom français.
@@ -107,10 +107,11 @@ class Bloc(BaseObj):
             "liste": "list",
         }
 
-        if str_type in types:
-            str_type = types[str_type]
-        else:
-            str_type = str_type.capitalize()
+        if controller_type:
+            if str_type in types:
+                str_type = types[str_type]
+            else:
+                str_type = str_type.capitalize()
 
         if RE_VAR.search(nom) is None:
             raise ValueError("Le nom de variable '{}' est invalide".format(
