@@ -307,6 +307,11 @@ class Magasin(BaseObj):
     def renouveler(self, vider=False):
         """Renouvelle l'inventaire depuis le stock."""
         if vider:
+            for service, qtt in self.inventaire:
+                if service.type_achat == "unique":
+                    importeur.objet.supprimer_objet(
+                            service.objet.identifiant)
+
             self.inventaire[:] = []
 
         for service, qtt, flags in self.stock:
