@@ -167,6 +167,24 @@ class Commande(Masque):
         """Retourne les différents noms possibles des commandes."""
         return (self.nom_francais, self.nom_anglais)
 
+    @property
+    def nom_complet_francais(self):
+        """Retourne le nom complet en français."""
+        if self.parente:
+            nom = self.parente.nom_complet_francais + " "
+
+        nom += self.nom_francais
+        return nom
+
+    @property
+    def nom_complet_anglais(self):
+        """Retourne le nom complet en anglais."""
+        if self.parente:
+            nom = self.parente.nom_complet_anglais + " "
+
+        nom += self.nom_anglais
+        return nom
+
     def ajouter(self):
         """Méthode appelée quand on ajoute la commande à l'interpréteur"""
         pass
@@ -184,7 +202,7 @@ class Commande(Masque):
             fin_pos = len(str_commande)
 
         str_commande = str_commande[:fin_pos]
-        
+
         # Si la commande est gvide, elle n'est pas validée
         if not str_commande:
             return False

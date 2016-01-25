@@ -101,7 +101,7 @@ class Guilde(BaseObj):
     def ouvrir(self):
         """Ouvre la guilde."""
         self.ouverte = True
-    
+
     def rejoindre(self, personnage):
         """Permet au personnage passé en paramètre de rejoindre la guilde.
 
@@ -401,9 +401,11 @@ class Guilde(BaseObj):
 
     def get_commande(self, nom, exception=True):
         """Cherche la commande indiquée."""
-        sa_nom = supprimer_accents(nom).lower()
+        sa_nom = supprimer_accents(nom).lower().replace(":", " ")
         for commande in self.commandes:
-            if supprimer_accents(commande.nom_complet).lower() == sa_nom:
+            if supprimer_accents(
+                    commande.nom_francais_complet).lower().startswith(
+                    sa_nom):
                 return commande
 
         if exception:

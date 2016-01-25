@@ -35,11 +35,40 @@ from primaires.scripting.script import Script
 class ScriptGuilde(Script):
 
     """Script et évènements propre aux guildes.
-    
+
     Il s'agit surtout d'une occasion de regrouper les blocs d'une
     certaine guilde dans un endroit plutôt que d'avoir beaucoup
     de scripts éparpillés.
 
     """
 
-    pass
+    def init(self):
+        """Initialisation du script"""
+        # Événement recette
+        evt_recette = self.creer_evenement("recette")
+        evt_recette.aide_courte = "évènement des recettes de guilde"
+        evt_recette.aide_longue = \
+            "Cet évènement regroupe les sous-évènement propres aux " \
+            "recettes de la guilde."
+
+        # Événement valide
+        evt_valide = evt_recette.creer_evenement("valide")
+        evt_valide.aide_courte = "la recette est-elle valide ?"
+        evt_valide.aide_longue = \
+            "Cet évènement permet de configurer génériquement le " \
+            "statut valide ou invalide des recettes de la guilde. Si " \
+            "cet évènement existe (et contient des instructions), il " \
+            "est appelé pour chaque recette (la clé de la recette " \
+            "est précisée en argument). Si ce n'est pas le cas, " \
+            "l'évènement 'valide' de chaque recette est appelé. Dans " \
+            "tous les cas, ces évènements doivent renseigner une " \
+            "variable 'valide', vallant soit |ent|1|ff| (la recette est " \
+            "valide), soit |ent|0|ff|."
+
+        # Configuration des variables de l'évènement valide
+        var_perso = evt_valide.ajouter_variable("personnage", "Personnage")
+        var_perso.aide = "le personnage fabriquant la recette"
+        var_ingredients = evt_valide.ajouter_variable("ingredients", "list")
+        var_ingredients.aide = "la liste des ingrédients (liste d'objets)"
+        var_recette = evt_valide.ajouter_variable("recette", "str")
+        var_recette.aide = "la clé de la recette valide ou non (une chaîne)"

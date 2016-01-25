@@ -96,10 +96,11 @@ class AES(Editeur):
         self.ajouter_option("a", self.opt_ajouter)
         self.ajouter_option("s", self.opt_supprimer)
 
-        valeur = getattr(objet, attribut, None)
-        if isinstance(valeur, list):
-            self.ajouter_option("h", self.opt_haut)
-            self.ajouter_option("b", self.opt_bas)
+        if attribut:
+            valeur = getattr(objet, attribut, None)
+            if isinstance(valeur, list):
+                self.ajouter_option("h", self.opt_haut)
+                self.ajouter_option("b", self.opt_bas)
 
     @staticmethod
     def get_valeur(valeur, affichage, callback=None):

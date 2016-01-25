@@ -120,9 +120,21 @@ class Recette(BaseObj):
 
         """
         ingredients = list(ingredients)
-        evt = self.script["valide"]
-        if evt.nb_lignes > 0:
-            evt.executer(personnage=personnage, ingredients=ingredients)
+        guilde = self.rang.guilde
+        rec_evt = self.script["valide"]
+        guilde_evt = guilde.script["recette"]["valide"]
+        if guilde_evt.nb_lignes > 0:
+            guilde_evt.executer(personnage=personnage, ingredients=ingredients,
+                    recette=self.resultat)
+            try:
+                valide = guilde_evt.espaces.variables["valide"]
+            except KeyError:
+                raise ValueError("la variable 'valide' n'est apparemment " \
+                        "pas définie")
+
+            return bool(valide)
+        elif rec_evt.nb_lignes > 0:
+            rec_evt.executer(personnage=personnage, ingredients=ingredients)
             try:
                 valide = evt.espaces.variables["valide"]
             except KeyError:
