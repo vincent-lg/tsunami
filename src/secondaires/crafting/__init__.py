@@ -30,6 +30,8 @@
 
 """Fichier contenant le module secondaire crafting."""
 
+import traceback
+
 from abstraits.module import *
 from corps.fonctions import valider_cle
 from primaires.format.fonctions import format_nb
@@ -170,9 +172,15 @@ class Module(BaseModule):
             for commande in guilde.commandes:
                 self.commandes_dynamiques[commande.nom_francais_complet] = \
                         commande
-                commande.ajouter()
-                commande.maj()
-                nb_cmd += 1
+                try:
+                    commande.ajouter()
+                except Exception as err:
+                    self.logger.warning("Erreur lors de l'ajout de " \
+                            "la commande {}".format(commande))
+                    self.logger.warning(traceback.format_exc())
+                else:
+                    commande.maj()
+                    nb_cmd += 1
 
             for talent in guilde.talents.values():
                 if talent.ouvert:
