@@ -141,7 +141,7 @@ class EdtEvenement(Editeur):
         else:
             evenement.descendre_test(no)
             self.actualiser()
-    
+
     def accueil(self):
         """Message d'accueil du contexte"""
         evenement = self.objet
@@ -149,7 +149,9 @@ class EdtEvenement(Editeur):
         msg += "Édition de l'évènement {} de {}".format(evenement.nom_complet,
                 evenement.script.parent).ljust(76)
         msg += "|ff||\n" + self.opts.separateur + "\n"
-        aide_longue = "\n".join(wrap(evenement.aide_longue))
+        paragraphes = ["\n".join(wrap(p)) for p in evenement.aide_longue.split(
+                "\n")]
+        aide_longue = "\n".join(paragraphes)
         msg += aide_longue + "\n\n"
         variables = evenement.variables.values()
         if variables:

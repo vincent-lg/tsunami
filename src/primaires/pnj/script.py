@@ -186,23 +186,80 @@ class ScriptPNJ(Script):
             "de leurs informations) ou quand ils apparaissent dans une " \
             "salle qui a configuré le PNJ en repop."
 
-        # Evénement magasin
+        # Événement marchand
         evt_marchand = self.creer_evenement("marchand")
-        evt_marchand_ouvre = evt_marchand.creer_evenement("ouvre")
-        evt_marchand_ferme = evt_marchand.creer_evenement("ferme")
         evt_marchand.aide_courte = "le vendeur du magasin agit"
-        evt_marchand_ouvre.aide_courte = "le magasin ouvre ses portes"
-        evt_marchand_ferme.aide_courte = "la magasin ferme ses portes"
         evt_marchand.aide_longue = \
             "Cet évènement est appelé si le PNJ est un vendeur de magasin, " \
             "dans différentes situations qui sont classées en sous-évènements."
+
+        # Évènement marchand.achète
+        evt_marchand_achete = evt_marchand.creer_evenement("achète")
+        evt_marchand_achete.aide_courte = "un personnage vend quelque chose"
+        evt_marchand_achete.aide_longue = \
+            "Cet évènement est appelé quand un personnage vend quelque " \
+            "chose dans le magasin, c'est-à-dire quand le magasin " \
+            "achète un produit. Le sous-èvénement 'avant' permet " \
+            "d'empêcher la transaction (le magasin ne veut pas de " \
+            "l'objet, pour X raison) et permet de modifier d'autres " \
+            "informations, comme la valeur de l'objet. Le sous-évènement " \
+            "'après', au contraire, est appelé quand la transaction " \
+            "a bel et bien eu lieu."
+
+        # Évènement marchand.achète.avant
+        evt_marchand_achete_avt = evt_marchand_achete.creer_evenement("avant")
+        evt_marchand_achete_avt.aide_courte = "avant l'achat"
+        evt_marchand_achete_avt.aide_longue = \
+            "Cet évènement est appelé quand le joueur entre la " \
+            "commande vendre/sell en précisant un produit. La transaction " \
+            "n'est pas encore conclue et peut être refusée, en " \
+            "utilisant l'action 'interrompre'. La valeur de la " \
+            "transaction peut également être modifiée en modifiant " \
+            "la variable 'valeur' qui doit valoir le prix du produit " \
+            "vendu.\n\nVariables pouvant être modifiées :\n    valeur : " \
+            "la valeur de vente du produit\n    conserver : met le " \
+            "produit dans l'inventaire du magasin"
+
+        # Configuration des variables de l'évènement marchand.achète.avant
+        var_conserver = evt_marchand_achete_avt.ajouter_variable("conserver",
+                "Fraction")
+        var_conserver.aide = "doit-on mettre les objets en vente " \
+                "(1 par défaut)"
+
+        # Évènement marchand.achète.après
+        evt_marchand_achete_apr = evt_marchand_achete.creer_evenement("après")
+        evt_marchand_achete_apr.aide_courte = "après l'achat"
+        evt_marchand_achete_apr.aide_longue = \
+            "Cet évènement est appelé quand le joueur entre la " \
+            "commande vendre/sell en précisant un produit. La transaction " \
+            "a été conclue et validée (payée). On peut maintenant " \
+            "souhaiter faire des opérations particulières sur les " \
+            "objets vendus."
+
+        # Configuration des variables de l'évènement marchand.achète
+        var_perso = evt_marchand_achete.ajouter_variable("personnage",
+                "Personnage")
+        var_perso.aide = "le personnage vendant ses produits"
+        var_objet = evt_marchand_achete.ajouter_variable("objet", "Objet")
+        var_objet.aide = "l'objet vendu"
+        var_valeur = evt_marchand_achete.ajouter_variable("valeur",
+                "Fraction")
+        var_valeur.aide = "la valeur des objets vendus"
+
+        # Évènement marchand.ferme
+        evt_marchand_ferme = evt_marchand.creer_evenement("ferme")
+        evt_marchand_ferme.aide_courte = "la magasin ferme ses portes"
+        evt_marchand_ferme.aide_longue = \
+            "Cet évènement est appelé quand le magasin ferme ses portes."
+
+        # Évènement marchand.ouvre
+        evt_marchand_ouvre = evt_marchand.creer_evenement("ouvre")
+        evt_marchand_ouvre.aide_courte = "le magasin ouvre ses portes"
         evt_marchand_ouvre.aide_longue = \
             "Cet évènement est appelé quand le magasin ouvre ses portes. Si " \
             "le vendeur n'est pas trouvé dans la salle du magasin, alors " \
             "le premier PNJ modelé sur le prototype indiqué dans le " \
             "magasin est choisi (qu'il soit là où non)."
-        evt_marchand_ferme.aide_longue = \
-            "Cet évènement est appelé quand le magasin ferme ses portes."
 
         # Evénement meurt
         evt_meurt = self.creer_evenement("meurt")

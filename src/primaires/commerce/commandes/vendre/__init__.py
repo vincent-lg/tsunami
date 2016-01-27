@@ -30,6 +30,8 @@
 
 """Package contenant la commande 'vendre'."""
 
+from fractions import Fraction
+
 from primaires.interpreteur.commande.commande import Commande
 from primaires.commerce.transaction import *
 
@@ -65,6 +67,11 @@ class CmdVendre(Commande):
             personnage << "|err|Il n'y a pas de magasin ici.|ff|"
             return
 
+        vendeur = magasin.vendeur
+        if vendeur is None:
+            personnage << "|err|Aucun vendeur n'est présent pour l'instant.|ff|"
+            return
+
         vendus = 0
         a_prototype = None
         objets = list(dic_masques["nom_objet"].objets_qtt_conteneurs)
@@ -84,6 +91,12 @@ class CmdVendre(Commande):
             if isinstance(valeur, bool) and not valeur:
                 break
 
+            evt = vendeur.script["marchand"]["achète"]["avant"]
+            evt.executer(pnj=vendeur, personnage=personnage, objet=objet,
+                    valeur=valeur, conserver=Fraction(1))
+            valeur = int(evt.espaces.variables["valeur"])
+            conserver = bool(evt.espaces.variables["conserver"])
+
             # On crée la transaction associée
             transaction = Transaction.initier(personnage, magasin, -valeur)
 
@@ -99,7 +112,13 @@ class CmdVendre(Commande):
 
             # Distribution des objets
             conteneur.retirer(objet, qtt)
-            magasin.ajouter_inventaire(objet, qtt)
+            if conserver:
+                magasin.ajouter_inventaire(objet, qtt)
+
+            evt = vendeur.script["marchand"]["achète"]["après"]
+            evt.executer(pnj=vendeur, personnage=personnage, objet=objet,
+                    valeur=valeur)
+
             vendus += qtt
             a_prototype = objet.prototype
             if vendus >= nombre:
