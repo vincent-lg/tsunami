@@ -73,6 +73,10 @@ class VenteUnique(BaseObj):
 
         return "inconnu"
 
+    @property
+    def cle(self):
+        return self.objet.identifiant
+
     def get_nom(self, nombre=1):
         """Retourne le nom complet en fonction du nombre.
 

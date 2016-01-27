@@ -210,7 +210,7 @@ class ScriptPNJ(Script):
         evt_marchand_achete_avt = evt_marchand_achete.creer_evenement("avant")
         evt_marchand_achete_avt.aide_courte = "avant l'achat"
         evt_marchand_achete_avt.aide_longue = \
-            "Cet évènement est appelé quand le joueur entre la " \
+            "Cet évènement est appelé quand le personnage entre la " \
             "commande vendre/sell en précisant un produit. La transaction " \
             "n'est pas encore conclue et peut être refusée, en " \
             "utilisant l'action 'interrompre'. La valeur de la " \
@@ -230,7 +230,7 @@ class ScriptPNJ(Script):
         evt_marchand_achete_apr = evt_marchand_achete.creer_evenement("après")
         evt_marchand_achete_apr.aide_courte = "après l'achat"
         evt_marchand_achete_apr.aide_longue = \
-            "Cet évènement est appelé quand le joueur entre la " \
+            "Cet évènement est appelé quand le personnage entre la " \
             "commande vendre/sell en précisant un produit. La transaction " \
             "a été conclue et validée (payée). On peut maintenant " \
             "souhaiter faire des opérations particulières sur les " \
@@ -252,6 +252,25 @@ class ScriptPNJ(Script):
         evt_marchand_ferme.aide_longue = \
             "Cet évènement est appelé quand le magasin ferme ses portes."
 
+        # Évènement marchand.infos
+        evt_marchand_infos = evt_marchand.creer_evenement("infos")
+        evt_marchand_infos.aide_courte = "un personnage demande des infos"
+        evt_marchand_infos.aide_longue = \
+            "Cet évènement est appelé quand un personnage demande des " \
+            "informations sur un service en vente grâce à la commande " \
+            "|cmd|infos|ff|."
+
+        # Configuration des variables de l'évènement marchand.infos
+        var_perso = evt_marchand_infos.ajouter_variable("personnage",
+                "Personnage")
+        var_perso.aide = "le personnage demandant des informationss"
+        var_type = evt_marchand_infos.ajouter_variable("type", "str")
+        var_type.aide = "le type de service concerné"
+        var_cle = evt_marchand_infos.ajouter_variable("cle", "str")
+        var_cle.aide = "la clé du service concerné"
+        var_qtt = evt_marchand_infos.ajouter_variable("quantite", "Fraction")
+        var_qtt.aide = "la quantité du service concerné"
+
         # Évènement marchand.ouvre
         evt_marchand_ouvre = evt_marchand.creer_evenement("ouvre")
         evt_marchand_ouvre.aide_courte = "le magasin ouvre ses portes"
@@ -261,7 +280,58 @@ class ScriptPNJ(Script):
             "le premier PNJ modelé sur le prototype indiqué dans le " \
             "magasin est choisi (qu'il soit là où non)."
 
-        # Evénement meurt
+        # Évènement marchand.vend
+        evt_marchand_vend = evt_marchand.creer_evenement("vend")
+        evt_marchand_vend.aide_courte = "un personnage achète quelque chose"
+        evt_marchand_vend.aide_longue = \
+            "Cet évènement est appelé quand un personnage achète quelque " \
+            "chose dans le magasin, c'est-à-dire quand le magasin " \
+            "vend un produit. Le sous-èvénement 'avant' permet " \
+            "d'empêcher la transaction (le magasin ne veut pas vendre " \
+            "le service, pour X raison) et permet de modifier d'autres " \
+            "informations, comme la valeur du service. Le sous-évènement " \
+            "'après', au contraire, est appelé quand la transaction " \
+            "a bel et bien eu lieu."
+
+        # Évènement marchand.vend.avant
+        evt_marchand_vend_avt = evt_marchand_vend.creer_evenement("avant")
+        evt_marchand_vend_avt.aide_courte = "avant la vente"
+        evt_marchand_vend_avt.aide_longue = \
+            "Cet évènement est appelé quand le personnage entre la " \
+            "commande acheter/buy en précisant un service. La transaction " \
+            "n'est pas encore conclue et peut être refusée, en " \
+            "utilisant l'action 'interrompre'. La valeur de la " \
+            "transaction peut également être modifiée en modifiant " \
+            "la variable 'valeur' qui doit valoir le prix du service " \
+            "vendu. |att|ATTENTION|ff| toutefois : à la différence " \
+            "de l'évènement marchand.achète, le magasin vend des " \
+            "services, pas forcément des objets. Le type du service " \
+            "est passé en variable (objet, familier, navire...) et " \
+            "la clé du service se trouve dans la variable |ent|cle|ff|."
+
+        # Évènement marchand.vend.après
+        evt_marchand_vend_apr = evt_marchand_vend.creer_evenement("après")
+        evt_marchand_vend_apr.aide_courte = "après l'achat"
+        evt_marchand_vend_apr.aide_longue = \
+            "Cet évènement est appelé quand le personnage entre la " \
+            "commande acheter/buy en précisant un service. La transaction " \
+            "a été conclue et validée (payée)."
+
+        # Configuration des variables de l'évènement marchand.vend
+        var_perso = evt_marchand_vend.ajouter_variable("personnage",
+                "Personnage")
+        var_perso.aide = "le personnage achetant les services"
+        var_type = evt_marchand_vend.ajouter_variable("type", "str")
+        var_type.aide = "le type de service acheté"
+        var_cle = evt_marchand_vend.ajouter_variable("cle", "str")
+        var_cle.aide = "la clé du service acheté"
+        var_qtt = evt_marchand_vend.ajouter_variable("quantite", "Fraction")
+        var_qtt.aide = "la quantité du service acheté"
+        var_valeur = evt_marchand_vend.ajouter_variable("valeur",
+                "Fraction")
+        var_valeur.aide = "la valeur des services achetés"
+
+        # Événement meurt
         evt_meurt = self.creer_evenement("meurt")
         evt_meurt.nom_acteur = "adversaire"
         evt_meurt_avant = evt_meurt.creer_evenement("avant")

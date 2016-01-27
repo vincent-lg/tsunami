@@ -30,6 +30,8 @@
 
 """Package contenant la commande 'acheter'."""
 
+from fractions import Fraction
+
 from primaires.interpreteur.commande.commande import Commande
 from primaires.commerce.transaction import *
 
@@ -61,7 +63,8 @@ class CmdAcheter(Commande):
 
 
         magasin = salle.magasin
-        if magasin.vendeur is None:
+        vendeur = magasin.vendeur
+        if vendeur is None:
             personnage << "|err|Aucun vendeur n'est présent pour l'instant.|ff|"
             return
 
@@ -73,6 +76,13 @@ class CmdAcheter(Commande):
             nb_obj = qtt
 
         somme = service.m_valeur * nb_obj
+
+        # Appelle du script
+        evt = vendeur.script["marchand"]["vend"]["avant"]
+        evt.executer(pnj=vendeur, personnage=personnage,
+                type=service.type_achat, cle=service.cle,
+                valeur=Fraction(somme), quantite=Fraction(nb_obj))
+        somme = int(evt.espaces.variables["valeur"])
 
         # On crée la transaction associée
         try:
@@ -88,3 +98,9 @@ class CmdAcheter(Commande):
         magasin.retirer_inventaire(service, nb_obj)
         personnage << "Vous achetez {}.".format(service.get_nom(nb_obj))
         service.acheter(nb_obj, magasin, transaction)
+
+        # Appel du script marchand.vend.après
+        evt = vendeur.script["marchand"]["vend"]["après"]
+        evt.executer(pnj=vendeur, personnage=personnage,
+                type=service.type_achat, cle=service.cle,
+                valeur=Fraction(somme), quantite=Fraction(nb_obj))

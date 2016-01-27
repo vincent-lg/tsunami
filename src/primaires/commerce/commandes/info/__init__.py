@@ -30,6 +30,8 @@
 
 """Package contenant la commande 'info'."""
 
+from fractions import Fraction
+
 from primaires.interpreteur.commande.commande import Commande
 
 class CmdInfo(Commande):
@@ -61,9 +63,24 @@ class CmdInfo(Commande):
 
 
         magasin = salle.magasin
-        if magasin.vendeur is None:
+        vendeur = magasin.vendeur
+        if vendeur is None:
             personnage << "|err|Aucun vendeur n'est présent pour l'instant.|ff|"
             return
+
         no_ligne = dic_masques["objet"].no_ligne
         service, qtt = magasin.inventaire[no_ligne]
+
+        if service.type_achat == "objet" and service.est_de_type("livre"):
+            personnage << "|err|Vous ne pouvez consulter un livre " \
+                    "sans l'acheter.|ff|"
+            return
+
+        # Appel du script correspondant
+        evt = vendeur.script["marchand"]["infos"]
+        evt.executer(pnj=vendeur, personnage=personnage,
+                type=service.type_achat, cle=service.cle,
+                quantite=Fraction(qtt))
+
+        # Envoie de la description du service
         personnage << service.regarder(personnage)

@@ -93,7 +93,7 @@ class CmdVendre(Commande):
 
             evt = vendeur.script["marchand"]["achète"]["avant"]
             evt.executer(pnj=vendeur, personnage=personnage, objet=objet,
-                    valeur=valeur, conserver=Fraction(1))
+                    valeur=Fraction(valeur), conserver=Fraction(1))
             valeur = int(evt.espaces.variables["valeur"])
             conserver = bool(evt.espaces.variables["conserver"])
 
