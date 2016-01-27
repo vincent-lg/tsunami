@@ -167,24 +167,29 @@ class Module(BaseModule):
                 "{nb} guilde{s} ouverte{s}", fem=True))
 
         # Ajout des commandes dynamiques
+        commandes = []
         nb_cmd = 0
         for guilde in self.guildes.values():
             for commande in guilde.commandes:
                 self.commandes_dynamiques[commande.nom_francais_complet] = \
                         commande
-                try:
-                    commande.ajouter()
-                except Exception as err:
-                    self.logger.warning("Erreur lors de l'ajout de " \
-                            "la commande {}".format(commande))
-                    self.logger.warning(traceback.format_exc())
-                else:
-                    commande.maj()
-                    nb_cmd += 1
+                commandes.append(commande)
 
             for talent in guilde.talents.values():
                 if talent.ouvert:
                     talent.ajouter()
+
+        commandes.sort(key=lambda c: str(c))
+        for commande in commandes:
+            try:
+                commande.ajouter()
+            except Exception as err:
+                self.logger.warning("Erreur lors de l'ajout de " \
+                        "la commande {}".format(commande))
+                self.logger.warning(traceback.format_exc())
+            else:
+                commande.maj()
+                nb_cmd += 1
 
         self.logger.info(format_nb(nb_cmd,
                 "{nb} commande{s} dynamique{s} créée{s}", fem=True))
