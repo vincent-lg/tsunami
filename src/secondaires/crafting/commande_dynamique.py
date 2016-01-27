@@ -30,6 +30,8 @@
 
 """Fichier contenant la classe CommandeDynamique détaillée plus bas."""
 
+from fractions import Fraction
+
 from abstraits.obase import BaseObj
 from primaires.format.description import Description
 from primaires.interpreteur.commande.commande import Commande
@@ -267,7 +269,7 @@ class CommandeDynamique(BaseObj):
             elif n_type == "cle":
                 variables[masque.nom] = masque.cle
             elif n_type == "nombre":
-                variables[masque.nom] = masque.nombre
+                variables[masque.nom] = Fraction(masque.nombre)
             elif n_type in ("objet_equipe", "objet_inventaire", "objet_sol"):
                 nom = masque.nom
                 if nom in ("objet_equipe", "objet_inventaire", "objet_sol"):
