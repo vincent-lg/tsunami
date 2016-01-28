@@ -144,6 +144,7 @@ class Bloc(BaseObj):
         variable 'retour', si il y en a une, que l'on retourne au cas où.
 
         """
+        self.espaces = Espaces(self)
         variables = {}
         jeton = Jeton()
         jeton.complet = True
