@@ -28,30 +28,12 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Fichier contenant la classe Tag, détaillée plus bas."""
+"""Fichier contenant la classe ScripTag détaillée plus bas."""
 
-from abstraits.obase import BaseObj
-from secondaires.tags.script import ScriptTag
+from primaires.scripting.script import Script
 
-class Tag(BaseObj):
+class ScriptTag(Script):
 
-    """Classe représentant un tag."""
+    """Script et évènements propre aux Tags."""
 
-    enregistrer = True
-
-    def __init__(self, cle, type):
-        """Constructeur de la fiche."""
-        BaseObj.__init__(self)
-        self.cle = cle
-        self.type = type
-        self.script = ScriptTag(self)
-        self._construire()
-
-    def __getnewargs__(self):
-        return ("inconnu", "inconnu")
-
-    def __repr__(self):
-        return "<Tag {} de type {}>".format(repr(self.cle), repr(self.type))
-
-    def __str__(self):
-        return self.cle
+    pass

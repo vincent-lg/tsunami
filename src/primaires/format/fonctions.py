@@ -313,11 +313,11 @@ def format_nb(nb, message, fem=False):
         "est": "sont" if nb > 1 else "est",
     }
     if nb == 0:
-        mots["nb"] = "Aucune" if fem else "Aucun"
+        mots["nb"] = "aucune" if fem else "aucun"
     elif nb == 1:
-        mots["nb"] = "Une" if fem else "Un"
+        mots["nb"] = "une" if fem else "un"
 
-    return message.format(**mots)
+    return message.format(**mots).capitalize()
 
 def aff_flottant(flottant, arrondi=3):
     """Retourne le flottant sous la forme d'une chaîne de caractères.

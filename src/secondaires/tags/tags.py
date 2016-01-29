@@ -28,30 +28,49 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Fichier contenant la classe Tag, détaillée plus bas."""
+"""Fichier contenant la classe Tags, détaillée plus bas."""
 
 from abstraits.obase import BaseObj
-from secondaires.tags.script import ScriptTag
 
-class Tag(BaseObj):
+class Tags(BaseObj):
 
-    """Classe représentant un tag."""
+    """Classe représentant les tags.
+
+    Cette tags associe un objet (une salle, un personnage
+    ou autre) à une liste de tags.
+
+    """
 
     enregistrer = True
 
-    def __init__(self, cle, type):
-        """Constructeur de la fiche."""
+    def __init__(self):
         BaseObj.__init__(self)
-        self.cle = cle
-        self.type = type
-        self.script = ScriptTag(self)
+        self.tags = {}
         self._construire()
 
     def __getnewargs__(self):
-        return ("inconnu", "inconnu")
+        return ()
+
+    def __getitem__(self, objet):
+        """Lecture d'un tag."""
+        if objet not in self.tags:
+            self.tags[objet] = Liste(objet)
+
+        return self.tags[objet]
+
+
+class Liste(BaseObj):
+
+    """Liste de tags."""
+
+    def __init__(self, objet):
+        BaseObj.__init__(self)
+        self.objet = objet
+        self.tags = []
+        self._construire()
+
+    def __getnewargs__(self):
+        return (None, )
 
     def __repr__(self):
-        return "<Tag {} de type {}>".format(repr(self.cle), repr(self.type))
-
-    def __str__(self):
-        return self.cle
+        return "<listeTags pour {}>".format(repr(objet))

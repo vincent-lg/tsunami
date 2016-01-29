@@ -30,12 +30,15 @@
 
 """Fichier contenant le module secondaire tags."""
 
+from textwrap import dedent
+
 from abstraits.module import *
 from corps.fonctions import valider_cle
 from primaires.format.fonctions import format_nb
 #from secondaires.tags import commandes
+from secondaires.tags.editeurs.selection_tags import SelectionTags
 from secondaires.tags.tag import Tag
-#from secondaires.tags import editeurs
+from secondaires.tags.tags import Tags
 
 class Module(BaseModule):
 
@@ -57,11 +60,21 @@ class Module(BaseModule):
         """Constructeur du module"""
         BaseModule.__init__(self, importeur, "tags", "secondaire")
         self.tags = {}
+        self.configuration = None
         self.types = ["objet", "pnj"]
         self.logger = self.importeur.man_logs.creer_logger("tags", "tags")
 
     def init(self):
         """Chargement des objets du module."""
+        # Abonnement aux hooks
+        self.importeur.hook["editeur:etendre"].ajouter_evenement(
+                self.ajouter_tags)
+
+        # Charge les tags
+        self.configuration = self.importeur.supenr.charger_unique(Tags)
+        if self.configuration is None:
+            self.configuration = Tags()
+
         tags = self.importeur.supenr.charger_groupe(Tag)
         groupes = {}
         for tag in tags:
@@ -122,3 +135,29 @@ class Module(BaseModule):
                     repr(cle)))
 
         self.tags.pop(cle).detruire()
+
+    def ajouter_tags(self, editeur, presentation, objet):
+        """Ajoute l'éditeur de tags aux éditeurs."""
+        print("Extension de", editeur)
+        if editeur.lower() in self.types:
+            liste = [t.cle for t in self.tags.values() if t.type == \
+                    editeur.lower()]
+            liste.sort()
+            lst_tags = self.configuration[objet]
+            tags = presentation.ajouter_choix("tags", None,
+                    SelectionTags, lst_tags,
+                    "tags", liste, objet)
+            tags.parent = presentation
+            tags.apercu = "{valeur}"
+            tags.aide_courte = dedent("""
+                Entrez |cmd|/|ff| pour revenir à la fenêtre parente.
+
+                Vous pouvez ici ajouter et supprimer des tags pour '{nom}'.
+                Si vous ajoutez un tag, en entrant son nom, les scripts
+                associés à ce tag seront automatiquement copiés dans
+                '{nom}'.
+
+                Tags possibles : {liste}
+
+                Tags actuels : {{valeur}}""".format(nom=str(objet),
+                liste=liste).lstrip("\n"))
