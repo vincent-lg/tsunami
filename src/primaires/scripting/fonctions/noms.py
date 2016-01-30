@@ -28,49 +28,51 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Fichier contenant la fonction salles."""
+"""Fichier contenant la fonction noms."""
 
 from primaires.scripting.fonction import Fonction
 from primaires.scripting.instruction import ErreurExecution
 
 class ClasseFonction(Fonction):
 
-    """Retourne une liste de salles."""
+    """Renvoie une liste de noms de plusieurs informations.
+
+    En paramètre de cette fonction doit être précisé le type
+    d'information souhaitée. Par exemple, :
+
+      identifiants = noms("salle")
+      # identifiants contient la liste des identifiants de salle
+
+    """
 
     @classmethod
     def init_types(cls):
-        cls.ajouter_types(cls.salles)
-        cls.ajouter_types(cls.salles, "str")
+        cls.ajouter_types(cls.noms, "str")
 
     @staticmethod
-    def salles(nom_zone="*"):
-        """Retourne toutes les salles.
-
-        Si le nom de la zone est passé en paramètre, ne retourne
-        que les salles de la zone indiquée.
+    def noms(type):
+        """Retourne les noms des informations demandées.
 
         Paramètres à préciser :
 
-          * nom_zone : le nom de la zone (une chaîne)
+          * type : le type d'information (voir plus bas).
 
-        Si la zone n'est pas précisée, retourne toutes les salles
-        de l'univers.
+        Types possibles :
+
+          * "joueur" : retourne le nom des joueurs ;
+          * "salle" : retourne les identifiants de toutes les salles.
 
         Exemples d'utilisation :
 
-          # Capture toutes les salles dans une liste
-          salles = salles()
-          # Capture seulement les salles de la zone 'depart'
-          salles = salles("depart")
+          noms = noms("joueur")
+          # noms contient la liste des noms de tous les joueurs
+          identifiants = noms("salle")
 
         """
-        if nom_zone == "*":
-            return list(importeur.salle._salles.values())
+        type = type.lower()
+        if type == "joueur":
+            return [j.nom for j in importeur.joueur.joueurs.values()]
+        elif type == "salle":
+            return [s.ident for s in importeur.salle._salles.values()]
         else:
-            nom_zone = nom_zone.lower()
-            try:
-                zone = importeur.salle.zones[nom_zone]
-            except KeyError:
-                raise ErreurExecution("zone {} inconnue".format(repr(nom_zone)))
-
-            return list(zone.salles)
+            raise ErreurExecution("Type inconnu {}".format(repr(type)))
