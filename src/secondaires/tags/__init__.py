@@ -35,7 +35,7 @@ from textwrap import dedent
 from abstraits.module import *
 from corps.fonctions import valider_cle
 from primaires.format.fonctions import format_nb
-#from secondaires.tags import commandes
+from secondaires.tags import commandes
 from secondaires.tags.editeurs.selection_tags import SelectionTags
 from secondaires.tags.tag import Tag
 from secondaires.tags.tags import Tags
@@ -62,6 +62,7 @@ class Module(BaseModule):
         self.tags = {}
         self.configuration = None
         self.types = ["objet", "pnj"]
+        self.cles = {}
         self.logger = self.importeur.man_logs.creer_logger("tags", "tags")
 
     def init(self):
@@ -86,23 +87,28 @@ class Module(BaseModule):
             groupe.append(tag)
 
         self.logger.info(format_nb(len(tags),
-                "{nb} tag{s} récupérée{s}"))
+                "{nb} tag{s} récupéré{s}"))
 
         for type, groupe in groupes.items():
             self.logger.info(format_nb(len(groupe),
                     "  Dont {nb} tag{s} du type " + type))
+
+        # Réferencement des clés
+        self.cles = {
+                "objet": importeur.objet._prototypes,
+                "pnj": importeur.pnj._prototypes,
+        }
+
+        BaseModule.init(self)
+
     def ajouter_commandes(self):
         """Ajout des commandes dans l'interpréteur"""
         self.commandes = [
-    #        commandes.tag.Cmdtag(),
+            commandes.tags.CmdTags(),
         ]
 
         for cmd in self.commandes:
             self.importeur.interpreteur.ajouter_commande(cmd)
-
-        # Ajout des éditeurs
-        #self.importeur.interpreteur.ajouter_editeur(
-        #        editeurs.gldedit.GldEdit)
 
     def creer_tag(self, cle, type):
         """Crée un nouveau tag."""

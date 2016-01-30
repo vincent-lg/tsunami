@@ -28,39 +28,6 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Fichier contenant la classe Tag, détaillée plus bas."""
+"""Package contenant les commandes du module crafting."""
 
-from abstraits.obase import BaseObj
-from secondaires.tags.script import ScriptTag
-
-class Tag(BaseObj):
-
-    """Classe représentant un tag."""
-
-    enregistrer = True
-
-    def __init__(self, cle, type):
-        """Constructeur de la fiche."""
-        BaseObj.__init__(self)
-        self.cle = cle
-        self.type = type
-        self.script = ScriptTag(self)
-        self._construire()
-
-    def __getnewargs__(self):
-        return ("inconnu", "inconnu")
-
-    def __repr__(self):
-        return "<Tag {} de type {}>".format(repr(self.cle), repr(self.type))
-
-    def __str__(self):
-        return self.cle
-
-    def copier_evenement(self, depuis):
-        """Copie l'éévènement depuis l'évènement passé en paramètre."""
-        parent = self.script
-        noms = depuis.nom_complet.split(".")
-        for nom in noms:
-            parent = parent.creer_evenement(nom)
-
-        parent.copier_depuis(depuis)
+from secondaires.tags.commandes import tags

@@ -28,39 +28,40 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Fichier contenant la classe Tag, détaillée plus bas."""
+"""Package contenant le paramètre 'créer' de la commande 'tags'."""
 
-from abstraits.obase import BaseObj
-from secondaires.tags.script import ScriptTag
+from primaires.interpreteur.masque.parametre import Parametre
 
-class Tag(BaseObj):
+class PrmCreer(Parametre):
 
-    """Classe représentant un tag."""
+    """Commande 'tags créer'"""
 
-    enregistrer = True
+    def __init__(self):
+        """Constructeur du paramètre."""
+        Parametre.__init__(self, "créer", "create")
+        self.schema = "<type:cle> <cle>"
+        self.aide_courte = "crée un nouveau tag"
+        self.aide_longue = \
+            "Cette commande permet de créer un nouveau tag. Vous devez " \
+            "préciser en premier paramètre le type de tag (comme " \
+            "pnj, objet ou autre) et en second paramètre, la clé du " \
+            "tag à créer. Par exemple : %tags% %tags:créer%|cmd|pnj " \
+            "marchand|ff|. Types de tag disponibles : " + ", ".join(
+            importeur.tags.types) + "."
 
-    def __init__(self, cle, type):
-        """Constructeur de la fiche."""
-        BaseObj.__init__(self)
-        self.cle = cle
-        self.type = type
-        self.script = ScriptTag(self)
-        self._construire()
+    def interpreter(self, personnage, dic_masques):
+        """Méthode d'interprétation de commande"""
+        type = dic_masques["type"].cle
+        cle = dic_masques["cle"].cle
 
-    def __getnewargs__(self):
-        return ("inconnu", "inconnu")
+        if type not in importeur.tags.types:
+            personnage << "|err|Type de tag {} inconnu.|ff|".format(type)
+            return
 
-    def __repr__(self):
-        return "<Tag {} de type {}>".format(repr(self.cle), repr(self.type))
+        if cle in importeur.tags.tags:
+            personnage << "|err|Cette clé de tag est déjà utilisée.|ff|"
+            return
 
-    def __str__(self):
-        return self.cle
-
-    def copier_evenement(self, depuis):
-        """Copie l'éévènement depuis l'évènement passé en paramètre."""
-        parent = self.script
-        noms = depuis.nom_complet.split(".")
-        for nom in noms:
-            parent = parent.creer_evenement(nom)
-
-        parent.copier_depuis(depuis)
+        tag = importeur.tags.creer_tag(cle, type)
+        personnage << "Le tag {} de type {} a bien été créé.".format(
+                cle, type)
