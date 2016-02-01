@@ -60,7 +60,8 @@ class ClasseFonction(Fonction):
         Types possibles :
 
           * "joueur" : retourne le nom des joueurs ;
-          * "salle" : retourne les identifiants de toutes les salles.
+          * "salle" : retourne les identifiants de toutes les salles ;
+          * "prototype de PNJ" : retourne les clés des prototypes de PNJ.
 
         Exemples d'utilisation :
 
@@ -74,5 +75,7 @@ class ClasseFonction(Fonction):
             return [j.nom for j in importeur.joueur.joueurs.values()]
         elif type == "salle":
             return [s.ident for s in importeur.salle._salles.values()]
+        elif type == "prototype de pnj":
+            return [p.cle for p in importeur.pnj._prototypes.values()]
         else:
             raise ErreurExecution("Type inconnu {}".format(repr(type)))
