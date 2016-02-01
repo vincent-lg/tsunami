@@ -84,8 +84,13 @@ class SelectionObjet(Editeur):
         dictionnaire = self.dictionnaire
         cles = list(dictionnaire.keys())
         cles_sa = [supprimer_accents(c).lower() for c in cles]
-        if msg_sa in cles_sa:
+        objet = None
+        if not cles:
+            objet = msg
+        elif msg_sa in cles_sa:
             objet = dictionnaire[cles[cles_sa.index(msg_sa)]]
+
+        if objet is not None:
             if objet in liste:
                 while objet in liste:
                     liste.remove(objet)
