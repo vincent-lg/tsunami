@@ -91,13 +91,17 @@ class Module(BaseModule):
 
         for type, groupe in groupes.items():
             self.logger.info(format_nb(len(groupe),
-                    "  Dont {nb} tag{s} du type " + type))
+                    "Dont {nb} tag{s} du type " + type))
 
         # Réferencement des clés
         self.cles = {
                 "objet": importeur.objet._prototypes,
                 "pnj": importeur.pnj._prototypes,
         }
+
+        # Abbonnement aux hooks
+        self.importeur.hook["recherche:filtres"].ajouter_evenement(
+                self.recherche_tags)
 
         BaseModule.init(self)
 
@@ -167,3 +171,19 @@ class Module(BaseModule):
 
                 Tags actuels : {{valeur}}""".format(nom=str(objet),
                 liste=liste).lstrip("\n"))
+
+    def recherche_tags(self, cherchable):
+        """Ajout de la recherche par tags."""
+        if cherchable.nom_cherchable in ("probjet", "prpnj"):
+            cherchable.ajouter_filtre("", "tags", self.filtrer_tags, "chaine")
+
+    def filtrer_tags(self, objet, tags):
+        """Filtre les données possédant le ou les tags indiqués.
+
+        Vous pouvez préciser en argument un seul tag, ou bien une
+        liste de tags séparés par un espace. Si l'un des tags est
+        présent dans la donnée, elle sera affichée.
+
+        """
+        o_tags = importeur.tags.configuration[objet].tags
+        return any(tag.lower() in o_tags for tag in tags.split(" "))

@@ -54,7 +54,11 @@ class Filtre:
         if self.type:
             courte += " ARG"
             longue += "=ARG" if self.opt_longue else ""
-        return courte + ", " + longue if self.opt_longue else courte
+
+        if self.opt_courte:
+            return courte + ", "+ longue if self.opt_longue else courte
+        else:
+            return longue
 
     def tester(self, objet, valeur):
         """Teste le filtre"""
