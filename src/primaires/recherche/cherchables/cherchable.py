@@ -38,6 +38,7 @@ import inspect
 import re
 import shlex
 import textwrap
+import time
 
 from abstraits.obase import BaseObj
 from primaires.format.tableau import Tableau
@@ -233,6 +234,7 @@ class Cherchable(BaseObj, metaclass=MetaCherchable):
             """Ne quitte pas Python."""
             raise ValueError(msg)
 
+        t1 = time.time()
         cherchable = cls()
 
         # On crée les listes d'options
@@ -326,4 +328,9 @@ class Cherchable(BaseObj, metaclass=MetaCherchable):
                     ligne.append(aff)
                 retour_aff.ajouter_ligne(*ligne)
 
-            return retour_aff.afficher()
+            t2 = time.time()
+            temps = str(round(t2 - t1, 3)).replace(".", ",")
+            s = "s" if len(retour) > 1 else ""
+            res = retour_aff.afficher()
+            return res + "\n {} résultat{s}, recherche en {}s".format(
+                    len(retour), temps, s=s)
