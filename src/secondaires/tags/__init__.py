@@ -61,7 +61,7 @@ class Module(BaseModule):
         BaseModule.__init__(self, importeur, "tags", "secondaire")
         self.tags = {}
         self.configuration = None
-        self.types = ["objet", "pnj"]
+        self.types = ["objet", "pnj", "salle"]
         self.cles = {}
         self.logger = self.importeur.man_logs.creer_logger("tags", "tags")
 
@@ -97,6 +97,7 @@ class Module(BaseModule):
         self.cles = {
                 "objet": importeur.objet._prototypes,
                 "pnj": importeur.pnj._prototypes,
+                "salle": importeur.salle._salles,
         }
 
         # Abbonnement aux hooks
@@ -148,7 +149,6 @@ class Module(BaseModule):
 
     def ajouter_tags(self, editeur, presentation, objet):
         """Ajoute l'éditeur de tags aux éditeurs."""
-        print("Extension de", editeur)
         if editeur.lower() in self.types:
             liste = [t.cle for t in self.tags.values() if t.type == \
                     editeur.lower()]
@@ -174,7 +174,7 @@ class Module(BaseModule):
 
     def recherche_tags(self, cherchable):
         """Ajout de la recherche par tags."""
-        if cherchable.nom_cherchable in ("probjet", "prpnj"):
+        if cherchable.nom_cherchable in ("probjet", "prpnj", "salle"):
             cherchable.ajouter_filtre("", "tags", self.filtrer_tags, "chaine")
 
     def filtrer_tags(self, objet, tags):
