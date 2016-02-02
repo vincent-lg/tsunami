@@ -30,6 +30,8 @@
 
 """Fichier contenant la fonction recuperer."""
 
+from fractions import Fraction
+
 from corps.fonctions import valider_cle
 from primaires.scripting.fonctions.recuperer_valeur_dans_liste import \
         ClasseFonction as CF
@@ -65,4 +67,8 @@ class ClasseFonction(CF):
 
         """
         valider_cle(cle)
-        return getattr(structure, cle, None)
+        objet = getattr(structure, cle, None)
+        if isinstance(objet, (int, float)):
+            objet = Fraction(objet)
+
+        return objet
