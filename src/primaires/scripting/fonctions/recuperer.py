@@ -68,7 +68,7 @@ class ClasseFonction(CF):
         """
         valider_cle(cle)
         objet = getattr(structure, cle, None)
-        if isinstance(objet, (int, float)):
+        if isinstance(objet, (int, float, bool)):
             objet = Fraction(objet)
 
         return objet

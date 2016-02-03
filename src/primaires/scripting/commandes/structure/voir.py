@@ -78,6 +78,8 @@ class PrmVoir(Parametre):
         for champ, valeur in donnees:
             if isinstance(valeur, StructureComplete):
                 valeur = valeur.structure + " " + str(valeur.id)
+            elif isinstance(valeur, bool):
+                valeur = "vrai" if valeur else "faux"
             elif isinstance(valeur, list):
                 liste = []
                 for element in valeur:

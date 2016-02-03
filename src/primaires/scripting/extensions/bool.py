@@ -28,28 +28,29 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Package 'extension' du moedule scripting.
+"""Module contenant la classe Bool, détaillée plus bas."""
 
-Dans ce package sont définis les extensions d'un éditeur personnalisé.
+from primaires.interpreteur.editeur.flag import Flag
+from primaires.scripting.extensions.base import Extension
 
-"""
+class Bool(Extension):
 
-from primaires.scripting.extensions.action import Action
-from primaires.scripting.extensions.bool import Bool
-from primaires.scripting.extensions.chaine import Chaine
-from primaires.scripting.extensions.choix import Choix
-from primaires.scripting.extensions.description import Description
-from primaires.scripting.extensions.liste import Liste
-from primaires.scripting.extensions.nombre import Nombre
-from primaires.scripting.extensions.selection import Selection
+    """Classe représentant le type éditable 'bool'.
 
-EXTENSIONS = {
-        "action": Action,
-        "bool": Bool,
-        "chaine": Chaine,
-        "choix": Choix,
-        "description": Description,
-        "liste": Liste,
-        "nombre": Nombre,
-        "selection": Selection,
-}
+    Ce type utilise l'éditeur Flag. Il permet simplement
+    d'entrer une valeur booléenne (True ou False).
+
+    """
+
+    extension = "bool"
+    aide = "une valeur VRAI ou FAUX"
+
+    @property
+    def editeur(self):
+        """Retourne le type d'éditeur."""
+        return Flag
+
+    @property
+    def arguments(self):
+        """Retourne les arguments de l'éditeur."""
+        return ()
