@@ -190,12 +190,12 @@ class EdtPedit(Presentation):
         xp = self.ajouter_choix("xP", "x", Flottant, prototype,
                 "gain_xp")
         xp.parent = self
-        xp.apercu = "{objet.gain_xp}% ({objet.gain_xp_absolu} XP)"
+        xp.apercu = "{valeur}% ({objet.xp_absolue} XP)"
         xp.prompt = "Entrez le pourcentage d'XP reçue par l'adversaire : "
         xp.aide_courte = \
             "Entrez le pourcentage d'XP relative gagnée par l'adversaire lors " \
             "de la mort du\nPNJ.\n\n" \
-            "Pourcentage actuel : {objet.gain_xp}%"
+            "Pourcentage actuel : {valeur}% ({objet.xp_absolue} XP)"
 
         # Stats à entraîner
         en = self.ajouter_choix("stats pouvant être entraînées", "en",

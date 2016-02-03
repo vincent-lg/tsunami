@@ -186,9 +186,6 @@ class Presentation(Editeur):
             if issubclass(enveloppe.editeur, Flag):
                 apercu = oui_ou_non(getattr(enveloppe.objet,
                         enveloppe.attribut))
-            elif issubclass(enveloppe.editeur, Flottant):
-                apercu = aff_flottant(getattr(enveloppe.objet,
-                        enveloppe.attribut))
             else:
                 apercu = enveloppe.get_apercu()
             if apercu:

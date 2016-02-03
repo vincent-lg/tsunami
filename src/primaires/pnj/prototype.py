@@ -99,11 +99,6 @@ class Prototype(BaseObj):
         """Retourne le nom de la race si existant ou une chaîne vide."""
         return (self.race and self.race.nom) or ""
 
-    @property
-    def gain_xp_absolu(self):
-        return int(importeur.perso.gen_niveaux.grille_xp[self.niveau - 1][1] \
-                * self.gain_xp / 100)
-
     def _get_race(self):
         return self._race
     def _set_race(self, race):
@@ -208,6 +203,17 @@ class Prototype(BaseObj):
             msg = "\n  Aucun"
 
         return msg
+
+    @property
+    def xp_absolue(self):
+        """Retourne l'XP absolu."""
+        try:
+            xp = importeur.perso.gen_niveaux.grille_xp[self.niveau][1]
+        except IndexError:
+            return 0
+
+        xp = int(xp * self.gain_xp / 100)
+        return xp
 
     def est_immortel(self):
         return False
