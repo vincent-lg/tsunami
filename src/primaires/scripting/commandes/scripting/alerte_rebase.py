@@ -28,33 +28,33 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Package contenant la commande 'scripting alerte'."""
+"""Module contenant la commande 'scripting alerte rebase'."""
 
 from primaires.interpreteur.masque.parametre import Parametre
-from .alerte_info import PrmInfo
-from .alerte_liste import PrmListe
-from .alerte_rebase import PrmRebase
-from .alerte_resoudre import PrmResoudre
 
-class PrmAlerte(Parametre):
+class PrmRebase(Parametre):
 
-    """Commande 'scripting alerte'"""
+    """Commande 'scripting alerte rebase'"""
 
     def __init__(self):
         """Constructeur du paramètre."""
-        Parametre.__init__(self, "alerte", "alert")
-        self.aide_courte = "manipule les alertes scripting"
+        Parametre.__init__(self, "rebase", "rebase")
+        self.nom_groupe = "administrateur"
+        self.aide_courte = "re-numérote les alertes"
         self.aide_longue = \
-            "Cette commande permet de manipuler les alertes du scripting. " \
-            "Les lister (sous-commande %scripting:alerte:liste%), " \
-            "obtenir des informations sur une alerte précise " \
-            "(sous-commande %scripting:alerte:info%) ou les " \
-            "marquer comme résolues (sous-commande " \
-            "%scripting:alerte:resoudre%)."
+            "Cette commande permet de réordonner les alertes en les " \
+            "numérotant proprement de 1 à N. Ceci est souvent un " \
+            "plus si le nombre d'alertes commence à devenir important " \
+            "et leur ID est trop élevé."
 
-    def ajouter_parametres(self):
-        """Ajout des paramètres."""
-        self.ajouter_parametre(PrmInfo())
-        self.ajouter_parametre(PrmListe())
-        self.ajouter_parametre(PrmRebase())
-        self.ajouter_parametre(PrmResoudre())
+    def interpreter(self, personnage, dic_masques):
+        """Méthode d'interprétation de commande"""
+        alertes = sorted(list(importeur.scripting.alertes.values()),
+                key=lambda a: a.no)
+        for i, alerte in enumerate(alertes):
+            del importeur.scripting.alertes[alerte.no]
+            alerte.no = i + 1
+            importeur.scripting.alertes[i + 1] = alerte
+
+        type(alerte).no_actuel = len(alertes)
+        personnage << "{} alertes renumérotées.".format(len(alertes))
