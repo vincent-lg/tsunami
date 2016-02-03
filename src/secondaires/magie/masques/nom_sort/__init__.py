@@ -82,8 +82,8 @@ class NomSort(Masque):
                 return True
 
         for objet in personnage.equipement.inventaire:
-            if objet.nom_type == "parchemin" and contient(objet.sort.nom,
-                    nom_sort) and objet.charges > 0:
+            if objet.est_de_type("parchemin") and objet.sort and contient(
+                    objet.sort.nom, nom_sort) and objet.charges > 0:
                 self.sort = objet.sort
                 self.parchemin = objet
                 return True
