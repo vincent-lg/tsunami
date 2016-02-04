@@ -130,7 +130,6 @@ class EdtStats(Editeur):
             noms = list(poids.keys())
             probas = list(poids.values())
             stat = choix_probable_liste(noms, probas)
-            self.pere << "Stats {} en proba {} donne {}.".format(noms, probas, stat)
             stat = self.objet[stat]
             courante = stat.courante + 1
             stat.courante = courante
