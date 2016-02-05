@@ -67,6 +67,13 @@ class EdtPresentation(Presentation):
 
     def construire(self, prototype):
         """Construction de l'éditeur"""
+        # Type (lecture seule)
+        type = self.ajouter_choix("type", "type", Uniligne, prototype,
+                "nom_type")
+        type.parent = self
+        type.apercu = "{valeur}"
+        type.lecture_seule = True
+
         # Noms
         noms = self.ajouter_choix("noms", "n", EdtNoms, prototype)
         noms.parent = self

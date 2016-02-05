@@ -40,9 +40,10 @@ class ClasseAction(Action):
     @classmethod
     def init_types(cls):
         cls.ajouter_types(cls.editer, "Personnage", "Structure")
+        cls.ajouter_types(cls.editer, "Personnage", "Structure", "str")
 
     @staticmethod
-    def editer(personnage, structure):
+    def editer(personnage, structure, lecture_seule=""):
         """Ouvre un éditeur pour la structure et l'affiche pour le personnage.
 
         La structure précisée doit être enregistrable, c'est-à-dire
@@ -52,7 +53,14 @@ class ClasseAction(Action):
         Paramètres à renseigner :
 
           * personnage : le personnage pour lequel afficher l'éditeur
-          * structure : une structure enregistrable.
+          * structure : une structure enregistrable ;
+          * lecture_seule (optionnel) : les champs qu'on ne peut éditer.
+
+        On peut préciser en troisième paramètre les champs que
+        l'on ne peut éditer, sous la forme d'une chaîne avec chaque
+        clé de menu séparé par un espace. Les champs indiqués seront
+        affichés mais ne pourront pas être édités (ils ne seront que
+        visibles et non éditables par le personnage).
 
         Exemples d'utilisation :
 
@@ -65,8 +73,18 @@ class ClasseAction(Action):
           # Un éditeur 'journal' doit exister. C'est lui qui sera appelé
           # pour éditer la structure. L'éditeur portant le nom du
           # groupe de la structure est toujours utilisé.
+          editer personnage journal "titre"
+          # Dans ce dernier cas, le personnage ne pourra pas éditer le titre du journal.
+          editer personnage journal "titre auteurs"
+          # Ici, le personnage ne pourra éditer ni le champ 'titre',
+          # ni le champ 'auteurs'
 
         """
+        if lecture_seule:
+            lecture_seule = lecture_seule.lower().split(" ")
+        else:
+            lecture_seule = []
+
         groupe = structure.structure
         if groupe is None:
             raise ErreurExecution("La structure précisée n'est de " \
@@ -78,4 +96,4 @@ class ClasseAction(Action):
             raise ErreurExecution("L'éditeur {} pour la structure {} " \
                     "n'a pas été trouvé".format(repr(groupe), structure))
 
-        editeur.editer(personnage, structure)
+        editeur.editer(personnage, structure, lecture_seule)

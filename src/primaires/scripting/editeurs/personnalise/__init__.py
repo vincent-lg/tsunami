@@ -38,8 +38,10 @@ class EdtEditeur(Presentation):
 
     """Classe définissant l'éditeur d'éditeur personnalisé."""
 
-    def __init__(self, personnage, editeur, structure, quitter=None):
+    def __init__(self, personnage, editeur, structure, quitter=None,
+            lecture_seule=None):
         """Constructeur de l'éditeur"""
+        lecture_seule = lecture_seule or []
         if hasattr(personnage, "instance_connexion"):
             instance_connexion = personnage.instance_connexion
         else:
@@ -52,12 +54,15 @@ class EdtEditeur(Presentation):
 
         Presentation.__init__(self, instance_connexion, editeur, None, quitter)
         if personnage and editeur and structure:
-            self.construire(editeur, structure)
+            self.construire(editeur, structure, lecture_seule)
 
     def __getnewargs__(self):
         return (None, None, None)
 
-    def construire(self, editeur, structure):
+    def construire(self, editeur, structure, lecture_seule=None):
         """Construction de l'éditeur"""
+        lecture_seule = lecture_seule or []
         for sous_editeur in editeur.editeurs:
-            sous_editeur.creer(self, structure)
+            enveloppe = sous_editeur.creer(self, structure)
+            if sous_editeur.nom in lecture_seule:
+                enveloppe.lecture_seule = True

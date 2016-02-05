@@ -63,6 +63,7 @@ class EnveloppeObjet(BaseObj):
         self.action = ""
         self.confirme = ""
         self.type = None
+        self.lecture_seule = False
 
     def __getnewargs__(self):
         return (None, None, None)

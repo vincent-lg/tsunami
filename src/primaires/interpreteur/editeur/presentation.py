@@ -175,19 +175,21 @@ class Presentation(Editeur):
             # On constitue le nom final
             # Si le nom d'origine est 'description' et le raccourci est 'd',
             # le nom final doit être '[D]escription'
-            pos = nom.find(raccourci)
-            raccourci = ((pos == 0) and raccourci[0].upper() + raccourci[1:]) \
-					or raccourci
             nom_maj = nom[0].upper() + nom[1:]
-            nom_m = nom_maj[:pos] + "[|cmd|" + raccourci + "|ff|]" + \
-                    nom_maj[pos + len(raccourci):]
-            msg += "\n " + nom_m
-            enveloppe = self.choix[nom]
-            if issubclass(enveloppe.editeur, Flag):
-                apercu = oui_ou_non(getattr(enveloppe.objet,
-                        enveloppe.attribut))
+            if objet.lecture_seule:
+                nom_m = "[-] " + nom_maj
             else:
-                apercu = enveloppe.get_apercu()
+                pos = nom.find(raccourci)
+                if pos >= 0:
+                    raccourci = raccourci[0].upper() + raccourci[1:]
+                nom_m = nom_maj[:pos] + "[|cmd|" + raccourci + "|ff|]" + \
+                        nom_maj[pos + len(raccourci):]
+            msg += "\n " + nom_m
+            if issubclass(objet.editeur, Flag):
+                apercu = oui_ou_non(getattr(objet.objet,
+                        objet.attribut))
+            else:
+                apercu = objet.get_apercu()
             if apercu:
                 msg += " : " + apercu
 
@@ -201,7 +203,12 @@ class Presentation(Editeur):
             if msg:
                 self.autre_interpretation(msg)
         else:
-            contexte = self.choix[nom].construire(self.pere)
+            enveloppe = self.choix[nom]
+            if enveloppe.lecture_seule:
+                self.pere << "|err|Vous ne pouvez pas éditer ce champ.|ff|"
+                return
+
+            contexte = enveloppe.construire(self.pere)
             self.migrer_contexte(contexte)
 
     def autre_interpretation(self, msg):

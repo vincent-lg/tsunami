@@ -126,8 +126,9 @@ class EditeurPersonnalise(BaseObj):
         extension = self.get_editeur(nom)
         self.editeurs.remove(extension)
 
-    def editer(self, personnage, structure):
+    def editer(self, personnage, structure, lecture_seule=None):
         """Fait éditer le personnage."""
-        editeur = EdtEditeur(personnage, self, structure)
+        editeur = EdtEditeur(personnage, self, structure,
+                lecture_seule=lecture_seule)
         personnage.contextes.ajouter(editeur)
         editeur.actualiser()
