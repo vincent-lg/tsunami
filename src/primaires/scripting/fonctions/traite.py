@@ -104,5 +104,8 @@ class ClasseFonction(Fonction):
                 chaine = supprimer_accents(chaine)
             elif operation == "lisser":
                 chaine = lisser(chaine)
+            else:
+                raise ErreurExecution("Opération {} inconnue.".format(
+                        repr(operation)))
 
         return chaine
