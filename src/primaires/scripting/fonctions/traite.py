@@ -64,6 +64,7 @@ class ClasseFonction(Fonction):
           * minuscule : met la chaîne en minuscule
           * majuscule : met la chaîne en majuscule
           * capital : met chaque première lettre de chaque mot en majuscule
+          * titre : la première lettre de la chaîne est mise en majuscules
           * sans_accents : retire les accents.
           * lisser : change "de un" en "d'un", "le un" en "l'un"...
 
@@ -95,6 +96,8 @@ class ClasseFonction(Fonction):
                 chaine = chaine.lower()
             elif operation == "majuscule":
                 chaine = chaine.upper()
+            elif operation == "titre":
+                chaine = chaine[0].upper() + chaine[1:]
             elif operation == "capital":
                 chaine = chaine.title()
             elif operation == "sans_accents":
