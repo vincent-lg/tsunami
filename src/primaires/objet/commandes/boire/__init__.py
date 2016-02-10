@@ -104,7 +104,7 @@ class CmdBoire(Commande):
                     personnage.soif = 0
                 personnage.estomac += objet.potion.poids_unitaire
                 objet.potion.script["boit"].executer(personnage=personnage,
-                        objet=objet)
+                        objet=objet.potion)
                 objet.onces -= 1
                 if objet.est_vide():
                     importeur.objet.supprimer_objet(objet.potion.identifiant)
