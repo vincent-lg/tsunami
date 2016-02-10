@@ -136,3 +136,22 @@ class ScriptObjet(Script):
         var_nom.aide = "le nom de la mémoire à effacer"
         var_valeur = evt_effacer_memoire.ajouter_variable("valeur", "Object")
         var_valeur.aide = "la valeur de la mémoire qu'on va effacer"
+
+        # Événement créé
+        evt_cree = self.creer_evenement("créé")
+        evt_cree.aide_courte = "l'objet est créé"
+        evt_cree.aide_longue = \
+            "Cet évènement est appelé quand l'objet est créé, pas " \
+            "nécessairement quelque part. Il faut donc éviter de se " \
+            "fier au contexte de l'objet (est-il posé au sol, par " \
+            "exemple) car l'objet n'a pas encore de contexte à ce " \
+            "stade. Il existe mais pas nécessairement quelque part. " \
+            "Il a pu être créé par la fonction scripting 'creer_objet' " \
+            "par exemple, et dans ce cas il sera manipulé avant " \
+            "d'apparaître quelque part. Cet évènement est toutefois " \
+            "utile pour créer des mémoires spécifiques, avoir des " \
+            "objets qui se détériorent progressivement, par exemple."
+
+        # Configuration des variables de l'évènement créé
+        var_objet = evt_cree.ajouter_variable("objet", "Objet")
+        var_objet.aide = "l'objet nouvellement créé"

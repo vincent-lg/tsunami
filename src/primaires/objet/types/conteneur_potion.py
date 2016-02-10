@@ -84,7 +84,7 @@ class ConteneurPotion(BaseType):
         self.connecteur = "de"
         self.masculin = True
         self.onces_max = 1
-        
+
         # Extensions d'éditeur
         self.etendre_editeur("c", "connecteur", Choix, self,
                 "connecteur", LISTE_CONNECTEURS)
@@ -96,7 +96,7 @@ class ConteneurPotion(BaseType):
         self._attributs = {
             "onces": Attribut(lambda: self.onces_max),
         }
-        
+
         # Erreur de validation du type
         self.err_type = "Laissez ce liquide à sa place, non mais."
 
@@ -116,7 +116,7 @@ class ConteneurPotion(BaseType):
             "|grf|un tonneau|ff| |bc|plein de|ff| |grf|bière|ff|.\n\n" \
             "Choix possibles : {objet.connecteurs}\n\n" \
             "Connecteur actuel : {objet.connecteur}"
-        
+
         contenu = enveloppes["on"]
         contenu.apercu = "{valeur}"
         contenu.prompt = "Nombre maximum d'onces que peut contenir l'objet : "
@@ -153,10 +153,10 @@ class ConteneurPotion(BaseType):
                 connecteur = connecteurs[1]
             else:
                 connecteur = connecteurs[2]
-                
+
             e = "e" if not self.masculin else ""
             ajout = lisser(" " + connecteur.format(s=s, e=e, liquide=nom))
-            
+
         if nombre <= 0:
             raise ValueError("la fonction get_nom a été appelée " \
                     "avec un nombre négatif ou nul.")
@@ -185,7 +185,7 @@ class ConteneurPotion(BaseType):
         """Rempli le conteneur de potion."""
         nb_max = self.onces_max
         self.onces = nb_max
-        
+
     def objets_contenus(self, conteneur):
         """Retourne les objets contenus."""
         objets = []
@@ -212,7 +212,7 @@ class ConteneurPotion(BaseType):
         """Le personnage regarde l'objet"""
         msg = BaseType.regarder(self, personnage)
         if getattr(self, "potion", False):
-            msg += str(self.potion.description)
+            msg += self.potion.description.regarder(personnage, self.potion)
 
         return msg
 

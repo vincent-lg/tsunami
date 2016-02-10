@@ -327,6 +327,7 @@ class Module(BaseModule):
 
         objet = Objet(prototype)
         self.ajouter_objet(objet)
+        objet.script["créé"].executer(objet=objet)
         return objet
 
     def ajouter_objet(self, objet):
