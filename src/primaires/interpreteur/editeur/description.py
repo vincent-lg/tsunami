@@ -98,7 +98,7 @@ class Description(Editeur):
     @staticmethod
     def afficher_apercu(apercu, objet, valeur):
         if valeur is None:
-            valeur = getattr(objet, "description", "")
+            return ""
 
         if isinstance(valeur, str):
             description = Desc(parent=objet, scriptable=False)
