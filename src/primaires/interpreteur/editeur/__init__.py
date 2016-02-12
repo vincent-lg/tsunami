@@ -82,8 +82,6 @@ class Editeur(Contexte):
         """Affichage de l'aperçu."""
         if valeur is None:
             valeur = "|att|non précisé|ff|"
-        else:
-            valeur = str(valeur)
 
         return apercu.format(objet=objet, valeur=valeur)
 

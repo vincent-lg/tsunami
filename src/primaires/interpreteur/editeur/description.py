@@ -48,9 +48,10 @@ class Description(Editeur):
 
     def __init__(self, pere, objet=None, attribut=None):
         """Constructeur de l'éditeur"""
+        attribut = attribut or "description"
         Editeur.__init__(self, pere, objet, attribut)
         self.opts.echp_sp_cars = False
-        self.nom_attribut = attribut or "description"
+        self.nom_attribut = attribut
         contenu = ""
         if objet:
             contenu = getattr(self.objet, self.nom_attribut)
@@ -59,8 +60,10 @@ class Description(Editeur):
             else:
                 contenu = str(contenu)
 
-        self.description_complete = Desc(description=contenu,
-                parent=objet, scriptable=False)
+        self.description_complete = Desc(parent=objet, scriptable=False)
+        if contenu:
+            for paragraphe in contenu.split("\n"):
+                self.description_complete.ajouter_paragraphe(paragraphe)
 
         self.ajouter_option("?", self.opt_aide)
         self.ajouter_option("j", self.opt_ajouter_paragraphe)
@@ -92,9 +95,21 @@ class Description(Editeur):
         else:
             return "-> "
 
-    def get_apercu(self):
-        """Aperçu de la description"""
-        return self.apercu.format(objet = self.objet.description)
+    @staticmethod
+    def afficher_apercu(apercu, objet, valeur):
+        if valeur is None:
+            valeur = getattr(objet, "description", "")
+
+        if isinstance(valeur, str):
+            description = Desc(parent=objet, scriptable=False)
+
+            for paragraphe in valeur.split("\n"):
+                description.ajouter_paragraphe(paragraphe)
+
+            valeur = description
+
+        valeur = valeur.paragraphes_indentes
+        return apercu.format(objet=objet, valeur=valeur)
 
     def mettre_a_jour(self):
         """Met à jour l'attribut si nécessaire."""
@@ -240,6 +255,7 @@ class Description(Editeur):
         description = self.description
         if arguments == "*": # on supprime toute la description
             description.vider()
+            self.mettre_a_jour()
             self.actualiser()
         else:
             # Ce doit être un nombre

@@ -175,12 +175,13 @@ class Presentation(Editeur):
             # On constitue le nom final
             # Si le nom d'origine est 'description' et le raccourci est 'd',
             # le nom final doit être '[D]escription'
-            nom_maj = nom[0].upper() + nom[1:]
+            nom_maj = nom
             if objet.lecture_seule:
-                nom_m = "[-] " + nom_maj
+                nom_m = "[-] " + nom_maj.capitalize()
             else:
-                pos = nom.find(raccourci)
+                pos = supprimer_accents(nom).lower().find(raccourci)
                 if pos >= 0:
+                    raccourci = nom[pos:pos + len(raccourci)]
                     raccourci = raccourci[0].upper() + raccourci[1:]
                 nom_m = nom_maj[:pos] + "[|cmd|" + raccourci + "|ff|]" + \
                         nom_maj[pos + len(raccourci):]
@@ -197,8 +198,9 @@ class Presentation(Editeur):
 
     def interpreter(self, msg):
         """Interprétation de la présentation"""
+        msg = supprimer_accents(msg.rstrip().lower())
         try:
-            nom = self.raccourcis[msg.rstrip().lower()]
+            nom = self.raccourcis[msg]
         except KeyError:
             if msg:
                 self.autre_interpretation(msg)
