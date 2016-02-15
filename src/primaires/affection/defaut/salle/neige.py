@@ -111,3 +111,12 @@ class Neige(AffectionSalle):
     def message_detruire(self, affection):
         """Destruction de l'affection de salle."""
         return "La neige fond, ne laissant que quelques flaques au sol."
+
+    def programmer_destruction(self, affection):
+        """Programme la destruction de la neige.
+
+        D'etruit les bonhommes de neige de la salle.
+
+        """
+        AffectionSalle.programmer_destruction(self, affection)
+        affection.affecte.supprimer_bonhommes_neige()

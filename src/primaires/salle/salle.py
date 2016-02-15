@@ -827,6 +827,14 @@ class Salle(BaseObj):
         for decor in self.get_decors(cle):
             self.supprimer_decor(decor)
 
+    def supprimer_bonhommes_neige(self):
+        """Supprime les bonhommes de neige présents."""
+        for decor in list(self.decors):
+            if isinstance(decor, BonhommeNeige):
+                self.supprimer_decor(decor)
+                self.envoyer("{} se met à fondre rapidement.".format(
+                        decor.get_nom().capitalize()))
+
     def get_structure(self):
         """Retourne la structure de la salle."""
         structure = StructureSimple()
