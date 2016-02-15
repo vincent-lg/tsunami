@@ -84,6 +84,8 @@ class ClasseFonction(Fonction):
         dernier = dernier or lien
         liste = [str(e) for e in liste]
         chaine = lien.join(liste[:-1])
-        chaine += dernier
+        if len(liste) > 1:
+            chaine += dernier
+
         chaine += liste[-1]
         return chaine
