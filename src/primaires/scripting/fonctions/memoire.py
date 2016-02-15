@@ -2,10 +2,10 @@
 
 # Copyright (c) 2010-2016 LE GOFF Vincent
 # All rights reserved.
-# 
+#
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are met:
-# 
+#
 # * Redistributions of source code must retain the above copyright notice, this
 #   list of conditions and the following disclaimer.
 # * Redistributions in binary form must reproduce the above copyright notice,
@@ -14,7 +14,7 @@
 # * Neither the name of the copyright holder nor the names of its contributors
 #   may be used to endorse or promote products derived from this software
 #   without specific prior written permission.
-# 
+#
 # THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
 # AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
 # IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -33,15 +33,16 @@
 from primaires.scripting.fonction import Fonction
 
 class ClasseFonction(Fonction):
-    
+
     """Renvoie la valeur d'une mémoire de scripting."""
-    
+
     @classmethod
     def init_types(cls):
         cls.ajouter_types(cls.memoire_salle, "Salle", "str")
         cls.ajouter_types(cls.memoire_perso, "Personnage", "str")
         cls.ajouter_types(cls.memoire_objet, "Objet", "str")
-    
+        cls.ajouter_types(cls.memoire_objet, "PrototypeObjet", "str")
+
     @staticmethod
     def memoire_salle(salle, cle):
         """Renvoie une mémoire de salle."""
@@ -49,7 +50,7 @@ class ClasseFonction(Fonction):
             if cle in importeur.scripting.memoires[salle]:
                 return importeur.scripting.memoires[salle][cle]
         return None
-    
+
     @staticmethod
     def memoire_perso(personnage, cle):
         """Renvoie une mémoire de personnage."""
@@ -59,7 +60,7 @@ class ClasseFonction(Fonction):
             if cle in importeur.scripting.memoires[personnage]:
                 return importeur.scripting.memoires[personnage][cle]
         return None
-    
+
     @staticmethod
     def memoire_objet(objet, cle):
         """Renvoie une mémoire d'objet."""
