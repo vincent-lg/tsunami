@@ -67,7 +67,7 @@ class Description(Editeur):
 
         self.ajouter_option("?", self.opt_aide)
         self.ajouter_option("j", self.opt_ajouter_paragraphe)
-        self.ajouter_option("i", self.opt_inserer_paragraphe)
+        self.ajouter_option("a", self.opt_inserer_paragraphe)
         self.ajouter_option("d", self.opt_supprimer)
         self.ajouter_option("r", self.opt_remplacer)
         self.ajouter_option("e", self.opt_editer_evt)
@@ -160,6 +160,9 @@ class Description(Editeur):
         """
         msg = \
             "Liste des options disponibles :\n" \
+            " - |ent|/d *|ff| pour supprimer toute la description\n" \
+            " - |ent|/d <numéro du paragraphe>|ff| pour supprimer un " \
+            "paragraphe\n" \
             " - |ent|/a <numéro du paragraphe> <texte>|ff| pour ajouter " \
             "du texte\n   à la fin du paragraphe spécifié\n" \
             " - |ent|/j <numéro du paragraphe> <texte>|ff| pour insérer " \
@@ -178,7 +181,7 @@ class Description(Editeur):
                 " - |ent|/re <ancien nom> <nouveau nom>|ff| renomme la " \
                 "description dynamique"
 
-            self.pere << msg
+        self.pere << msg
 
     def opt_ajouter_paragraphe(self, arguments):
         """Ajoute un paragraphe.
