@@ -306,7 +306,12 @@ class Test(BaseObj):
             no_ligne = int(reg.groups()[-1]) - 1
 
         if no_ligne > 0:
-            ligne = echapper_accolades(str(self.__instructions[no_ligne - 1]))
+            try:
+                ligne = echapper_accolades(str(self.__instructions[no_ligne - 1]))
+            except IndexError:
+                no_ligne = "|err|inconnue|ff|"
+                ligne = "Ligne inconnue."
+                message = "erreur de syntaxe"
         else:
             no_ligne = "|err|inconnue|ff|"
             ligne = "Ligne inconnue."
