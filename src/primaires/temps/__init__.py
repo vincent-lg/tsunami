@@ -64,7 +64,7 @@ class Module(BaseModule):
         self.cfg = type(self.importeur).anaconf.get_config("temps",
             "temps/temps.cfg", "config temps", cfg_temps)
 
-        self.synchroniser = self.cfg.synchroniser
+        self.synchroniser = self.cfg.synchro
 
         # On crée les hooks du module
         importeur.hook.ajouter_hook("temps:minute",
@@ -119,6 +119,12 @@ class Module(BaseModule):
         if self.synchroniser:
             t1 = self.temps.timestamp
             delta = int(t2 - t1)
+            if delta > 3:
+                print("Delta", delta)
+
+            if delta > 10:
+                delta = 10
+                t2 = t1 + 10
         else:
             delta = 1
 

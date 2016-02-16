@@ -2,10 +2,10 @@
 
 # Copyright (c) 2010-2016 LE GOFF Vincent
 # All rights reserved.
-# 
+#
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are met:
-# 
+#
 # * Redistributions of source code must retain the above copyright notice, this
 #   list of conditions and the following disclaimer.
 # * Redistributions in binary form must reproduce the above copyright notice,
@@ -14,7 +14,7 @@
 # * Neither the name of the copyright holder nor the names of its contributors
 #   may be used to endorse or promote products derived from this software
 #   without specific prior written permission.
-# 
+#
 # THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
 # AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
 # IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -30,42 +30,44 @@
 
 """Ce fichier décrit la classe FichierConfiguration, détaillée plus bas."""
 
+from collections import OrderedDict
 import re
 import textwrap
 
 from .exceptions import *
 
 class FichierConfiguration:
-    
+
     """Cette classe définit un fichier de configuration.
-    
+
     Le fichier créé par cette classe est déjà ouvert. La classe se contente
     de l'analyser et de placer les données dans un dictionnaire.
-    
+
     Elle est également en charge de mettre un jour un fichier en tenant
     compte d'un autre fichier (mettre à jour un modèle en tenant compte
     des données configurées, ici).
-    
+
     """
-    
-    def __init__(self, nom, chaine, logger):
+
+    def __init__(self, nom, chaine, logger, debug=False):
         """Constructeur d'un fichier de configuration.
-        
+
         On lui passe la chaîne lue dans le fichier, non analysée.
         Cette chaîne contient donc les données brutes, il faut l'analyser.
-        
+
         """
         self.nom = nom
         self.fichier = chaine
-        self.donnees = {}
+        self.logger = logger
+        self.donnees = OrderedDict()
         self.lignes = {}
         self.logger = logger
-        
+
         # On analyse la chaîne
         t_contenu = chaine.split("\n")
         contenu = chaine
         delimiteurs = ('\\', ',', '[', '{', '(')
-        
+
         # On lit les données
         i = 0
         while i < len(t_contenu):
@@ -83,7 +85,7 @@ class FichierConfiguration:
             else:
                 nom_donnee = ligne.split("=")[0].strip()
                 donnee = "=".join(ligne.split("=")[1:]).lstrip()
-                
+
                 # Si la ligne se poursuit, on continue
                 ligne_debut = i
                 while ligne.rstrip()[-1] in delimiteurs or \
@@ -91,26 +93,32 @@ class FichierConfiguration:
                     i += 1
                     if i >= len(t_contenu):
                         break
-                    
+
                     ligne = t_contenu[i]
                     donnee += "\n" + ligne
-                
+
                 ligne_fin = i
                 self.lignes[nom_donnee] = (ligne_debut, ligne_fin)
                 self.donnees[nom_donnee] = donnee
+
+                if debug:
+                    logger.debug("Ligne {} à {} : {} = {}".format(
+                            ligne_debut, ligne_fin, nom_donnee, donnee))
+
                 i += 1
-    
-    def mettre_a_jour(self, autre_fichier):
+
+    def mettre_a_jour(self, autre_fichier, debug=False):
         """Met à jour l'attribut 'chaine' en fonction d'un autre fichier.
-        
+
         On parcourt les données de cet autre fichier.
         *   Si la donnée est présente dans self.donnees, on la réécrit
             sans savoir si elle est identique ou non, on l'écrase)
         *   Sinon on ne la réécrit pas.
-        
+
         """
         t_contenu = self.fichier.split("\n")
-        for nom_don, val_don in autre_fichier.donnees.items():
+        for nom_don, val_don in reversed(tuple(
+                autre_fichier.donnees.items())):
             if nom_don in self.donnees.keys(): # la donnée existe
                 # On la met à jour
                 self.donnees[nom_don] = val_don
@@ -123,6 +131,9 @@ class FichierConfiguration:
                 nv_val = nom_don + " = " + val_don
                 nv_val = nv_val.split("\n")
                 t_contenu = t_contenu[:debut] + nv_val + t_contenu[fin + 1:]
-        
+                if debug:
+                    self.logger.debug("Remplacement de ligne {} à {} : " \
+                            "{}".format(debut, fin, nv_val))
+
         self.fichier = "\n".join(t_contenu)
 

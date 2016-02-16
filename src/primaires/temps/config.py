@@ -180,6 +180,6 @@ msgs_coucher = (
 # temps dans le jeu parfaitement aligné avec le temps réel, suivant
 # l'écoulement configuré, mais ce réglage peut occasionner une
 # certaine latence si le MUD n'est pas lancé en permanence.
-synchroniser = False
+synchro = off
 
 """
