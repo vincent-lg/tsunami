@@ -2,10 +2,10 @@
 
 # Copyright (c) 2010-2016 LE GOFF Vincent
 # All rights reserved.
-# 
+#
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are met:
-# 
+#
 # * Redistributions of source code must retain the above copyright notice, this
 #   list of conditions and the following disclaimer.
 # * Redistributions in binary form must reproduce the above copyright notice,
@@ -14,7 +14,7 @@
 # * Neither the name of the copyright holder nor the names of its contributors
 #   may be used to endorse or promote products derived from this software
 #   without specific prior written permission.
-# 
+#
 # THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
 # AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
 # IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -106,7 +106,8 @@ reglage_initial = (1785, 5, 12, 10, 0)
 # - le dénominateur
 # Exemple : "3/4"
 # Le numérateur est le nombre d'heures réelles qui s'écoulent
-# Le numérateur est le nombre d'heures de l'univers qui s'écoulent en parallèle
+# Le dénominateur est le nombre d'heures de l'univers qui s'écoulent
+# en parallèle.
 # Par exemple, si vous définissez l'écoulement ainsi :
 # vitesse_ecoulement = "1/5"
 # 5 heures de l'univers s'écoulent pendant une heure réelle
@@ -172,5 +173,13 @@ msgs_lever = (
 msgs_coucher = (
         "Le soleil se couche à l'ouest.",
 )
+
+# Synchronisation avec le temps réel
+# Cette valeur permet de spécifier si le temps IRL et le temps IG
+# doivent être synchronisés. Activer cette option permet d'avoir un
+# temps dans le jeu parfaitement aligné avec le temps réel, suivant
+# l'écoulement configuré, mais ce réglage peut occasionner une
+# certaine latence si le MUD n'est pas lancé en permanence.
+synchroniser = False
 
 """

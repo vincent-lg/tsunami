@@ -31,6 +31,7 @@
 """Fichier contenant la classe Temps, détaillée plus bas."""
 
 from fractions import Fraction
+from time import time
 from random import choice
 
 from abstraits.obase import BaseObj
@@ -52,6 +53,7 @@ class Temps(BaseObj):
     def __init__(self, config):
         """Constructeur de l'objet"""
         BaseObj.__init__(self)
+        self.timestamp = time()
         self._construire()
         if not config:
             return
@@ -269,7 +271,7 @@ class Temps(BaseObj):
         elif avt_fait_jour and not apr_fait_jour:
             print("Coucher de soleil")
             self.coucher_soleil()
-        
+
         self.appeler_hook(minute, heure, jour, mois, annee)
 
     def lever_soleil(self):
@@ -280,7 +282,7 @@ class Temps(BaseObj):
             # Ce code pourrait ëtre optimisé
             if salle.interieur:
                 continue
-            
+
             perturbation = importeur.meteo.get_perturbation(salle)
             if perturbation is None or not perturbation.est_opaque():
                 salle.envoyer(phrase, prompt=False)
@@ -293,7 +295,7 @@ class Temps(BaseObj):
             # Ce code pourrait ëtre optimisé
             if salle.interieur:
                 continue
-            
+
             perturbation = importeur.meteo.get_perturbation(salle)
             if perturbation is None or not perturbation.est_opaque():
                 salle.envoyer(phrase, prompt=False)

@@ -30,6 +30,8 @@
 
 """Fichier contenant le module primaire temps."""
 
+from time import time
+
 from abstraits.module import *
 from primaires.meteo.perturbations.base import OPAQUE
 from .config import cfg_temps
@@ -39,6 +41,7 @@ from . import commandes
 class Module(BaseModule):
 
     """Cette classe contient les informations du module primaire temps.
+
     Ce module gère le temps, son écoulement et sa mesure. Une configuration
     complète de ce module permet de savoir :
     -   quelles sont les unités de temps (années, saisons, mois...)
@@ -54,11 +57,14 @@ class Module(BaseModule):
         self.met_changer_jour = []
         self.met_changer_mois = []
         self.met_changer_annee = []
+        self.synchroniser = False
 
     def config(self):
         """Méthode de configuration du module"""
         self.cfg = type(self.importeur).anaconf.get_config("temps",
             "temps/temps.cfg", "config temps", cfg_temps)
+
+        self.synchroniser = self.cfg.synchroniser
 
         # On crée les hooks du module
         importeur.hook.ajouter_hook("temps:minute",
@@ -108,7 +114,18 @@ class Module(BaseModule):
         """Incrémentation du temps"""
         self.importeur.diffact.ajouter_action("inc_temps",
                 1, self.inc)
-        self.temps.inc()
+
+        t2 = time()
+        if self.synchroniser:
+            t1 = self.temps.timestamp
+            delta = int(t2 - t1)
+        else:
+            delta = 1
+
+        for i in range(delta):
+            self.temps.inc()
+
+        self.temps.timestamp = t2
 
     def avancer(self, secondes):
         """Avance le temps du nombre de secondes IRL données."""
