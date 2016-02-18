@@ -150,7 +150,7 @@ class Module(BaseModule):
             personnage << "Ajout de {} à la route {}.".format(
                     destination, route.str_ident)
 
-    def trouver_chemin(self, origine, destination):
+    def trouver_chemin(self, origine, destination, debug=False):
         """Trouve le chemin le plus court entre deux salles.
 
         Les deux salles doivent se trouver dans le complexe des*
@@ -161,6 +161,10 @@ class Module(BaseModule):
         (http://www.redblobgames.com/pathfinding/a-star/introduction.html)
 
         """
+        if debug:
+            self.logger.debug("Recherche la route entre {} et {}".format(
+                    origine, destination))
+
         routes_origines = []
         routes_destinations = []
 
@@ -168,6 +172,7 @@ class Module(BaseModule):
             # La route contient-elle 'origine' ?
             if route.origine is origine or origine in route.salles:
                 routes_origines.append(route)
+
             # La route contient-elle 'destination' ?
             if destination in route.salles:
                 routes_destinations.append(route)
@@ -176,17 +181,25 @@ class Module(BaseModule):
         if len(routes_origines) == 0:
             raise ValueError("{} n'a pas pu être trouvé dans le " \
                     "complexe des routes".format(origine))
+
         if len(routes_destinations) == 0:
             raise ValueError("{} n'a pas pu être trouvé dans le " \
                     "complexe des routes".format(destination))
+
+        if debug:
+            self.logger.debug("Origines={}, destinations={}".format(
+                    routes_origines, routes_destinations))
 
         # Si une route directe existe entre les deux salles, la retourne
         communes = []
         for route in routes_origines:
             if route in routes_destinations:
                 communes.append(route)
-        
+
         communes = [r for r in communes if r.precede(origine, destination)]
+        if debug:
+            self.logger.debug("{} routes communes".format(len(communes)))
+
         if communes:
             route = communes[0]
             description = DescriptionRoute(origine)
@@ -200,6 +213,10 @@ class Module(BaseModule):
             for route_destination in routes_destinations:
                 start = route_origine
                 goal = route_destination
+                if debug:
+                    self.logger.debug("Cherche la liaison entre {} et " \
+                            "{}".format(start, goal))
+
                 frontier = PriorityQueue()
                 frontier.put(start, 0)
                 came_from = {}
@@ -213,6 +230,10 @@ class Module(BaseModule):
                         break
 
                     for next in current.enfants:
+                        if debug:
+                            self.logger.debug("  Recherche dans {}".format(
+                                    next))
+
                         new_cost = cost_so_far[current] + len(next)
                         if next not in cost_so_far or new_cost < cost_so_far[
                             next]:

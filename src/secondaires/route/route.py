@@ -122,7 +122,7 @@ class Route(BaseObj):
     def enfants(self):
         """Retourne les routes enfants de self.
 
-        Ces routes sont celles dont l'origine est la destination*
+        Ces routes sont celles dont l'origine est la destination
         de self (incluant donc la route contraire de self).
 
         """
