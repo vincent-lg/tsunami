@@ -68,7 +68,7 @@ class SelectionTags(Selection):
                 tag = importeur.tags.tags[cle]
                 script = tag.script
                 for evenement in script.evenements.values():
-                    evt = self.tagge.script.evenements[evenement.nom]
+                    evt = self.tagge.script[evenement.nom]
                     evt.copier_depuis(evenement)
                     self.pere << "Copie de l'évènement {}.".format(
                             evenement.nom)
