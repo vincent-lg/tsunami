@@ -1047,9 +1047,13 @@ class Personnage(BaseObj):
         if self.equipement:
             for membre in self.equipement.membres:
                 objets = list(membre.equipe) + [membre.tenu]
-                for objet in objets:
-                    if hasattr(objet, "conteneur"):
-                        qtt -= objet.conteneur.retirer(objet, qtt)
+                for o in objets:
+                    if hasattr(o, "conteneur"):
+                        try:
+                            qtt -= o.conteneur.retirer(objet, qtt)
+                        except ValueError:
+                            continue
+
                         if qtt <= 0:
                             break
 
