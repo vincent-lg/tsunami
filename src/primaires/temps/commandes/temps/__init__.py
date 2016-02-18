@@ -61,11 +61,11 @@ minute. Vous pouvez omettre le mois, ou même omettre le jour et ne préciser qu
 | r2017-01-01 00:00 | Le premier janvier 2017 à minuit               |
 | r05-18 15:30      | Le 18 mai de cette année à 15:30               |
 | r22 20:00         | Le 22 de ce mois et de cette année à 20:00     |
-| r 18:00           | Aujourd'hui à 18:00                            |
+| r18:00            | Aujourd'hui à 18:00                            |
 | m50-01-01 00:00   | Le jour 1 du mois 1 de l'année 50 à minuit     |
 | m10-22 6:00       | Le jour 22 du mois 10 de cette année à 6:00    |
 | m15 19:45         | Le jour 15 de ce mois et cette année à 19:45   |
-| m 23:00           | Le même jour IG à 23:00                        |
+| m23:00            | Le même jour IG à 23:00                        |
 +-------------------+------------------------------------------------+
 """.strip("\n")
 
@@ -73,11 +73,11 @@ EXP = (
     re.compile("^(m)([0-9]+)\-([0-9]+)\-([0-9]+)\s+([0-9]+)\:([0-9]+)$", re.I),
     re.compile("^(m)([0-9]+)\-([0-9]+)\s+([0-9]+)\:([0-9]+)$", re.I),
     re.compile("^(m)([0-9]+)\s+([0-9]+)\:([0-9]+)$", re.I),
-    re.compile("^(m)\s+([0-9]+)\:([0-9]+)$", re.I),
+    re.compile("^(m)\s*([0-9]+)\:([0-9]+)$", re.I),
     re.compile("^(r)([0-9]+)\-([0-9]+)\-([0-9]+)\s+([0-9]+)\:([0-9]+)$", re.I),
     re.compile("^(r)([0-9]+)\-([0-9]+)\s+([0-9]+)\:([0-9]+)$", re.I),
     re.compile("^(r)([0-9]+)\s+([0-9]+)\:([0-9]+)$", re.I),
-    re.compile("^(r)\s+([0-9]+)\:([0-9]+)$", re.I),
+    re.compile("^(r)\s*([0-9]+)\:([0-9]+)$", re.I),
 )
 
 class CmdTemps(Commande):
@@ -104,8 +104,8 @@ class CmdTemps(Commande):
         r_heure = mtn.hour
         r_minute = mtn.minute
         m_annee = temps.annee
-        m_mois = temps.mois
-        m_jour = temps.jour
+        m_mois = temps.mois + 1
+        m_jour = temps.jour + 1
         m_heure = temps.heure
         m_minute = temps.minute
         cnv = None
