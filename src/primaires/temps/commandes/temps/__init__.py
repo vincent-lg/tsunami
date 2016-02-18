@@ -36,19 +36,18 @@ from datetime import datetime, timedelta
 import re
 from time import time
 
-from primaires.format.date import get_date
 from primaires.interpreteur.commande.commande import Commande
 
 # Constantes
 EXP = (
-    re.compile("^(m)([0-9]+)\-([0-9]+)\-([0-9]+)\s*([0-9]+)\:([0-9]+)$", re.I),
-    re.compile("^(m)([0-9]+)\-([0-9]+)\s*([0-9]+)\:([0-9]+)$", re.I),
-    re.compile("^(m)([0-9]+)\s*([0-9]+)\:([0-9]+)$", re.I),
-    re.compile("^(m)\s*([0-9]+)\:([0-9]+)$", re.I),
-    re.compile("^(r)([0-9]+)\-([0-9]+)\-([0-9]+)\s*([0-9]+)\:([0-9]+)$", re.I),
-    re.compile("^(r)([0-9]+)\-([0-9]+)\s*([0-9]+)\:([0-9]+)$", re.I),
-    re.compile("^(r)([0-9]+)\s*([0-9]+)\:([0-9]+)$", re.I),
-    re.compile("^(r)\s*([0-9]+)\:([0-9]+)$", re.I),
+    re.compile("^(m)([0-9]+)\-([0-9]+)\-([0-9]+)\s+([0-9]+)\:([0-9]+)$", re.I),
+    re.compile("^(m)([0-9]+)\-([0-9]+)\s+([0-9]+)\:([0-9]+)$", re.I),
+    re.compile("^(m)([0-9]+)\s+([0-9]+)\:([0-9]+)$", re.I),
+    re.compile("^(m)\s+([0-9]+)\:([0-9]+)$", re.I),
+    re.compile("^(r)([0-9]+)\-([0-9]+)\-([0-9]+)\s+([0-9]+)\:([0-9]+)$", re.I),
+    re.compile("^(r)([0-9]+)\-([0-9]+)\s+([0-9]+)\:([0-9]+)$", re.I),
+    re.compile("^(r)([0-9]+)\s+([0-9]+)\:([0-9]+)$", re.I),
+    re.compile("^(r)\s+([0-9]+)\:([0-9]+)$", re.I),
 )
 
 class CmdTemps(Commande):
@@ -68,6 +67,7 @@ class CmdTemps(Commande):
     def interpreter(self, personnage, dic_masques):
         """Méthode d'interprétation de commande"""
         temps = importeur.temps.temps
+        variable = importeur.temps.variable
         mtn = datetime.now()
         r_annee = mtn.year
         r_mois = mtn.month
@@ -114,29 +114,27 @@ class CmdTemps(Commande):
                     minute = int(minute)
                     break
 
-            # Affichage simple de la transformation attendue
+            # Transformation
             if cnv == "m":
-                msg = "Transformation vers le temps réel de "
-                # Calcul du nombre de secondes IRL
-                secondes = (annee - m_annee) * 31104000
-                secondes += (mois - m_mois) * 2592000
-                secondes += (jour - m_jour) * 86400
-                secondes += (heure - m_heure) * 3600
-                secondes += (minute - m_minute) * 60
-                secondes = int(secondes * temps.vitesse_ecoulement)
-                projection = mtn + timedelta(seconds=secondes)
-                resultat = "{} (secondes={})".format(get_date(
-                        projection).capitalize(), secondes)
+                mois -= 1
+                jour -= 1
+                try:
+                    variable.changer_IG(annee, mois, jour, heure, minute)
+                except ValueError:
+                    personnage << "|err|Syntaxe de temps invalide.|ff|"
             elif cnv == "r":
-                msg = "Transformation vers le temps IG de "
-                resultat = "inconnu"
+                try:
+                    variable.changer_IRL(annee, mois, jour, heure, minute)
+                except ValueError:
+                    personnage << "|err|Syntaxe de temps invalide.|ff|"
+                    return
             else:
                 personnage << "|err|Syntaxe de temps invalide.|ff|"
                 return
 
-            msg += "{}-{}-{} {}:{}".format(annee, mois, jour, heure, minute)
-            msg += "\n" + resultat
-            personnage << msg
+            personnage << "Le {} à {}\nCorrespond au {}.".format(
+                    variable.date_formatee, variable.heure_formatee,
+                    variable.aff_reelle[3:])
             return
 
         personnage << "Nous sommes le {}.\nIl est {}.".format(

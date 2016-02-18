@@ -36,6 +36,7 @@ from abstraits.module import *
 from primaires.meteo.perturbations.base import OPAQUE
 from .config import cfg_temps
 from .temps import Temps
+from .variable import TempsVariable
 from . import commandes
 
 class Module(BaseModule):
@@ -119,12 +120,9 @@ class Module(BaseModule):
         if self.synchroniser:
             t1 = self.temps.timestamp
             delta = int(t2 - t1)
-            if delta > 3:
-                print("Delta", delta)
-
-            if delta > 10:
-                delta = 10
-                t2 = t1 + 10
+            if delta > 100:
+                delta = 100
+                t2 = t1 + 100
         else:
             delta = 1
 
@@ -147,6 +145,11 @@ class Module(BaseModule):
                 break
         if salle.exterieur and not opaque:
             liste_messages.append("|cy|" + self.temps.ciel_actuel + "|ff|")
+
+    @property
+    def variable(self):
+        """Retourne le temps variable."""
+        return TempsVariable()
 
     def changer_minute(self):
         """Change de minute."""
