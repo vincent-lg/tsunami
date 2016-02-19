@@ -39,6 +39,7 @@ from abstraits.obase import BaseObj
 from primaires.format.tableau import Tableau
 from primaires.perso.personnage import Personnage
 from primaires.salle.salle import Salle
+from primaires.temps.variable import TempsVariable
 from primaires.objet.types.base import BaseType as PrototypeObjet
 from primaires.objet.objet import Objet
 from primaires.pnj.pnj import PNJ

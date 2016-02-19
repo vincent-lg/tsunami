@@ -33,10 +33,11 @@
 from datetime import datetime, timedelta
 from time import time
 
+from abstraits.obase import BaseObj
 from primaires.format.date import get_date
 from .constantes import *
 
-class TempsVariable:
+class TempsVariable(BaseObj):
 
     """Classe contenant un mécanisme de temps virtuel variable.
 
@@ -52,14 +53,30 @@ class TempsVariable:
 
     """
 
-    def __init__(self):
-        temps = importeur.temps.temps
-        self.annee = temps.annee
-        self.mois = temps.mois
-        self.jour = temps.jour
-        self.heure = temps.heure
-        self.minute = temps.minute
+    def __init__(self, configurer=True):
+        BaseObj.__init__(self)
+        self.annee = 0
+        self.mois = 0
+        self.jour = 0
+        self.heure = 0
+        self.minute = 0
+
+        if configurer:
+            temps = importeur.temps.temps
+            self.annee = temps.annee
+            self.mois = temps.mois
+            self.jour = temps.jour
+            self.heure = temps.heure
+            self.minute = temps.minute
+
         self.timestamp = time()
+        self._construire()
+
+    def __getnewargs__(self):
+        return (False, )
+
+    def __repr__(self):
+        return "<TempsVariable pour {}>".format(self.reelle)
 
     @property
     def no_j(self):
@@ -155,6 +172,24 @@ class TempsVariable:
     def aff_reelle(self):
         """Affichage de la date réelle."""
         return get_date(self.reelle)
+
+    def __eq__(self, autre):
+        return int(self.timestamp) == int(autre.timestamp)
+
+    def __ne__(self, autre):
+        return int(self.timestamp) != int(autre.timestamp)
+
+    def __le__(self, autre):
+        return int(self.timestamp) <= int(autre.timestamp)
+
+    def __lt__(self, autre):
+        return int(self.timestamp) < int(autre.timestamp)
+
+    def __ge__(self, autre):
+        return int(self.timestamp) >= int(autre.timestamp)
+
+    def __gt__(self, autre):
+        return int(self.timestamp) > int(autre.timestamp)
 
     def changer_IG(self, annee=None, mois=None, jour=None, heure=None,
             minute=None):
