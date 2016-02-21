@@ -81,6 +81,9 @@ class ClasseFonction(Fonction):
           # participants contient : "Anael Eridan Kredh"
 
         """
+        if not liste:
+            return ""
+
         dernier = dernier or lien
         liste = [str(e) for e in liste]
         chaine = lien.join(liste[:-1])
