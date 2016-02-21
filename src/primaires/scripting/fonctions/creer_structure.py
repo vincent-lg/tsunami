@@ -33,6 +33,7 @@
 from corps.fonctions import valider_cle
 from primaires.scripting.fonction import Fonction
 from primaires.scripting.instruction import ErreurExecution
+from primaires.scripting.structure import StructureSimple
 
 class ClasseFonction(Fonction):
 
@@ -103,7 +104,29 @@ class ClasseFonction(Fonction):
 
     @classmethod
     def init_types(cls):
+        cls.ajouter_types(cls.creer_structure_simple)
         cls.ajouter_types(cls.creer_structure, "str")
+
+    @staticmethod
+    def creer_structure_simple():
+        """Crée une structure simple non enregistrée.
+
+        La structure créée à l'aide de cette fonction sans paramètre
+        n'est pas automatiquement enregistrée (il faut l'enregistrer
+        dans une autre structure ou dans une mémoire pour ce faire).
+        Une structure simple, sans groupe, peut être utile pour
+        conserver des informations de façon plus logique que dans
+        des listes. Le résultat est le même : vous pouvez lire et
+        écrire dans des cases de cette structure sans contrainte.
+
+        Exemple d'utilisation :
+
+          simple = structure()
+          ecrire simple "nom" "..."
+          nom = recuperer(simple, "nom")
+
+        """
+        return StructureSimple()
 
     @staticmethod
     def creer_structure(groupe):
