@@ -171,7 +171,7 @@ class TempsVariable(BaseObj):
     @property
     def aff_reelle(self):
         """Affichage de la date réelle."""
-        return get_date(self.reelle)
+        return get_date(self.reelle, secondes=False)
 
     def __eq__(self, autre):
         return int(self.timestamp) == int(autre.timestamp)

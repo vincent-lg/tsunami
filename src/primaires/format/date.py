@@ -33,7 +33,7 @@
 from datetime import datetime
 import time
 
-def get_date(temps=None):
+def get_date(temps=None, secondes=True):
     """Retourne la date et l'heure sous la forme :
         le mardi 1 janvier 1970 à 00:00:00
 
@@ -64,7 +64,11 @@ def get_date(temps=None):
 
     jour_semaine = semaine[struct.tm_wday]
     mois_courant = mois[struct.tm_mon - 1]
-    ret = "le {} {} {} {} à {:02}:{:02}:{:02}".format(
-        jour_semaine, struct.tm_mday, mois_courant, struct.tm_year,
-        struct.tm_hour, struct.tm_min, struct.tm_sec)
+    ret = "le {} {} {} {} à {:02}:{:02}".format(
+            jour_semaine, struct.tm_mday, mois_courant, struct.tm_year,
+            struct.tm_hour, struct.tm_min)
+
+    if secondes:
+        ret += ":{:>02}".format(struct.tm_sec)
+
     return ret

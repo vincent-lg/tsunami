@@ -55,6 +55,8 @@ class ClasseFonction(Fonction):
 
           * "ig" : retourne le temps en format IG (in game)
           * "irl" : retourne le temps en format IRL ;
+          * "numig" : retourne le temps IG en format numérique ;
+          * "numirl" : retourne le temps IRL en format numérique ;
           * "sa" : retourne le temps sans article.
 
         Exemples d'utilisation :
@@ -70,6 +72,9 @@ class ClasseFonction(Fonction):
           # Retire l'article du temps
           ig = afficher_temps(temps, "ig sa")
           irl = afficher_temps(temps, "irl sa")
+          # Retourne le temps en format numérique
+          irl = afficher(temps(temps, "numirl")
+          # irl contient quelque chose comme : 2016-11-10 11:18"
 
         """
         flags = flags.lower().split(" ")
@@ -78,6 +83,23 @@ class ClasseFonction(Fonction):
                     temps.heure_formatee)
         elif "irl" in flags:
             retour = temps.aff_reelle
+        elif "numig" in flags:
+            annee = temps.annee
+            mois = temps.mois + 1
+            jour = temps.jour + 1
+            heure = temps.heure
+            minute = temps.minute
+            retour = "{}-{:>02}-{:>02} {:>02}:{:>02}".format(
+                    annee, mois, jour, heure, minute)
+        elif "numirl" in flags:
+            date = temps.reelle
+            annee = date.year
+            mois = date.month
+            jour = date.day
+            heure = date.hour
+            minute = date.minute
+            retour = "{}-{:>02}-{:>02} {:>02}:{:>02}".format(
+                    annee, mois, jour, heure, minute)
         else:
             raise ErreurExecution("Il vous faut préciser au moins \"ig\" " \
                     "ou \"irl\" en flag d'affichage")
