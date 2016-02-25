@@ -217,7 +217,7 @@ class EdtPedit(Presentation):
         scripts.parent = self
 
         # À dépecer
-        depecer = self.ajouter_choix("à dépecer", "dé", EdtADepecer,
+        depecer = self.ajouter_choix("à dépecer", "de", EdtADepecer,
                 prototype)
         depecer.parent = self
         depecer.aide_courte = \
