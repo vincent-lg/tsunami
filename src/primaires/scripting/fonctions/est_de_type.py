@@ -31,6 +31,7 @@
 """Fichier contenant la fonction est_de_type."""
 
 from primaires.scripting.fonction import Fonction
+from primaires.scripting.instruction import ErreurExecution
 
 class ClasseFonction(Fonction):
 
@@ -40,6 +41,7 @@ class ClasseFonction(Fonction):
     def init_types(cls):
         cls.ajouter_types(cls.est_de_type_objet, "Objet", "str")
         cls.ajouter_types(cls.est_de_type_objet, "PrototypeObjet", "str")
+        cls.ajouter_types(cls.est_de_type_cle, "str", "str")
 
     @staticmethod
     def est_de_type_objet(objet, nom_type):
@@ -58,7 +60,7 @@ class ClasseFonction(Fonction):
         return objet.est_de_type(nom_type)
 
     @staticmethod
-    def est_de_type_prototype(prototype, nom_type):
+    def est_de_type_cle(cle, nom_type):
         """Retourne vrai si le prototype d'objet est du type indiqué.
 
         Retourne vrai également si le nom de type est un parent du
@@ -67,8 +69,14 @@ class ClasseFonction(Fonction):
 
         Paramètres à entrer :
 
-          * prototype : le prototype d'objet à tester
+          * cle : la clé du prototype d'objet (une chaîne)
           * nom_type : le nom du type
 
         """
+        cle = cle.lower()
+        if not cle in importeur.objet.prototypes:
+            raise ErreurExecution("prototype {} introuvable".format(
+                    repr(cle)))
+
+        prototype = importeur.objet.prototypes[cle]
         return prototype.est_de_type(nom_type)
