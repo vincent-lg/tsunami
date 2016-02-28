@@ -40,6 +40,8 @@ class ClasseFonction(Fonction):
     @classmethod
     def init_types(cls):
         cls.ajouter_types(cls.attribut, "Objet", "str")
+        cls.ajouter_types(cls.attribut_prototype, "PrototypeObjet", "str")
+        cls.ajouter_types(cls.attribut_cle, "str", "str")
 
     @staticmethod
     def attribut(objet, nom_attribut):
@@ -60,6 +62,56 @@ class ClasseFonction(Fonction):
             return attributs[nom_attribut]
 
         attributs = importeur.crafting.configuration[objet.prototype].attributs
+        if attributs and nom_attribut in attributs:
+            return attributs[nom_attribut]
+
+        return None
+
+    @staticmethod
+    def attribut_prototype(prototype, nom_attribut):
+        """Retourne l'attribut spécifique à un prototype d'objet.
+
+        L'attribut est un ajout de crafting, modifiable dans
+        l'éditeur 'oedit'. Il s'applique à un objet ou à son
+        prototype. Dans ce cas précis, on cherche l'attribut dans
+        le prototype, c'est-à-dire celui modifié directement dans
+        l'éditeur.
+
+        Paramètres à préciser :
+
+          * prototype : le prototype d'objet à utiliser ;
+          * nom_attribut : le nom de l'attribut (une chaîne)
+
+        """
+        attributs = importeur.crafting.configuration[prototype].attributs
+        if attributs and nom_attribut in attributs:
+            return attributs[nom_attribut]
+
+        return None
+
+    @staticmethod
+    def attribut_cle(cle_prototype, nom_attribut):
+        """Retourne l'attribut spécifique à un prototype d'objet.
+
+        L'attribut est un ajout de crafting, modifiable dans
+        l'éditeur 'oedit'. Il s'applique à un objet ou à son
+        prototype. Dans ce cas précis, on cherche l'attribut dans
+        le prototype, c'est-à-dire celui modifié directement dans
+        l'éditeur.
+
+        Paramètres à préciser :
+
+          * cle_prototype : la clé du prototype d'objet (une chaîne) ;
+          * nom_attribut : le nom de l'attribut (une chaîne)
+
+        """
+        try:
+            prototype = importeur.objet.prototypes[cle_prototype]
+        except KeyError:
+            raise ErreurExecution("prototype d'objet {} inconnu".format(
+                    repr(cle_prototype)))
+
+        attributs = importeur.crafting.configuration[prototype].attributs
         if attributs and nom_attribut in attributs:
             return attributs[nom_attribut]
 
