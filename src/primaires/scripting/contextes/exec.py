@@ -32,6 +32,7 @@
 
 from code import InteractiveConsole
 import sys
+import re
 from textwrap import dedent
 import traceback
 
@@ -101,16 +102,24 @@ class Exec(Contexte):
             Les alertes seront affichées directement dans la console
             plutôt qu'envoyées au système.
 
+            Affichage :
+             Entrez |ent|le nom d'une variable|ff| pour afficher son contenu
+             Entrez |ent|une fonction|ff| pour afficher son retour
+
             Options disponibles :
              |cmd|/?a|ff| pour avoir de l'aide sur les actions existantes
              |cmd|/?f|ff| pour avoir de l'aide sur les fonctions existantes
-             |cmd|/v|ent| (<variable>)|ff| pour voir le contenu d'une variable
+             |cmd|/v|ff| pour voir les variables actuelles
              |cmd|/q|ff| pour quitter cette console.""".lstrip("\n"))
 
         return res
 
     def interpreter(self, msg):
         """Méthode d'interprétation du contexte"""
+        variables = self.evenement.espaces.variables
+        if "_" in variables:
+            del variables["_"]
+
         if msg.startswith("/"):
             msg = msg[1:]
             parties = msg.split(" ")
@@ -124,6 +133,13 @@ class Exec(Contexte):
         else:
             # Exécution du code
             ret = False
+
+            # Affichage d'une variable
+            if re.search(r"^[A-Za-z0-9_]+$", msg):
+                return self.opt_v(msg)
+            elif re.search(r"^[A-Za-z0-9_]+\(", msg):
+                msg = "_ = {}".format(msg)
+
             try:
                 instruction = self.test.ajouter_instruction(msg)
             except Exception as err:
@@ -141,7 +157,9 @@ class Exec(Contexte):
             except Exception:
                 self.pere << traceback.format_exc()
             else:
-                if nb_msg == self.pere.nb_msg:
+                if "_" in variables:
+                    self.opt_v("_")
+                elif nb_msg == self.pere.nb_msg:
                     self.pere.envoyer("")
             finally:
                 sys.stdin = sys.__stdin__
