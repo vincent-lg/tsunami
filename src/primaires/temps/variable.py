@@ -173,6 +173,17 @@ class TempsVariable(BaseObj):
         """Affichage de la date réelle."""
         return get_date(self.reelle, secondes=False)
 
+    def copier(self):
+        """Retourne une copie du temps variable."""
+        copie = TempsVariable(False)
+        copie.annee = self.annee
+        copie.mois = self.mois
+        copie.jour = self.jour
+        copie.heure = self.heure
+        copie.minute = self.minute
+        copie.timestamp = self.timestamp
+        return copie
+
     def __eq__(self, autre):
         return int(self.timestamp) == int(autre.timestamp)
 
