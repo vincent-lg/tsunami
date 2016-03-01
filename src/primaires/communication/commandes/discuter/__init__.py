@@ -72,6 +72,11 @@ class CmdDiscuter(Commande):
             "bien des rumeurs concernant un évènement particulier, " \
             "pour ne citer que certaines des possibilités"
 
+    def ajouter(self):
+        """Méthode appelée quand on ajoute la commande à l'interpréteur"""
+        mot_cle = self.noeud.suivant.suivant.interne.masque
+        mot_cle.gauche = True
+
     def interpreter(self, personnage, dic_masques):
         """Interprétation de la commande"""
         personnage.agir("parler")

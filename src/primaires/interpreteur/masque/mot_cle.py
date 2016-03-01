@@ -51,6 +51,7 @@ class MotCle(Commande):
         self.francais = francais
         self.anglais = anglais
         self.nom = francais
+        self.gauche = False
 
     def __str__(self):
         """Fonction d'affichage"""
@@ -59,7 +60,7 @@ class MotCle(Commande):
     @property
     def nom_francais(self):
         return self.francais
-    
+
     def init(self):
         """On ne fait rien."""
         pass
@@ -88,7 +89,11 @@ class MotCle(Commande):
             sa_commande = supprimer_accents(str_commande).lower()
             mot_cle = " " + mot_cle + " "
             if mot_cle in sa_commande:
-                fin = sa_commande.rindex(mot_cle)
+                if self.gauche:
+                    fin = sa_commande.index(mot_cle)
+                else:
+                    fin = sa_commande.rindex(mot_cle)
+
                 masque.a_interpreter = str_commande[:fin]
                 fin += len(mot_cle)
                 commande[:] = commande[fin:]
