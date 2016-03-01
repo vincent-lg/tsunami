@@ -257,15 +257,26 @@ class TempsVariable(BaseObj):
     def changer_IRL(self, annee=None, mois=None, jour=None, heure=None,
             minute=None):
         """Change le temps IRL, impactant le temps IG."""
-        mtn = datetime.now()
+        mtn = self.reelle
         annee = annee or mtn.year
         mois = mois or mtn.month
         jour = jour or mtn.day
         heure = heure if heure is not None else mtn.hour
         minute = minute if minute is not None else mtn.minute
 
-        date = datetime(year=annee, month=mois, day=jour, hour=heure,
-                minute=minute)
+        # On fait un calcul un peu différent si on change le mois ou l'année
+        if mtn.year == annee and mtn.month == mois:
+            delta = timedelta(days=(jour - mtn.day), hours=(heure - mtn.hour),
+                    minutes=(minute - mtn.minute))
+            date = mtn + delta
+        else:
+            if mois > 12:
+                annee += mois // 12
+                mois = mois % 12
+
+            date = datetime(year=annee, month=mois, day=jour, hour=heure,
+                    minute=minute)
+
         t1 = self.timestamp
         t2 = date.timestamp()
 
