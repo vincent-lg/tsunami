@@ -30,8 +30,9 @@
 
 """Fichier contenant la fonction objet."""
 
-from primaires.scripting.fonction import Fonction
 from primaires.objet.conteneur import SurPoids
+from primaires.scripting.fonction import Fonction
+from primaires.scripting.instruction import ErreurExecution
 
 class ClasseFonction(Fonction):
 
@@ -41,6 +42,7 @@ class ClasseFonction(Fonction):
     def init_types(cls):
         cls.ajouter_types(cls.objet_salle, "Salle", "str")
         cls.ajouter_types(cls.objet_perso, "Personnage", "str")
+        cls.ajouter_types(cls.objet_ident, "str")
 
     @staticmethod
     def objet_salle(salle, type_ou_prototype):
@@ -107,3 +109,26 @@ class ClasseFonction(Fonction):
                 return o
 
         return None
+
+    @staticmethod
+    def objet_ident(identifiant):
+        """Retourne l'objet correspondant à l'identifiant.
+
+        Si l'objet de l'identifiant n'est pas trouvé, crée une
+        alerte. L'identifiant, à préciser sous forme d'une chaîne,
+        est sous la forme "cle_NOMBRE". Par exemple, "pomme_rouge_128".
+
+        Paramètres à préciser :
+
+          * identifiant : l'identifiant de l'objet (une chaîne).
+
+        Exemple d'utilisation :
+
+          objet = objet("sabre_38")
+
+        """
+        try:
+            return importeur.objet.objets[identifiant.lower()]
+        except KeyError:
+            raise ErreurExecution("Identifiant d'objet {} introuvable.".format(
+                    repr(identifiant)))
