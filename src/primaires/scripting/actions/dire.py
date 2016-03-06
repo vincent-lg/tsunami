@@ -72,7 +72,8 @@ class ClasseAction(Action):
                 personnage.sans_prompt()
 
         message = message.replace("_b_nl_b_", "\n")
-        personnage.envoyer(message, **variables)
+        f_variables = get_variables(variables, message)
+        personnage.envoyer(message, **f_variables)
 
     @staticmethod
     def dire_salle(salle, message, flags="", variables=None):

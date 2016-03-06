@@ -33,39 +33,28 @@
 import re
 
 # Constantes
-RE_VAR = re.compile(r"\{([A-Za-z_][A-Za-z0-9_]*?)\}")
+RE_VAR = re.compile(r"\$\{([A-Za-z0-9_]+)\}")
+RE_VAR_RAPIDE = re.compile(r"\$([A-Za-z0-9_]+)([ .,]|$)")
 
 def formatter(variables, chaine):
     f_variables = {}
+    chaine = RE_VAR_RAPIDE.sub(r"{\1}\2", chaine)
+    chaine = RE_VAR.sub(r"{\1}", chaine)
     for nom, variable in variables.items():
         if hasattr(variable, "get_nom_pour"):
             f_variables[nom] = "{" + nom + "}"
         else:
             f_variables[nom] = str(variable)
 
-    i = chaine.find("${")
-    while i >= 0:
-        if len(chaine) > i + 2:
-            if chaine[i + 2] != "{":
-                chaine = chaine[:i] + chaine[i + 1:]
-        else:
-            chaine = chaine[:i] + chaine[i + 1:]
-            break
-        i = chaine.find("${", i)
-
-    return chaine.format(**f_variables)
+    chaine = chaine.format(**f_variables)
+    return chaine
 
 def get_variables(variables, chaine):
     """Retourne les variables trouvées dans la chaîne."""
-    vars = {}
-    for var in RE_VAR.findall(chaine):
-        try:
-            vars[var] = variables[var]
-        except KeyError:
-            raise ValueError("La variable {} est introuvable.".format(
-                    repr(var)))
-
-    return vars
+    vars = VariablesAAfficher(variables)
+    chaine = RE_VAR_RAPIDE.sub(r"{\1}\2", chaine)
+    chaine.format(**vars)
+    return vars.utilisees
 
 class VariablesAAfficher(dict):
 
@@ -75,5 +64,10 @@ class VariablesAAfficher(dict):
 
     """
 
+    def __init__(self, variables):
+        self.variables = variables
+        self.utilisees = {}
+
     def __getitem__(self, item):
-        return dict.__getitem__(self, item)
+        self.utilisees[item] = self.variables[item]
+        return "{" + item + "}"
