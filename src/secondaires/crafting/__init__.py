@@ -140,6 +140,8 @@ class Module(BaseModule):
                 Extension.etendre_editeur)
         self.importeur.hook["description:ajouter_variables"].ajouter_evenement(
                 self.ajouter_variables)
+        self.importeur.hook["scripting:changer_nom_objet"].ajouter_evenement(
+                self.get_attributs)
 
         # Ajout de la catégorie de commande
         self.importeur.interpreteur.categories["profession"] = \
@@ -327,3 +329,27 @@ class Module(BaseModule):
         """Ajoute les attributs."""
         if isinstance(element, Objet):
             return self.configuration[element].attributs
+
+    def get_attributs(self, prototype_ou_objet, variables=None):
+        """Retourne les attributs."""
+        if variables is None:
+            variables = {}
+
+        attributs = importeur.crafting.configuration[
+                prototype_ou_objet].attributs
+
+        if attributs is None:
+            attributs = {}
+
+        # Cherche dans le prototype
+        if getattr(prototype_ou_objet, "prototype", None):
+            prototype = prototype_ou_objet.prototype
+            p_attributs = importeur.crafting.configuration[
+                    prototype].attributs
+            if p_attributs:
+                attributs.update(p_attributs)
+
+        # Mise à jour des variables
+        variables.update(attributs)
+        print("var", variables)
+        return variables

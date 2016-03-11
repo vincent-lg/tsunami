@@ -154,6 +154,16 @@ class ClasseAction(Action):
         sûr qu'il n'y aura qu'un seul objet de ce prototype en jeu.
 
         """
+        variables = {}
+        importeur.hook["scripting:changer_nom_objet"].executer(
+                prototype_ou_objet, variables)
+
+        # Remplacement des variables dans le nom
+        for nom, valeur in variables.items():
+            print("repl", nom, valeur)
+            nom_singulier = nom_singulier.replace("${}".format(nom), valeur)
+            nom_pluriel = nom_pluriel.replace("${}".format(nom), valeur)
+
         prototype_ou_objet.nom_singulier = nom_singulier
         if nom_pluriel:
             prototype_ou_objet.nom_pluriel = nom_pluriel

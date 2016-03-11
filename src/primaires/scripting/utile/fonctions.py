@@ -38,6 +38,7 @@ RE_VAR_RAPIDE = re.compile(r"\$([A-Za-z0-9_]+)([ .,]|$)")
 
 def formatter(variables, chaine):
     f_variables = {}
+    chaine = chaine.replace("$$", "|dollar|")
     chaine = RE_VAR_RAPIDE.sub(r"{\1}\2", chaine)
     chaine = RE_VAR.sub(r"{\1}", chaine)
     for nom, variable in variables.items():
@@ -46,6 +47,7 @@ def formatter(variables, chaine):
         else:
             f_variables[nom] = str(variable)
 
+    chaine = chaine.replace("|dollar|", "$")
     chaine = chaine.format(**f_variables)
     return chaine
 

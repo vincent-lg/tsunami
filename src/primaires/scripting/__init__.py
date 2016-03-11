@@ -131,6 +131,8 @@ class Module(BaseModule):
                 cfg_exportation)
 
         # Création des hooks
+        importeur.hook.ajouter_hook("scripting:changer_nom_objet",
+                "Hook appelé quand l'action changer_nom est exécutée.")
         importeur.hook.ajouter_hook("scripting:deplacer_alea_personnage",
                 "Hook appelé quand l'action deplacer_alea est exécutée.")
         BaseModule.config(self)

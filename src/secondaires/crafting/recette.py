@@ -214,6 +214,16 @@ class Recette(BaseObj):
         for objet in objets:
             importeur.crafting.configuration[objet].attributs = dict(
                     sa_attributs)
+
+            # Copie des attributs dans le nom
+            for attribut, valeur in sa_attributs.items():
+                print(objet, "replace", attribut, valeur)
+                objet.nom_singulier = objet.nom_singulier.replace(
+                        "${}".format(attribut), valeur)
+                objet.nom_pluriel = objet.nom_pluriel.replace(
+                        "${}".format(attribut), valeur)
+
+            print(objet.nom_singulier)
             personnage.salle.objets_sol.ajouter(objet)
             self.script["fabrique"].executer(personnage=personnage,
                     objet=objet, ingredients=ingredients)
