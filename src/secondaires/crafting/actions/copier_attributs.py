@@ -67,7 +67,6 @@ class ClasseAction(Action):
                 attributs)
 
         for attribut, valeur in attributs.items():
-            print(objet_final, "replace", attribut, valeur)
             objet_final.nom_singulier = objet_final.nom_singulier.replace(
                     "${}".format(attribut), valeur)
             objet_final.nom_pluriel = objet_final.nom_pluriel.replace(

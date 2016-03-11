@@ -351,5 +351,4 @@ class Module(BaseModule):
 
         # Mise à jour des variables
         variables.update(attributs)
-        print("var", variables)
         return variables
