@@ -152,7 +152,6 @@ class Exec(Contexte):
             sys.stdout = self.pere
             sys.stderr = self.pere
             nb_msg = self.pere.nb_msg
-            print("push", py_code)
             try:
                 ret = self.console.push(py_code)
                 self.py_prompt = "... " if ret else ">>> "
