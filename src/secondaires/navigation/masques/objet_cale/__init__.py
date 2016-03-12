@@ -50,6 +50,7 @@ class ObjetCale(Masque):
     def init(self):
         """Initialisation des attributs"""
         self.prototype = None
+        self.objets = []
 
     def repartir(self, personnage, masques, commande):
         """Répartition du masque."""
@@ -72,6 +73,10 @@ class ObjetCale(Masque):
         nom = self.a_interpreter
         salle = personnage.salle
         cale = salle.navire.cale
+        for objet, nombre in cale.conteneur.iter_nombres():
+            if contient(objet.get_nom(nombre), nom):
+                self.objets.append(objet)
+
         for conteneur in cale.conteneurs.values():
             for cle in conteneur.keys():
                 try:
@@ -84,6 +89,6 @@ class ObjetCale(Masque):
                     self.prototype = prototype
                     return True
 
-        raise ErreurValidation("Cet objet n'est pas trouvable dans la " \
-                "cale de ce navire.")
-        return True
+        if not self.objets:
+            raise ErreurValidation("Cet objet n'est pas trouvable dans la " \
+                    "cale de ce navire.")

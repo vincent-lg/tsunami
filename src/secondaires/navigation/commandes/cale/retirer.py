@@ -67,7 +67,11 @@ class PrmRetirer(Parametre):
             return
 
         cale = navire.cale
+        objets = dic_masques["objet_cale"].objets
         prototype = dic_masques["objet_cale"].prototype
+        if objets:
+            prototype = objets[0].prototype
+
         nombre = 1
         if dic_masques["nombre"]:
             nombre = dic_masques["nombre"].nombre
@@ -76,4 +80,8 @@ class PrmRetirer(Parametre):
             personnage << "|err|Vous ne pouvez pas faire cela d'ici.|ff|"
             return
 
-        cale.recuperer(personnage, prototype.cle, nombre)
+        if objets:
+            objets = objets[:nombre]
+            cale.recuperer(personnage, objets, nombre)
+        else:
+            cale.recuperer(personnage, prototype.cle, nombre)

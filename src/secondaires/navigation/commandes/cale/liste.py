@@ -68,18 +68,8 @@ class PrmListe(Parametre):
             liste = cale.conteneurs[nom]
             msg += "\n" + nom.capitalize() + " :"
             if liste:
-                contenu = []
-                for cle, nb in liste.items():
-                    try:
-                        prototype = importeur.objet.prototypes[cle]
-                    except KeyError:
-                        continue
-
-                    contenu.append((prototype, nb))
-
-                contenu.sort(key=lambda couple: couple[0].nom_singulier)
-                for prototype, nb in contenu:
-                    msg += "\n  " + prototype.get_nom(nb)
+                for nom in cale.get_noms(nom):
+                    msg += "\n  " + nom
             else:
                 msg += "\n  Aucun"
 

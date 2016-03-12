@@ -199,6 +199,8 @@ class Module(BaseModule):
                 self.stats_navigation)
         self.importeur.hook["personnage:deplacer"].ajouter_evenement(
                 self.modifier_prompt)
+        self.importeur.hook["objet:doit_garder"].ajouter_evenement(
+                self.objets_en_cale)
 
         # Ajout des talents
         importeur.perso.ajouter_talent("calfeutrage", "calfeutrage",
@@ -517,6 +519,18 @@ class Module(BaseModule):
         element = self.elements[cle]
         element.detruire()
         del self.elements[cle]
+
+    def objets_en_cale(self):
+        """Retourne tous les objets en cale."""
+        objets = []
+        for navire in self.navires.values():
+            cale = navire.cale
+            if cale:
+                for objet in cale.conteneur:
+                    objets.append(objet)
+
+        print("sauve", objets)
+        return objets
 
     def get_vents_etendue(self, cle):
         """Retourne une liste des vents de l'étendue."""

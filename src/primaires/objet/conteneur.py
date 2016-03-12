@@ -95,6 +95,15 @@ class ConteneurObjet(BaseObj):
         for objet in self._non_uniques:
             yield (objet.prototype, objet.nombre)
 
+    def get_objets_cle(self, cle, limite=None):
+        """Retourne une liste des objets de clé indiquée."""
+        objets = []
+        for objet, quantite in self.iter_nombres():
+            if objet.cle == cle:
+                objets.append(objet)
+
+        return objets[:limite]
+
     def get_objets_par_nom(self):
         """Retourne une liste de couples (objet, nombre).
 
@@ -222,7 +231,8 @@ class ConteneurObjet(BaseObj):
         if recursif:
             parent = self.parent
             contenu = hasattr(parent, "contenu") and parent.contenu or parent
-            contenu.supporter_poids_sup(poids, recursif)
+            if hasattr(contenu, "supporter_poids_sup"):
+                contenu.supporter_poids_sup(poids, recursif)
 
 
 class SurPoids(ExceptionMUD):

@@ -160,7 +160,6 @@ class ClasseAction(Action):
 
         # Remplacement des variables dans le nom
         for nom, valeur in variables.items():
-            print("repl", nom, valeur)
             nom_singulier = nom_singulier.replace("${}".format(nom), valeur)
             nom_pluriel = nom_pluriel.replace("${}".format(nom), valeur)
 

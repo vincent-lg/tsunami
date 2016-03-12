@@ -30,6 +30,8 @@
 
 """Fichier contenant le paramètre 'placer' de la commande 'cale'."""
 
+import traceback
+
 from primaires.interpreteur.masque.parametre import Parametre
 
 class PrmPlacer(Parametre):
@@ -86,6 +88,7 @@ class PrmPlacer(Parametre):
         try:
             nombre = cale.ajouter_objets(objets)
         except ValueError as err:
+            print(traceback.format_exc())
             personnage << "|err|" + str(err) + "|ff|"
         else:
             personnage << "Vous mettez en cale {}.".format(objet.get_nom(
