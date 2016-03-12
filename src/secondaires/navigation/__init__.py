@@ -68,6 +68,7 @@ from .matelots_vente import MatelotsVente
 from .repere import Repere
 from .trajet import Trajet
 from .prompt import PromptNavigation
+from .cale import TYPES as CALE_TYPES
 
 class Module(BaseModule):
 
@@ -407,6 +408,13 @@ class Module(BaseModule):
 
         for obstacle in Navire.obs_recif:
             obstacle.symbole = "!"
+
+        # On renseigne les types dynamiques dans la cale
+        for nom_type in importeur.objet.get_types_herites("matériau"):
+            CALE_TYPES[nom_type] = "marchandises"
+
+        for nom_type in importeur.objet.get_types_herites("outil"):
+            CALE_TYPES[nom_type] = "outils"
 
     def creer_modele(self, cle):
         """Crée un modèle de navire et l'ajoute dans le dictionnaire.

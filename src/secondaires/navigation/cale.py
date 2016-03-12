@@ -41,6 +41,8 @@ CONTENEURS = [
         "vivres",
         "armes",
         "pavillons",
+        "marchandises",
+        "outils",
 ]
 
 TYPES = {
@@ -62,6 +64,7 @@ TYPES = {
         "masse": "armes",
         "projectile": "armes",
         "pavillon": "pavillons",
+        "sac de matériau": "marchandises",
 }
 
 class Cale(BaseObj):
@@ -93,6 +96,8 @@ class Cale(BaseObj):
         self.vivres = {}
         self.armes = {}
         self.pavillons = {}
+        self.marchandises = {}
+        self.outils = {}
 
         self._construire()
 
@@ -139,12 +144,16 @@ class Cale(BaseObj):
                 "vivres": self.vivres,
                 "armes": self.armes,
                 "pavillons": self.pavillons,
+                "marchandises": self.marchandises,
+                "outils": self.outils,
         }
 
     @property
     def types(self):
         """Retourne la correspondance nom_type: conteneur."""
-        return {
+        marchandises = importeur.objet.get_types_herites("matériau")
+        outils = importeur.objet.get_types_herites("outil")
+        types = {
                 "boulet de canon": self.boulets,
                 "sac de poudre": self.sacs_poudre,
                 "écope": self.ecopes,
@@ -163,7 +172,18 @@ class Cale(BaseObj):
                 "masse": self.armes,
                 "projectile": self.armes,
                 "pavillon": self.pavillons,
+                "sac de matériau": self.marchandises,
         }
+
+        # Marchandises
+        for nom_type in marchandises:
+            types[nom_type] = self.marchandises
+
+        # Outils
+        for nom_type in outils:
+            types[nom_type] = self.outils
+
+        return types
 
     def get_noms(self, nom):
         """Retourne les noms d'objet contenus dans la portion de la cale."""
