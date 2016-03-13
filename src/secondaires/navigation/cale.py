@@ -124,7 +124,7 @@ class Cale(BaseObj):
 
         # Parcourt des objets uniques
         for objet, quantite in self.conteneur.iter_nombres():
-            poids += objet.poids_unitaire * quantite
+            poids += objet.poids * quantite
 
         return poids
 
@@ -267,7 +267,8 @@ class Cale(BaseObj):
                 raise ValueError("{} ne peut être mis en " \
                         "cale.".format(objet.get_nom().capitalize()))
 
-            if objet.nom_singulier == objet.prototype.nom_singulier:
+            if objet.nom_singulier == objet.prototype.nom_singulier and \
+                    not objet.est_de_type("sac de matériau"):
                 # C'est un objet non unique
                 nb = conteneur.get(objet.prototype.cle, 0)
                 nb += 1

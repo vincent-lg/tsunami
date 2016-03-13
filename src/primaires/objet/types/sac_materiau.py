@@ -133,8 +133,7 @@ class SacMateriau(BaseType):
     def regarder(self, personnage):
         """Le personnage regarde l'objet"""
         variables = {"contenu": ""}
-        if self.materiau and self.materiau.quantite:
-            variables["contenu"] = self.nom_singulier.capitalize() + \
-                    " contient " + self.materiau.get_nom(self.quantite) + "."
+        if self.materiau and self.quantite:
+            variables["contenu"] = self.materiau.get_nom(self.quantite)
 
         return BaseType.regarder(self, personnage, variables)
