@@ -413,15 +413,25 @@ class Navire(Vehicule):
         Le droit est calculé selon plsuieurs critères :
             Si le personnage est immortel, retourne True
             Si le personnage est le propriétaire, retourne True
+            Si le personnage a le grade indiqué ou supérieur, retourne True
+
+        Si le paramètre 'est_present' est à True, n'importe quel
+        personnage a tous les droits, tant que le capitaine est à
+        bord. Cela permet par exemple à tout personnage de lever
+        l'ancre si le capitaine est à bord. Si le capitaine est
+        déconnecté, il n'est pas considéré comme étant à bord.
 
         """
         if personnage.est_immortel():
             return True
 
-        if personnage is self.proprietaire or \
-                        (si_present and getattr(self.proprietaire.salle,
-                        "navire", None) is self):
+        if personnage is self.proprietaire:
             return True
+
+        if si_present:
+            for salle in self.salles.values():
+                if self.proprietaire in salle.personnages:
+                    return True
 
         return self.equipage.est_au_poste(personnage, poste)
 
