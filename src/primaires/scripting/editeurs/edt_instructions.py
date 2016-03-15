@@ -58,12 +58,28 @@ class EdtInstructions(Editeur):
         self.ajouter_option("?a", self.opt_aide_actions)
         self.ajouter_option("c", self.opt_corriger_instruction)
         self.ajouter_option("d", self.opt_supprimer_instructions)
+        self.ajouter_option("h", self.opt_afficher_cache)
         self.ajouter_option("i", self.opt_inserer_instruction)
         self.ajouter_option("o", self.opt_copier)
         self.ajouter_option("q", self.opt_relier_quete)
         self.ajouter_option("r", self.opt_remplacer_instruction)
         self.ajouter_option("v", self.opt_coller)
         self.ajouter_option("x", self.opt_couper)
+
+    def opt_afficher_cache(self, arguments):
+        """Affiche ou réactualiser le cache.
+
+        Syntaxe :
+            /h (reset)
+
+        """
+        test = self.objet
+        if arguments.lower() == "reset":
+            self.pere << "|att|Le cache a été réinitialisé.|ff|"
+            test.calculer_cache()
+
+        cache = test.get_cache()
+        self.pere << "Cache actuel :\n" + cache
 
     def opt_remplacer_instruction(self, arguments):
         """Remplace une ligne par une nouvelle instruction."""
