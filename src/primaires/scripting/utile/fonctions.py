@@ -34,7 +34,7 @@ import re
 
 # Constantes
 RE_VAR = re.compile(r"\$\{([A-Za-z0-9_]+)\}")
-RE_VAR_RAPIDE = re.compile(r"\$([A-Za-z0-9_]+)([ .,]|$)")
+RE_VAR_RAPIDE = re.compile(r"\$([A-Za-z0-9_]+)([ .,_|-]|$)")
 
 def formatter(variables, chaine):
     f_variables = {}
