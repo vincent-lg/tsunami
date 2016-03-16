@@ -58,7 +58,7 @@ class PrmVoir(Parametre):
         res = "Options actuelles :\n\n"
         res += "  Couleurs : {}\n".format(oui_ou_non(
                 personnage.compte.couleur))
-        res += "  Envoi d'e-mails de notification de MudMail : {}\n".format(
+        res += "  Envoi d'e-mails de notification de MudMails : {}\n".format(
                 oui_ou_non(personnage.compte.email))
         res += "  Envoi des newsletters : {}\n".format(oui_ou_non(
                 personnage.compte.newsletter))
