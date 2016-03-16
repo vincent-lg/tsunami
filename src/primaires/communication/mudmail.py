@@ -170,6 +170,9 @@ class MUDmail(BaseObj):
 
     def envoyer_email(self, dest):
         """Envoie l'e-mail au destinataire."""
+        if not dest.compte.email:
+            return
+
         destinateur = "equipe"
         destinataire = dest.compte.adresse_email
         expediteur = self.expediteur.nom

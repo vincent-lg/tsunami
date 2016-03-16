@@ -28,44 +28,39 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Fichier contenant le paramètre 'voir' de la commande 'options'."""
+"""Fichier contenant le paramètre 'email' de la commande 'options'."""
 
 from primaires.interpreteur.masque.parametre import Parametre
-from reseau.connexions.client_connecte import ENCODAGES
-from primaires.format.fonctions import oui_ou_non
 
-class PrmVoir(Parametre):
+class PrmEmail(Parametre):
 
-    """Commande 'options voir'.
-
-    """
+    """Commande 'options email'."""
 
     def __init__(self):
-        """Constructeur du paramètre"""
-        Parametre.__init__(self, "voir", "view")
-        self.schema = ""
-        self.aide_courte = "visualise les options du joueur"
+        """Constructeur du paramètre."""
+        Parametre.__init__(self, "email", "email")
+        self.tronquer = True
+        self.schema = "<etat>"
+        self.aide_courte = "active / désactive l'envoi d'e-mails"
         self.aide_longue = \
-            "Cette commande permet de voir l'état actuel des options que " \
-            "vous pouvez éditer avec la commande %options%. Elle donne aussi " \
-            "un aperçu des valeurs disponibles."
+            "Cette commande permet d'activer ou désactiver l'envoi " \
+            "d'e-mails à ce compte en cas de réception d'un UmdMail. " \
+            "Si cette option est active, un e-mail sera envoyé lors " \
+            "de l''envoi de MudMails, comme par exemple un commentaire de " \
+            "rapport. Si cette option est inactive, les MudMails seront " \
+            "toujours reçus par les joueurs du compte, mais un e-mail " \
+            "de notification ne sera pas envoyé à la réception de MudMails. " \
+            "Pour activer l'option, précisez en paramètre |ent|on|ff|. " \
+            "Pour la désactiver, précisez |ent|off|ff| en paramètre."
 
     def interpreter(self, personnage, dic_masques):
-        """Interprétation du paramètre"""
-        langue = personnage.langue_cmd
-        encodage = personnage.compte.encodage or "aucun"
-        encodages = ["aucun"] + ENCODAGES
-        res = "Options actuelles :\n\n"
-        res += "  Couleurs : {}\n".format(oui_ou_non(
-                personnage.compte.couleur))
-        res += "  Envoi d'e-mails de notification de MudMail : {}\n".format(
-                oui_ou_non(personnage.compte.email))
-        res += "  Envoi des newsletters : {}\n".format(oui_ou_non(
-                personnage.compte.newsletter))
-        res += "  Votre encodage : |ent|" + encodage + "|ff|.\n"
-        res += "  Encodages disponibles : |ent|" + "|ff|, |ent|".join(
-                encodages) + "|ff|.\n\n"
-        res += "  Votre langue : |ent|" + langue + "|ff|.\n"
-        res += "  Langues disponibles : |ent|français|ff|, " \
-            "|ent|anglais|ff|."
-        personnage << res
+        """Interprétation du paramètre."""
+        etat = dic_masques["etat"].flag
+        if personnage.compte.email == etat:
+            personnage << "|att|C'est déjà le cas.|ff|"
+        else:
+            personnage.compte.email = etat
+            if etat:
+                personnage << "Envoi d'e-mails activé."
+            else:
+                personnage << "Envoi d'e-mails désactivé."

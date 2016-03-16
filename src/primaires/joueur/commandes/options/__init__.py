@@ -2,10 +2,10 @@
 
 # Copyright (c) 2010-2016 LE GOFF Vincent
 # All rights reserved.
-# 
+#
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are met:
-# 
+#
 # * Redistributions of source code must retain the above copyright notice, this
 #   list of conditions and the following disclaimer.
 # * Redistributions in binary form must reproduce the above copyright notice,
@@ -14,7 +14,7 @@
 # * Neither the name of the copyright holder nor the names of its contributors
 #   may be used to endorse or promote products derived from this software
 #   without specific prior written permission.
-# 
+#
 # THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
 # AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
 # IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -36,17 +36,18 @@ Dans ce fichier se trouve la commande même.
 from primaires.interpreteur.commande.commande import Commande
 from .chmdp import PrmChmdp
 from .couleur import PrmCouleur
+from .email import PrmEmail
 from .encodage import PrmEncodage
 from .langue import PrmLangue
 from .newsletter import PrmNewsletter
 from .voir import PrmVoir
 
 class CmdOptions(Commande):
-    
+
     """Commande 'options'.
-    
+
     """
-    
+
     def __init__(self):
         """Constructeur de la commande"""
         Commande.__init__(self, "options", "options")
@@ -57,7 +58,7 @@ class CmdOptions(Commande):
             "joueur et de votre compte. Tapez %options% sans paramètrse " \
             "pour voir les options disponibles, ou lisez l'aide des " \
             "sous-commandes ci-dessous."
-    
+
     def ajouter_parametres(self):
         """Ajout des paramètres"""
         prm_couleur = PrmCouleur()
@@ -66,8 +67,9 @@ class CmdOptions(Commande):
         prm_newsletter = PrmNewsletter()
         prm_voir = PrmVoir()
         prm_chmdp = PrmChmdp()
-        
+
         self.ajouter_parametre(prm_couleur)
+        self.ajouter_parametre(PrmEmail())
         self.ajouter_parametre(prm_encodage)
         self.ajouter_parametre(prm_langue)
         self.ajouter_parametre(prm_newsletter)

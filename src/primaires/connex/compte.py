@@ -71,6 +71,7 @@ class Compte(BaseObj):
 
         # Options
         self.couleur = True # couleurs activées par défaut
+        self.email = True
         self.newsletter = True
 
         self._construire()
