@@ -145,6 +145,9 @@ class Compte(BaseObj):
                     joueur not in canal.connectes:
                 canal.rejoindre_ou_quitter(joueur, aff=False, forcer=True)
         self.joueurs.append(joueur)
+
+        # Modification des options d'éditeur de description
+        importeur.interpreteur.options.changer_option(joueur, 2)
         self._enregistrer()
 
     def supprimer_joueur(self, joueur):

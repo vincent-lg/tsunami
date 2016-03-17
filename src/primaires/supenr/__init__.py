@@ -82,6 +82,7 @@ class Module(BaseModule):
         self.enregistre_actuellement = False
         self.fichiers = {}
         self.pret = False
+        self.met_preparer = []
 
         # Objets utiles pour MongoDB
         self.mongo_db = None
@@ -178,6 +179,13 @@ class Module(BaseModule):
             importeur.diffact.ajouter_action("enregistrement", 1,
                     self.mongo_enregistrer_file)
         BaseModule.init(self)
+
+    def preparer(self):
+        """Appel des méthodes différées."""
+        for liste in self.met_preparer:
+            callback = liste[0]
+            arguments = liste[1:]
+            callback(*arguments)
 
     def detruire(self):
         """Destruction du module"""

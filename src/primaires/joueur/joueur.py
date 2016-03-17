@@ -39,6 +39,7 @@ from primaires.perso.personnage import Personnage
 from primaires.format.description import Description
 
 class Joueur(Personnage):
+
     """Classe représentant un joueur, c'est-à-dire un personnage connecté
     grâce à un client, à différencier des PNJ qui sont des personnages
     virtuels, animés par l'univers.
@@ -48,6 +49,9 @@ class Joueur(Personnage):
     sous_rep = "joueurs"
 
     enregistrer = True
+    _nom = "joueur"
+    _version = 1
+
     def __init__(self):
         """Constructeur du joueur"""
         Personnage.__init__(self)

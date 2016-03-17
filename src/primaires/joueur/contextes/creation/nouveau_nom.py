@@ -41,6 +41,7 @@ from primaires.joueur.joueur import Joueur
 RE_NOM_VALIDE = re.compile(r"^[A-Za-z]*$")
 
 class NouveauNom(Contexte):
+
     """Contexte demandant au client d'entrer le nom de son nouveau personnage.
 
     La validité du nom est établie par la regex 'RE_NOM_VALIDE' et par
