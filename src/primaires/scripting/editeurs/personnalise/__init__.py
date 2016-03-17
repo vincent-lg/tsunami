@@ -63,6 +63,9 @@ class EdtEditeur(Presentation):
         """Construction de l'éditeur"""
         lecture_seule = lecture_seule or []
         for sous_editeur in editeur.editeurs:
+            if "-{}".format(sous_editeur.nom) in lecture_seule:
+                continue
+
             enveloppe = sous_editeur.creer(self, structure)
             if sous_editeur.nom in lecture_seule:
                 enveloppe.lecture_seule = True

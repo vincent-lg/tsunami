@@ -62,6 +62,10 @@ class ClasseAction(Action):
         affichés mais ne pourront pas être édités (ils ne seront que
         visibles et non éditables par le personnage).
 
+        Il est possible d'aller plus loin en précisant un tiret
+        devant le nom de l'éditeur. Au lieu d'apparaître en lecture
+        seule, cet éditeur n'apparaîtra pas du tout.
+
         Exemples d'utilisation :
 
           # On pourrait récupérer la structure 'journal' d'ID 4 ainsi :
@@ -78,6 +82,9 @@ class ClasseAction(Action):
           editer personnage journal "titre auteurs"
           # Ici, le personnage ne pourra éditer ni le champ 'titre',
           # ni le champ 'auteurs'
+          editer personnage journal "titre -auteurs"
+          # Dans ce cas, le champ titre sera en lecture seule,
+          # mais le champ auteurs ne sera pas du tout visible.
 
         """
         if lecture_seule:

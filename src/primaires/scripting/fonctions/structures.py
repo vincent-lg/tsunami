@@ -57,15 +57,8 @@ class ClasseFonction(Fonction):
         """
         st_groupe = importeur.scripting.structures.get(groupe)
         if st_groupe is None:
-            raise ErreurExecution("Le groupe {} est inconnu".format(repr(
-                    groupe)))
+            return []
 
         structures = list(st_groupe.values())
         structures = sorted(structures, key=lambda s: s.id)
-        return structures
-
-        if structures is None:
-            raise ErreurExecution("La structures de groupe {} et d'ID " \
-                    "{} est introuvable".format(repr(groupe), int(id)))
-
         return structures
