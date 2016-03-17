@@ -122,7 +122,7 @@ class Module(BaseModule):
             delta = int(t2 - t1)
             if delta > 100:
                 delta = 100
-                t2 = t1 + 100
+            t2 = t1 + delta
         else:
             delta = 1
 
