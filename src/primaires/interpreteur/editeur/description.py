@@ -63,7 +63,8 @@ class Description(Editeur):
         self.description_complete = Desc(parent=objet, scriptable=False)
         if contenu:
             for paragraphe in contenu.split("\n"):
-                self.description_complete.ajouter_paragraphe(paragraphe)
+                self.description_complete.ajouter_paragraphe(
+                        paragraphe.replace("|nl|", " "))
 
         self.ajouter_option("?", self.opt_aide)
         self.ajouter_option("j", self.opt_ajouter_paragraphe)
@@ -104,7 +105,8 @@ class Description(Editeur):
             description = Desc(parent=objet, scriptable=False)
 
             for paragraphe in valeur.split("\n"):
-                description.ajouter_paragraphe(paragraphe)
+                description.ajouter_paragraphe(
+                        paragraphe.replace("|nl|", " "))
 
             valeur = description
 
@@ -115,7 +117,8 @@ class Description(Editeur):
         """Met à jour l'attribut si nécessaire."""
         attribut = getattr(self.objet, self.nom_attribut)
         if isinstance(attribut, str):
-            contenu = str(self.description_complete)
+            contenu = self.description_complete.affichage_simple("|nl|")
+            print("Contenu", contenu)
             setattr(self.objet, self.nom_attribut, contenu)
 
     def accueil(self):

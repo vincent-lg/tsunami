@@ -85,12 +85,7 @@ class Description(BaseObj):
 
     def __str__(self):
         """Retourne la description sous la forme d'un texte 'str'"""
-        res = []
-        for paragraphe in self.paragraphes:
-            paragraphe = self.wrap_paragraphe(paragraphe)
-            paragraphe = paragraphe.replace("|nl|", "\n")
-            res.append(paragraphe)
-        return "\n".join(res)
+        return self.affichage_simple()
 
     def __bool__(self):
         """Retourne True si la description n'est pas vide, False sinon."""
@@ -98,14 +93,14 @@ class Description(BaseObj):
 
     def copier_depuis(self, description):
         """Copie une description dans une autre.
-        
+
         Cette méthode copie le contenu de la description et des scripts.
-        
+
         """
         self.paragraphes = list(description.paragraphes)
         self.scriptable = description.scriptable
         self.script.copier_depuis(description.script)
-        
+
     def maj_auto(self):
         """Appelle le callback (si défini) pour mettre à jour le parent."""
         if self.parent and self.callback:
@@ -152,6 +147,15 @@ class Description(BaseObj):
 
         self.maj_auto()
         self._enregistrer()
+
+    def affichage_simple(self, nl="\n"):
+        res = []
+        for paragraphe in self.paragraphes:
+            paragraphe = self.wrap_paragraphe(paragraphe, nl)
+            paragraphe = paragraphe.replace("|nl|", nl)
+            res.append(paragraphe)
+
+        return "\n".join(res)
 
     def wrap_paragraphe(self, paragraphe, lien="\n", aff_sp_cars=False):
         """Wrap un paragraphe et le retourne"""
