@@ -87,7 +87,7 @@ class ConteneurPotion(BaseType):
 
         # Extensions d'éditeur
         self.etendre_editeur("c", "connecteur", Choix, self,
-                "connecteur", LISTE_CONNECTEURS)
+                "connecteur", list(LISTE_CONNECTEURS.keys()))
         self.etendre_editeur("on", "nombre d'onces au maximum", Entier,
                 self, "onces_max")
         self.etendre_editeur("ma", "genre masculin", Flag, self, "masculin")
@@ -108,7 +108,7 @@ class ConteneurPotion(BaseType):
     def travailler_enveloppes(self, enveloppes):
         """Travail sur les enveloppes."""
         connecteur = enveloppes["c"]
-        connecteur.apercu = "{objet.connecteur}"
+        connecteur.apercu = "{valeur}"
         connecteur.aide_courte = \
             "Choisissez un |ent|connecteur|ff| ou entrez |cmd|/|ff| pour " \
             "revenir à la fenêtre parente.\nLe connecteur sera utilisé pour " \
