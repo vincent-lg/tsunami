@@ -125,6 +125,15 @@ class Auberge(BaseObj):
         """Utile pour la compatibilité avec les transactions."""
         return self.comptoir
 
+    @property
+    def salles(self):
+        """Retourne les salles des chambres et dépendances."""
+        salles = []
+        for chambre in self.chambres.values():
+            salles.extend(chambre.salles)
+
+        return salles
+
     def get_chambre_avec_numero(self, numero):
         """Retourne la chambre avec le numéro spécifié.
 

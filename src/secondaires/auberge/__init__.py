@@ -159,7 +159,7 @@ class Module(BaseModule):
         salle = joueur.salle
         for auberge in self.auberges.values():
             for chambre in auberge.chambres.values():
-                if salle is chambre.salle:
+                if salle in chambre.salles:
                     chambre.verifier_expiration()
                     if chambre.proprietaire is not joueur:
                         # On téléporte le joueur dans la salle de l'auberge

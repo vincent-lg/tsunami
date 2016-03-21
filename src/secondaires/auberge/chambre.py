@@ -59,6 +59,7 @@ class Chambre(BaseObj):
         self.prix_par_jour = 1
         self.proprietaire = None
         self.expire_a = None
+        self.dependances = []
 
     def __getnewargs__(self):
         return (None, "", None)
@@ -108,6 +109,13 @@ class Chambre(BaseObj):
     def nom_proprietaire(self):
         """Retourne le nom du propriétaire si louée."""
         return self.proprietaire and self.proprietaire.nom or "|att|aucun|ff|"
+
+    @property
+    def salles(self):
+        """Retourne la salle de la chambre et les dépendances."""
+        salles = [self.salle]
+        salles.extend(self.dependances)
+        return salles
 
     def prix(self, nb_jours):
         """Retourne le prix en fonction du nombre de jours loués.
