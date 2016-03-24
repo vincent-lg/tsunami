@@ -353,6 +353,7 @@ class Module(BaseModule):
             structure.id = id_libre
 
         if structure.id in groupe:
+            print(groupe)
             raise ValueError("La structure {} d'ID {} existe déjà".format(
                     nom, structure.id))
 
