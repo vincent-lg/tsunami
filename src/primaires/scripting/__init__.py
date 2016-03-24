@@ -352,11 +352,6 @@ class Module(BaseModule):
         if structure.id == 0:
             structure.id = id_libre
 
-        if structure.id in groupe:
-            print(groupe)
-            raise ValueError("La structure {} d'ID {} existe déjà".format(
-                    nom, structure.id))
-
         groupe[structure.id] = structure
         if nom not in self.structures:
             self.structures[nom] = groupe
