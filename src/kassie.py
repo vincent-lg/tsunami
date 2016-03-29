@@ -191,8 +191,9 @@ else:
 # On configure, initialise et prépare les modules
 importeur.tout_configurer()
 importeur.tout_initialiser()
-importeur.executer_script(parser_cmd.get("script"))
-importeur.tout_preparer()
+if "debug" not in parser_cmd.keys():
+    importeur.executer_script(parser_cmd.get("script"))
+    importeur.tout_preparer()
 
 # Création du thread pour la console interactive
 if console:

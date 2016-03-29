@@ -273,10 +273,20 @@ class Module(BaseModule):
         Si il n'y a pas de contexte suivant, connecte le joueur.
 
         """
-        if contexte.nom in self.ordre_creation:
-            actuel = self.ordre_creation.index(contexte.nom)
+        ordre = list(self.ordre_creation)
+        # On retire les contextes invalides
+        if not importeur.perso.races:
+            if "personnage:creation:choix_race" in ordre:
+                ordre.remove("personnage:creation:choix_race")
+            if "personnage:creation:choix_genre" in ordre:
+                ordre.remove("personnage:creation:choix_genre")
+
+        print(ordre)
+        if contexte.nom in ordre:
+            # Déplace au prochain contexte valide
+            actuel = ordre.index(contexte.nom)
             if actuel < (len(self.ordre_creation) - 1):
-                nom = self.ordre_creation[actuel + 1]
+                nom = ordre[actuel + 1]
                 contexte.migrer_contexte(nom)
             else:
                 if contexte.pere.joueur not in contexte.pere.compte.joueurs:
@@ -288,5 +298,5 @@ class Module(BaseModule):
             nouv_joueur.instance_connexion = contexte.pere
             contexte.pere.joueur = nouv_joueur
             nouv_joueur.compte = contexte.pere.compte
-            nom = self.ordre_creation[0]
+            nom = ordre[0]
             contexte = contexte.migrer_contexte(nom)

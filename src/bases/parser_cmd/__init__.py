@@ -80,10 +80,18 @@ class ParserCMD(dict):
         # - p (port) : port d'écoute du serveur
         # - r (script) : script avant préparation
         # - s 'serveur) : lancer le serveur (on ou off)
-        flags_courts = "c:e:hi:l:p:r:s:"
-        flags_longs = ["chemin-configuration=", "chemin-enregistrement=",
-                "help", "interactif=", "chemin-logs=", "port=", "script",
-                "serveur="]
+        flags_courts = "c:de:hi:l:p:r:s:"
+        flags_longs = [
+                "chemin-configuration=",
+                "debug",
+                "chemin-enregistrement=",
+                "help",
+                "interactif=",
+                "chemin-logs=",
+                "port=",
+                "script",
+                "serveur=",
+        ]
 
         # Création de l'objet analysant la ligne de commande
         try:
@@ -124,6 +132,9 @@ class ParserCMD(dict):
                     sys.exit(1)
                 else:
                     self["port"] = port
+            elif nom in ["-d", "--debug"]:
+                self["debug"] = True
+                print("Lancement du MUD en mode debug (sans échec).")
             elif nom in ["-r", "--script"]:
                 self["script"] = val
             elif nom in ["-s", "--serveur"]:
@@ -148,6 +159,7 @@ class ParserCMD(dict):
             "Options disponibles :\n" \
             "\n" \
             "-c, chemin-configuration\n" \
+            "-d, debug\n" \
             "-e, chemin-enregistrement\n" \
             "-h, help : affiche ce message d'aide\n" \
             "-i, interactif : lance Kassie en mode débuggage interactif\n" \

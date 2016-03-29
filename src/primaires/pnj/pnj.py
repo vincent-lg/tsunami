@@ -244,7 +244,11 @@ class PNJ(Personnage):
     def tick(self):
         """Méthode appelée à chaque tick."""
         Personnage.tick(self)
-        self.script["tick"].executer(pnj=self)
+        try:
+            self.script["tick"].executer(pnj=self)
+        except Exception:
+            pass
+
         importeur.hook["pnj:tick"].executer(self)
 
     def regarder(self, personnage):

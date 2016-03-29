@@ -102,7 +102,8 @@ class Module(BaseModule):
 
     def boucle(self):
         """Fonction appelée à chaque boucle synchro"""
-        self.stats.surveiller_watch_dog(time.time())
+        if self.stats:
+            self.stats.surveiller_watch_dog(time.time())
 
     def cb_reception(self, serveur, importeur, logger, client, msg):
         """Callback appelée quand on réceptionne un message"""

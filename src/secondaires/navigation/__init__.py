@@ -397,6 +397,7 @@ class Module(BaseModule):
                     matelot.nettoyer_ordres()
                     matelot.executer_ordres()
             navire.equipage.points_max = navire.equipage.points_actuels
+        self.nav_logger.info("Mise à jour des matelots terminée.")
 
         # On renseigne le terrain récif
         Navire.obs_recif = (
@@ -408,6 +409,7 @@ class Module(BaseModule):
 
         for obstacle in Navire.obs_recif:
             obstacle.symbole = "!"
+        self.nav_logger.info("Mise à jour des obstacles terminée.")
 
         # On renseigne les types dynamiques dans la cale
         for nom_type in importeur.objet.get_types_herites("matériau"):
@@ -415,6 +417,8 @@ class Module(BaseModule):
 
         for nom_type in importeur.objet.get_types_herites("outil"):
             CALE_TYPES[nom_type] = "outils"
+
+        self.nav_logger.info("Mise à jour des cales terminées.")
 
     def creer_modele(self, cle):
         """Crée un modèle de navire et l'ajoute dans le dictionnaire.
