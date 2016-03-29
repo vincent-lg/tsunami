@@ -120,6 +120,11 @@ class Module(BaseModule):
         if self.synchroniser:
             t1 = self.temps.timestamp
             delta = int(t2 - t1)
+            if delta > 3600:
+                print("Hoquet temporel :", delta, "secondes")
+                self.temps.timestamp = t2
+                return
+
             if delta > 100:
                 delta = 100
             t2 = t1 + delta
