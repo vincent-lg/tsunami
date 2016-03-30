@@ -122,6 +122,68 @@ class BasePertu(BaseObj, metaclass=MetaPertu):
         """Retourne True si on peut voir le ciel, False sinon."""
         return self.flags & OPAQUE != 0
 
+    # Messages
+    def envoyer_message_debut(self, salles=None, exceptions=None):
+        """Envoie le message de début de la perturbation.
+
+        Si les salles ne sont pas précisées, calcule les salles
+        sous la perturbation actuelle.
+
+        """
+        exceptions = exceptions or []
+        if salles is None:
+            salles = self.liste_salles_sous
+
+        for salle in salles:
+            if salle in exceptions:
+                continue
+
+            if not salle.exterieur:
+                continue
+
+            importeur.meteo.salles[salle] = self
+            salle.envoyer("|cy|" + self.message_debut + "|ff|",
+                    prompt=False)
+
+    def envoyer_message_entre(self, salles, exceptions=None):
+        """Envoie le message quand la perturbation entre sur une salle."""
+        exceptions = exceptions or []
+        for salle in salles:
+            if salle in exceptions:
+                continue
+
+            if not salle.exterieur:
+                continue
+
+            importeur.meteo.salles[salle] = self
+            salle.envoyer("|cy|" + self.message_entrer.format(
+                    dir=vents_opp[self.dir]) + "|ff|", prompt=False)
+
+    def envoyer_message_sort(self, salles, exceptions=None):
+        """Envoie le message quand la perturbation quitte une salle."""
+        exceptions = exceptions or []
+        for salle in salles:
+            if salle in exceptions:
+                continue
+
+            if not salle.exterieur:
+                continue
+
+            importeur.meteo.salles[salle] = None
+            salle.envoyer("|cy|" + self.message_sortir.format(
+                    dir=vents[self.dir]) + "|ff|", prompt=False)
+
+    def envoyer_message_transition(self, salles=None, message=""):
+        """Envoie du message de transition."""
+        if salles is None:
+            salles = self.liste_salles_sous
+
+        for salle in salles:
+            if salle.exterieur:
+                importeur.meteo.salles[salle] = self
+                salle.envoyer("|cy|" + message + "|ff|",
+                        prompt=False)
+
     def envoyer_message_fin(self, salles=None):
         """Envoie le message de fin de la perturbation.
 
@@ -135,6 +197,7 @@ class BasePertu(BaseObj, metaclass=MetaPertu):
 
         for salle in salles:
             if salle.exterieur:
+                importeur.meteo.salles[salle] = None
                 salle.envoyer("|cy|" + self.message_fin + "|ff|",
                         prompt=False)
 
@@ -160,10 +223,6 @@ class BasePertu(BaseObj, metaclass=MetaPertu):
             if not nom_pertu_enchainer:
                 self.envoyer_message_fin(sous)
             else:
-                for salle in sous:
-                    if salle.exterieur:
-                        salle.envoyer("|cy|" + msg_enchainement + "|ff|",
-                                prompt=False)
                 cls_pertu_enchainer = None
                 for pertu_existante in importeur.meteo.perturbations:
                     if pertu_existante.nom_pertu == nom_pertu_enchainer:
@@ -174,6 +233,9 @@ class BasePertu(BaseObj, metaclass=MetaPertu):
                     pertu_enchainer = cls_pertu_enchainer(self.centre)
                     pertu_enchainer.rayon = self.rayon
                     pertu_enchainer.dir = self.dir
+                    # Donne le message de transition
+                    pertu_enchainer.envoyer_message_transition(sous,
+                            msg_enchainement)
                     importeur.meteo.perturbations_actuelles.append(
                             pertu_enchainer)
             self.detruire()
@@ -241,15 +303,10 @@ class BasePertu(BaseObj, metaclass=MetaPertu):
                     importeur.meteo.perturbations_actuelles.remove(self)
                     break
 
-                if salle.exterieur:
-                    salle.envoyer("|cy|" + self.message_entrer.format(
-                            dir=vents_opp[self.dir]) + "|ff|", prompt=False)
-
-        for salle in salles:
-            if (not self.e_existe or salle not in nouvelles) and \
-                    salle.exterieur:
-                salle.envoyer("|cy|" + self.message_sortir.format(
-                        dir=vents[self.dir]) + "|ff|", prompt=False)
+        # Envoie du message de déplacement
+        if self.e_existe:
+            self.envoyer_message_sort(salles, nouvelles)
+            self.envoyer_message_entre(nouvelles, salles)
 
         if randint(1, 10) <= self.alea_dir / 2:
             self.dir = randint(0, 7)

@@ -317,7 +317,7 @@ class Salle(BaseObj):
             if importeur.temps.temps.il_fait_jour:
                 return True
 
-            perturbation = importeur.meteo.get_perturbation(self)
+            perturbation = importeur.meteo.salles.get(self)
             if perturbation is None or not perturbation.est_opaque():
                 return True
 

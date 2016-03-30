@@ -99,3 +99,4 @@ class ClasseAction(Action):
         n_pertu.rayon = rayon
         n_pertu.statique = True
         importeur.meteo.perturbations_actuelles.append(n_pertu)
+        n_pertu.envoyer_message_debut()
