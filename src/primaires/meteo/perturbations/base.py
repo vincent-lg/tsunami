@@ -66,6 +66,7 @@ class BasePertu(BaseObj, metaclass=MetaPertu):
     temperature_min = None
     temperature_max = None
     origine = True
+    attributs = ()
 
     enregistrer = True
     def __init__(self, pos):
