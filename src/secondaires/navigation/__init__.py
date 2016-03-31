@@ -69,6 +69,7 @@ from .repere import Repere
 from .trajet import Trajet
 from .prompt import PromptNavigation
 from .cale import TYPES as CALE_TYPES
+from .templates.tenir_gouvernail import TenirGouvernail
 
 class Module(BaseModule):
 
@@ -126,10 +127,7 @@ class Module(BaseModule):
         charger_canon.msg_refus = "Vous êtes en train de charger le canon"
         charger_canon.msg_visible = "charge le canon ici"
         charger_canon.act_autorisees = ["parler"]
-        ten_gouv = self.importeur.perso.ajouter_etat("tenir_gouvernail")
-        ten_gouv.msg_refus = "Vous tenez actuellement le gouvernail"
-        ten_gouv.msg_visible = "tient le gouvernail ici"
-        ten_gouv.act_autorisees = ["regarder", "parler"]
+        self.importeur.perso.ajouter_etat("tenir_gouvernail", TenirGouvernail)
         u_loch = self.importeur.perso.ajouter_etat("utiliser_loch")
         u_loch.msg_refus = "Vous êtes en train de manipuler le loch"
         u_loch.msg_visible = "manipule le loch ici"
