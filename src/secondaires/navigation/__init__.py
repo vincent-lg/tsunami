@@ -375,7 +375,8 @@ class Module(BaseModule):
                 if rames:
                     rames.vitesse = "immobile"
                     rames.centrer()
-                    rames.tenu = None
+                    if rames.tenu:
+                        rames.tenu.etats.retirer("tenir_rames")
 
             navire.construire_depuis_modele(False)
             if (len(navire.salles) ** 2 - len(navire.salles)) != \
@@ -405,7 +406,6 @@ class Module(BaseModule):
 
         for obstacle in Navire.obs_recif:
             obstacle.symbole = "!"
-        self.nav_logger.info("Mise à jour des obstacles terminée.")
 
         # On renseigne les types dynamiques dans la cale
         for nom_type in importeur.objet.get_types_herites("matériau"):
@@ -413,8 +413,6 @@ class Module(BaseModule):
 
         for nom_type in importeur.objet.get_types_herites("outil"):
             CALE_TYPES[nom_type] = "outils"
-
-        self.nav_logger.info("Mise à jour des cales terminées.")
 
     def creer_modele(self, cle):
         """Crée un modèle de navire et l'ajoute dans le dictionnaire.

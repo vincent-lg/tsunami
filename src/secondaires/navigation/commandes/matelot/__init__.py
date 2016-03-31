@@ -38,6 +38,7 @@ from primaires.interpreteur.commande.commande import Commande
 from .affecter import PrmAffecter
 from .creer import PrmCreer
 from .editer import PrmEditer
+from .info import PrmInfo
 from .liste import PrmListe
 from .poste import PrmPoste
 from .promouvoir import PrmPromouvoir
@@ -68,6 +69,7 @@ class CmdMatelot(Commande):
         self.ajouter_parametre(PrmAffecter())
         self.ajouter_parametre(PrmCreer())
         self.ajouter_parametre(PrmEditer())
+        self.ajouter_parametre(PrmInfo())
         self.ajouter_parametre(PrmListe())
         self.ajouter_parametre(PrmPoste())
         self.ajouter_parametre(PrmPromouvoir())
