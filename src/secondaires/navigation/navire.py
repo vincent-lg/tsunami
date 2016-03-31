@@ -1190,7 +1190,6 @@ class Propulsion(Force):
         for rames in navire.rames:
             if rames.tenu and not rames.tenu.est_connecte():
                 rames.tenu.etats.retirer("tenir_rames")
-                rames.tenu = None
                 rames.vitesse = "immobile"
                 rames.centrer()
 
