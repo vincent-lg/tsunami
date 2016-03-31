@@ -70,6 +70,7 @@ from .trajet import Trajet
 from .prompt import PromptNavigation
 from .cale import TYPES as CALE_TYPES
 from .templates.tenir_gouvernail import TenirGouvernail
+from .templates.tenir_rames import TenirRames
 
 class Module(BaseModule):
 
@@ -137,10 +138,7 @@ class Module(BaseModule):
         point.msg_visible = "fait le point ici"
         point.act_autorisees = ["parler"]
 
-        ten_rames = self.importeur.perso.ajouter_etat("tenir_rames")
-        ten_rames.msg_refus = "Vous tenez actuellement les rames"
-        ten_rames.msg_visible = "rame ici"
-        ten_rames.act_autorisees = ["regarder", "parler"]
+        self.importeur.perso.ajouter_etat("tenir_rames", TenirRames)
 
         # Ajout du niveau
         importeur.perso.ajouter_niveau("navigation", "navigation")
