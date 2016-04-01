@@ -77,6 +77,7 @@ class CmdAsseoir(Commande):
                     elt.connecteur, elt.titre)
             personnage.salle.envoyer("{{}} s'asseoit {} {}.".format(
                     elt.connecteur, elt.titre), personnage)
+            elt.script["asseoit"].executer(personnage=personnage)
         else:
             personnage.etats.retirer("allonge")
             personnage.etats.ajouter("assis", None)
