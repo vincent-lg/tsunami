@@ -149,7 +149,7 @@ class Route(BaseObj):
         """Cherche à ajouter une nouvelle sortie.
 
         La salle passée en paramètre est la salle à ajouter à la*
-        route en construction. La dernière salle est récupérée.*
+        route en construction. La dernière salle est récupérée.
         Une sortie directe doit être trouvée entre la dernière
         salle de la route et la nouvelle salle.
 

@@ -71,6 +71,7 @@ class Module(BaseModule):
         self.logger = self.importeur.man_logs.creer_logger(
                 "route", "route")
         self.en_cours = {}
+        self.automatiques = []
 
     def config(self):
         """Configuration du module."""
@@ -125,7 +126,7 @@ class Module(BaseModule):
         """
         self.routes.pop(ident).detruire()
 
-    def enregistrer(self, personnage):
+    def enregistrer(self, personnage, origine=None):
         """Enregistre un point.
 
         Si le personnage ne dessine aucune route actuellement, en
@@ -134,7 +135,8 @@ class Module(BaseModule):
         """
         route = self.en_cours.get(personnage)
         if route is None:
-            route = self.creer_route(personnage.salle)
+            origine = origine or personnage.salle
+            route = self.creer_route(origine)
             self.en_cours[personnage] = route
         else:
             del self.en_cours[personnage]
@@ -144,11 +146,44 @@ class Module(BaseModule):
 
     def etendre_route(self, personnage, destination, sortie, endurance):
         """Étend la route si besoin."""
+        if personnage in self.automatiques and personnage not in self.en_cours:
+            # Si la route n'existe pas entre l'origine et la destination
+            origine = sortie.parent
+            ident = (str(origine), str(destination))
+            if ident not in self.routes:
+                route = self.enregistrer(personnage, origine)
+                personnage << "La route {} a bien été créée.".format(
+                        route.str_ident)
+            else:
+                personnage << "On connaît déjà la route entre {} et {}.".format(
+                        origine, destination)
+
         if personnage in self.en_cours:
             route = self.en_cours[personnage]
-            route.ajouter_sortie(destination)
-            personnage << "Ajout de {} à la route {}.".format(
-                    destination, route.str_ident)
+            if personnage in self.automatiques:
+                # Gestion automatique de la route
+                sorties = destination.sorties
+                route.ajouter_sortie(destination)
+                if len(sorties) == 2:
+                    # Un passage, on ne fait rien
+                    personnage << "Ajout de {} à la route {}.".format(
+                            destination, route.str_ident)
+                else:
+                    # C'est un cul-de-sac, on l'ajoute tel quel
+                    # Ou alors c'est un embranchement multiple
+                    if (str(route.origine), str(destination)) in self.routes:
+                        personnage << "La route entre {} et {} existe " \
+                                "déjà.".format(route.origine, destination)
+                        del self.en_cours[personnage]
+                    else:
+                        importeur.route.enregistrer(personnage)
+                        personnage << "Enregistrement de la route {}.".format(
+                                route.str_ident)
+
+            else:
+                route.ajouter_sortie(destination)
+                personnage << "Ajout de {} à la route {}.".format(
+                        destination, route.str_ident)
 
     def trouver_chemin(self, origine, destination, debug=False):
         """Trouve le chemin le plus court entre deux salles.
