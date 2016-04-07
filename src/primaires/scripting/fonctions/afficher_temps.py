@@ -57,6 +57,8 @@ class ClasseFonction(Fonction):
           * "irl" : retourne le temps en format IRL ;
           * "numig" : retourne le temps IG en format numérique ;
           * "numirl" : retourne le temps IRL en format numérique ;
+          * "dig" : retourne la date IG ;
+          * "hig" : retourne l'heure IG ;
           * "sa" : retourne le temps sans article.
 
         Exemples d'utilisation :
@@ -81,6 +83,10 @@ class ClasseFonction(Fonction):
         if "ig" in flags:
             retour = "le {} à {}".format(temps.date_formatee,
                     temps.heure_formatee)
+        elif "dig" in flags:
+            retour = "le {}".format(temps.date_formatee)
+        elif "hig" in flags:
+            retour = "à {}".format(temps.heure_formatee)
         elif "irl" in flags:
             retour = temps.aff_reelle
         elif "numig" in flags:
@@ -106,6 +112,6 @@ class ClasseFonction(Fonction):
 
         for flag in flags:
             if flag == "sa":
-                retour = retour[3:]
+                retour = " ".join(retour.split(" ")[1:])
 
         return retour
