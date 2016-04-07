@@ -30,10 +30,11 @@
 
 """Fichier contenant le module primaire salle."""
 
+from datetime import datetime
+from fractions import Fraction
 from math import sqrt
 import re
 from random import random, randint
-from datetime import datetime
 
 from abstraits.module import *
 from primaires.format.fonctions import format_nb, supprimer_accents
@@ -896,6 +897,11 @@ class Module(BaseModule):
         """Hook appelé à chaque changement de minute."""
         minute, heure, jour, mois, annee = temps.minute, temps.heure, \
                 temps.jour + 1, temps.mois + 1, temps.annee
+        minute = Fraction(minute)
+        heure = Fraction(heure)
+        jour = Fraction(jour)
+        mois = Fraction(mois)
+        annee = Fraction(annee)
         for salle in self.ch_minute:
             salle.script["changer"]["minute"].executer(salle=salle,
                     minute=minute, heure=heure, jour=jour, mois=mois,
@@ -905,6 +911,11 @@ class Module(BaseModule):
         """Hook appelé à chaque changement d'heure."""
         minute, heure, jour, mois, annee = temps.minute, temps.heure, \
                 temps.jour + 1, temps.mois + 1, temps.annee
+        minute = Fraction(minute)
+        heure = Fraction(heure)
+        jour = Fraction(jour)
+        mois = Fraction(mois)
+        annee = Fraction(annee)
         for salle in self.ch_heure:
             salle.script["changer"]["heure"].executer(salle=salle,
                     minute=minute, heure=heure, jour=jour, mois=mois,
@@ -914,6 +925,11 @@ class Module(BaseModule):
         """Hook appelé à chaque changement de jour."""
         minute, heure, jour, mois, annee = temps.minute, temps.heure, \
                 temps.jour + 1, temps.mois + 1, temps.annee
+        minute = Fraction(minute)
+        heure = Fraction(heure)
+        jour = Fraction(jour)
+        mois = Fraction(mois)
+        annee = Fraction(annee)
         for salle in self.ch_jour:
             salle.script["changer"]["jour"].executer(salle=salle,
                     minute=minute, heure=heure, jour=jour, mois=mois,
@@ -923,6 +939,11 @@ class Module(BaseModule):
         """Hook appelé à chaque changement de mois."""
         minute, heure, jour, mois, annee = temps.minute, temps.heure, \
                 temps.jour + 1, temps.mois + 1, temps.annee
+        minute = Fraction(minute)
+        heure = Fraction(heure)
+        jour = Fraction(jour)
+        mois = Fraction(mois)
+        annee = Fraction(annee)
         for salle in self.ch_mois:
             salle.script["changer"]["mois"].executer(salle=salle,
                     minute=minute, heure=heure, jour=jour, mois=mois,
@@ -932,6 +953,11 @@ class Module(BaseModule):
         """Hook appelé à chaque changement d'année."""
         minute, heure, jour, mois, annee = temps.minute, temps.heure, \
                 temps.jour + 1, temps.mois + 1, temps.annee
+        minute = Fraction(minute)
+        heure = Fraction(heure)
+        jour = Fraction(jour)
+        mois = Fraction(mois)
+        annee = Fraction(annee)
         for salle in self.ch_annee:
             salle.script["changer"]["annee"].executer(salle=salle,
                     minute=minute, heure=heure, jour=jour, mois=mois,
