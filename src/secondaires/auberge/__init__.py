@@ -97,6 +97,17 @@ class Module(BaseModule):
         self.importeur.interpreteur.ajouter_editeur(
                 editeurs.aubedit.EdtAubedit)
 
+    def preparer(self):
+        """Préparation du module."""
+        self.verifier_auberges()
+
+    def verifier_auberges(self):
+        """Vérification cyclique des auberges et expirations."""
+        importeur.diffact.ajouter_action("auberges", 3600,
+                self.verifier_auberges)
+        for auberge in self.auberges.values():
+            auberge.verifier_chambres()
+
     def get_auberge(self, salle):
         """Retourne, si trouvé, l'auberge définie dans la salle.
 
