@@ -95,7 +95,9 @@ class CmdPoser(Commande):
             if dans and not (dans.est_de_type("conteneur") and \
                     dans.accepte_type(objet) and dans.peut_contenir(
                     objet, qtt)) and not (dans.est_de_type("machine") and \
-                    dans.machine_conteneur and dans.peut_contenir(objet, qtt)):
+                    dans.machine_conteneur and dans.peut_contenir(objet, qtt)) \
+                    and not (dans.est_de_type("meuble") and dans.peut_contenir(
+                    objet, qtt)):
                 personnage << "|err|{} ne peut pas contenir {}.|ff|".format(
                         dans.get_nom(), objet.get_nom(qtt))
                 return
@@ -134,6 +136,16 @@ class CmdPoser(Commande):
             if dans.est_de_type("machine"):
                 dans.script["entrepose"]["après"].executer(
                         personnage=personnage, machine=dans, objets=poses)
+            elif dans.est_de_type("meuble"):
+                msg_pose = dans.messages["pose"]
+                msg_pose = msg_pose.replace("$meuble", dans.get_nom(1))
+                msg_pose = msg_pose.replace("$objet", objet.get_nom(pose))
+                personnage << msg_pose
+                msg_opose = dans.messages["opose"]
+                msg_opose = msg_opose.replace("$meuble", dans.get_nom(1))
+                msg_opose = msg_opose.replace("$objet", objet.get_nom(pose))
+                msg_opose = msg_opose.replace("$personnage", "{}")
+                personnage.salle.envoyer(msg_opose, personnage)
             else:
                 if getattr(dans, "meuble_support", False):
                     connecteur = "sur"

@@ -78,7 +78,8 @@ class CmdPrendre(Commande):
         depuis = depuis and depuis.objet or None
 
         if depuis and not depuis.est_de_type("conteneur") and not \
-                depuis.est_de_type("machine"):
+                depuis.est_de_type("machine") and not depuis.est_de_type(
+                "meuble"):
             personnage << "|err|Vous ne pouvez rien prendre dans " \
                     "{}.|ff|".format(depuis.get_nom())
             return
@@ -124,6 +125,16 @@ class CmdPrendre(Commande):
         if depuis and depuis.est_de_type("machine"):
             depuis.script["récupère"]["après"].executer(
                     personnage=personnage, machine=depuis, objets=ramasses)
+        elif depuis and depuis.est_de_type("meuble"):
+            msg_prend = depuis.messages["prend"]
+            msg_prend = msg_prend.replace("$meuble", depuis.get_nom(1))
+            msg_prend = msg_prend.replace("$objet", objet.get_nom(pris))
+            personnage << msg_prend
+            msg_oprend = depuis.messages["oprend"]
+            msg_oprend = msg_oprend.replace("$meuble", depuis.get_nom(1))
+            msg_oprend = msg_oprend.replace("$objet", objet.get_nom(pris))
+            msg_oprend = msg_oprend.replace("$personnage", "{}")
+            personnage.salle.envoyer(msg_oprend, personnage)
         elif depuis:
             personnage << "Vous prenez {} depuis {}.".format(
                     objet.get_nom(pris), depuis.nom_singulier)
