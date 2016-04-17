@@ -96,8 +96,8 @@ class Etats(BaseObj):
         for tuple in etats:
             cle = tuple[0]
             args = tuple[1:]
-            if cle in importeur.perso.etats:
-                self.ajouter(cle, *args)
+            importeur.diffact.ajouter_action("e_{}".format(id(list(cle))),
+                    0, self.ajouter, cle, *args)
 
     def get(self, cle_etat):
         """Retourne, si trouvé, l'état dont la clé correspond.
