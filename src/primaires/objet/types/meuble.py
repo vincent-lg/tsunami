@@ -48,6 +48,8 @@ class Meuble(BaseType):
     def __init__(self, cle=""):
         """Constructeur de l'objet"""
         BaseType.__init__(self, cle)
+        self.nb_places_assises = 1
+        self.nb_places_allongees = 1
         self.poids_max = 10
         self.facteurs_repos = {
                 "assis": 0,
@@ -57,6 +59,8 @@ class Meuble(BaseType):
         self.messages = {
                 "assis": "Vous vous assezez sur $meuble.",
                 "allongé": "Vous vous allongez sur $meuble.",
+                "oassis": "$personnage s'asseze sur $meuble.",
+                "oallongé": "$personnage s'allonge sur $meuble.",
                 "contenu": "Vous voyez à l'intérieur :",
                 "vide": "Il n'y a rien à l'intérieur.",
                 "pose": "Vous entreposez $objet dans $meuble.",
@@ -81,6 +85,24 @@ class Meuble(BaseType):
                 lambda obj: ConteneurObjet(obj),
                 ("", )),
         }
+
+    @property
+    def peut_asseoir(self):
+        """Return si peut s'asseoir sur le meuble."""
+        return self.facteurs_repos["assis"] > 0
+
+    @property
+    def peut_allonger(self):
+        """Return si peut s'allonger sur le meuble."""
+        return self.facteurs_repos["allongé"] > 0
+
+    @property
+    def facteur_asseoit(self):
+        return self.facteurs_repos["assis"]
+
+    @property
+    def facteur_allonge(self):
+        return self.facteurs_repos["allongé"]
 
     def peut_contenir(self, objet, qtt=1):
         """Retourne True si le conteneur peut prendre l'objet."""
@@ -172,6 +194,8 @@ class Meuble(BaseType):
             des messages sont :
                 assis : le joueur s'asseoit sur le meuble.
                 allongé : le joueur s'allonge sur le meuble.
+                oassis : le message que voient les autres quand on s'asseoit.
+                oallonge : le message que voient les autres quand on s'allonge.
                 contenu : le meuble regardé contient quelque chose.
                 vide : le meuble regardé ne contient rien.
                 pose : on pose un ou plusieurs objets sur le meuble.

@@ -73,11 +73,22 @@ class CmdAsseoir(Commande):
 
             personnage.etats.retirer("allonge")
             personnage.etats.ajouter("assis", elt)
-            personnage << "Vous vous asseyez {} {}.".format(
-                    elt.connecteur, elt.titre)
-            personnage.salle.envoyer("{{}} s'asseoit {} {}.".format(
-                    elt.connecteur, elt.titre), personnage)
-            elt.script["asseoit"].executer(personnage=personnage)
+
+            if hasattr(elt, "messages"):
+                # elt est un meuble
+                message = elt.messages["assis"]
+                message = message.replace("$meuble", elt.get_nom(1))
+                personnage << message
+                message = elt.messages["oassis"]
+                message = message.replace("$meuble", elt.get_nom(1))
+                message = message.replace("$personnage", "{}")
+                personnage.salle.envoyer(message, personnage)
+            else:
+                personnage << "Vous vous asseyez {} {}.".format(
+                        elt.connecteur, elt.titre)
+                personnage.salle.envoyer("{{}} s'asseoit {} {}.".format(
+                        elt.connecteur, elt.titre), personnage)
+                elt.script["asseoit"].executer(personnage=personnage)
         else:
             personnage.etats.retirer("allonge")
             personnage.etats.ajouter("assis", None)
