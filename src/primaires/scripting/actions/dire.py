@@ -71,6 +71,7 @@ class ClasseAction(Action):
             if flag == "sp":
                 personnage.sans_prompt()
 
+        message = message.replace("|nl|", "\n")
         message = message.replace("_b_nl_b_", "\n")
         f_variables = get_variables(variables, message)
         personnage.envoyer(message, **f_variables)
@@ -95,6 +96,7 @@ class ClasseAction(Action):
 
         """
         flags = flags.lower()
+        message = message.replace("|nl|", "\n")
         message = message.replace("_b_nl_b_", "\n")
         f_variables = get_variables(variables, message)
         f_variables["lisser"] = True
