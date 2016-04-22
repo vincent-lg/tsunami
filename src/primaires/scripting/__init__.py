@@ -363,6 +363,8 @@ class Module(BaseModule):
         groupe = self.structures[structure.structure]
         del groupe[structure.id]
         structure.detruire()
+        # Force la destruction
+        object.__setattr__(structure, "e_existe", False)
 
     def creer_editeur(self, structure):
         """Crée un éditeur sur le nom de la structure."""
