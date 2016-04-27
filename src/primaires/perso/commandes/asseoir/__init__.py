@@ -76,6 +76,7 @@ class CmdAsseoir(Commande):
 
             if hasattr(elt, "messages"):
                 # elt est un meuble
+                elt.peut_prendre = False
                 message = elt.messages["assis"]
                 message = message.replace("$meuble", elt.get_nom(1))
                 personnage << message

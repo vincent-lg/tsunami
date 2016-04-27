@@ -33,6 +33,7 @@
 from textwrap import dedent
 
 from bases.objet.attribut import Attribut
+from primaires.interpreteur.editeur.flag import Flag
 from primaires.interpreteur.editeur.flottant import Flottant
 from primaires.interpreteur.editeur.tableau import Tableau
 from primaires.objet.conteneur import ConteneurObjet
@@ -48,6 +49,7 @@ class Meuble(BaseType):
     def __init__(self, cle=""):
         """Constructeur de l'objet"""
         BaseType.__init__(self, cle)
+        self.meuble_conteneur = True
         self.nb_places_assises = 1
         self.nb_places_allongees = 1
         self.poids_max = 10
@@ -57,10 +59,12 @@ class Meuble(BaseType):
         }
 
         self.messages = {
-                "assis": "Vous vous assezez sur $meuble.",
+                "assis": "Vous vous asseyez sur $meuble.",
                 "allongé": "Vous vous allongez sur $meuble.",
-                "oassis": "$personnage s'asseze sur $meuble.",
+                "oassis": "$personnage s'asseye sur $meuble.",
                 "oallongé": "$personnage s'allonge sur $meuble.",
+                "eassis": "est assis(e) sur $meuble.",
+                "eallongé": "est allongé(e) sur $meuble.",
                 "contenu": "Vous voyez à l'intérieur :",
                 "vide": "Il n'y a rien à l'intérieur.",
                 "pose": "Vous entreposez $objet dans $meuble.",
@@ -70,13 +74,16 @@ class Meuble(BaseType):
         }
 
         # Extensions d'éditeur
+        self.etendre_editeur("c", "meuble conteneur", Flag, self,
+                "meuble_conteneur")
         self.etendre_editeur("x", "poids max", Flottant, self, "poids_max")
         self.etendre_editeur("r", "facteurs de repos", Tableau, self,
                 "facteurs_repos", (("Nom", ["assis", "allongé"]),
                 ("Facteur", "flottant")))
         self.etendre_editeur("m", "messages", Tableau, self,
-                "messages", (("Type", ["assis", "allongé",
-                "contenu", "vide", "pose", "prend", "opose", "oprend"]),
+                "messages", (("Type", ["assis", "allongé", "oassis",
+                "oallongé", "eassis", "eallongé", "contenu", "vide",
+                "pose", "prend", "opose", "oprend"]),
                 ("Message", "chaîne")))
 
         # Attributs propres à l'objet (non au prototype)
@@ -97,11 +104,11 @@ class Meuble(BaseType):
         return self.facteurs_repos["allongé"] > 0
 
     @property
-    def facteur_asseoit(self):
+    def facteur_asseoir(self):
         return self.facteurs_repos["assis"]
 
     @property
-    def facteur_allonge(self):
+    def facteur_allonger(self):
         return self.facteurs_repos["allongé"]
 
     def peut_contenir(self, objet, qtt=1):
@@ -196,6 +203,8 @@ class Meuble(BaseType):
                 allongé : le joueur s'allonge sur le meuble.
                 oassis : le message que voient les autres quand on s'asseoit.
                 oallonge : le message que voient les autres quand on s'allonge.
+                eassis : un autre personnage voit le joueur assis.
+                eallongé : un autre personnage voit le joueur allongé.
                 contenu : le meuble regardé contient quelque chose.
                 vide : le meuble regardé ne contient rien.
                 pose : on pose un ou plusieurs objets sur le meuble.
@@ -212,6 +221,10 @@ class Meuble(BaseType):
             manipulés). "opose" et "oprend" supportent $meuble et $objet,
             ainsi que $personnage remplacé par le nom du personnage
             manipulant le meuble.
+            Pour les messages |ent|eassis|ff| et |ent|eallongé|ff|,
+            vous pouvez préciser un (e) entre parenthèses, qui sera
+            retiré si le personnage est masculin, remplacé par un E si
+            le personnage est féminin.
 
             Pour remplacer un message, entrez son type, un signe |ent|/|ff|
             après un espace et le nouveau message après un autre espace.
@@ -243,7 +256,9 @@ class Meuble(BaseType):
     def regarder(self, personnage):
         """Le personnage regarde l'objet"""
         msg = BaseType.regarder(self, personnage)
-        if not getattr(self, "conteneur", False):
+        if self.meuble_conteneur is False:
+            return msg
+        elif not getattr(self, "conteneur", False):
             return msg
 
         objets = []
