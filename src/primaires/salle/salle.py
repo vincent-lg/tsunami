@@ -844,6 +844,12 @@ class Salle(BaseObj):
         structure.titre = self.titre
         structure.interieur = Fraction(self.interieur)
         structure.illuminee = Fraction(self.illuminee)
+
+        # Coordonnées
+        structure.coordonnees = Fraction(self.coords.valide)
+        structure.x = Fraction(self.coords.x)
+        structure.y = Fraction(self.coords.y)
+        structure.z = Fraction(self.coords.z)
         return structure
 
     def appliquer_structure(self, structure):
@@ -861,3 +867,11 @@ class Salle(BaseObj):
                 self.interieur = bool(valeur)
             elif cle == "illuminee":
                 self.illuminee = bool(valeur)
+            elif cle == "coordonnees":
+                self.coords.valide = bool(valeur)
+            elif cle == "x":
+                self.coords.x = int(valeur)
+            elif cle == "y":
+                self.coords.y = int(valeur)
+            elif cle == "z":
+                self.coords.z = int(valeur)
