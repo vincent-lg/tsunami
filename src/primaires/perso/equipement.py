@@ -134,9 +134,11 @@ class Equipement(BaseObj):
         courante a simplement l'avantage d'afficher une erreur explicite
         en cas de problème.
 
+        La recherche se fait indépendemment des majuscules ou accents.
+
         """
-        nom = supprimer_accents(nom_membre)
-        noms = [(supprimer_accents(membre.nom), i) for i, membre in \
+        nom = supprimer_accents(nom_membre).lower()
+        noms = [(supprimer_accents(membre.nom).lower(), i) for i, membre in \
                 enumerate(self.__membres)]
         noms = dict(noms)
 
