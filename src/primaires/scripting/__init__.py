@@ -618,7 +618,7 @@ class Module(BaseModule):
                     if cle in self.memoires and valeur in self.memoires[cle]:
                         valeur_memoire = self.memoires[cle][valeur]
                         del self.memoires[cle][valeur]
-                        if evenement:
+                        if cle.e_existe and evenement:
                             variables = evenement.deduire_variables(
                                     cle, nom=valeur, valeur=valeur_memoire)
                             evenement.executer(**variables)
