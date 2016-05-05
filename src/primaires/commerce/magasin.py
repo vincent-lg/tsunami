@@ -204,7 +204,8 @@ class Magasin(BaseObj):
 
         raise ValueError("le service {} {} n'existe pas".format(type, cle))
 
-    def ajouter_inventaire(self, service, qtt, inc_qtt=True):
+    def ajouter_inventaire(self, service, qtt, inc_qtt=True,
+            forcer_unique=False):
         """Ajoute des services dans l'inventaire.
 
         Si service est de type objet, on applique la règle
@@ -216,11 +217,16 @@ class Magasin(BaseObj):
         du service de l'inventaire, si présent. Sinon, la quantité du
         service, si présent, est remplacée par la nouvelle.
 
+        Si le paramètre forcer_unique est à True, et que l'on veut vendre
+        un objet, celui-ci est automatiquement ajouté comme un objet
+        unique.
+
         """
         services = list(self.inventaire)
         trouve = unique = False
         if isinstance(service, Objet):
-            if service.nom_singulier != service.prototype.nom_singulier:
+            if forcer_unique or service.nom_singulier != \
+                    service.prototype.nom_singulier:
                 service = VenteUnique(service)
                 unique = True
             else:

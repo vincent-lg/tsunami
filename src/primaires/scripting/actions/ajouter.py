@@ -135,4 +135,4 @@ class ClasseAction(CA):
             except ValueError:
                 pass
 
-        salle.magasin.ajouter_inventaire(objet, 1)
+        salle.magasin.ajouter_inventaire(objet, 1, forcer_unique=True)

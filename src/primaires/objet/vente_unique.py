@@ -69,7 +69,7 @@ class VenteUnique(BaseObj):
     def nom_achat(self):
         """Retourne le nom à afficher dans le magasin."""
         if self.objet:
-            return self.objet.nom_singulier
+            return self.objet.get_nom(1)
 
         return "inconnu"
 
