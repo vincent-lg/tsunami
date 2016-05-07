@@ -43,7 +43,7 @@ class Pluie(BasePertu):
     duree_max = 12
     temperature_min = 4
     origine = False
-    attributs = ("pluie", "gris", "doux", "humide", "vent")
+    attributs = ("pluie", "gris", "nuage", "doux", "humide", "vent")
 
     def __init__(self, pos):
         """Constructeur de la perturbation"""
