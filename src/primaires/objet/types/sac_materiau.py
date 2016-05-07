@@ -109,6 +109,14 @@ class SacMateriau(BaseType):
 
         return round(poids, 3)
 
+    def _get_prix(self):
+        """Retourne le prix"""
+        prix = self._prix
+        if self.materiau and self.quantite:
+            prix += self.materiau.prix * self.quantite
+
+        return prix
+
     def travailler_enveloppes(self, enveloppes):
         """Travail sur les enveloppes"""
         materiaux_admis = enveloppes["t"]

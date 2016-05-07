@@ -136,6 +136,11 @@ class Objet(BaseObj):
         return self.calculer_poids()
 
     @property
+    def prix(self):
+        """Retourne le prix de l'objet."""
+        return self._get_prix()
+
+    @property
     def grand_parent(self):
         """Retourne le grand parent de l'objet."""
         if hasattr(self.contenu, "grand_parent"):
