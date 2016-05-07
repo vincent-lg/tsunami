@@ -31,6 +31,7 @@
 """Ce fichier contient la classe BaseType, détaillée plus bas."""
 
 from fractions import Fraction
+from math import sqrt
 
 from abstraits.obase import BaseObj
 from primaires.format.description import Description
@@ -226,7 +227,15 @@ class BaseType(BaseObj, metaclass=MetaType):
                 noms_sup.reverse()
                 for nom in noms_sup:
                     if nombre >= nom[0]:
-                        return nom[1]
+                        variables = {}
+                        variables["nb"] = nombre
+                        for i in range(2, 1 + int(sqrt(nombre))):
+                            variables["nb{}".format(i)] = nombre // i
+
+                        return nom[1].format(nb=nombre,
+                                nb2=nombre // 2, nb4=nombre // 4,
+                                nb8=nombre // 8, nb16=nombre // 16)
+
             return str(nombre) + " " + self.nom_pluriel
 
     def get_nom_pour(self, personnage):
