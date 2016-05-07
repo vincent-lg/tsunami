@@ -1,5 +1,4 @@
 # -*-coding:Utf-8 -*
-# -*-coding:Utf-8 -*
 
 # Copyright (c) 2010-2016 LE GOFF Vincent
 # All rights reserved.
@@ -32,6 +31,7 @@
 """Fichier contenant le type machine."""
 
 from bases.objet.attribut import Attribut
+from corps.fonctions import lisser
 from primaires.interpreteur.editeur.flag import Flag
 from primaires.interpreteur.editeur.flottant import Flottant
 from primaires.interpreteur.editeur.selection import Selection
@@ -244,7 +244,13 @@ class Machine(BaseType):
 
         objets = []
         for o, nb in self.conteneur.get_objets_par_nom():
-            objets.append(o.get_nom(nb))
+            if o.est_de_type("potion"):
+                article = str(nb) if nb > 1 else "une"
+                s = "s" if nb > 1 else ""
+                objets.append(lisser("{} mesure{s} de {}".format(article,
+                        o.nom_singulier, s=s)))
+            else:
+                objets.append(o.get_nom(nb))
 
         if objets:
             msg += self.message_contenu
