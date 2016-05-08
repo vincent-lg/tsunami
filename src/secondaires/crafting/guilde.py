@@ -443,11 +443,12 @@ class Guilde(BaseObj):
     def supprimer_commande(self, nom):
         """Supprime la commande indiquée."""
         commande = self.get_commande(nom)
-        if not commande.utilisable:
-            self.commandes.remove(commande)
-            commande.detruire()
-        else:
-            raise ValueError("Cette commande est déjà ouverte")
+        self.commandes.remove(commande)
+        if commande.commande:
+            print("Destruction de", commande.commande)
+            commande.commande.detruire()
+
+        commande.detruire()
 
 class GuildeSansRang(ExceptionCrafting):
 

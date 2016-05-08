@@ -442,3 +442,15 @@ class Commande(Masque):
                 nom = "commandes_{}".format(Commande.nb_actions)
                 type(self).importeur.diffact.ajouter_action(nom, tps,
                         self.execution_progressive, generateur)
+
+    def detruire(self):
+        """Destruction de la commande."""
+        # Destruction des paramètres récursivement
+        for noeud in self.parametres.values():
+            noeud.commande.detruire()
+
+        importeur.interpreteur.groupes.supprimer_commande(self)
+        if self.parente:
+            del self.parente.parametres[self.nom]
+
+        importeur.interpreteur.commandes.remove(self.noeud)

@@ -131,7 +131,7 @@ class Module(BaseModule):
                 "h": "haut",
                 "b": "bas",
         }
-        
+
         # Erreurs des commandes
         self.erreurs = {}
 
