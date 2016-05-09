@@ -128,10 +128,8 @@ class ClasseFonction(Fonction):
           * *equipement : cherche uniquement dans l'équipement du personnage.
           * *inventaire : cherche uniquement dans l'inventaire.
 
-        Si aucun filtre n'est précisé, le filtre utilisé est
-        "*equipement&*inventaire", ce qui signifie "tous les objets
-        de l'équipement et ceux possédés dans l'inventaire". Voir les
-        exemples ci-dessous pour plus d'information.
+        Si aucune mention de l'origine n'est précisé, cherche dans
+        l'inventaire et l'équipement.
 
         Exemples d'utilisation :
 
@@ -153,12 +151,21 @@ class ClasseFonction(Fonction):
         filtre = filtre.lower()
         filtres = filtre.split("&")
         objets = []
+        origine = False
         if "*equipement" in filtres:
+            origine = True
             objets.extend([o for o in personnage.equipement.equipes])
             filtres.remove("*equipement")
         if "*inventaire" in filtres:
+            origine = True
             objets.extend([o for o in personnage.equipement.inventaire_simple])
             filtres.remove("*inventaire")
+
+        if not origine:
+            # On part du principe qu'on a voulu dire dans l'inventaire
+            # et l'équipement
+            objets.extend([o for o in personnage.equipement.equipes])
+            objets.extend([o for o in personnage.equipement.inventaire_simple])
 
         for filtre in filtres:
             if filtre.startswith("+"):
