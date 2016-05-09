@@ -49,9 +49,20 @@ class ClasseFonction(Fonction):
 
         On doit donc utiliser une boucle pour pardcourir les objets
         retournés par cette fonction. Le conteneur peut être un conteneur
-        simple, une machine, un conteneur de nourriture ou de potion.
-        Dans ce dernier cas, il ne retourne qu'un seul objet
-        qui est la potion contenue.
+        simple, une machine, un sac de matériau, un conteneur de nourriture
+        ou
+        de potion. Le sac de matériau et conteneur de potion sont deux
+        importantes exceptions à garder à l'esprit :
+
+          * Le sac de matériau retourne une liste de prototypes d'objet,
+            pas d'objets. Cette liste est de longueur N (N correspondant
+            à la quantité d'objets dans ce sac).
+          * Le conteneur de potion retourne une liste d'objets identiques,
+            de longueur correspondant au nombre d'onces restantes
+            dans ce conteneur de potion. Ne pas traiter cette liste
+            comme des objets individuels, car ils sont tous identiques.
+            Mieux vaut récupérer la clé du prototype du premier objet,
+            ainsi que la longueur de la liste.
 
         NOTE IMPORTANTE : si le conteneur est un conteneur standard
         ou une machine, ne retourne que les objets uniques. C'est-à-dire,
@@ -61,14 +72,42 @@ class ClasseFonction(Fonction):
         avoir un groupage par nom d'objets, ce qui a tendance à
         être plus agréable, notamment pour l'affichage.
 
+        Exemple d'utilisation :
+
+          # 'conteneur' contient un conteneur standard
+          pour chaque objet dans conteneur:
+             # ...
+          fait
+          # 'flacon' contient un conteneur de potion
+          liquides = contenus_dans(flacon)
+          si liquides:
+              cle = cle_prototype(recuperer(liquides, 1))
+              quantite = longueur(liquides)
+              # Verse le liquide au sol...
+              poser salle cle quantite
+          finsi
+          # 'sac' contient un sac de matériau contenant 2 livres de farine
+          materiaux = contenus_dans(sac)
+          si materiaux:
+              cle = cle_prototype(recuperer(materiaux, 1))
+              quantite = longueur(materiaux)
+              dire personnage "Ce sac contient $quantite livres de $cle."
+          finsi
+
         """
         if conteneur.est_de_type("conteneur de potion"):
-            return [conteneur.potion] if conteneur.potion else []
+            onces = getattr(conteneur, "onces", 1)
+            return [conteneur.potion] * onces if conteneur.potion else []
+        elif conteneur.est_de_type("sac de matériau"):
+            if conteneur.materiau and conteneur.quantite:
+                prototype = conteneur.materiau
+                return [prototype] * conteneur.quantite
 
-        if conteneur.est_de_type("conteneur de nourriture"):
+            return []
+        elif conteneur.est_de_type("conteneur de nourriture"):
             return list(conteneur.nourriture)
 
-        if conteneur.est_de_type("conteneur") or conteneur.est_de_type(
+        elif conteneur.est_de_type("conteneur") or conteneur.est_de_type(
                 "machine"):
             return list(conteneur.conteneur._objets)
 
