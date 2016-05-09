@@ -39,8 +39,9 @@ class ClasseAction(Action):
 
     @classmethod
     def init_types(cls):
-        cls.ajouter_types(cls.appliquer_salle, "Salle", "Structure")
         cls.ajouter_types(cls.appliquer_personnage, "Personnage", "Structure")
+        cls.ajouter_types(cls.appliquer_salle, "Salle", "Structure")
+        cls.ajouter_types(cls.appliquer_objet, "Objet", "Structure")
 
     @staticmethod
     def appliquer_salle(salle, structure):
@@ -109,3 +110,35 @@ class ClasseAction(Action):
 
         """
         personnage.appliquer_structure(structure)
+
+    @staticmethod
+    def appliquer_objet(objet, structure):
+        """Applique la structure spécifiée sur l'objet.
+
+        Cette action est utile pour apporter des modifications à un
+        objet grâce aux structures. Voir les exemples plus bas pour une
+        démonstration de leur utilité.
+
+        Paramètres à entrer :
+
+          * objet : l'objet que l'on veut modifier ;
+          * structure : la structure à appliquer sur l'objet.
+
+        La structure peut contenir toutes les informations d'un
+        objet (ses noms, sa description, ses flags...). Si
+        la structure n'est pas si complète, seules les informations
+        précisées sont utilisées. Cette action peut générer des
+        alertes si la structure n'est pas du bon format, ou bien dans
+        certains autres cas particuliers.
+
+        Exemples d'utilisation :
+
+          # Récupère la structure de l'objet
+          structure = structure(objet)
+          # Met l'objet en invisible
+          ecrire structure "visible" 0
+          # Applique les modifications
+          appliquer objet structure
+
+        """
+        objet.appliquer_structure(structure)

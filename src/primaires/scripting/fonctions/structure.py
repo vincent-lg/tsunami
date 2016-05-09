@@ -40,6 +40,7 @@ class ClasseFonction(Fonction):
     @classmethod
     def init_types(cls):
         cls.ajouter_types(cls.structure, "str", "Fraction")
+        cls.ajouter_types(cls.structure_objet, "Objet")
         cls.ajouter_types(cls.structure_salle, "Salle")
         cls.ajouter_types(cls.structure_personnage, "Personnage")
 
@@ -171,3 +172,33 @@ class ClasseFonction(Fonction):
 
         """
         return personnage.get_structure()
+
+    @staticmethod
+    def structure_objet(objet):
+        """Retourne une structure simple représentant l'objet spécifié.
+
+        Les structures sont extrêmement pratiques pour modifier
+        certaines informations, quand les actions ou fonctions existantes
+        ne suffisent pas. Ces modifications peuvent être parfois très
+        spécifiques, comme par exemple, dans ce contexte, changer
+        le flag d'un objet.
+
+        Paramètres à entrer :
+
+          * objet : l'objet dont on veut obtenir la structure.
+
+        Cases de la structure :
+
+            * visible : l'objet est-il visible (0 ou 1).
+
+        Exemples d'utilisation :
+
+          # Récupère la structure de l'objet dans la variable 'objet'
+          structure = structure(objet)
+          # Modifie la visibilité de l'objet
+          ecrire structure "visible" 0
+          # Enregistre les modifications
+          appliquer objet structure
+
+        """
+        return objet.get_structure()

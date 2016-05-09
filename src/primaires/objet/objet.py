@@ -31,8 +31,10 @@
 """Ce fichier contient la classe Objet, détaillée plus bas."""
 
 from datetime import datetime
+from fractions import Fraction
 
 from abstraits.obase import BaseObj
+from primaires.scripting.structure import StructureSimple
 
 class Objet(BaseObj):
 
@@ -78,6 +80,7 @@ class Objet(BaseObj):
         self.prototype = prototype
         self.contenu = None # contenu dans
         self.ajoute_a = datetime.now()
+        self.visible = True
         self._construire()
         if prototype:
             self.identifiant = prototype.cle + "_" + str(
@@ -251,6 +254,19 @@ class Objet(BaseObj):
 
         self.prototype.detruire_objet(self)
         BaseObj.detruire(self)
+
+    def get_structure(self):
+        """Retourne la structure de l'objet."""
+        structure = StructureSimple()
+        structure.visible = Fraction(self.visible)
+        return structure
+
+    def appliquer_structure(self, structure):
+        """Applique la structure passée en paramètre."""
+        for cle, valeur in structure.donnees.items():
+            if cle == "visible":
+                self.visible = bool(valeur)
+
 
 class MethodeObjet:
 

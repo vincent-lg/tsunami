@@ -115,6 +115,9 @@ class ConteneurObjet(BaseObj):
         objets = OrderedDict()
         nombres = {}
         for objet in self._objets:
+            if not objet.visible:
+                continue
+
             nom = objet.get_nom()
             objets[nom] = objet
             nb = nombres.get(nom, 0)
