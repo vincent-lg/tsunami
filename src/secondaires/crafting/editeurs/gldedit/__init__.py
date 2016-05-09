@@ -86,7 +86,7 @@ class GldEdit(Presentation):
             "|bc|{valeur}|ff|"
 
         # Ouverte
-        ouverte = self.ajouter_choix("ouverte", "ouv", Flag, guilde, 
+        ouverte = self.ajouter_choix("ouverte", "ouv", Flag, guilde,
                 "ouverte")
         ouverte.parent = self
 
@@ -177,12 +177,14 @@ class GldEdit(Presentation):
             "Les éditeurs possibles sont : |ent|salle|ff|, " \
             "|ent|objet|ff| ou |ent|PNJ|ff|.\n" \
             "Les types d'extension possibles sont :\n" \
+            "    bool (un bool ou flag vrai ou faux)\n" \
             "    chaîne (une chaîne de caractères sans contrainte)\n" \
             "    clé (une chaîne sans accent ni majuscules)\n" \
             "    entier (un nombre entier sans contrainte)\n" \
             "    entier positif / négatif / positif ou nul / " \
             "négatif ou nul\n" \
             "    entier entre X et Y\n" \
+            "    flottant (un nombre à virgule flottante)\n" \
             "    prototype d'objet (un prototype d'objet)\n" \
             "    tableau avec les colonnes nom (type), nom2 (type2)...\n\n" \
             "Exemples de types :\n" \
@@ -190,7 +192,7 @@ class GldEdit(Presentation):
             "    entier entre 5 et 32\n" \
             "    tableau avec les colonnes nom (chaîne), âge (entier)\n\n" \
             "Extensions actuelles :{valeur}"
-        
+
         # Script
         scripts = self.ajouter_choix("scripts", "sc", EdtScript,
                 guilde.script)

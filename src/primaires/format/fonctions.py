@@ -297,7 +297,12 @@ def couper_phrase(phrase, couper):
 
 def oui_ou_non(flag):
     """Retourne 'oui' si le flag est True, 'non' sinon."""
-    mots = {True:"|vrc|oui|ff|", False:"|rgc|non|ff|"}
+    mots = {
+        True: "|vrc|oui|ff|",
+        False: "|rgc|non|ff|",
+        None: "|rgc|non|ff|",
+    }
+
     return mots[flag]
 
 def format_nb(nb, message, fem=False):

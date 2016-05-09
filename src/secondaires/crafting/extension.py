@@ -37,19 +37,23 @@ from primaires.format.description import Description
 from primaires.format.fonctions import supprimer_accents
 from primaires.interpreteur.editeur.choix_objet import ChoixObjet
 from primaires.interpreteur.editeur.entier import Entier
+from primaires.interpreteur.editeur.flag import Flag
+from primaires.interpreteur.editeur.flottant import Flottant
 from primaires.interpreteur.editeur.tableau import Tableau
 from primaires.interpreteur.editeur.uniligne import Uniligne, CLE
 
 # Constantes
 TYPES = {
+    "bool": re.compile("^bool$"),
+    "chaîne": re.compile("^chaine$"),
+    "clé": re.compile("^cle$"),
     "entier": re.compile(r"""
             ^nombre|entier
             # signe
             (\ (?P<signe>positif|negatif|positif\ ou\ nul|negatif\ ou\ nul))?
             # Bornes
             (\ entre\ (?P<min>[0-9]+)\ et\ (?P<max>[0-9]+))?$""", re.X),
-    "chaîne": re.compile("^chaine$"),
-    "clé": re.compile("^cle$"),
+    "flottant": re.compile("^flottant$"),
     "prototype d'objet": re.compile("^prototype d'objet$"),
     "tableau": re.compile(r"""
             tableau\ avec\ les\ colonnes
@@ -137,12 +141,12 @@ class Extension(BaseObj):
         nom_type = self._type
         sup = self.sup
 
-        if nom_type == "chaîne":
+        if nom_type == "bool":
+            return Flag, ()
+        elif nom_type == "chaîne":
             return Uniligne, ()
         elif nom_type == "clé":
             return Uniligne, (CLE, )
-        elif nom_type == "prototype d'objet":
-            return ChoixObjet, (importeur.objet.prototypes, )
         elif nom_type == "entier":
             borne_min = borne_max = None
             signe = sup["signe"]
@@ -160,6 +164,10 @@ class Extension(BaseObj):
                 borne_max = int(sup["max"])
 
             return Entier, (borne_min, borne_max)
+        elif nom_type == "flottant":
+            return Flottant, ()
+        elif nom_type == "prototype d'objet":
+            return ChoixObjet, (importeur.objet.prototypes, )
         elif nom_type == "tableau":
             colonnes = []
             for i in range(4):

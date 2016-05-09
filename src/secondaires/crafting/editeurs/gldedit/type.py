@@ -80,11 +80,15 @@ class GldTypeEdit(Presentation):
             " |ent|/a <nom de l'extension à ajouter / type>|ff|\n" \
             " |ent|/s <nom de l'extension à supprimer>|ff|\n\n" \
             "Les types d'extension possibles sont :\n" \
+            "    bool (un bool ou flag, vrai ou faux)\n" \
             "    chaîne (une chaîne de caractères sans contrainte)\n" \
+            "    clé (une chaîne de caractères formant une clé valide)\n" \
             "    entier (un nombre entier sans contrainte)\n" \
             "    entier positif / négatif / positif ou nul / " \
             "négatif ou nul\n" \
             "    entier entre X et Y\n" \
+            "    flottant (un nombre à virgule flottante)\n" \
+            "    prototype d'objet (une clé de prototype d'objet)\n" \
             "    tableau avec les colonnes nom (type), nom2 (type2)...\n\n" \
             "Exemples de types :\n" \
             "    entier positif ou nul\n" \
