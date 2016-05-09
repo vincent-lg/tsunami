@@ -56,9 +56,13 @@ class ClasseAction(Action):
           copier_attributs objet1 objet2
 
         """
-        attributs = importeur.crafting.configuration[objet_origine].attributs
-        if attributs is None:
-            attributs = {}
+        attributs = importeur.crafting.configuration[
+                objet_origine.prototype].attributs.copy()
+        attributs = attributs or {}
+
+        autres = importeur.crafting.configuration[objet_origine].attributs
+        if autres:
+            attributs.update(autres)
 
         if importeur.crafting.configuration[objet_final].attributs is None:
             importeur.crafting.configuration[objet_final].attributs = {}
