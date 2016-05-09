@@ -57,8 +57,8 @@ class ClasseAction(Action):
 
         """
         attributs = importeur.crafting.configuration[
-                objet_origine.prototype].attributs.copy()
-        attributs = attributs or {}
+                objet_origine.prototype].attributs
+        attributs = attributs and attributs.copy() or {}
 
         autres = importeur.crafting.configuration[objet_origine].attributs
         if autres:
