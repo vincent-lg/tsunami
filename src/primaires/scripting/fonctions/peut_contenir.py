@@ -58,15 +58,18 @@ class ClasseFonction(Fonction):
                 return False
             else:
                 return True
-        try:
-            conteneur.conteneur.supporter_poids_sup(objet.poids_unitaire,
-                    recursif=False)
-            assert conteneur.est_de_type("conteneur")
-            assert conteneur.accepte_type(objet)
-        except (AssertionError, SurPoids):
-            return False
-        else:
-            return True
+        if conteneur.est_de_type("conteneur") or conteneur.est_de_type(
+                "machine") or conteneur.est_de_type("meuble"):
+            try:
+                conteneur.conteneur.supporter_poids_sup(objet.poids_unitaire,
+                        recursif=False)
+                if conteneur.est_de_type("conteneur"):
+                    assert conteneur.accepte_type(objet)
+            except (AssertionError, SurPoids):
+                return False
+            else:
+                return True
+
         return False
 
     @staticmethod
@@ -90,13 +93,16 @@ class ClasseFonction(Fonction):
                 return False
             else:
                 return True
-        try:
-            conteneur.conteneur.supporter_poids_sup(
-                    prototype.poids_unitaire * nb, recursif=False)
-            assert conteneur.est_de_type("conteneur")
-            assert conteneur.accepte_type(prototype)
-        except (AssertionError, SurPoids):
-            return False
-        else:
-            return True
+        if conteneur.est_de_type("conteneur") or conteneur.est_de_type(
+                "machine") or conteneur.est_de_type("meuble"):
+            try:
+                conteneur.conteneur.supporter_poids_sup(
+                        prototype.poids_unitaire * nb, recursif=False)
+                if conteneur.est_de_type("conteneur"):
+                    assert conteneur.accepte_type(prototype)
+            except (AssertionError, SurPoids):
+                return False
+            else:
+                return True
+
         return False
