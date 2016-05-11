@@ -49,15 +49,28 @@ class ClasseFonction(Fonction):
 
         Retourne vrai également si le nom de type est un parent du
         type de l'objet. Par exemple, si l'objet est un fruit
-        mais que l'on test si c'est une nourriture.
+        mais que l'on test si c'est une nourriture. Vous pouvez également
+        préciser plusieurs tests séparés par une barre verticale (|). La
+        fonction retournera vrai si l'objet est au moins d'un des types indiqués.
+
+        ATTENTION : le test est sensible à l'accentuation.
 
         Paramètres à entrer :
 
           * objet : l'objet à tester
           * nom_type : le nom du type
 
+        Exemples d'utilisation :
+
+          si est_de_type(objet, "viande"):
+              # Si l'objet est de type viande
+          finsi
+          si est_de_type(objet, "viande|chaussure"):
+              # Si l'objet est de type viande ou chaussure
+          finsi
+
         """
-        return objet.est_de_type(nom_type)
+        return any(objet.est_de_type(n) for n in nom_type.split("_b_"))
 
     @staticmethod
     def est_de_type_cle(cle, nom_type):
@@ -65,12 +78,25 @@ class ClasseFonction(Fonction):
 
         Retourne vrai également si le nom de type est un parent du
         type du prototype. Par exemple, si le prototype est un fruit
-        mais que l'on test si c'est une nourriture.
+        mais que l'on test si c'est une nourriture. Vous pouvez également
+        préciser plusieurs tests séparés par une barre verticale (|). La
+        fonction retournera vrai si l'objet est au moins d'un des types indiqués.
+
+        ATTENTION : le test est sensible à l'accentuation.
 
         Paramètres à entrer :
 
           * cle : la clé du prototype d'objet (une chaîne)
           * nom_type : le nom du type
+
+        Exemples d'utilisation :
+
+          si est_de_type("viande_lapin", "viande"):
+              # Si l'objet est de type viande
+          finsi
+          si est_de_type("viande_lapin", "viande|chaussure"):
+              # Si l'objet est de type viande ou chaussure
+          finsi
 
         """
         cle = cle.lower()
@@ -79,4 +105,4 @@ class ClasseFonction(Fonction):
                     repr(cle)))
 
         prototype = importeur.objet.prototypes[cle]
-        return prototype.est_de_type(nom_type)
+        return any(prototype.est_de_type(n) for n in nom_type.split("_b_"))

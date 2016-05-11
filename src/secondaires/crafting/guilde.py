@@ -308,7 +308,7 @@ class Guilde(BaseObj):
             pass
         else:
             nom_parent = getattr(n_type.__bases__[0], "nom_type", "")
-            type = Type(self, nom_parent, nom_type)
+            type = Type(self, nom_parent, n_type.nom_type)
             self.types.append(type)
             return type
 
