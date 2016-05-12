@@ -207,9 +207,6 @@ class Extension(BaseObj):
             i = 0
             while i + nb <= len(titre):
                 morceau = titre[i:i + nb]
-                if not morceau.strip(" "):
-                    continue
-
                 if morceau not in presentation.raccourcis:
                     raccourci = morceau
                     break
