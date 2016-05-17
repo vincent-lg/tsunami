@@ -45,10 +45,35 @@ class ClasseAction(Action):
     def detruire_contenu(objet):
         """Détruit le contenu de l'objet précisé.
 
-        L'objet doit être un conteneur. Tout ce qu'il contient est
-        __DEFINiTIVEMENT__ supprimé.
+        Détruit le contenu d'un conteneur de potion, conteneur de nourriture
+        ou conteneur standard (cela inclut les meubles et machines). Dans
+        tous les cas, tous le qu'il contient est __DÉFINITIVEMENT__ supprimé.
+
+        Paramètres à préciser :
+
+          * conteneur : l'objet que l'on souhaite vider.
+
+        Exemples d'utilisation :
+
+          # Détruit le contenu dans un pot rempli d'eau, qui devient
+          # donc vide.
+          detruire_contenu pot
+          # La même chose pour un conteneur de nourriture
+          detruire_contenu poelon
+          # On pour un conteneur standard
+          detruire_contenu coffre
+          detruire_contenu armoire
+          # ...
 
         """
+        if objet.est_de_type("conteneur de potion"):
+            objet.potion = None
+            objet.onces = 0
+            return
+        elif objet.est_de_type("conteneur de nourriture"):
+            objet.nourriture = []
+            return
+
         if not hasattr(objet, "conteneur"):
             raise ErreurExecution("{} n'est pas un conteneur".format(
                     objet.cle))
