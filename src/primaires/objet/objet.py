@@ -259,6 +259,7 @@ class Objet(BaseObj):
         """Retourne la structure de l'objet."""
         structure = StructureSimple()
         structure.visible = Fraction(self.visible)
+        self.prototype.get_structure(structure)
         return structure
 
     def appliquer_structure(self, structure):

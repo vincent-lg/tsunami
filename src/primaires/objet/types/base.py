@@ -382,3 +382,17 @@ class BaseType(BaseObj, metaclass=MetaType):
     def nettoyage_cyclique(self):
         """Nettoyage cyclique de l'objet si besoin."""
         pass
+
+    def get_structure(self, structure):
+        """Retourne la structure étenduee.
+
+        La structure doit être envoyée par l'objet. Il est peu probable
+        d'avoir besoin d'appeler cette méthode direction.
+
+        """
+        flags = []
+        for nom, valeur in FLAGS.items():
+            if self.flags & valeur != 0:
+                flags.append(nom)
+
+        structure.flags = flags

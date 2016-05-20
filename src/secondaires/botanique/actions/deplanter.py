@@ -79,7 +79,6 @@ class ClasseAction(Action):
         nombre = int(nombre) if nombre else None
         nb = 0
         for plante in list(importeur.botanique.salles.get(salle, [])):
-            print("Nombre", nombre)
             if plante.cle == cle_plante.lower():
                 if nombre is None or nb < nombre:
                     importeur.botanique.supprimer_plante(plante.identifiant)

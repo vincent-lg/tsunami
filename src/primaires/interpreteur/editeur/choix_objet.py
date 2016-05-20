@@ -66,7 +66,6 @@ class ChoixObjet(Editeur):
 
         return self.aide_courte.format(objet=objet, valeur=objet)
 
-
     @staticmethod
     def afficher_apercu(apercu, objet, valeur, dictionnaire=None,
             none=False, feminin=False):
@@ -94,10 +93,10 @@ class ChoixObjet(Editeur):
     def interpreter(self, msg):
         """Interprétation du contexte"""
         liste = list(self.dictionnaire.keys())
-        liste = [supprimer_accents(e).lower() for e in liste]
+        sa_liste = [supprimer_accents(e).lower() for e in liste]
         msg = supprimer_accents(msg).lower()
-        if msg in liste:
-            indice = liste.index(msg)
+        if msg in sa_liste:
+            indice = sa_liste.index(msg)
             cle = liste[indice]
             objet = self.dictionnaire[cle]
             setattr(self.objet, self.attribut, objet)
