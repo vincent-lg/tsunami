@@ -91,8 +91,8 @@ class Salle(BaseObj):
     nom_scripting = "la salle"
     _nom = "salle"
     _version = 4
-
     enregistrer = True
+
     def __init__(self, zone, mnemonic, x=0, y=0, z=0, valide=True):
         """Constructeur de la salle"""
         BaseObj.__init__(self)
@@ -123,6 +123,9 @@ class Salle(BaseObj):
 
         # Décors
         self.decors = []
+
+        # Propriétaires de la salle (maison, cabine de bateau, etc)
+        self._proprietaires = []
 
         self._construire()
 
@@ -260,6 +263,11 @@ class Salle(BaseObj):
                         details[d.nom] = d
 
         return tuple(details.values())
+
+    @property
+    def proprietaires(self):
+        """Retourne les propriétaires."""
+        return self._proprietaires
 
     def changer_terrain(self, nouveau_terrain):
         """Change le terrain de la salle."""
@@ -844,6 +852,7 @@ class Salle(BaseObj):
         structure.titre = self.titre
         structure.interieur = Fraction(self.interieur)
         structure.illuminee = Fraction(self.illuminee)
+        structure.proprietaires = list(self.proprietaires)
 
         # Coordonnées
         structure.coordonnees = Fraction(self.coords.valide)
@@ -867,6 +876,9 @@ class Salle(BaseObj):
                 self.interieur = bool(valeur)
             elif cle == "illuminee":
                 self.illuminee = bool(valeur)
+            elif cle == "proprietaires":
+                proprietaires = [p for p in valeur if p]
+                self.proprietaires[:] = proprietaires
             elif cle == "coordonnees":
                 self.coords.valide = bool(valeur)
             elif cle == "x":

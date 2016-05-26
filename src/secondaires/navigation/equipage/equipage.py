@@ -367,7 +367,7 @@ class Equipage(BaseObj):
         return None
 
     def get_matelots_au_poste(self, nom_poste, libre=True,
-            endurance_min=None, exception=None):
+            endurance_min=None, exception=None, joueurs=False):
         """Retourne les matelots au poste indiqué.
 
         Cette méthode retourne toujours une liste, bien que cette
@@ -387,6 +387,10 @@ class Equipage(BaseObj):
             libre -- le matelot est-il libre (sans ordre ni état)
             endurance_min -- l'endurance minimum que doit avoir le personnage
             exception -- le matelot qui ne fera pas parti des choix
+            joueurs -- doit-on inclure les matelots joueurs ?
+
+        Si 'joueurs' est à True, retourne une liste de personnages
+        (les joueurs ne sont pas liés à des matelots par défaut).
 
         """
         noms_poste = HIERARCHIE[nom_poste]
@@ -406,6 +410,12 @@ class Equipage(BaseObj):
         if endurance_min is not None:
             matelots = [m for m in matelots if \
                     m.personnage.endurance >= endurance_min]
+
+        if joueurs:
+            matelots = [m.personnage for m in matelots]
+            for joueur, poste in self.joueurs.items():
+                if poste in noms_poste:
+                    matelots.insert(0, joueur)
 
         return matelots
 

@@ -165,6 +165,20 @@ class SalleNavire(Salle):
     def str_cales(self):
         return ", ".join(sorted(self.cales))
 
+    @property
+    def proprietaires(self):
+        """Retourne les propriétaires de la salle (cabine ?)."""
+        if self.poste and self.navire and self.navire.equipage:
+            proprietaires = self.navire.equipage.get_matelots_au_poste(
+                    self.poste, joueurs=True)
+            proprietaire = self.navire.proprietaire
+            if proprietaire not in proprietaires:
+                proprietaires.insert(0, proprietaire)
+
+            return proprietaires
+
+        return []
+
     def get_element(self, cle):
         """Retourne l'élément de type indiqué ou None."""
         elts = [e for e in self.elements if e.nom_type == cle]
