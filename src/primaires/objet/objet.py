@@ -259,6 +259,7 @@ class Objet(BaseObj):
         """Retourne la structure de l'objet."""
         structure = StructureSimple()
         structure.visible = Fraction(self.visible)
+        structure.peut_prendre = Fraction(self.peut_prendre)
         self.prototype.get_structure(structure)
         return structure
 
@@ -267,6 +268,8 @@ class Objet(BaseObj):
         for cle, valeur in structure.donnees.items():
             if cle == "visible":
                 self.visible = bool(valeur)
+            elif cle == "peut_prendre":
+                self.peut_prendre = bool(valeur)
 
 
 class MethodeObjet:
