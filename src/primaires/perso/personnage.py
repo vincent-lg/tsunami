@@ -1060,8 +1060,6 @@ class Personnage(BaseObj):
                 if qtt <= 0:
                     break
 
-            print("On a essayé de retirer", objet, qtt)
-
     def ramasser(self, objet, exception=None, qtt=1):
         """Ramasse l'objet objet.
 
@@ -1427,7 +1425,7 @@ class Personnage(BaseObj):
             elif cle == "faim":
                 self.faim = round(float(valeur), 2)
             elif cle == "estomac":
-                self.soif = round(float(valeur), 2)
+                self.estomac = round(float(valeur), 2)
             elif cle == "niveau":
                 self.niveau = int(valeur)
             elif cle == "xp":
