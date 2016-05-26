@@ -83,6 +83,12 @@ class Module(BaseModule):
         for affection in affections:
             self.ajouter_affection(affection)
 
+        # Renseigne les valeurs scriptables
+        importeur.scripting.valeurs.update({
+                "affection de personnage": self.aff_personnages,
+                "affection de salle": self.aff_salles,
+        })
+
         BaseModule.init(self)
 
     def ajouter_commandes(self):
