@@ -33,6 +33,7 @@
 from textwrap import dedent
 
 from bases.objet.attribut import Attribut
+from primaires.interpreteur.editeur.entier import Entier
 from primaires.interpreteur.editeur.flag import Flag
 from primaires.interpreteur.editeur.flottant import Flottant
 from primaires.interpreteur.editeur.tableau import Tableau
@@ -76,6 +77,10 @@ class Meuble(BaseType):
         # Extensions d'éditeur
         self.etendre_editeur("c", "meuble conteneur", Flag, self,
                 "meuble_conteneur")
+        self.etendre_editeur("as", "nombre de places assises", Entier,
+                self, "nb_places_assises")
+        self.etendre_editeur("al", "nombre de places allongées", Entier,
+                self, "nb_places_allongees")
         self.etendre_editeur("x", "poids max", Flottant, self, "poids_max")
         self.etendre_editeur("r", "facteurs de repos", Tableau, self,
                 "facteurs_repos", (("Nom", ["assis", "allongé"]),
@@ -160,6 +165,24 @@ class Meuble(BaseType):
             "Entrez le |ent|poids maximum|ff| du conteneur ou " \
             "|cmd|/|ff| pour revenir à la fenêtre parente.\n\n" \
             "Poids maximum actuel : {objet.poids_max}"
+
+        # Nombre de places assises
+        nb_assises = enveloppes["as"]
+        nb_assises.apercu = "{valeur}"
+        nb_assises.prompt = "Nombre de places assises : "
+        nb_assises.aide_courte = \
+            "Entrez le |ent|nombre de places assises|ff| du meuble ou\n" \
+            "|cmd|/|ff| pour revenir à la fenêtre parente.\n\n" \
+            "Nombre de places assises : {valeur}"
+
+        # Nombre de places allongées
+        nb_allongees = enveloppes["al"]
+        nb_allongees.apercu = "{valeur}"
+        nb_allongees.prompt = "Nombre de places allongées : "
+        nb_allongees.aide_courte = \
+            "Entrez le |ent|nombre de places allongées|ff| du meuble ou\n" \
+            "|cmd|/|ff| pour revenir à la fenêtre parente.\n\n" \
+            "Nombre de places allongées : {valeur}"
 
         # Facteurs de repos
         repos = enveloppes["r"]
