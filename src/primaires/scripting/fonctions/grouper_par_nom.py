@@ -30,6 +30,7 @@
 
 """Fichier contenant la fonction grouper_par_nom."""
 
+from collections import OrderedDict
 from fractions import Fraction
 
 from primaires.scripting.fonction import Fonction
@@ -66,7 +67,7 @@ class ClasseFonction(Fonction):
           fait
 
         """
-        noms = {}
+        noms = OrderedDict()
         liens = {}
 
         for objet in objets:
