@@ -74,8 +74,8 @@ class ClasseFonction(Fonction):
             nom = objet.get_nom()
             if nom not in noms:
                 noms[nom] = 0
+                liens[nom] = objet
             noms[nom] += 1
-            liens[nom] = objet
 
         groupe = []
         for nom, qtt in noms.items():
