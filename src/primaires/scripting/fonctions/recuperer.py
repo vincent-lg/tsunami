@@ -35,6 +35,7 @@ from fractions import Fraction
 from corps.fonctions import valider_cle
 from primaires.scripting.fonctions.recuperer_valeur_dans_liste import \
         ClasseFonction as CF
+from primaires.scripting.instruction import ErreurExecution
 
 class ClasseFonction(CF):
 
@@ -44,6 +45,7 @@ class ClasseFonction(CF):
     def init_types(cls):
         super(ClasseFonction, cls).init_types()
         cls.ajouter_types(cls.recuperer_structure, "Structure", "str")
+        cls.ajouter_types(cls.recuperer_chaine, "str", "Fraction")
 
     @staticmethod
     def recuperer_structure(structure, cle):
@@ -72,3 +74,40 @@ class ClasseFonction(CF):
             objet = Fraction(objet)
 
         return objet
+
+    @staticmethod
+    def recuperer_chaine(chaine, indice):
+        """Récupère la lettre à la position spécifiée.
+
+        Une chaîne est un ensemble composite au même titre qu'une liste. Elle ne contient que des lettres, cependant (des caractères, qui sont des chaînes de caractère de longueur 1). Vous pouvez utiliser cette fonction la lettre en début ou en fin d'une chaîne, par exemple.
+
+        Paramètres à préciser :
+
+          * chaine : la chaîne utilisée ;
+          * indice : l'indice (numéro de la case où se trouve la lettre).
+
+        Exemples d'utilisation :
+
+          # Récupère la première lettre de la chaîne
+          premiere = recuperer("juste quelques mots", 1)
+          # 'premiere' contient "j"
+          derniere = recuperer("juste quelques mots", -1)
+          # 'derniere' contient "s"
+
+        """
+        indice = int(indice)
+        if indice > 0:
+            if indice > len(chaine):
+                raise ErreurExecution("L'indice précisé ({}) est trop " \
+                        "important pour la chaîne {}.".format(
+                        indice, repr(chaine)))
+            indice -= 1
+        elif indice < 0:
+            if -indice > len(chaine):
+                raise ErreurExecution("L'indice précisé ({}) est trop " \
+                        "important pour la chaîne {}.".format(
+                        indice, repr(chaine)))
+        else:
+            raise ErreurExecution("L'indice précisé vaut 0.")
+
+        return chaine[indice]

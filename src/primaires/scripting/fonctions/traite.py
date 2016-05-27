@@ -67,6 +67,7 @@ class ClasseFonction(Fonction):
           * titre : la première lettre de la chaîne est mise en majuscules
           * sans_accents : retire les accents.
           * lisser : change "de un" en "d'un", "le un" en "l'un"...
+          * rogner : rogne les espaces au début et à la fin de la chaaîne
 
         Exemples d'utilisation :
 
@@ -100,6 +101,8 @@ class ClasseFonction(Fonction):
                 chaine = chaine[0].upper() + chaine[1:]
             elif operation == "capital":
                 chaine = chaine.title()
+            elif operation == "rogner":
+                chaine = chaine.strip(" ")
             elif operation == "sans_accents":
                 chaine = supprimer_accents(chaine)
             elif operation == "lisser":
