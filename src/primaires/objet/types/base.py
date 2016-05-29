@@ -313,6 +313,10 @@ class BaseType(BaseObj, metaclass=MetaType):
         valeur = self.m_valeur
         return valeur * 0.7
 
+    def peut_ramasser(self):
+        """Essaye de ramasser l'objet."""
+        return self.peut_prendre
+
     def regarder(self, personnage, variables=None):
         """Le personnage regarde l'objet"""
         salle = personnage.salle

@@ -57,10 +57,6 @@ class CmdLever(Commande):
         if repos is None:
             repos = personnage.etats.get("allonge")
 
-        if repos and repos.sur and hasattr(repos.sur, "messages"):
-            # repos.sur est un meuble
-            repos.sur.peut_prendre = True
-
         personnage.etats.retirer("assis")
         personnage.etats.retirer("allonge")
         personnage << "Vous vous levez."

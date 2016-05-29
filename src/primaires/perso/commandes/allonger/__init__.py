@@ -75,7 +75,6 @@ class CmdAllonger(Commande):
             personnage.etats.ajouter("allonge", elt)
             if hasattr(elt, "messages"):
                 # elt est un meuble
-                elt.peut_prendre = False
                 message = elt.messages["allongé"]
                 message = message.replace("$meuble", elt.get_nom(1))
                 personnage << message

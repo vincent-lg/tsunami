@@ -116,6 +116,28 @@ class Meuble(BaseType):
     def facteur_allonger(self):
         return self.facteurs_repos["allongé"]
 
+    def peut_ramasser(self):
+        """Essaye de ramasser l'objet."""
+        # On vérifie tous les personnages dans la salle
+        salle = self.grand_parent
+        if hasattr(salle, "personnages"):
+            for personnage in salle.personnages:
+                assis = personnage.etats.get("assis")
+                allonge = personnage.etats.get("allonge")
+                etat = assis or allonge
+                if etat and etat.sur is self:
+                    return False
+
+        # Parcourt tous les joueurs
+        for joueur in importeur.joueur.joueurs.values():
+            assis = joueur.etats.get("assis")
+            allonge = joueur.etats.get("allonge")
+            etat = assis or allonge
+            if etat and etat.sur is self:
+                return False
+
+        return self.peut_prendre
+
     def peut_contenir(self, objet, qtt=1):
         """Retourne True si le conteneur peut prendre l'objet."""
         poids = objet.poids * qtt

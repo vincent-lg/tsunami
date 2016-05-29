@@ -87,7 +87,7 @@ class CmdPrendre(Commande):
         pris = 0
         ramasses = []
         for objet, qtt, conteneur in objets:
-            if not objet.peut_prendre or objet.flags & \
+            if not objet.peut_ramasser() or objet.flags & \
                     FLAGS["ne peut pas prendre"] != 0:
                 personnage << "Vous ne pouvez pas prendre {} avec vos " \
                         "mains...".format(objet.nom_singulier)
