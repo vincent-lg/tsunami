@@ -33,6 +33,7 @@
 from random import choice
 
 from abstraits.module import *
+from corps.aleatoire import choix_probable_liste
 from primaires.affection.personnage import AffectionPersonnage
 from primaires.format.fonctions import format_nb
 from primaires.perso.exceptions.action import ExceptionAction
@@ -615,15 +616,17 @@ class Module(BaseModule):
             while pnj.points_entrainement != 0:
                 stats = familier.fiche.stats_progres
                 selections = []
-                for nom in stats:
+                probabilites = []
+                for nom, probabilite in stats:
                     stat = pnj.stats[nom]
                     if stat.base < stat.marge_max:
                         selections.append(nom)
+                        probabilites.append(probabilite)
 
                 if not selections:
                     return
 
-                stat = choice(selections)
+                stat = choix_probable_liste(selections, probabilites)
                 self.logger.info("{} gagne en {}.".format(pnj.identifiant,
                         stat))
                 pnj.gagner_stat(stat)

@@ -38,12 +38,12 @@ seront placées dans ce package
 from textwrap import dedent
 
 from primaires.interpreteur.editeur.choix import Choix
-from primaires.interpreteur.editeur.flag import Flag
 from primaires.interpreteur.editeur.entier import Entier
+from primaires.interpreteur.editeur.flag import Flag
 from primaires.interpreteur.editeur.presentation import Presentation
 from primaires.interpreteur.editeur.selection import Selection
-from primaires.interpreteur.editeur.uniligne import Uniligne
 from primaires.interpreteur.editeur.tableau import Tableau
+from primaires.interpreteur.editeur.uniligne import Uniligne
 from primaires.scripting.editeurs.edt_script import EdtScript
 from secondaires.familier.aptitudes import APTITUDES
 from secondaires.familier.constantes import *
@@ -123,19 +123,34 @@ class EdtFamedit(Presentation):
             "supportés actuellement : {objet.str_harnachements}"
 
         # Stats pouvant progresser
-        stats = self.ajouter_choix("stats pouvant progresser", "st",
-                Selection, fiche, "stats_progres", ["force", "agilite",
-                "robustesse", "intelligence", "charisme", "sensibilite"])
+        stats = self.ajouter_choix("stats pouvant progresser", "s",
+                Tableau, fiche, "stats_progres",
+                ((("Stat", ["force", "agilite", "robustesse", "intelligence",
+                "charisme", "sensibilite"])), ("Probabilité", "entier")))
         stats.parent = self
         stats.prompt = "Stats pouvant augmenter automatiquement : "
-        stats.apercu = "{objet.str_stats_progres}"
-        stats.aide_courte = \
-            "Entrez un |ent|nom de stat|ff| pour l'ajouter " \
-            "ou le retirer\nou |cmd|/|ff| pour revenir à la fenêtre " \
-            "parente.\n\nQuand le familier gagne un niveau, il va " \
-            "choisir aléatoirement parmi ces stats et les\naugmenter " \
-            "si il a des points d'entraînement disponibles\n\nStats " \
-            "automatiques actuelles : {objet.str_stats_progres}"
+        stats.apercu = "\n{objet.str_stats_progres}"
+        stats.aide_courte = dedent("""
+            Entrez |cmd|/|ff| pour revenir à la fenêtre parente.
+
+            Vous pouvez ici préciser les stats à entaîner automatiquement
+            au passage du niveau du familier, selon certaines probabilités.
+            Vous pouvez configurer certaines stats pour être plus probables
+            que d'autres dans l'entraînement. Précisez en premier paramètre
+            le nom de la stat (comme force, agilité, ...) et en second,
+            après un signe |cmd|/|ff|, la probabilité. Au passage du
+            niveau, la probabilité de choisir cette stat dépendra de la
+            probabilité totale.
+
+            Pour ajouter ou modifier une ligne :
+                |ent|nom de la stat / probabilité|ff|
+
+            Vous pouvez supprimer une ligne en entrant l'option |cmd|/s|ff|
+            suivie du numéro de la ligne à supprimer.
+
+            Probabilités actuelles :
+            {valeur}
+        """.strip("\n"))
 
         # Aliments supplémentaires
         aliments_sup = []
