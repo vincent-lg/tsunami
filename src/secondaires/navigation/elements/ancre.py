@@ -30,8 +30,11 @@
 
 """Fichier contenant la classe Ancre, détaillée plus bas."""
 
+from random import randint
+
 from bases.objet.attribut import Attribut
 from primaires.interpreteur.editeur.entier import Entier
+from primaires.perso.exceptions.stat import DepassementStat
 from secondaires.navigation.constantes import *
 from .base import BaseElement
 
@@ -101,3 +104,43 @@ class Ancre(BaseElement):
             return "L'ancre est jetée."
         else:
             return "La chaîne de l'ancre est enroulée sur le pont."
+
+    def peser(self):
+        """Pèse sur l'ancre pour le lever."""
+        salle = self.parent
+        navire = salle.navire
+
+        # Calcul du nombre de personnages sur l'ancre
+        actifs = [p for p in salle.personnages if "ancre" in p.etats]
+
+        # On consomme l'endurance
+        nb = len(actifs)
+        for personnage in actifs:
+            try:
+                personnage.stats.endurance -= randint(20, 30)
+            except DepassementStat:
+                personnage.etats.retirer("ancre")
+                personnage << "Vous êtes épuisé et arrêter de peser " \
+                        "sur le cabestan."
+                salle.envoyer("{} s'effondre, épuisé, près du cabestan.",
+                        personnage)
+                nb -= 1
+            else:
+                personnage.sans_prompt()
+                personnage << "Vous pesez de toute votre force sur " \
+                        "le cabestan..."
+
+        if nb <= 0:
+            return
+        elif nb >= self.nb_lever:
+            navire.envoyer(
+                    "L'ancre dérape du fond et le navire gîte légèrement.")
+            for actif in actifs:
+                if "ancre" in actif.etats:
+                    actif.etats.retirer("ancre")
+
+            navire.immobilise = False
+            self.jetee = False
+        else:
+            importeur.diffact.ajouter_action("ancre_{}".format(id(self)),
+                    2, self.peser)

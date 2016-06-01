@@ -137,6 +137,10 @@ class Module(BaseModule):
         point.msg_refus = "Vous êtes en train de faire votre point"
         point.msg_visible = "fait le point ici"
         point.act_autorisees = ["parler"]
+        ancre = self.importeur.perso.ajouter_etat("ancre")
+        ancre.msg_refus = "Vous êtes occué avec l'ancre."
+        ancre.msg_visible = "manipule l'ancre ici"
+        ancre.act_autorisees = ["regarder", "parler"]
 
         self.importeur.perso.ajouter_etat("tenir_rames", TenirRames)
 

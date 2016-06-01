@@ -52,6 +52,13 @@ class PrmJeter(Parametre):
     def interpreter(self, personnage, dic_masques):
         """Interprétation du paramètre"""
         salle = personnage.salle
+        if "ancre" in personnage.etats:
+            personnage << "Vous cessez de peser sur le cabestan."
+            salle.envoyer("{} cesse de peser sur le cabestan.", personnage)
+            personnage.etats.retirer("ancre")
+            return
+
+        personnage.agir("ancre")
         if not hasattr(salle, "navire") or salle.navire is None or \
                 salle.navire.etendue is None:
             personnage << "|err|Vous n'êtes pas sur un navire.|ff|"
