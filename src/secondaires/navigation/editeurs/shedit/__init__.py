@@ -35,10 +35,13 @@ seront placées dans ce package
 
 """
 
+from textwrap import dedent
+
 from primaires.interpreteur.editeur.presentation import Presentation
 from primaires.interpreteur.editeur.description import Description
 from primaires.interpreteur.editeur.entier import Entier
 from primaires.interpreteur.editeur.flag import Flag
+from primaires.interpreteur.editeur.tableau import Tableau
 from primaires.interpreteur.editeur.uniligne import Uniligne
 from .edt_carte import EdtCarte
 
@@ -104,6 +107,28 @@ class EdtShedit(Presentation):
         independantes = self.ajouter_choix("descriptions indépendantes", "in", Flag,
                 modele, "descriptions_independantes")
         independantes.parent = self
+
+        # Facteurs d'orientation
+        facteurs = self.ajouter_choix("facteurs d'orientation", "f", Tableau,
+                modele, "facteurs_orientations",
+                ((("Allure", ["vent debout", "au près", "bon plein",
+                "largue", "grand largue", "vent arrière"]),
+                ("Facteur", "flottant"))))
+        facteurs.parent = self
+        facteurs.apercu = "{valeur}"
+        facteurs.aide_courte = dedent("""
+            Entrez |cmd|/|ff| pour revenir à la fenêtre parente.
+
+            Entrez une allure, un signe |cmd|/|ff| et son facteur influençant
+            la vitesse. Si ce facteur est négatif, le navire va "culer".
+            Si ce facteur est positif, la vitesse (dépendant du vent)
+            sera multipliée par le facteur de l'allure précisé. Vent
+            debout est une allure qui fait culer le navire. Le facteur
+            augmente ensuite, restant faible (ou nul) pour le près, davantage
+            pour le bon plein puis le largue, qui est souvent la
+            meilleure allure. Le facteur diminue ensuite généralement
+            pour le grand largue et le vent arrière.
+            {valeur}""".strip("\n"))
 
         # Peut conquérir
         peut_conquerir = self.ajouter_choix("peut conquérir", "co", Flag,
