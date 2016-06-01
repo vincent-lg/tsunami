@@ -118,6 +118,7 @@ class PrmInfo(Parametre):
         msg += "\n  Propriétaire : " + (navire.proprietaire and \
                 navire.proprietaire.nom or "Aucun")
         msg += "\n  Étendue : " + etendue
+        msg += " (profondeur={})".format(navire.profondeur)
         msg += "\n  Immobilisé : {}   En collision : {}   Orientation : " \
                 "{}".format(oui_ou_non(navire.immobilise), oui_ou_non(
                 navire.en_collision), navire.orientation)

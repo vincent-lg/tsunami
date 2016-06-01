@@ -403,6 +403,38 @@ class Navire(Vehicule):
 
         return nb
 
+    @property
+    def profondeur(self):
+        """Retourne la profondeur au-dessous de la salle centrale du navire.
+
+        La profondeur de l'étendue d'eau est pris comme base. La
+        distance avec les côtes de l'étendue (c'est-à-dire les salles
+        accostables) est ensuite utilisé pour minimiser cette profondeur.
+
+        """
+        longueur = self.get_max_distance_au_centre()
+        etendue = self.etendue
+        if not etendue:
+            return 0
+
+        profondeur = etendue.profondeur
+        centre = self.position
+        c_x, c_y, c_z = centre.x, centre.y, centre.z
+        distance = 100
+
+        for salle in etendue.cotes.values():
+            x, y, z = salle.coords.x, salle.coords.y, salle.coords.z
+            vecteur = Vector(c_x - x, c_y - y, c_z - z)
+            if vecteur.mag <= distance:
+                distance = vecteur.mag
+
+        if distance < (longueur + 1):
+            return 3
+        elif distance < 10:
+            return 10
+        else:
+            return round(profondeur * distance / 100)
+
     def get_nom_pour(self, personnage):
         """Retourne le nom pour le personnage précisé."""
         return self.desc_survol
