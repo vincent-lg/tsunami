@@ -150,3 +150,8 @@ class Volonte(BaseObj, metaclass=MetaVolonte):
             return reg.groups()
 
         return None
+
+    @classmethod
+    def extraire_arguments(cls, navire):
+        """Extrait les arguments de la volonté."""
+        return ()

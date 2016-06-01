@@ -28,19 +28,46 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Package contenant les différents ordres définis chacun dans un fichier.
+"""Fichier contenant l'ordre LeverAncre."""
 
-La classe-mère des ordres est définie dans le répertoire parent, fichier
-ordre.py.
+from secondaires.navigation.equipage.signaux import *
 
-"""
+from ..ordre import *
 
-from secondaires.navigation.equipage.ordres.deplacer import Deplacer
-from secondaires.navigation.equipage.ordres.hisser_voile import HisserVoile
-from secondaires.navigation.equipage.ordres.lever_ancre import LeverAncre
-from secondaires.navigation.equipage.ordres.long_deplacer import LongDeplacer
-from secondaires.navigation.equipage.ordres.plier_voile import PlierVoile
-from secondaires.navigation.equipage.ordres.relacher_gouvernail import \
-        RelacherGouvernail
-from secondaires.navigation.equipage.ordres.tenir_gouvernail import \
-        TenirGouvernail
+class LeverAncre(Ordre):
+
+    """Ordre lever_ancre.
+
+    Cet ordre est appelé pour demander à un matelot de lever l'ancre.
+
+    """
+
+    cle = "lever_ancre"
+    etats_autorises = ("ancre", "")
+
+    def executer(self):
+        """Exécute l'ordre : déplace le matelot."""
+        personnage = self.matelot.personnage
+        salle = personnage.salle
+        if not hasattr(salle, "ancre"):
+            return
+
+        ancre = salle.get_element("ancre")
+        if not ancre:
+            return
+
+        if not ancre.jetee:
+            yield SignalInutile("l'ancre est déjà levée")
+        else:
+            ancre.lever(personnage)
+            i = 0
+            while "ancre" in personnage.etats:
+                i += 1
+                if i > 100:
+                    yield SignalAbandonne("J'ai essayé trop longtemps.")
+                elif personnage.stats.endurance < 40:
+                    yield SignalRelais("Je suis trop fatigué.")
+                else:
+                    yield 2
+
+            yield SignalTermine()

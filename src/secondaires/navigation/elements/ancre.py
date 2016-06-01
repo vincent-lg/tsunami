@@ -105,6 +105,38 @@ class Ancre(BaseElement):
         else:
             return "La chaîne de l'ancre est enroulée sur le pont."
 
+    def jeter(self, personnage):
+        """Jète l'ancre."""
+        salle = self.parent
+        navire = salle.navire
+        vitesse = navire.vitesse.norme
+        navire.vitesse.x = 0
+        navire.vitesse.y = 0
+        navire.vitesse.z = 0
+        navire.acceleration.x = 0
+        navire.acceleration.y = 0
+        navire.acceleration.z = 0
+        navire.immobilise = True
+        self.jetee = True
+        personnage << "Vous jetez l'ancre."
+        salle.envoyer("{} jète l'ancre.", personnage)
+        if vitesse > 1:
+            navire.envoyer("Le navire tremble violemment quand son " \
+                    "ancre touche le fond.")
+        else:
+            navire.envoyer("Le navire frémit légèrement quand son " \
+                    "ancre touche le fond.")
+
+    def lever(self, personnage):
+        """Commence à lever l'ancre."""
+        salle = self.parent
+        navire = salle.navire
+        personnage.etats.ajouter("ancre")
+        personnage << "Vous pesez sur le cabestan pour lever l'ancre."
+        salle.envoyer("{} pèse sur le cabestan pour lever l'ancre.", personnage)
+        importeur.diffact.ajouter_action("ancre_{}".format(id(self)),
+                2, self.peser)
+
     def peser(self):
         """Pèse sur l'ancre pour le lever."""
         salle = self.parent

@@ -28,19 +28,42 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Package contenant les différents ordres définis chacun dans un fichier.
+"""Fichier contenant l'ordre JeterAncre."""
 
-La classe-mère des ordres est définie dans le répertoire parent, fichier
-ordre.py.
+from secondaires.navigation.equipage.signaux import *
 
-"""
+from ..ordre import *
 
-from secondaires.navigation.equipage.ordres.deplacer import Deplacer
-from secondaires.navigation.equipage.ordres.hisser_voile import HisserVoile
-from secondaires.navigation.equipage.ordres.lever_ancre import LeverAncre
-from secondaires.navigation.equipage.ordres.long_deplacer import LongDeplacer
-from secondaires.navigation.equipage.ordres.plier_voile import PlierVoile
-from secondaires.navigation.equipage.ordres.relacher_gouvernail import \
-        RelacherGouvernail
-from secondaires.navigation.equipage.ordres.tenir_gouvernail import \
-        TenirGouvernail
+class JeterAncre(Ordre):
+
+    """Ordre jeter_ancre.
+
+    Cet ordre est appelé pour demander à un matelot de jeter l'ancre.
+
+    """
+
+    cle = "jeter_ancre"
+
+    def executer(self):
+        """Exécute l'ordre : déplace le matelot."""
+        personnage = self.matelot.personnage
+        salle = personnage.salle
+        navire = salle.navire
+        if not hasattr(salle, "ancre"):
+            return
+
+        ancre = salle.get_element("ancre")
+        if not ancre:
+            return
+
+        if ancre.jetee:
+            yield SignalInutile("l'ancre est déjà jetée.")
+        elif navire.vitesse.norme >= 2:
+            yield SignalAbandonne("Le navire va encore trop vite, capitaine !",
+                    True)
+        elif ancre.longueur < navire.profondeur:
+            yield SignalAbandonne("La chaîne de l'ancre n'est pas assez " \
+                    "longue.", True)
+        else:
+            ancre.jeter(personnage)
+            yield SignalTermine()

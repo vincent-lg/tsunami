@@ -83,20 +83,4 @@ class PrmJeter(Parametre):
         elif ancre.longueur < profondeur:
             personnage << "|err|Vous ne pouvez jeter l'ancre ici.|ff|"
         else:
-            vitesse = navire.vitesse.norme
-            navire.vitesse.x = 0
-            navire.vitesse.y = 0
-            navire.vitesse.z = 0
-            navire.acceleration.x = 0
-            navire.acceleration.y = 0
-            navire.acceleration.z = 0
-            navire.immobilise = True
-            ancre.jetee = True
-            personnage << "Vous jetez l'ancre."
-            personnage.salle.envoyer("{} jète l'ancre.", personnage)
-            if vitesse > 1:
-                navire.envoyer("Le navire tremble violemment quand son " \
-                        "ancre touche le fond.")
-            else:
-                navire.envoyer("Le navire frémit légèrement quand son " \
-                        "ancre touche le fond.")
+            ancre.jeter(personnage)

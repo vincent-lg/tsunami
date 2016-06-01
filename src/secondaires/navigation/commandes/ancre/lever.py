@@ -89,8 +89,4 @@ class PrmLever(Parametre):
                         "navire.|ff|"
                 return
 
-            personnage.etats.ajouter("ancre")
-            personnage << "Vous pesez sur le cabestan pour lever l'ancre."
-            salle.envoyer("{} pèse sur le cabestan pour lever l'ancre.", personnage)
-            importeur.diffact.ajouter_action("ancre_{}".format(id(ancre)),
-                    2, ancre.peser)
+            ancre.lever(personnage)

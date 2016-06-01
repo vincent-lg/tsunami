@@ -39,6 +39,8 @@ from secondaires.navigation.equipage.volontes.aborder import Aborder
 from secondaires.navigation.equipage.volontes.colmater import Colmater
 from secondaires.navigation.equipage.volontes.feu import Feu
 from secondaires.navigation.equipage.volontes.hisser_voiles import HisserVoiles
+from secondaires.navigation.equipage.volontes.jeter_ancre import JeterAncre
+from secondaires.navigation.equipage.volontes.lever_ancre import LeverAncre
 from secondaires.navigation.equipage.volontes.orienter_voiles import OrienterVoiles
 from secondaires.navigation.equipage.volontes.plier_voiles import PlierVoiles
 from secondaires.navigation.equipage.volontes.ramer import Ramer
