@@ -25,10 +25,12 @@
 # INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
 # CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
-# pereIBILITY OF SUCH DAMAGE.
+# POSSIBILITY OF SUCH DAMAGE.
 
 
 """Ce fichier définit la classe 'enveloppe_objet' détaillée lus bas."""
+
+from textwrap import dedent
 
 from abstraits.obase import BaseObj
 
@@ -67,6 +69,15 @@ class EnveloppeObjet(BaseObj):
 
     def __getnewargs__(self):
         return (None, None, None)
+
+    def aider(self, aide):
+        """Change l'aide courte.
+
+        L'aide courte précisée peut se trouver sous la forme longue
+        (sur plusieurs lignes avec de l'indentation qui sera retirée).
+
+        """
+        self.aide_courte = dedent(aide.strip("\n"))
 
     def construire(self, pere):
         """Retourne l'éditeur construit"""

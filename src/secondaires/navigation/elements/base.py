@@ -76,31 +76,11 @@ class BaseElement(BaseObj, metaclass=MetaElt):
             del attrs["_attributs"]
         return attrs
 
-    def etendre_editeur(self, raccourci, ligne, editeur, objet, attribut, *sup):
-        """Permet d'étendre l'éditeur d'éléments en fonction du type.
+    def editer(self, presentation):
+        """Méthode à rédéfinir, appelée quand l'éditeur s'affiche.
 
-        Paramètres à entrer :
-        -   raccourci   le raccourci permettant d'accéder à la ligne
-        -   ligne       la ligne de l'éditeur (exemple 'Description')
-        -   editeur     le contexte-éditeur (exemple Uniligne)
-        -   objet       l'objet à éditer
-        -   attribut    l'attribut à éditer
-
-        Cette méthode est appelée lors de la création de l'éditeur
-        d'éléments.
-
-        """
-        self._extensions_editeur.append(
-            (raccourci, ligne, editeur, objet, attribut, sup))
-
-    def travailler_enveloppes(self, enveloppes):
-        """Travail sur les enveloppes.
-
-        On récupère un dictionnaire représentant la présentation avec en
-        clé les raccourcis et en valeur les enveloppes.
-
-        Cela peut permettre de travailler sur les enveloppes ajoutées par
-        'etendre_editeur'.
+        Cette méthode est à redéfinir quand on souhaite ajouter des
+        options spécifiques à l'éditeur de l'élément en question.
 
         """
         pass

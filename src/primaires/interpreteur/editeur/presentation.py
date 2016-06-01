@@ -128,6 +128,8 @@ class Presentation(Editeur):
                     passage_apres = True
 
         self.raccourcis[raccourci] = nom
+        enveloppe.parent = self
+        enveloppe.apercu = "{valeur}"
         return enveloppe
 
     def ajouter_choix_avant(self, avant, nom, raccourci, objet_editeur,
@@ -152,6 +154,8 @@ class Presentation(Editeur):
                     self.choix.move_to_end(cle)
 
         self.raccourcis[raccourci] = nom
+        enveloppe.parent = self
+        enveloppe.apercu = "{valeur}"
         return enveloppe
 
     def supprimer_choix(self, nom):
