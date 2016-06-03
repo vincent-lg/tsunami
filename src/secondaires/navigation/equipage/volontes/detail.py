@@ -98,6 +98,9 @@ class Detail(Volonte):
         points = Visible.observer(personnage, portee, precision,
                 {"": navire})
         msg = points.formatter(direction, limite)
+        if not msg:
+            msg = "La vigie signale que rien n'est visible pour l'heure."
+
         initiateur.envoyer(msg)
 
     def crier_ordres(self, personnage):
