@@ -545,6 +545,7 @@ class Navire(Vehicule):
                         salle.r_x, salle.r_y, salle.r_z, modele, self)
             n_salle.titre = salle.titre
             n_salle.titre_court = salle.titre_court
+            n_salle.illuminee = True
             if not modele.descriptions_independantes:
                 n_salle.description = salle.description
                 n_salle.details = salle.details
@@ -854,10 +855,19 @@ class Navire(Vehicule):
             self.direction.z = z
             self.maj_salles()
 
-    def envoyer(self, message):
-        """Envoie le message à tous les personnages présents dans le navire."""
+    def envoyer(self, message, exceptions=None, prompt=True):
+        """Envoie le message à tous les personnages présents dans le navire.
+
+        Les exceptions sont des salles qui ne recevront pas ce message.
+        Si 'prompt' est à False, le prompt sera désactivé.
+
+        """
+        exceptions = exceptions or []
         for salle in self.salles.values():
-            salle.envoyer(message)
+            if salle in exceptions:
+                continue
+
+            salle.envoyer(message, prompt=prompt)
 
     def envoyer_autour(self, messages, rayon, exclure_navire=True):
         """Envoie le message dans les salles autour du navire.

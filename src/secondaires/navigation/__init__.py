@@ -373,6 +373,7 @@ class Module(BaseModule):
         self.nav_logger.info("Mise à jour des navires...")
         for navire in self.navires.values():
             for salle in navire.salles.values():
+                salle.illuminee = True
                 for element in salle.elements:
                     element.mettre_a_jour_attributs()
                 rames = salle.rames

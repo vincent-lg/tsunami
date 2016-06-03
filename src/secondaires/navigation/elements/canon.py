@@ -280,7 +280,11 @@ class Canon(BaseElement):
                     salle=cible)
 
             # Inflige des dégâts au navire
-            if navire and not navire.accoste and degats > 0:
+            if navire and not navire.immobilise:
+                navire.envoyer("|rg|{}  détonne {}.|ff|".format(
+                        projectile.nom_singulier.capitalize(),
+                        cible.titre_court), exceptions=[cible], prompt=False)
+
                 cible.noyer(int(degats / 2))
                 cible.navire.equipage.ajouter_ennemi(adverse)
 
