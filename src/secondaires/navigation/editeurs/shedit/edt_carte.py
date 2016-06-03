@@ -70,6 +70,7 @@ class EdtCarte(Editeur):
             /d mnémonique
 
         """
+        modele = self.objet
         if modele.get_salle(arguments) is None:
             self.pere << "|err|Le mnémonique {} est introuvable.|ff|".format(
                     arguments)

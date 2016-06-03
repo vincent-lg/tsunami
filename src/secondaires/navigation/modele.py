@@ -133,6 +133,7 @@ class ModeleNavire(BaseObj):
             for i in range(1, int(max(mnemonics, key=int)) + 2):
                 if str(i) not in mnemonics:
                     mnemonic = str(i)
+                    break
 
         salle = SalleNavire(self.cle, mnemonic, r_x, r_y, r_z, self)
         self.salles[r_coords] = salle
@@ -158,6 +159,19 @@ class ModeleNavire(BaseObj):
                     contraire)
             salle_2.sorties.ajouter_sortie(contraire, nom_contraire,
                     article_contraire, salle_1, direction)
+
+    def supprimer_salle(self, mnemonic):
+        """Supprime la salle précisée."""
+        c, salle = self.get_salle(mnemonic)
+
+        # On supprime les sorties menant à la salle
+        for autre in self.salles.values():
+            for sortie in list(autre.sorties):
+                if sortie.salle_dest is salle:
+                    autre.sorties.supprimer_sortie(sortie.direction)
+
+        # Supprime la salle
+        self.salles.pop(c).detruire()
 
     def generer_graph(self):
         """Génère le graph des sorties.

@@ -574,7 +574,8 @@ class Navire(Vehicule):
         # On recopie les sorties
         for salle in modele.salles.values():
             n_salle = self.salles[salle.r_coords]
-            for dir, sortie in salle.sorties._sorties.items():
+            for sortie in salle.sorties:
+                dir = sortie.direction
                 if sortie and sortie.salle_dest:
                     c_salle = self.salles[sortie.salle_dest.r_coords]
                     t_sortie = n_salle.sorties.ajouter_sortie(dir,

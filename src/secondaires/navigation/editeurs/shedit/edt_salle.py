@@ -267,7 +267,7 @@ class EdtSalle(Presentation):
 
         # Poste
         poste = self.ajouter_choix("salle réservée au grade", "rad",
-                Choix, salle, "poste", ORDRE)
+                Choix, salle, "poste", list(ORDRE) + [""])
         poste.parent = self
         poste.apercu = "{objet.poste}"
         poste.aide_courte = \
@@ -397,7 +397,7 @@ class EdtSalle(Presentation):
         msg += " Sorties :"
         for dir, nom in NOMS_SORTIES.items():
             sortie = salle.sorties[dir]
-            if sortie:
+            if sortie and sortie.salle_dest:
                 msg += "\n   {} vers {}".format(sortie.nom.capitalize(),
                         sortie.salle_dest.mnemonic)
                 if sortie.porte:
