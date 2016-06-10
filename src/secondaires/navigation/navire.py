@@ -1170,14 +1170,14 @@ class Navire(Vehicule):
 
         importeur.navigation.supprimer_navire(self.cle)
 
-    def enlever_canot(self, canot):
+    def remonter_canot(self, canot):
         """Cette méthode enlève le canot et le met à bord.
 
         Le canot est un autre navire (supposément un petit). Il
         est placé dans les canots du bord et pourra être descendu ailleurs.
 
         """
-        if not canot.modele.canot:
+        if not canot.modele.a_canot:
             raise ValueError("{} n'est pas un canot".format(canot))
 
         for salle in canot.salles.values():
@@ -1185,10 +1185,25 @@ class Navire(Vehicule):
                 raise ValueError("{} a des personnages".format(salle))
 
         canot.etendue = None
-        for salle in canot.salles.values():
-            salle.coords.valide = False
+        self.canots.append(canot)
+        importeur.navigation.nav_logger.info("{} remonte le canot {}".format(
+                self.cle, canot.cle))
 
-        self.canots.append(canot.cle)
+    def descendre_canot(self, canot):
+        """Descend un canot qui se trouve dans self.canots."""
+        # On positionne le canot juste devant la proue
+        y = 0
+        while (0, y, 0) in self.modele.salles:
+            y += 1
+
+        p_x, p_y, p_z = self.position.tuple
+        canot.etendue = self.etendue
+        canot.position.x = p_x
+        canot.position.y = p_y + y
+        canot.position.z = p_z
+        self.canots.remove(canot)
+        importeur.navigation.nav_logger.info("{} met à l'eau le canot " \
+                "{}".format(self.cle, canot.cle))
 
     def detruire(self):
         """Destruction du self."""

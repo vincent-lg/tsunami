@@ -62,7 +62,6 @@ class ModeleNavire(BaseObj):
         self.duree_construction = 60
         self.description = Description(parent=self)
         self.description_vente = Description(parent=self)
-        self.canot = False
         self.masculin = True
         self.peut_conquerir = True
         self.niveau = 5
@@ -93,6 +92,21 @@ class ModeleNavire(BaseObj):
     def mnemonics_salles(self):
         """Retourne un tuple des mnémoniques des salles."""
         return tuple(s.mnemonic for s in self.salles.values())
+
+    @property
+    def a_canot(self):
+        """Le modèle de navire a-t-il un canot ?
+
+        Le modèle de navire a un canot si il existe un objet de
+        même clé que le modèle.
+
+        """
+        return self.cle in importeur.objet.prototypes
+
+    @property
+    def prototype_canot(self):
+        """Retourne le prototype d'objet du canot ou None."""
+        return importeur.objet.prototypes.get(self.cle)
 
     def get_max_distance_au_centre(self):
         """Retourne la distance maximum par rapport au centre du navire."""

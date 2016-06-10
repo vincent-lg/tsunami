@@ -31,6 +31,7 @@
 """Fichier contenant la classe Joueur, détaillée plus bas."""
 
 from datetime import datetime
+from textwrap import dedent
 
 from abstraits.obase import BaseObj
 from corps.fonctions import lisser as fn_lisser
@@ -175,6 +176,23 @@ class Joueur(Personnage):
         if self.derniere_connexion:
             # On appelle l'hook à la connexion
             type(self).importeur.hook["joueur:connecte"].executer(self)
+            self << dedent("""
+                |rg|ATTENTION : Le système de sauvegarde doit être changé.|ff|
+                La sauvegarde de l'univers ne fonctionne plus sur la
+                machine. Un nouveau système de sauvegarde va être mis en
+                place au plus vite. Cette modification nécessaitera
+                cependant pas mal de travail, et pourra prendre plusieurs
+                jours. Le MUD continuera à tourner dans l'intervalle, mais
+                l'univers ne sera plus sauvegardé. Vous pouvez continuer à
+                vous connecter au jeu, discuter sur les canaux, mais les
+                modifications apportées à votre joueur ou à l'univers seront
+                perdues à la nouvelle sauvegarde.
+
+                L'équipe des immortels fait son possible pour vous
+                permettre de jouer à nouveau sur Vancia.
+
+                Merci de votre compréhension, merci pour vos encouragements.
+            """)
 
         self.derniere_connexion = datetime.now()
         self.adresse_ip = self.instance_connexion.adresse_ip

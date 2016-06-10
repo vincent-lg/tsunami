@@ -173,11 +173,11 @@ class Module(BaseModule):
             self.charger()
 
             # Création de l'action différée pour enregistrer périodiquement
-            importeur.diffact.ajouter_action("enregistrement", 60 * 60,
-                    self.enregistrer_periodiquement)
-        else: # Mongo
-            importeur.diffact.ajouter_action("enregistrement", 1,
-                    self.mongo_enregistrer_file)
+            #importeur.diffact.ajouter_action("enregistrement", 60 * 60,
+            #        self.enregistrer_periodiquement)
+        #else: # Mongo
+            #importeur.diffact.ajouter_action("enregistrement", 1,
+            #        self.mongo_enregistrer_file)
         BaseModule.init(self)
 
     def preparer(self):
@@ -254,8 +254,8 @@ class Module(BaseModule):
         On enregistre tous les objets dans la sauvegarde pickle.
 
         """
-        importeur.diffact.ajouter_action("enregistrement", 60 * 60,
-                self.enregistrer_periodiquement)
+        #importeur.diffact.ajouter_action("enregistrement", 60 * 60,
+        #        self.enregistrer_periodiquement)
         if self.enregistre_actuellement:
             return
 

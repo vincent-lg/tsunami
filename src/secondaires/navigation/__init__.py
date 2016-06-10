@@ -328,6 +328,7 @@ class Module(BaseModule):
             commandes.cale.CmdCale(),
             commandes.calfeutrer.CmdCalfeutrer(),
             commandes.canon.CmdCanon(),
+            commandes.canot.CmdCanot(),
             commandes.cap.CmdCap(),
             commandes.chantier.CmdChantier(),
             commandes.debarquer.CmdDebarquer(),
