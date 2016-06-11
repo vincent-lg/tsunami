@@ -1,6 +1,6 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2012 LE GOFF Vincent
+# Copyright (c) 2010-2016 LE GOFF Vincent
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -48,6 +48,7 @@ class Obstacle(BaseObj):
         BaseObj.__init__(self)
         self.nom = nom
         self.desc_survol = desc_survol
+        self.symbole = ""
         self._construire()
 
     def __getnewargs__(self):

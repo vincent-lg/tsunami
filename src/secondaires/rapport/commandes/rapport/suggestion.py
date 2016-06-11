@@ -1,6 +1,6 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2012 LE GOFF Vincent
+# Copyright (c) 2010-2016 LE GOFF Vincent
 # All rights reserved.
 # 
 # Redistribution and use in source and binary forms, with or without
@@ -42,7 +42,7 @@ class PrmSuggestion(Parametre):
         Parametre.__init__(self, "suggestion", "suggest")
         self.groupe = "joueur"
         self.schema = "<message>"
-        self.aide_courte = "crée une suggestion"
+        self.aide_courte = "crée une suggestion concernant l'univers"
         self.aide_longue = \
             "Cette commande permet de créer une nouvelle suggestion liée " \
             "à l'évolution de l'univers. Vous devez préciser en argument " \

@@ -1,6 +1,6 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2010 LE GOFF Vincent
+# Copyright (c) 2010-2016 LE GOFF Vincent
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -34,6 +34,7 @@ from . import cle_navire
 from . import cle_vent
 from . import modele
 from . import nom_matelot
+from . import nom_navire
 from . import objet_cale
 from . import point_visible
 from . import vitesse_rames

@@ -1,6 +1,6 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2012 LE GOFF Vincent
+# Copyright (c) 2010-2016 LE GOFF Vincent
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -91,6 +91,8 @@ class CmdDebarquer(Commande):
                 navire.nom), personnage)
         salle.envoyer("{{}} saute sur {}.".format(
                 d_salle.titre.lower()), personnage)
+        importeur.hook["personnage:deplacer"].executer(
+                personnage, d_salle, None, 0)
         if not hasattr(d_salle, "navire") or d_salle.navire is None:
             personnage.envoyer_tip("N'oubliez pas d'amarrer votre navire " \
                     "avec %amarre% %amarre:attacher%.")

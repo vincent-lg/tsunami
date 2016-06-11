@@ -1,6 +1,6 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2010 LE GOFF Vincent
+# Copyright (c) 2010-2016 LE GOFF Vincent
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -107,6 +107,7 @@ class Sorties(BaseObj):
         BaseObj.__init__(self)
         self.parent = parent
         self._sorties = OrderedDict(NOMS_SORTIES)
+
         # On passe le statut en CONSTRUIT
         self._statut = CONSTRUIT
 
@@ -136,6 +137,12 @@ class Sorties(BaseObj):
     def __contains__(self, direction):
         return direction in self._sorties and self._sorties[direction] \
                 is not None
+
+    def __len__(self):
+        """Retourne le nombre de sorties existantes."""
+        sorties = [s for s in self._sorties.values() if \
+                s and s.salle_dest]
+        return len(sorties)
 
     @property
     def sorties_par_alpha(self):

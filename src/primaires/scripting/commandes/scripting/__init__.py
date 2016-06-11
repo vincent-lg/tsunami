@@ -1,11 +1,11 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2010 LE GOFF Vincent
+# Copyright (c) 2010-2016 LE GOFF Vincent
 # All rights reserved.
-# 
+#
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are met:
-# 
+#
 # * Redistributions of source code must retain the above copyright notice, this
 #   list of conditions and the following disclaimer.
 # * Redistributions in binary form must reproduce the above copyright notice,
@@ -14,7 +14,7 @@
 # * Neither the name of the copyright holder nor the names of its contributors
 #   may be used to endorse or promote products derived from this software
 #   without specific prior written permission.
-# 
+#
 # THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
 # AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
 # IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -32,11 +32,12 @@
 
 from primaires.interpreteur.commande.commande import Commande
 from .alerte import PrmAlerte
+from .exec import PrmExec
 
 class CmdScripting(Commande):
-    
+
     """Commande 'scripting'"""
-    
+
     def __init__(self):
         """Constructeur de la commande"""
         Commande.__init__(self, "scripting", "scripting")
@@ -46,7 +47,8 @@ class CmdScripting(Commande):
         self.aide_longue = \
             "Cette commande permet de manipuler les scripting, de " \
             "consulter les alertes envoyés lors d'une erreur de script."
-        
+
     def ajouter_parametres(self):
         """Ajout des paramètres."""
         self.ajouter_parametre(PrmAlerte())
+        self.ajouter_parametre(PrmExec())

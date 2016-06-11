@@ -1,6 +1,6 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2010 LE GOFF Vincent
+# Copyright (c) 2010-2016 LE GOFF Vincent
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -30,6 +30,8 @@
 
 """Fichier contenant la classe ModeleNavire, détaillée plus bas."""
 
+from queue import Queue
+
 from abstraits.obase import BaseObj
 from primaires.format.description import Description
 from .salle import *
@@ -53,14 +55,27 @@ class ModeleNavire(BaseObj):
         self.vehicules = []
         self.salles = {}
         self.poids_max = 200
+        self.tirant_eau = 3
+        self.fond_plat = False
         self.graph = {}
         self.m_valeur = 1000
         self.duree_construction = 60
         self.description = Description(parent=self)
         self.description_vente = Description(parent=self)
-        self.canot = False
         self.masculin = True
+        self.peut_conquerir = True
+        self.niveau = 5
         self.cale_max = 200
+        self.facteur_rames = 0.8
+        self.facteurs_orientations = {
+                "vent debout": -0.3,
+                "au près": 0.5,
+                "bon plein": 0.8,
+                "largue": 1.2,
+                "grand largue": 0.9,
+                "vent arrière": 0.7,
+        }
+        self.descriptions_independantes = False
         self._construire()
 
     def __getnewargs__(self):
@@ -94,6 +109,9 @@ class ModeleNavire(BaseObj):
         attrs["salles"] = salles
         BaseObj.__setstate__(self, attrs)
 
+    def __repr__(self):
+        return self.cle
+
     @property
     def coordonnees_salles(self):
         """Retourne un tuple des coorodnnées des salles."""
@@ -101,8 +119,23 @@ class ModeleNavire(BaseObj):
 
     @property
     def mnemonics_salles(self):
-        """Retourne un tuple des mnémonics des salles."""
+        """Retourne un tuple des mnémoniques des salles."""
         return tuple(s.mnemonic for s in self.salles.values())
+
+    @property
+    def a_canot(self):
+        """Le modèle de navire a-t-il un canot ?
+
+        Le modèle de navire a un canot si il existe un objet de
+        même clé que le modèle.
+
+        """
+        return self.cle in importeur.objet.prototypes
+
+    @property
+    def prototype_canot(self):
+        """Retourne le prototype d'objet du canot ou None."""
+        return importeur.objet.prototypes.get(self.cle)
 
     def get_max_distance_au_centre(self):
         """Retourne la distance maximum par rapport au centre du navire."""
@@ -113,7 +146,7 @@ class ModeleNavire(BaseObj):
         return max(distances)
 
     def get_salle(self, mnemonic):
-        """Retourne la salle ayant le mnémonic indiqué.
+        """Retourne la salle ayant le mnémonique indiqué.
 
         Lève une exception ValueError si la salle n'est pas trouvée.
 
@@ -129,7 +162,7 @@ class ModeleNavire(BaseObj):
 
         r_x, r_y et r_z sont les coordonnées relatives par rapport
         au milieu du navire.
-        Si mnemonic est None (par défaut), cherche un mnémonic disponible.
+        Si mnemonic est None (par défaut), cherche un mnémonique disponible.
 
         """
         r_coords = (r_x, r_y, r_z)
@@ -138,11 +171,12 @@ class ModeleNavire(BaseObj):
                     "occupées".format(*r_coords))
 
         if mnemonic is None:
-            # On cherche le plus petit mnémonic non utilisé
+            # On cherche le plus petit mnémonique non utilisé
             mnemonics = sorted(self.mnemonics_salles)
             for i in range(1, int(max(mnemonics, key=int)) + 2):
                 if str(i) not in mnemonics:
                     mnemonic = str(i)
+                    break
 
         salle = SalleNavire(self.cle, mnemonic, r_x, r_y, r_z, self)
         self.salles[r_coords] = salle
@@ -169,6 +203,19 @@ class ModeleNavire(BaseObj):
             salle_2.sorties.ajouter_sortie(contraire, nom_contraire,
                     article_contraire, salle_1, direction)
 
+    def supprimer_salle(self, mnemonic):
+        """Supprime la salle précisée."""
+        c, salle = self.get_salle(mnemonic)
+
+        # On supprime les sorties menant à la salle
+        for autre in self.salles.values():
+            for sortie in list(autre.sorties):
+                if sortie.salle_dest is salle:
+                    autre.sorties.supprimer_sortie(sortie.direction)
+
+        # Supprime la salle
+        self.salles.pop(c).detruire()
+
     def generer_graph(self):
         """Génère le graph des sorties.
 
@@ -176,49 +223,57 @@ class ModeleNavire(BaseObj):
         (origine, destination) et en valeur la liste des sorties
         nécessaires pour s'y rendre.
 
+        L'algorithme Dijkstra est utilisé.
+
         """
-        def ajouter_paire(graph, origine, destination, sorties):
-            """Ajoute une paire unique au graph."""
-
-            o_mnemo = origine if isinstance(origine, str) else origine.mnemonic
-            d_mnemo = destination if isinstance(destination, str) else \
-                    destination.mnemonic
-            if o_mnemo == d_mnemo:
-                return False
-
-            chemin = graph.get((o_mnemo, d_mnemo))
-            if chemin is None or len(sorties) < len(chemin):
-                graph[(o_mnemo, d_mnemo)] = sorties
-                return True
-
-            return False
-
-        def enrichir_graph(graph, origine, destination, sorties):
-            """Enrichit le graph."""
-            court = ajouter_paire(graph, origine, destination, sorties)
-            if court:
-                for (o_mnemo, d_mnemo), chemin in tuple(graph.items()):
-                    if o_mnemo == destination.mnemonic:
-                        n_chemin = list(sorties) + list(chemin)
-                        ajouter_paire(graph, origine, d_mnemo, n_chemin)
-
-                for sortie in destination.sorties:
-                    if sortie.salle_dest:
-                        enrichir_graph(graph, destination, sortie.salle_dest,
-                                [sortie.nom])
-
-                for (o_mnemo, d_mnemo), chemin in tuple(graph.items()):
-                    if o_mnemo == destination.mnemonic:
-                        n_chemin = list(sorties) + list(chemin)
-                        ajouter_paire(graph, origine, d_mnemo, n_chemin)
-
         graph = {}
-        origine = self.salles.get((0, 0, 0))
-        if origine:
-            for sortie in origine.sorties:
-                if sortie and sortie.salle_dest:
-                    enrichir_graph(graph, origine, sortie.salle_dest,
-                            [sortie.nom])
+        aretes = {}
+        sorties = {}
+
+        # On remplit le chemin avec toutes les liaisons
+        for salle in self.salles.values():
+            origine = salle.mnemonic
+            aretes[origine] = []
+            for sortie in salle.sorties:
+                destination = sortie.salle_dest.mnemonic
+                aretes[origine].append(destination)
+                sorties[origine, destination] = sortie.nom
+
+        # Population des chemins dans le graph
+        for origine in range(1, len(self.salles) + 1):
+            origine = str(origine)
+            for destination in range(1, len(self.salles) + 1):
+                destination = str(destination)
+                if origine == destination:
+                    continue
+
+                frontier = Queue()
+                frontier.put(origine)
+                origines = {origine: None}
+                while not frontier.empty():
+                    actuel = frontier.get()
+                    if actuel == destination:
+                        break
+
+                    for fils in aretes[actuel]:
+                        if fils not in origines:
+                            frontier.put(fils)
+                            origines[fils] = actuel
+
+
+                # Recherche la liste des sorties
+                parent = Queue()
+                parent.put(destination)
+                chemin = []
+                while not parent.empty():
+                    actuel = parent.get()
+                    precedent = origines[actuel]
+                    sortie = sorties[precedent, actuel]
+                    chemin.insert(0, sortie)
+                    if precedent != origine:
+                        parent.put(precedent)
+
+                graph[origine, destination] = chemin
 
         self.graph = graph
 

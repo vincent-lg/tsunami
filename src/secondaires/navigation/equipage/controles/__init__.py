@@ -1,6 +1,6 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2014 LE GOFF Vincent
+# Copyright (c) 2010-2016 LE GOFF Vincent
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -38,3 +38,4 @@ pour plus d'informations).
 """
 
 from secondaires.navigation.equipage.controles.direction import Direction
+from secondaires.navigation.equipage.controles.vitesse import Vitesse

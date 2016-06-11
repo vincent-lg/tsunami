@@ -1,6 +1,6 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2010 LE GOFF Vincent
+# Copyright (c) 2010-2016 LE GOFF Vincent
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -36,11 +36,15 @@ scripting.
 from fractions import Fraction
 
 from abstraits.obase import BaseObj
+from primaires.format.tableau import Tableau
 from primaires.perso.personnage import Personnage
 from primaires.salle.salle import Salle
+from primaires.temps.variable import TempsVariable
 from primaires.objet.types.base import BaseType as PrototypeObjet
 from primaires.objet.objet import Objet
 from primaires.pnj.pnj import PNJ
+from primaires.pnj.prototype import Prototype as PrototypePNJ
+from primaires.scripting.structure import StructureSimple as Structure
 
 def get(nom):
     """Retourne le type portant le nom."""

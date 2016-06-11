@@ -1,11 +1,11 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2010 DAVY Guillaume
+# Copyright (c) 2010-2016 DAVY Guillaume
 # All rights reserved.
-# 
+#
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are met:
-# 
+#
 # * Redistributions of source code must retain the above copyright notice, this
 #   list of conditions and the following disclaimer.
 # * Redistributions in binary form must reproduce the above copyright notice,
@@ -14,7 +14,7 @@
 # * Neither the name of the copyright holder nor the names of its contributors
 #   may be used to endorse or promote products derived from this software
 #   without specific prior written permission.
-# 
+#
 # THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
 # AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
 # IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -41,32 +41,32 @@ cmd_recup_vancia = "v"
 
 class ChoisirPersonnage(Contexte):
     """Contexte du choix de personnage
-    
+
     """
     nom = "connex:connexion:choix_personnages"
-    
+
     def __init__(self, pere):
         """Constructeur du contexte"""
         Contexte.__init__(self, pere)
-    
+
     def entrer(self):
         """Si aucun personnage n'a été créé, on redirige vers la création d'un
         premier personnage.
         Dans tous les cas, on recopie l'encodage du compte dans le client.
-        
+
         """
         self.pere.client.encodage = self.pere.compte.encodage
-    
+
     def get_prompt(self):
         """Message de prompt"""
         return "Votre choix : "
-    
+
     def accueil(self):
         """Message d'accueil"""
         ret = \
             "\n|tit|------= Choix du personnage =------|ff|\n" \
             "Faites votre |ent|choix|ff| parmi la liste ci-dessous :\n"
-        
+
         for i, joueur in enumerate(self.pere.compte.joueurs):
             no = " |cmd|" + str(i + 1) + "|ff|"
             ret += "\n" + no + " pour jouer |ent|{0}|ff|".format( \
@@ -87,11 +87,11 @@ class ChoisirPersonnage(Contexte):
                 elif duree > 60:
                     duree //= 60
                     mesure = "minute"
-                
+
                 s = ""
                 if duree > 1:
                     s = "s"
-                
+
                 temps = " (|rg|banni pour {} {}{s})".format(duree,
                         mesure, s=s)
                 ret += temps
@@ -104,11 +104,11 @@ class ChoisirPersonnage(Contexte):
                     ret += "la même adresse)"
                 else:
                     ret += "l'adresse {})".format(adresse_ip)
-        
+
         if len(self.pere.compte.joueurs) > 0:
             # on saute deux lignes
             ret += "\n"
-        
+
         ret += "\n"
         ret += " |cmd|{C}|ff| pour |ent|créer|ff| un nouveau " \
                 "personnage\n".format(C = cmd_creer.upper())
@@ -116,21 +116,21 @@ class ChoisirPersonnage(Contexte):
             # on propose de supprimer un des joueurs créé
             ret += " |cmd|{S}|ff| pour |ent|supprimer|ff| un personnage de " \
                 "ce compte\n".format(S = cmd_supprimer.upper())
-        
+
         ret += " |cmd|{M}|ff| pour changer votre |ent|mot de passe|ff|" \
                 "\n".format(M = cmd_chmdp.upper())
         ret += " |cmd|{V}|ff| pour importer un |ent|joueur de Vancia|ff|" \
                 "\n".format(V=cmd_recup_vancia.upper())
-        
+
         ret += " |cmd|{Q}|ff| pour |ent|quitter|ff| le jeu".format( \
                 Q = cmd_quitter.upper())
         return ret
-    
+
     def interpreter(self, msg):
         """Méthode d'interprétation"""
         cfg_connex = type(self).importeur.anaconf.get_config("connex")
         nb_perso_max = cfg_connex.nb_perso_max
-        
+
         msg = msg.lower()
         if msg.isdecimal():
             # On le convertit
@@ -146,13 +146,18 @@ class ChoisirPersonnage(Contexte):
                         joueur in importeur.connex.joueurs_bannis:
                     self.pere << "|err|Ce joueur est banni du serveur.|ff|"
                     return
-                
+
                 # on se connecte sur le joueur
                 joueur = self.pere.compte.joueurs[choix]
                 self.pere.joueur = joueur
                 joueur.compte = self.pere.compte
                 joueur.instance_connexion = self.pere
-                
+
+                # On log la connexion
+                importeur.connex.table_logger.info(
+                        "{} se connecte sur {}".format(joueur.nom,
+                        self.pere.adresse_ip))
+
                 races = type(self).importeur.perso.races
                 if joueur.race is None and len(races) > 0:
                     self.migrer_contexte("personnage:creation:choix_race")
@@ -167,7 +172,7 @@ class ChoisirPersonnage(Contexte):
                         "personnages.|ff|".format(nb_perso_max))
             else:
                 # On redirige vers la création de compte
-                self.migrer_contexte("personnage:creation:nouveau_nom")
+                importeur.joueur.migrer_ctx_creation(self)
         elif msg == cmd_supprimer:
             if len(self.pere.compte.joueurs) == 0:
                 self.pere.envoyer("|err|Vous ne pouvez pas supprimer de "\

@@ -1,6 +1,6 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2013 LE GOFF Vincent
+# Copyright (c) 2010-2016 LE GOFF Vincent
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -31,6 +31,7 @@
 """Fichier contenant la classe Cale, détaillée plus bas."""
 
 from abstraits.obase import BaseObj
+from primaires.objet.conteneur import ConteneurObjet
 
 CONTENEURS = [
         "boulets",
@@ -38,6 +39,10 @@ CONTENEURS = [
         "sacs de poudre",
         "tonneaux de poix",
         "vivres",
+        "armes",
+        "pavillons",
+        "marchandises",
+        "outils",
 ]
 
 TYPES = {
@@ -52,6 +57,14 @@ TYPES = {
         "fruit": "vivres",
         "gâteau": "vivres",
         "tonneau d'eau": "vivres",
+        "arme de jet": "armes",
+        "épée": "armes",
+        "hache": "armes",
+        "lance": "armes",
+        "masse": "armes",
+        "projectile": "armes",
+        "pavillon": "pavillons",
+        "sac de matériau": "marchandises",
 }
 
 class Cale(BaseObj):
@@ -75,11 +88,16 @@ class Cale(BaseObj):
         BaseObj.__init__(self)
         self.navire = navire
         self.eau_douce = 0
+        self.conteneur = ConteneurObjet(self)
         self.boulets = {}
         self.sacs_poudre = {}
         self.ecopes = {}
         self.tonneaux_poix = {}
         self.vivres = {}
+        self.armes = {}
+        self.pavillons = {}
+        self.marchandises = {}
+        self.outils = {}
 
         self._construire()
 
@@ -103,6 +121,11 @@ class Cale(BaseObj):
 
                 poids += prototype.poids_unitaire * qtt
 
+
+        # Parcourt des objets uniques
+        for objet, quantite in self.conteneur.iter_nombres():
+            poids += objet.poids * quantite
+
         return poids
 
     @property
@@ -119,12 +142,18 @@ class Cale(BaseObj):
                 "écopes": self.ecopes,
                 "tonneaux de poix": self.tonneaux_poix,
                 "vivres": self.vivres,
+                "armes": self.armes,
+                "pavillons": self.pavillons,
+                "marchandises": self.marchandises,
+                "outils": self.outils,
         }
 
     @property
     def types(self):
         """Retourne la correspondance nom_type: conteneur."""
-        return {
+        marchandises = importeur.objet.get_types_herites("matériau")
+        outils = importeur.objet.get_types_herites("outil")
+        types = {
                 "boulet de canon": self.boulets,
                 "sac de poudre": self.sacs_poudre,
                 "écope": self.ecopes,
@@ -136,7 +165,54 @@ class Cale(BaseObj):
                 "fruit": self.vivres,
                 "gâteau": self.vivres,
                 "tonneau d'eau": self.vivres,
+                "arme de jet": self.armes,
+                "épée": self.armes,
+                "hache": self.armes,
+                "lance": self.armes,
+                "masse": self.armes,
+                "projectile": self.armes,
+                "pavillon": self.pavillons,
+                "sac de matériau": self.marchandises,
         }
+
+        # Marchandises
+        for nom_type in marchandises:
+            types[nom_type] = self.marchandises
+
+        # Outils
+        for nom_type in outils:
+            types[nom_type] = self.outils
+
+        return types
+
+    def get_noms(self, nom):
+        """Retourne les noms d'objet contenus dans la portion de la cale."""
+        objets = {}
+        liste = list(self.conteneurs[nom].items())
+        liste += list(self.conteneur.iter_nombres())
+        for objet, quantite in liste:
+            if isinstance(objet, str):
+                try:
+                    objet = importeur.objet.prototypes[objet]
+                except KeyError:
+                    continue
+
+            nom_type = objet.nom_type
+            conteneur = TYPES[nom_type]
+            if conteneur == nom:
+                singulier = objet.get_nom(1)
+                if singulier not in objets:
+                    objets[singulier] = (objet, quantite)
+                else:
+                    quantite += objets[singulier][1]
+                    objets[singulier] = (objet, quantite)
+
+        noms = []
+        for nom, (objet, quantite) in sorted(objets.items()):
+            nom = objet.get_nom(quantite)
+            noms.append(nom)
+
+        return noms
 
     def accepte(self, salle, nom_type):
         """Vérifie si la salle en paramtère accepte le nom type."""
@@ -144,7 +220,23 @@ class Cale(BaseObj):
         if conteneur is None:
             return False
 
+        if salle is None:
+            return True
+
         return conteneur in salle.cales
+
+    def ajouter_prototype_objet(self, prototype, nombre=1):
+        """Ajoute les objets spécifiés en cale."""
+        nom_type = prototype.nom_type
+        if nom_type in self.types:
+            conteneur = self.types[nom_type]
+        else:
+            raise ValueError("{} ne peut être mis en " \
+                    "cale.".format(prototype.cle))
+
+        nb = conteneur.get(prototype.cle, 0)
+        nb += nombre
+        conteneur[prototype.cle] = nb
 
     def ajouter_objets(self, objets):
         """Ajoute les objets précisés dans la cale, si possible."""
@@ -175,18 +267,37 @@ class Cale(BaseObj):
                 raise ValueError("{} ne peut être mis en " \
                         "cale.".format(objet.get_nom().capitalize()))
 
-            nb = conteneur.get(objet.prototype.cle, 0)
-            nb += 1
-            conteneur[objet.prototype.cle] = nb
+            if objet.nom_singulier == objet.prototype.nom_singulier and \
+                    not objet.est_de_type("sac de matériau"):
+                # C'est un objet non unique
+                nb = conteneur.get(objet.prototype.cle, 0)
+                nb += 1
+                conteneur[objet.prototype.cle] = nb
+                importeur.objet.supprimer_objet(objet.identifiant)
+            else:
+                # C'est un objet unique, on le conserve à part
+                objet.contenu.retirer(objet)
+                self.conteneur.ajouter(objet)
+
             poids += objet.prototype.poids_unitaire
-            importeur.objet.supprimer_objet(objet.identifiant)
             nombre += 1
 
         return nombre
 
     def recuperer(self, personnage, cle, nb=1, donner=True):
-        """Récupère une quantité d'objets depuis la cale."""
-        prototype = importeur.objet.prototypes[cle]
+        """Récupère une quantité d'objets depuis la cale.
+
+        cle peut être une liste d'objets.
+
+        """
+        if isinstance(cle, list):
+            objets = cle
+            prototype = objets[0].prototype
+            cle = prototype.cle
+        else:
+            objets = []
+            prototype = importeur.objet.prototypes[cle]
+
         nom_type = prototype.nom_type
         if nom_type in self.types:
             conteneur = self.types[nom_type]
@@ -194,6 +305,24 @@ class Cale(BaseObj):
             personnage << "|err|{} ne se conserve pas en cale.|ff|".format(
                     prototype.nom_singulier.capitalize())
             return
+
+        # Cet objet se trouve-t-il dans le conteneur
+        if objets:
+            objet = objets[0]
+            personnage << "Vous récupérez {} depuis la cale.".format(
+                    objet.get_nom(nb))
+            for objet in objets:
+                self.conteneur.retirer(objet)
+                if objet.est_de_type("tonneau d'eau"):
+                    nb_max = objet.gorgees_max_contenu
+                    if nb_max > self.eau_douce:
+                        objet.gorgees_contenu = self.eau_douce
+                    self.eau_douce -= objet.gorgees_contenu
+
+                if donner:
+                    personnage.ramasser_ou_poser(objet)
+
+            return objet
 
         if cle not in conteneur:
             personnage << "|err|{} est introuvable dans cette " \
@@ -215,12 +344,9 @@ class Cale(BaseObj):
             objet = importeur.objet.creer_objet(prototype)
             if prototype.est_de_type("tonneau d'eau"):
                 nb_max = prototype.gorgees_max_contenu
-                print("nb_max", nb_max)
                 if nb_max > self.eau_douce:
-                    print(" ", self.eau_douce)
                     objet.gorgees_contenu = self.eau_douce
                 self.eau_douce -= objet.gorgees_contenu
-                print(self.eau_douce)
 
             if donner:
                 personnage.ramasser_ou_poser(objet)

@@ -1,6 +1,6 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2010 LE GOFF Vincent
+# Copyright (c) 2010-2016 LE GOFF Vincent
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -176,6 +176,7 @@ class BaseObj(metaclass=MetaBaseObj):
             sys.exit(1)
         except TypeError as err:
             print("Erreur lors de l'appel au constructeur de", classe, err)
+            print(traceback.format_exc())
             sys.exit(1)
         self.__dict__.update(dico_attrs)
 

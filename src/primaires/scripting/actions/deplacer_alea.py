@@ -1,6 +1,6 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2012 LE GOFF Vincent
+# Copyright (c) 2010-2016 LE GOFF Vincent
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -56,6 +56,15 @@ class ClasseAction(Action):
                 "str")
 
     @staticmethod
+    def flags_deplacement(personnage):
+        """Retourne les flags de déplacement."""
+        flags = {}
+        if personnage.salle.nom_terrain in ("aquatique", "subaquatique"):
+            flags["nage"] = True
+
+        return flags
+
+    @staticmethod
     def deplacer_alea_personnage(personnage):
         """Déplace aléatoirement le personnage sans aucun critères.
 
@@ -81,8 +90,9 @@ class ClasseAction(Action):
             return
 
         sortie = choice(sorties)
+        flags = ClasseAction.flags_deplacement(personnage)
         try:
-            personnage.deplacer_vers(sortie)
+            personnage.deplacer_vers(sortie, **flags)
         except ExceptionAction:
             pass
 
@@ -127,8 +137,9 @@ class ClasseAction(Action):
             return
 
         sortie = choice(sorties)
+        flags = ClasseAction.flags_deplacement(personnage)
         try:
-            personnage.deplacer_vers(sortie)
+            personnage.deplacer_vers(sortie, **flags)
         except ExceptionAction:
             pass
 

@@ -1,6 +1,6 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2013 LE GOFF Vincent
+# Copyright (c) 2010-2016 LE GOFF Vincent
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -35,9 +35,13 @@ ordre.py.
 
 """
 
+from secondaires.navigation.equipage.volontes.aborder import Aborder
 from secondaires.navigation.equipage.volontes.colmater import Colmater
+from secondaires.navigation.equipage.volontes.detail import Detail
 from secondaires.navigation.equipage.volontes.feu import Feu
 from secondaires.navigation.equipage.volontes.hisser_voiles import HisserVoiles
+from secondaires.navigation.equipage.volontes.jeter_ancre import JeterAncre
+from secondaires.navigation.equipage.volontes.lever_ancre import LeverAncre
 from secondaires.navigation.equipage.volontes.orienter_voiles import OrienterVoiles
 from secondaires.navigation.equipage.volontes.plier_voiles import PlierVoiles
 from secondaires.navigation.equipage.volontes.ramer import Ramer
@@ -45,6 +49,7 @@ from secondaires.navigation.equipage.volontes.relacher_gouvernail import \
         RelacherGouvernail
 from secondaires.navigation.equipage.volontes.relacher_rames import \
         RelacherRames
+from secondaires.navigation.equipage.volontes.suivre import Suivre
 from secondaires.navigation.equipage.volontes.tenir_gouvernail import \
         TenirGouvernail
 from secondaires.navigation.equipage.volontes.tenir_rames import TenirRames
@@ -54,3 +59,4 @@ from secondaires.navigation.equipage.volontes.virer_babord import VirerBabord
 from secondaires.navigation.equipage.volontes.virer_tribord import VirerTribord
 from secondaires.navigation.equipage.volontes.virer_gouvernail import \
         VirerGouvernail
+from secondaires.navigation.equipage.volontes.vitesse import Vitesse

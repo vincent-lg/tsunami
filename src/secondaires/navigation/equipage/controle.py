@@ -1,6 +1,6 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2014 LE GOFF Vincent
+# Copyright (c) 2010-2016 LE GOFF Vincent
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -78,6 +78,7 @@ class Controle(BaseObj, metaclass=MetaControle):
     """
 
     cle = None
+    logger = type(importeur).man_logs.get_logger("ordres")
     def __init__(self, equipage, *args):
         BaseObj.__init__(self)
         self.equipage = equipage
@@ -119,3 +120,9 @@ class Controle(BaseObj, metaclass=MetaControle):
 
         """
         raise NotImplementedError
+
+    def debug(self, message):
+        """Log le message précisé en paramètre en ajoutant des informations."""
+        message = "Contrôle {}:{}, {}".format(self.cle_navire, self.cle,
+                message)
+        self.logger.debug(message)

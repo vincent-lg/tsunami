@@ -1,11 +1,11 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2010 LE GOFF Vincent
+# Copyright (c) 2010-2016 LE GOFF Vincent
 # All rights reserved.
-# 
+#
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are met:
-# 
+#
 # * Redistributions of source code must retain the above copyright notice, this
 #   list of conditions and the following disclaimer.
 # * Redistributions in binary form must reproduce the above copyright notice,
@@ -14,7 +14,7 @@
 # * Neither the name of the copyright holder nor the names of its contributors
 #   may be used to endorse or promote products derived from this software
 #   without specific prior written permission.
-# 
+#
 # THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
 # AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
 # IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -33,34 +33,52 @@
 from primaires.interpreteur.commande.commande import Commande
 from primaires.interpreteur.editeur.presentation import Presentation
 from primaires.interpreteur.editeur.uniligne import Uniligne
+from primaires.format.tableau import Tableau
 from secondaires.navigation.editeurs.eltedit.presentation import EdtPresentation
 from primaires.interpreteur.editeur.env_objet import EnveloppeObjet
 
 class CmdEltedit(Commande):
-    
+
     """Commande 'eltedit'"""
-    
+
     def __init__(self):
         """Constructeur de la commande"""
         Commande.__init__(self, "eltedit", "eltedit")
         self.groupe = "administrateur"
-        self.schema = "<ident>"
+        self.schema = "(<ident>)"
         self.nom_categorie = "batisseur"
         self.aide_courte = "ouvre l'éditeur d'élément"
         self.aide_longue = \
             "Cette commande permet d'accéder à l'éditeur d'éléments. Elle " \
             "prend en paramètre l'identifiant de l'élément (que des " \
             "minuscules, des chiffres et le signe |ent|_|ff|). Si l'élément " \
-            "n'existe pas, il est créé."
-    
+            "n'existe pas, il est créé. Si aucun élément n'est précisé " \
+            "en paramètre, la liste des éléments actuels est affichée."
+
     def interpreter(self, personnage, dic_masques):
         """Méthode d'interprétation de commande"""
+        if not dic_masques["ident"]:
+            # Affichage des éléments
+            tableau = Tableau("Éléments actuels")
+            tableau.ajouter_colonne("Type")
+            tableau.ajouter_colonne("Clé")
+            tableau.ajouter_colonne("Nom")
+            elements = list(importeur.navigation.elements.values())
+            elements.sort(key=lambda e: e.cle)
+            elements.sort(key=lambda e: e.nom_type)
+            for element in elements:
+                tableau.ajouter_ligne(element.nom_type, element.cle,
+                        element.nom)
+
+            personnage << tableau.afficher()
+            return
+
         ident = dic_masques["ident"].ident
         if ident in type(self).importeur.navigation.elements:
             element = type(self).importeur.navigation.elements[ident]
             enveloppe = EnveloppeObjet(EdtPresentation, element, "")
             contexte = enveloppe.construire(personnage)
-            
+
             personnage.contextes.ajouter(contexte)
             contexte.actualiser()
         else:

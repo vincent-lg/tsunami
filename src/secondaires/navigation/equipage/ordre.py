@@ -1,6 +1,6 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2012 LE GOFF Vincent
+# Copyright (c) 2010-2016 LE GOFF Vincent
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -145,7 +145,7 @@ class Ordre(BaseObj, metaclass=MetaOrdre):
 
     # Méthodes de manipulation d'un personnage
     def jeter_ou_entreposer(self, exception):
-        """Jète les objets tenus ou les met en cale.
+        """Jette les objets tenus ou les met en cale.
 
         Si l'objet tenu peut être mis en cale, il est entreposé. Sinon
         il est jeté.
@@ -154,26 +154,5 @@ class Ordre(BaseObj, metaclass=MetaOrdre):
         aucune main libre.
 
         """
-        personnage = self.matelot.personnage
-        navire = self.navire
-        cale = navire.cale
-        if personnage.nb_mains_libres > 0:
-            return
-
-        for objet in list(personnage.equipement.tenus):
-            if personnage.nb_mains_libres > 0:
-                return
-
-            if objet.nom_type != exception:
-                detruire = False
-                personnage.equipement.tenus.retirer(objet)
-                if objet.nom_type in cale.types:
-                    try:
-                        cale.ajouter_objets([objet])
-                    except ValueError:
-                        detruire = True
-                else:
-                    detruire = True
-
-                if detruire:
-                    importeur.objet.supprimer_objet(objet.identifiant)
+        matelot = self.matelot
+        matelot.jeter_ou_entreposer(exception)

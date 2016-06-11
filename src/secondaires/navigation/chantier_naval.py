@@ -1,6 +1,6 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2013 LE GOFF Vincent
+# Copyright (c) 2010-2016 LE GOFF Vincent
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -54,6 +54,7 @@ class ChantierNaval(BaseObj):
         self.etendue = None
         self.points = []
         self.commandes = []
+        self.cales_seches = []
         self._construire()
 
     def __getnewargs__(self):
@@ -84,6 +85,7 @@ class ChantierNaval(BaseObj):
         """Retourne les navires dans le chantier naval."""
         navires = [n for n in importeur.navigation.navires.values() if \
                 n.proprietaire is personnage]
+        navires = [n for n in navires if n.etendue]
         navires = [n for n in navires if (int(n.position.x),
                 int(n.position.y), int(n.position.z)) in self.points]
         navires.sort(key=lambda n: n.cle)

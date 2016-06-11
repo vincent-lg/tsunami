@@ -1,6 +1,6 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2013 LE GOFF Vincent
+# Copyright (c) 2010-2016 LE GOFF Vincent
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -99,7 +99,7 @@ class PrmPoste(Parametre):
 
         if nom is None:
             personnage << "|err|Impossible de trouver le nom du poste : " \
-                    "{}.".format(nom_poste)
+                    "{}.|ff|".format(nom_poste)
         elif matelot.nom_poste == nom:
             personnage << "|err|Ce matelot est déjà à ce poste.|ff|"
         else:

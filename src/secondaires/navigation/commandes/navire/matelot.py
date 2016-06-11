@@ -1,6 +1,6 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2013 LE GOFF Vincent
+# Copyright (c) 2010-2016 LE GOFF Vincent
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -57,7 +57,7 @@ class PrmMatelot(Parametre):
         try:
             fiche = importeur.navigation.fiches[cle]
         except KeyError:
-            personnage << "|err|Matelot inconnu : {}.".format(repr(cle))
+            personnage << "|err|Matelot inconnu : {}.|ff|".format(repr(cle))
             return
 
         salle = navire.salles.get((0, 0, 0))

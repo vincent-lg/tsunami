@@ -1,6 +1,6 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2014 LE GOFF Vincent
+# Copyright (c) 2010-2016 LE GOFF Vincent
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -57,7 +57,7 @@ class CmdHistorique(Commande):
         messages = importeur.communication.messages.get(personnage, [])
         if len(messages) == 0:
             personnage << "|err|Vous n'avez encore aucune conversation " \
-                    "à rappeler."
+                    "à rappeler.|ff|"
             return
 
         tableau = importeur.communication.extraire_historique(personnage)

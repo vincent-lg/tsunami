@@ -1,6 +1,6 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2010 LE GOFF Vincent
+# Copyright (c) 2010-2016 LE GOFF Vincent
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -89,7 +89,7 @@ class CmdAnnonces(Commande):
                         else:
                             personnage << annonces.afficher(nombre)
                 except ValueError:
-                    personnage << "|err|Il faut préciser un nombre ou bien '*' pour voir toutes les annonces."
+                    personnage << "|err|Il faut préciser un nombre ou bien '*' pour voir toutes les annonces.|ff|"
         else:
             ret = annonces.afficher_dernieres_pour(personnage)
             if not ret:

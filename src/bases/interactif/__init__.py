@@ -1,6 +1,6 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2012 LE GOFF Vincent
+# Copyright (c) 2010-2016 LE GOFF Vincent
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -30,51 +30,114 @@
 
 """Fichier contenant la classe ConsoleInteractive détaillée plus bas."""
 
-from code import InteractiveConsole
+from code import InteractiveConsole, InteractiveInterpreter
 import sys
+import time
 import traceback
+from threading import Thread, Timer
 
 class ConsoleInteractive:
 
     """Classe représentant une console interactive.
 
     Dans cette console peut être entrée du code Python. Si Kassie est
-    lancé avec l'option -i (--interactif), à chaque tour de boucle
+    lancée avec l'option -i (--interactif), à chaque tour de boucle
     l'utilisateur pourra entrer du code Python et voir le résultat affiché
-    à l'écran.
+    à l'écran. Ce mode n'est maintenant plus bloquant :
+    l'utilisateur peut ne rien entrer pendant des heures, le MUD
+    continuera à tourner. Cependant, le résultat des logs ne sera
+    pas affiché dans ce contexte. Il appartiendra à l'utilisateur de
+    regarder la console autrement (de faire un 'tail -f' sur un
+    fichier de retour, par exemple).
 
     Cette console est utile si le réseau est inactif sur la machine (ou
     inopérant) et que vous souhaitez tester Kassie malgré tout.
+    Elle est aussi très pratique pour des opérations de débuggage,
+    correction de bugs ponctuels ou tests de certaines conditions.
+    Elle doit cependant être utilisée avec autant de prudence que
+    la commande 'systeme', car elle donne un accès complet à Python
+    et l'univers.
 
     """
 
     def __init__(self, importeur):
         """Constructeur."""
-        self.espace = {
-            "importeur": importeur,
-            "fermer": self.fermer,
-        }
-        self.console = InteractiveConsole(self.espace)
+        self.console = Console(type(importeur).espace)
         self.prompt = ">>> "
-        self.ouverte = True
+        self.timer = None
+        sys.__stdout__.write("Python {}\nChargement du MUD en " \
+                "cours...\n---".format(sys.version))
+        sys.__stdout__.flush()
 
-    def fermer(self):
-        """Ferme la console."""
-        self.ouverte = False
+    def input(self):
+        """Récupère l'input de l'utilisateur."""
+        if not importeur.serveur.lance:
+            return
 
-    def boucle(self):
-        """A chaque tour de boucle."""
-        if self.ouverte:
-            try:
-                code = input(self.prompt)
-            except (KeyboardInterrupt, EOFError):
-                importeur.serveur.lance = False
-                return
+        sys.__stdout__.write("\r" + self.prompt)
+        sys.__stdout__.flush()
+        try:
+            code = input()
+        except (KeyboardInterrupt, EOFError):
+            importeur.serveur.lance = False
+            return
 
-            try:
-                ret = self.console.push(code)
-            except Exception:
-                print(traceback.format_exc())
+        stdout = sys.stdout
+        stderr = sys.stderr
+        sys.stdout = sys.__stdout__
+        sys.stderr = sys.__stderr__
+        try:
+            ret = self.console.push(code)
+        except Exception:
+            print(traceback.format_exc())
+        else:
+            self.prompt = "... " if ret else ">>> "
+        finally:
+            sys.stdout = stdout
+            sys.stderr = stderr
+
+
+class ThreadConsole(Thread):
+
+    """Support pour une console dans un thread différent."""
+
+    def __init__(self, console):
+        Thread.__init__(self)
+        self.daemon = True
+        self.console = console
+
+    def run(self):
+        """Lance le thread."""
+        while importeur.serveur.lance:
+            if len(self.console.console.codes):
+                time.sleep(0.02)
             else:
-                self.prompt = "... " if ret else ">>> "
+                self.console.input()
 
+class Console(InteractiveConsole):
+
+    """Exécute le code en différé."""
+
+    def __init__(self, espace):
+        InteractiveConsole.__init__(self, espace)
+        self.codes = []
+
+    def runcode(self, code):
+        """Diffère l'exécution du code."""
+        self.codes.append(code)
+
+    def runcodes(self):
+        """Exécute les codes en attente."""
+        codes = list(self.codes)
+        self.codes.clear()
+
+        # Rétablit sus.stdout et sys.stderr
+        stdout = sys.stdout
+        stderr = sys.stderr
+        sys.stdout = sys.__stdout__
+        sys.stderr = sys.__stderr__
+        for code in codes:
+            InteractiveInterpreter.runcode(self, code)
+
+        sys.stdout = stdout
+        sys.stderr = stderr

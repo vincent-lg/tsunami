@@ -1,6 +1,6 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2010 LE GOFF Vincent
+# Copyright (c) 2010-2016 LE GOFF Vincent
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -30,7 +30,9 @@
 
 """Fichier contenant la classe Personnage, détaillée plus bas."""
 
+from fractions import Fraction
 import random
+from textwrap import wrap
 
 from abstraits.obase import BaseObj
 from corps.aleatoire import varier
@@ -40,6 +42,7 @@ from primaires.interpreteur.commande.commande import Commande
 from primaires.interpreteur.file import FileContexte
 from primaires.interpreteur.groupe.groupe import *
 from primaires.objet.conteneur import SurPoids
+from primaires.scripting.structure import StructureSimple
 
 from .race import Race
 from .equipement import Equipement
@@ -47,6 +50,7 @@ from .quetes import Quetes
 from .stats import Stats
 from .exceptions.stat import DepassementStat
 from .etats import Etats
+from .prompt import prompts
 
 class Personnage(BaseObj):
 
@@ -61,7 +65,7 @@ class Personnage(BaseObj):
     """
 
     _nom = "personnage"
-    _version = 6
+    _version = 7
 
     def __init__(self):
         """Constructeur d'un personnage"""
@@ -72,8 +76,8 @@ class Personnage(BaseObj):
         self.langue_cmd = "francais"
         self._salle = None
         self.stats = Stats(self)
-        self._prompt = "Vit   {stats.vitalite}     Man   {stats.mana}     " \
-                "End   {stats.endurance}"
+        self.prompts_selectionnes = []
+        self.prompts = {}
         self.equipement = None
         self._race = None
         self.genre = "aucun"
@@ -94,12 +98,16 @@ class Personnage(BaseObj):
         self._element = ""
         self.sorts = {}
         self.sorts_verrouilles = []
+        self.sorts_oublies = []
         self.points_tribut = 0
 
         # Etat
         self.etats = Etats(self)
         self.super_invisible = False
         self.affections = {}
+
+        # Noyade
+        self.degre_noyade = 0
 
         # Niveau primaire et niveaux secondaires
         self.niveau = 1
@@ -211,7 +219,10 @@ class Personnage(BaseObj):
     @property
     def prompt(self):
         """Retourne le prompt formatté"""
-        prompt = self._prompt.format(stats=self.stats)
+        selectionne = self.prompts_selectionnes and \
+                self.prompts_selectionnes[0] or "défaut"
+        prompt = self.prompts.get(selectionne)
+        prompt = prompts[selectionne].calculer(self, prompt)
         if self.super_invisible:
             prompt = "[i] " + prompt
 
@@ -252,7 +263,7 @@ class Personnage(BaseObj):
 
     @property
     def points_apprentissage_max(self):
-        return len(importeur.perso.talents) * 50
+        return importeur.perso.get_points_apprentissage(self)
 
     @property
     def argent_total(self):
@@ -302,6 +313,24 @@ class Personnage(BaseObj):
 
         return nb
 
+    def possede_type(self, type_objet):
+        """Retourne le premier objet du type indiqué ou None.
+
+        Pour chaque objet dans l'inventaire du personnage, on
+        cherche l'objet de type spécifié. Ce eput être un type parent
+        (par exemple, on recherche tous les types vêtement).
+
+        """
+        if self.equipement is None:
+            return None
+
+        inventaire = self.equipement.inventaire
+        for objet in inventaire:
+            if objet.est_de_type(type_objet):
+                return objet
+
+        return None
+
     def _get_element(self):
         """Retourne l'élément."""
         return self._element
@@ -341,6 +370,10 @@ class Personnage(BaseObj):
         """Retourne True si peut voir le personnage, False sinon."""
         if self.est_immortel():
             return True
+
+        salle = self.salle
+        if not salle.voit_ici(self):
+            return False
 
         return not personnage.super_invisible
 
@@ -412,6 +445,36 @@ class Personnage(BaseObj):
 
         return self in combat.combattants
 
+    def selectionner_prompt(self, prompt):
+        """Sélectionne le prompt du nom indiqué.
+
+        Par exemple : personnage.selectionner_prompt("combat")
+
+        """
+        if self.prompts_selectionnes and self.prompts_selectionnes[0] == \
+                prompt:
+            return
+
+        selectionnes = [p for p in self.prompts_selectionnes if p != prompt]
+        selectionnes.insert(0, prompt)
+        self.prompts_selectionnes[:] = selectionnes
+
+    def deselectionner_prompt(self, prompt):
+        """Déselectionne le prompt indiqué.
+
+        Par exemple : personnage.deselectionner_prompt("combat")
+
+        """
+        if not self.prompts_selectionnes:
+            return
+
+        selectionnes = [p for p in self.prompts_selectionnes if p != prompt]
+        self.prompts_selectionnes[:] = selectionnes
+
+    def deselectionner_tous_prompts(self):
+        """Déselectionne tous les prompts."""
+        self.prompts_selectionnes[:] = []
+
     def peut_etre_attaque(self):
         """Retourne True si le personnage peut être attaéqué.
 
@@ -470,7 +533,7 @@ class Personnage(BaseObj):
 
         # Calcul de l'endurance
         if escalade:
-            end = 8
+            end = min(8, o_sortie.diff_escalade * 2)
         elif nage:
             end = 10
         else:
@@ -490,18 +553,9 @@ class Personnage(BaseObj):
         if retours:
             n_endurance = retours[0]
 
-        if self.est_en_combat():
-            reussite = self.essayer_fuir()
-            if reussite:
-                self << "Vous vous enfuyez..."
-                self.etats.retirer("combat")
-                combat = type(self).importeur.combat.get_combat_depuis_salle(
-                        self.salle)
-                combat.supprimer_combattant(self)
-            else:
-                self << "|err|Vous ne parvenez pas à vous enfuir !|ff|"
-                return
-        self.agir("bouger")
+        if not self.est_en_combat():
+            self.agir("bouger")
+
         if o_sortie.diff_escalade and o_sortie.direction in ("haut", "bas") \
                 and not self.est_immortel() and not escalade:
             self << "|err|Vous devez escalader pour aller dans cette " \
@@ -526,8 +580,30 @@ class Personnage(BaseObj):
             return
 
         if escalade:
-            connaissance = varier(self.pratiquer_talent("escalade"), 10)
-            reussir = connaissance / 10 >= o_sortie.diff_escalade
+            valeur_talent = self.get_talent("escalade")
+            # note : la proba d'apprentissage du talent diminue si la pente
+            # est trop facile par rapport au talent déjà possédé.
+            # Si la connaissance dépasse la difficulté de plus de deux niveaux,
+            # on divise par quatre la proba d'apprentissage
+            if (valeur_talent / 10 > (o_sortie.diff_escalade + 2)):
+                diviseur_proba = 4
+            # Si la connaissance dépasse la difficulté de plus d'un niveau,
+            # on divise par deux la proba d'apprentissage
+            elif (valeur_talent / 10 > (o_sortie.diff_escalade + 1)):
+                diviseur_proba = 2
+            else:
+                diviseur_proba = 1
+            valeur_talent = self.pratiquer_talent("escalade", diviseur_proba)
+            # on rajoute une valeur entre -10 et +10 au talent aléatoirement
+            # ainsi à partir de 10 en-dessous de la difficulté fois 10, on
+            # commence à avoir une petite chance (si on est nu). À partir de
+            # 10 au-dessus de la difficulté fois 10, on ne peut plus échouer
+            # (si on est nu).
+            tentative = varier(valeur_talent, 10)
+            importeur.salle.logger.debug(
+                "{} essaye d'escalader (réussir={}, difficulté={})".format(
+                self.nom, round(tentative / 10, 2), o_sortie.diff_escalade))
+            reussir = tentative / 10 >= o_sortie.diff_escalade
             if not reussir:
                 self.tomber()
                 return
@@ -557,6 +633,18 @@ class Personnage(BaseObj):
                 not salle_dest.peut_entrer(self):
             self << "|err|Vous ne pouvez ouvrir cette porte.|ff|"
             return
+
+        if self.est_en_combat():
+            reussite = self.essayer_fuir()
+            if reussite:
+                self << "Vous vous enfuyez..."
+                self.etats.retirer("combat")
+                combat = type(self).importeur.combat.get_combat_depuis_salle(
+                        self.salle)
+                combat.supprimer_combattant(self)
+            else:
+                self << "|err|Vous ne parvenez pas à vous enfuir !|ff|"
+                return
 
         # On appelle l'évènement sort des affections du personnage
         for affection in list(self.affections.values()):
@@ -632,9 +720,15 @@ class Personnage(BaseObj):
             self.envoyer("Vous passez {} et refermez derrière vous.".format(
                     sortie.nom_complet))
 
+        # Plonger sous l'eau
         if salle.nom_terrain != "subaquatique" and \
                 salle_dest.nom_terrain == "subaquatique":
             self.plonger()
+
+        # Emerger de sous l'eau
+        if salle.nom_terrain == "subaquatique" and \
+                salle_dest.nom_terrain != "subaquatique":
+            self.emerger()
 
         self.salle = salle_dest
 
@@ -673,6 +767,10 @@ class Personnage(BaseObj):
             salle_dest.script["entre"]["apres"].executer(
                     depuis=nom_opp, salle=salle_dest, personnage=self)
 
+            if salle.nom_zone != salle_dest.nom_zone:
+                salle_dest.zone.script["entre"].executer(
+                    origine=salle, salle=salle_dest, personnage=self)
+
             # On appelle l'évènement 'sort' des affections de la salle
             for affection in list(salle_dest.affections.values()):
                 duree = affection.duree
@@ -694,6 +792,10 @@ class Personnage(BaseObj):
                         personnage=self, salle=salle)
                 importeur.hook["pnj:arrive"].executer(perso,
                         self)
+
+    def noyable(self):
+        """Retourne True si le personnage est noyable, False sinon."""
+        return not self.est_immortel()
 
     def essayer_nage(self, origine, destination):
         """Essaye de nager et retourne un booléen de réussite.
@@ -843,6 +945,9 @@ class Personnage(BaseObj):
             xp_nec = grille[niveau_actuel - 1][1]
             nb_gagne += 1
 
+        if hasattr(self, "script") and nb_gagne > 0:
+            self.script["gagne_niveau"].executer(pnj=self)
+
         if not retour:
             return nb_gagne
 
@@ -937,6 +1042,24 @@ class Personnage(BaseObj):
             stat_liee = self.stats[liee]
             stat_liee.courante = stat_liee.courante + stat.courante
 
+    def retirer(self, objet, qtt=1):
+        """Retire l'objet indiqué de l'inventaire."""
+        if self.equipement:
+            for membre in self.equipement.membres:
+                objets = list(membre.equipe) + [membre.tenu]
+                for o in objets:
+                    if hasattr(o, "conteneur"):
+                        try:
+                            qtt -= o.conteneur.retirer(objet, qtt)
+                        except ValueError:
+                            continue
+
+                        if qtt <= 0:
+                            break
+
+                if qtt <= 0:
+                    break
+
     def ramasser(self, objet, exception=None, qtt=1):
         """Ramasse l'objet objet.
 
@@ -1020,9 +1143,6 @@ class Personnage(BaseObj):
         for f in facteurs:
             facteur *= f
 
-        if facteur > 1:
-            print("Facteur de récupération pour", self, facteur)
-
         for nom, liee in stats.items():
             stat = self.stats[nom]
             courante = stat.courante
@@ -1051,8 +1171,13 @@ class Personnage(BaseObj):
         if unique and importeur.information.entree_tip(self, cle):
             return
 
-        message = "|att|TIP : " + message + "|ff|"
         message = Commande.remplacer_mots_cles(self, message)
+        paragraphes = []
+        for paragraphe in message.split("\n"):
+            paragraphes.append("\n      ".join(wrap(paragraphe, 69)))
+
+        message = "\n      ".join(paragraphes).replace("|ff|", "|att|")
+        message = "|att|TIP : " + message + "|ff|"
         self.envoyer(message)
         if unique:
             importeur.information.noter_tip(self, cle)
@@ -1132,8 +1257,11 @@ class Personnage(BaseObj):
         equipement = self.equipement
         msg = ""
         if notifier:
-            msg = "Vous regardez {} :\n".format(self.get_nom_pour(
+            msg = "Vous regardez {} :".format(self.get_nom_pour(
                     personnage, retenu=False))
+            if personnage.est_immortel():
+                msg += self.ajout_description_pour_imm()
+            msg += "\n"
         if hasattr(self, "description"):
             msg += "\n" + self.description.regarder(personnage=personnage,
                     elt=self) + "\n\n"
@@ -1176,6 +1304,10 @@ class Personnage(BaseObj):
             personnage.salle.envoyer("{} regarde {}.", personnage, self)
         else:
             return msg
+
+    def ajout_description_pour_imm(self):
+        """ Complément d'information pour l'imm qui regarde le personnage """
+        return ""
 
     def tomber(self):
         """self tombe de salles en salles."""
@@ -1224,36 +1356,79 @@ class Personnage(BaseObj):
         self << "|att|Vous prenez une grande inspiration avant " \
                 "de plonger.|ff|"
         nom = "noyade_" + self.nom_unique
-        if not self.est_immortel() and nom not in \
+        if self.noyable() and nom not in \
                 importeur.diffact.actions:
-            importeur.diffact.ajouter_action(nom, 5, self.act_noyer, 5)
+            importeur.diffact.ajouter_action(nom, 5, self.act_noyer)
 
-    def act_noyer(self, tps):
+    def emerger(self):
+        """self émerge."""
+        self << "|att|Vous sortez la tête de l'eau et emplissez enfin " \
+                "vos poumons d'air frais.|ff|"
+        self.degre_noyade = 0
+
+    def act_noyer(self):
         """Noie progressivement le joueur."""
         if self.salle.nom_terrain != "subaquatique":
+            self.degre_noyade = 0
             return
+
+        if self.est_mort():
+            self.degre_noyade = 0
+        else:
+            self.degre_noyade += 5
 
         nom = "noyade_" + self.nom_unique
-
-        if self.est_mort():
-            tps = 0
-
-        importeur.diffact.ajouter_action(nom, 5, self.act_noyer,
-                tps + 5)
+        importeur.diffact.ajouter_action(nom, 5, self.act_noyer)
 
         if self.est_mort():
             return
 
-        if tps >= 90:
+        if self.degre_noyade >= 90:
             try:
                 self.vitalite = 0
             except DepassementStat:
                 self << "|err|Vos poumons vides se remplissent d'eau...|ff|"
                 self.mourir()
-        elif tps == 80:
+        elif self.degre_noyade == 80:
             self.sans_prompt()
             self << "|att|Vos poumons sont presque vides et vous commencez " \
                     "à étouffer.|ff|"
-        elif tps == 60:
+        elif self.degre_noyade == 60:
             self.sans_prompt()
             self << "|att|Il ne vous reste plus beaucoup d'air...|ff|"
+
+    def get_structure(self):
+        """Retourne la structure simple du personnage."""
+        structure = StructureSimple()
+        structure.groupe = self.nom_groupe
+        structure.salle = self._salle
+        structure.race = self._race and self._race.nom or ""
+        structure.genre = self.genre
+        structure.soif = Fraction(self.soif)
+        structure.faim = Fraction(self.faim)
+        structure.estomac = Fraction(self.estomac)
+        structure.niveau = Fraction(self.niveau)
+        structure.xp = Fraction(self.xp)
+        structure.pk = Fraction(self.pk)
+        return structure
+
+    def appliquer_structure(self, structure):
+        """Applique la structure passée en paramètre."""
+        for cle, valeur in structure.donnees.items():
+            if cle == "salle":
+                self._salle = valeur
+            elif cle == "race":
+                race = importeur.perso.get_race(structure.race)
+                self._race = race
+            elif cle == "soif":
+                self.soif = round(float(valeur), 2)
+            elif cle == "faim":
+                self.faim = round(float(valeur), 2)
+            elif cle == "estomac":
+                self.estomac = round(float(valeur), 2)
+            elif cle == "niveau":
+                self.niveau = int(valeur)
+            elif cle == "xp":
+                self.xp = int(valeur)
+            elif cle == "pk":
+                self.pk = bool(valeur)

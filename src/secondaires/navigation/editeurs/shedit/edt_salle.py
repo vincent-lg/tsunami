@@ -1,6 +1,6 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2010 LE GOFF Vincent
+# Copyright (c) 2010-2016 LE GOFF Vincent
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -32,11 +32,12 @@
 
 """
 
-from primaires.interpreteur.editeur.presentation import Presentation
 from primaires.interpreteur.editeur.choix import Choix
 from primaires.interpreteur.editeur.description import Description
-from primaires.interpreteur.editeur.uniligne import Uniligne
+from primaires.interpreteur.editeur.entier import Entier
 from primaires.interpreteur.editeur.flag import Flag
+from primaires.interpreteur.editeur.presentation import Presentation
+from primaires.interpreteur.editeur.uniligne import Uniligne
 from primaires.salle.editeurs.redit.edt_details import EdtDetails
 from primaires.interpreteur.editeur.selection import Selection
 from secondaires.navigation.cale import CONTENEURS
@@ -74,7 +75,7 @@ class EdtSalle(Presentation):
         """Ajoute une salle à bâbord.
 
         Syntaxe :
-            /bab <mnémonic>
+            /bab <mnémonique>
 
         """
         salle = self.objet
@@ -89,7 +90,7 @@ class EdtSalle(Presentation):
         """Ajoute une salle à tribord.
 
         Syntaxe :
-            /tri <mnémonic>
+            /tri <mnémonique>
 
         """
         salle = self.objet
@@ -104,7 +105,7 @@ class EdtSalle(Presentation):
         """Ajoute une salle à l'avant.
 
         Syntaxe :
-            /ava <mnémonic>
+            /ava <mnémonique>
 
         """
         salle = self.objet
@@ -119,7 +120,7 @@ class EdtSalle(Presentation):
         """Ajoute une salle à l'arrière.
 
         Syntaxe :
-            /arr <mnémonic>
+            /arr <mnémonique>
 
         """
         salle = self.objet
@@ -134,7 +135,7 @@ class EdtSalle(Presentation):
         """Ajoute une salle vers le bas.
 
         Syntaxe :
-            /bas <mnémonic>
+            /bas <mnémonique>
 
         """
         salle = self.objet
@@ -149,7 +150,7 @@ class EdtSalle(Presentation):
         """Ajoute une salle vers le haut.
 
         Syntaxe :
-            /hau <mnémonic>
+            /hau <mnémonique>
 
         """
         salle = self.objet
@@ -266,7 +267,7 @@ class EdtSalle(Presentation):
 
         # Poste
         poste = self.ajouter_choix("salle réservée au grade", "rad",
-                Choix, salle, "poste", ORDRE)
+                Choix, salle, "poste", list(ORDRE) + [""])
         poste.parent = self
         poste.apercu = "{objet.poste}"
         poste.aide_courte = \
@@ -277,6 +278,50 @@ class EdtSalle(Presentation):
             "doit avoir une porte.\n\n" \
             "Grades possibles : " + ", ".join(ORDRE) + "\n" \
             "Grade actuel : |bc|{objet.poste}|ff|"
+
+        # Sabord minimum
+        sabord_min = self.ajouter_choix("sabord", "b", Entier, salle,
+                "sabord_min", -180, 180)
+        sabord_min.parent = self
+        sabord_min.prompt = "Sabord de la salle : "
+        sabord_min.apercu = "{objet.sabord_min}°"
+        sabord_min.aide_courte = \
+            "Entrez le |ent|sabord|ff| de la salle ou |cmd|/|ff| pour revenir " \
+            "à la fenêtre parente.\n\nVous devez préciser le sabord " \
+            "en degrés. Ceci est utile si la salle\ncomporte un canon " \
+            "car il faut savoir dans quelle direction le canon doit\n" \
+            "tirer. Le sabord est le centre (sélectionné par défaut) " \
+            "du canon.\nVous devez préciser un nombre de degrés. Par " \
+            "exemple, si la salle\na un sabord de 0°, cela signifie " \
+            "que le canon tire droit devant. Si\nle sabord est de 90°, " \
+            "cela signifie que le canon tire sur tribord\n(droit à " \
+            "l'est si le navire face le nord, par exemple). L'angle " \
+            "peut\nêtre négatif pour indiquer une direction bâbord " \
+            ": -90° signifie que\nle canon tirera sur 90° bâbord. Notez " \
+            "que si vous renseignez le sabord,\nvous devez aussi " \
+            "renseigner la largeur du sabord qui indique de combien de\n" \
+            "degrés le canon peut pivoter dans un sens ou dans l'autre.\n\n" \
+            "Sabord actuel : |bc|{objet.sabord_min}°|ff|"
+
+        # Sabord maximum
+        sabord_max = self.ajouter_choix("largeur du sabord", "l", Entier,
+                salle, "sabord_max", 0, 180)
+        sabord_max.parent = self
+        sabord_max.prompt = "Largeur du sabord de la salle : "
+        sabord_max.apercu = "{objet.sabord_max}°"
+        sabord_max.aide_courte = \
+            "Entrez la |ent|largeur du sabord|ff| ou |cmd|/|ff| pour revenir " \
+            "à la fenêtre parente.\n\nVous devez préciser la largeur " \
+            "du sabord en degrés. Cette donnée indique\nde combien " \
+            "de degrés le canon peut pivoter dans un sens ou dans l'autre\n" \
+            "autour du sabord. Par exemple, si le sabord est de 0° " \
+            "et que la largeur\ndu sabor est de 5°, le canon peut " \
+            "pivoter de -5° (5° bâbord) jusqu'à\n5° (sur tribord). " \
+            "Vous pouvez aussi faire un sabord qui s'ouvre sur\n-45° " \
+            "(45° bâbord) avec une largeur de sabor de 10°, " \
+            "c'est-à-dire que\nle canon pourra pivoter de 55° bâbord " \
+            "à 35° bâbord.\n\nLargeur du sabord actuel : " \
+            "|bc|{objet.sabord_max}°|ff|"
 
         # Cales
         cales = self.ajouter_choix("types de cale", "ca", Selection,
@@ -352,7 +397,7 @@ class EdtSalle(Presentation):
         msg += " Sorties :"
         for dir, nom in NOMS_SORTIES.items():
             sortie = salle.sorties[dir]
-            if sortie:
+            if sortie and sortie.salle_dest:
                 msg += "\n   {} vers {}".format(sortie.nom.capitalize(),
                         sortie.salle_dest.mnemonic)
                 if sortie.porte:

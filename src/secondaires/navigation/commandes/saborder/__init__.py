@@ -1,6 +1,6 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2013 LE GOFF Vincent
+# Copyright (c) 2010-2016 LE GOFF Vincent
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -61,9 +61,15 @@ class CmdSaborder(Commande):
             personnage << "|err|Ce navire a accosté, vous ne pouvez le " \
                     "saborder.|ff|"
             return
+
         if not salle.noyable:
             personnage << "|err|Vous ne pouvez ouvrir de brèche dans la " \
                     "coque ici.|ff|"
+            return
+
+        if navire.proprietaire is not personnage:
+            personnage << "|err|Vous n'êtes pas le propriétaire de " \
+                    "ce navire.|ff|"
             return
 
         salle.noyer(30)

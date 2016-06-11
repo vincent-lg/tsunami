@@ -1,6 +1,6 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2012 LE GOFF Vincent
+# Copyright (c) 2010-2016 LE GOFF Vincent
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -58,7 +58,7 @@ class Module(BaseModule):
         pecher = self.importeur.perso.ajouter_etat("pecher")
         pecher.msg_refus = "Vous êtes en train de pêcher"
         pecher.msg_visible = "pêche ici"
-        pecher.act_autorisees = ["regarder", "parler", "geste", "asseoir"]
+        pecher.act_autorisees = ["regarder", "parler", "geste", "asseoir", "lever"]
 
         BaseModule.config(self)
 

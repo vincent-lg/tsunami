@@ -1,6 +1,6 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2010 LE GOFF Vincent
+# Copyright (c) 2010-2016 LE GOFF Vincent
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -272,7 +272,9 @@ class Quete(BaseObj):
             # On récupère le dernier niveau validé
             niveaux = [n for n in self.__niveaux if len(n) == len(niveau)]
             if len(niveaux) == 0:
-                if niveau[-1] != 1:
+                if niveau == (1, ):
+                    return True
+                elif niveau[-1] != 1:
                     return False
             else:
                 dernier_niveau = max(niveaux)
@@ -287,9 +289,7 @@ class Quete(BaseObj):
             elif niveau_suivant != niveau_parent:
                 return False
 
-            return self.peut_faire(quete.parent, niveau)
-        else:
-            return self.peut_faire(quete.parent, niveau[:-1])
+        return self.peut_faire(quete.parent, niveau[:-1])
 
     def valider(self, quete, niveau):
         """Valide la quête passée en paramètre.

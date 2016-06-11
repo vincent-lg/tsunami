@@ -1,6 +1,6 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2012 LE GOFF Vincent
+# Copyright (c) 2010-2016 LE GOFF Vincent
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -76,6 +76,7 @@ class Periode(BaseObj):
         self.variation = 0
         self.elements = []
         self.poids_max = 0
+        self.visible = True
 
     def __getnewargs__(self):
         return ("", None)

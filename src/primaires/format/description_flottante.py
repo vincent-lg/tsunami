@@ -1,6 +1,6 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2013 LE GOFF Vincent
+# Copyright (c) 2010-2016 LE GOFF Vincent
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -32,6 +32,7 @@
 
 from abstraits.obase import BaseObj
 from primaires.format.description import Description
+from primaires.salle.details import Details
 
 class DescriptionFlottante(BaseObj):
 
@@ -51,6 +52,8 @@ class DescriptionFlottante(BaseObj):
         cle -- la clé identifiant la description flottante (doit être unique)
         description -- la description flottante-même
                        dans une liste)
+        details -- les détails flottants
+
     """
 
     enregistrer = True
@@ -59,6 +62,7 @@ class DescriptionFlottante(BaseObj):
         BaseObj.__init__(self)
         self.cle = cle
         self.description = Description(parent=self, scriptable=True)
+        self.details = Details(parent=self)
         self._construire()
 
     def __getnewargs__(self):

@@ -1,6 +1,6 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2012 LE GOFF Vincent
+# Copyright (c) 2010-2016 LE GOFF Vincent
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -43,17 +43,24 @@ class CmdEmbarquer(Commande):
         """Constructeur de la commande"""
         Commande.__init__(self, "embarquer", "embark")
         self.nom_categorie = "navire"
+        self.schema = "(<nom_navire>)"
         self.aide_courte = "embarque sur un navire proche"
         self.aide_longue = \
             "Cette commande permet d'embarquer sur un navire proche. " \
             "Vous devez l'entrer sur un quai. Si un navire se trouve " \
             "assez prêt, vous sauterez à bord, ce qui peut être utile " \
-            "pour des navires n'ayant aucune passerelle."
+            "pour des navires n'ayant aucune passerelle. Vous pouvez " \
+            "préciser en paramètre un fragment de nom de navire pour " \
+            "embarquer dans un navire précis."
 
     def interpreter(self, personnage, dic_masques):
         """Méthode d'interprétation de commande"""
         personnage.agir("bouger")
         salle = personnage.salle
+        navires = []
+        if dic_masques["nom_navire"]:
+            navires = [dic_masques["nom_navire"].navire]
+
         if hasattr(salle, "navire"):
             o_navire = salle.navire
             etendue = o_navire.etendue
@@ -65,8 +72,9 @@ class CmdEmbarquer(Commande):
                 personnage << "|err|Vous n'êtes pas sur un quai.|ff|"
                 return
 
-        navires = [n for n in importeur.navigation.navires.values() if \
-                n.etendue is etendue and n is not o_navire]
+        if not navires:
+            navires = [n for n in importeur.navigation.navires.values() if \
+                    n.etendue is etendue and n is not o_navire]
 
         # On cherche la salle de nagvire la plus proche
         d_salle = None # la salle de destination
@@ -96,5 +104,14 @@ class CmdEmbarquer(Commande):
                 salle.titre.lower()), personnage)
         salle.envoyer("{{}} saute dans {}.".format(
                 navire.nom), personnage)
+        importeur.hook["personnage:deplacer"].executer(
+                personnage, d_salle, None, 0)
         importeur.navigation.ecrire_suivi("{} embarque dans {}.".format(
                 personnage.nom_unique, navire.cle))
+
+        # On appelle les pnj.arrive des PNJs de la salle
+        for perso in d_salle.personnages:
+            if perso is not personnage and hasattr(perso, "script") and \
+                    perso.peut_voir(personnage):
+                importeur.hook["pnj:arrive"].executer(perso,
+                        personnage)

@@ -1,6 +1,6 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2010 LE GOFF Vincent
+# Copyright (c) 2010-2016 LE GOFF Vincent
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -93,3 +93,65 @@ class ScriptObjet(Script):
         var_objet.aide = "l'objet posé"
         var_quantite = evt_pose.ajouter_variable("quantite", "Fraction")
         var_quantite.aide = "le nombre d'objets posés"
+
+        # Evénement porte
+        evt_porte = self.creer_evenement("porte")
+        evt_porte.aide_courte = "un personnage équipe l'objet"
+        evt_porte.aide_longue = \
+            "Cet évènement est appelé quand un personnage porte " \
+            "(c'est-à-dire équipe) l'objet."
+
+        # Configuration des variables de l'évènement porte
+        var_perso = evt_porte.ajouter_variable("personnage", "Personnage")
+        var_perso.aide = "le personnage équipant l'objet"
+        var_objet = evt_porte.ajouter_variable("objet", "Objet")
+        var_objet.aide = "l'objet équipé"
+
+        # Evénement retire
+        evt_retire = self.creer_evenement("retire")
+        evt_retire.aide_courte = "un personnage retire l'objet"
+        evt_retire.aide_longue = \
+            "Cet évènement est appelé quand un personnage retire " \
+            "(c'est-à-dire déséquipe) l'objet."
+
+        # Configuration des variables de l'évènement retire
+        var_perso = evt_retire.ajouter_variable("personnage", "Personnage")
+        var_perso.aide = "le personnage déséquipant l'objet"
+        var_objet = evt_retire.ajouter_variable("objet", "Objet")
+        var_objet.aide = "l'objet déséquipé"
+
+        # Evénement effacer_memoire
+        evt_effacer_memoire = self.creer_evenement("effacer_memoire")
+        evt_effacer_memoire.aide_courte = "une mémoire est effacée"
+        evt_effacer_memoire.aide_longue = \
+            "Cet évènement est appelé quand une mémoire " \
+            "enregistrée dans l'objet est effacée par le système. " \
+            "C'est très utile pour exécuter une action particulière " \
+            "quand une mémoire expire."
+
+        # Configuration des variables de l'évènement effacer_memoire
+        var_objet = evt_effacer_memoire.ajouter_variable("objet", "Objet")
+        var_objet.aide = "l'objet-même"
+        var_nom = evt_effacer_memoire.ajouter_variable("nom", "str")
+        var_nom.aide = "le nom de la mémoire à effacer"
+        var_valeur = evt_effacer_memoire.ajouter_variable("valeur", "Object")
+        var_valeur.aide = "la valeur de la mémoire qu'on va effacer"
+
+        # Événement créé
+        evt_cree = self.creer_evenement("créé")
+        evt_cree.aide_courte = "l'objet est créé"
+        evt_cree.aide_longue = \
+            "Cet évènement est appelé quand l'objet est créé, pas " \
+            "nécessairement quelque part. Il faut donc éviter de se " \
+            "fier au contexte de l'objet (est-il posé au sol, par " \
+            "exemple) car l'objet n'a pas encore de contexte à ce " \
+            "stade. Il existe mais pas nécessairement quelque part. " \
+            "Il a pu être créé par la fonction scripting 'creer_objet' " \
+            "par exemple, et dans ce cas il sera manipulé avant " \
+            "d'apparaître quelque part. Cet évènement est toutefois " \
+            "utile pour créer des mémoires spécifiques, avoir des " \
+            "objets qui se détériorent progressivement, par exemple."
+
+        # Configuration des variables de l'évènement créé
+        var_objet = evt_cree.ajouter_variable("objet", "Objet")
+        var_objet.aide = "l'objet nouvellement créé"

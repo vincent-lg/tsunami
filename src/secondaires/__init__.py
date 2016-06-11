@@ -1,6 +1,6 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2010 LE GOFF Vincent
+# Copyright (c) 2010-2016 LE GOFF Vincent
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -52,7 +52,9 @@ Voici un résumé des modules primaires existants :
 -   auberge     Module gérant les auberges
 -   botanique   Module gérant les végétaux récoltables
 -   calendrier  Module gérant un calendrier d'évènements
+-   crafting    Module gérant les guildes
 -   cuisine     Module chargé de la cuisine
+-   diligence   Module chargé des diligences maudites
 -   exportaide  Module exportant l'aide dans un autre format
 -   familier    Module gérant les familiers et montures
 -   jeux        Module traitant les jeux et plateaux de jeu
@@ -60,6 +62,7 @@ Voici un résumé des modules primaires existants :
 -   navigation  Module gérant la navigation, navires, équipages
 -   peche       Module gérant la pêche
 -   rapport     Module chargé de traiter les rapports de bug et suggestions
+-   route       Module gérant le graph des routes de l'univers
 -   stat        Module chargé d'effectuer des statistiques sur le serveur
 -   systeme     Module offrant des commandes de manipulation système
 

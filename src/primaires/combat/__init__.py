@@ -1,6 +1,6 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2011 LE GOFF Vincent
+# Copyright (c) 2010-2016 LE GOFF Vincent
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -34,6 +34,7 @@ from abstraits.module import *
 from . import commandes
 from . import types
 from .combat import *
+from .prompt import PromptCombat
 from .types.arme import Arme
 
 class Module(BaseModule):
@@ -64,7 +65,7 @@ class Module(BaseModule):
         etat.msg_visible = "combat ici"
         etat.act_interdites = ["tuer", "bouger", "prendre", "poser",
                 "chercherbois", "ouvrir", "fermer", "jouer", "porter",
-                "retirer", "ingerer"]
+                "retirer", "ingerer", "action", "depecer"]
 
         # État scruter
         etat = self.importeur.perso.ajouter_etat("scruter")
@@ -81,6 +82,9 @@ class Module(BaseModule):
 
     def init(self):
         """Initialisation du module."""
+        # Ajout du prompt
+        importeur.perso.ajouter_prompt(PromptCombat)
+
         # Ajout du niveau combat
         ajouter_niveau = self.importeur.perso.ajouter_niveau
         ajouter_niveau("combat", "combat")
@@ -152,8 +156,15 @@ class Module(BaseModule):
             self.importeur.diffact.retirer_action(
                 "combat:{}".format(ident), warning=False)
             for personnage in combat.combattants:
+                personnage.deselectionner_prompt("combat")
                 if "combat" in personnage.etats:
                     personnage.etats.retirer("combat")
+
+    def verifier_cible(self, personnage):
+        """Vérifie et efface éventuellement la cible."""
+        cible = self.cible.get(personnage)
+        if cible and cible.est_mort():
+            del self.cible[personnage]
 
     def detruire(self):
         """Destruction du module."""

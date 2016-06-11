@@ -1,6 +1,6 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2012 NOEL-BARON Léo
+# Copyright (c) 2010-2016 NOEL-BARON Léo
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -38,6 +38,7 @@ import inspect
 import re
 import shlex
 import textwrap
+import time
 
 from abstraits.obase import BaseObj
 from primaires.format.tableau import Tableau
@@ -74,6 +75,7 @@ class Cherchable(BaseObj, metaclass=MetaCherchable):
 
         # Initialisation du cherchable
         self.init()
+        importeur.hook["recherche:filtres"].executer(self)
 
     def __getnewargs__(self):
         return ()
@@ -143,6 +145,7 @@ class Cherchable(BaseObj, metaclass=MetaCherchable):
         for f in noms_filtres:
             if len(f) > l_max:
                 l_max = len(f)
+
         for i, filtre in enumerate(self.filtres):
             aide += "   " + noms_filtres[i].ljust(l_max) + " "
             if callable(filtre.test):
@@ -175,7 +178,8 @@ class Cherchable(BaseObj, metaclass=MetaCherchable):
     def ajouter_filtre(self, opt_courte, opt_longue, test, type=""):
         """Ajoute le filtre spécifié"""
         longues = [f.opt_longue for f in self.filtres]
-        if opt_courte in self.courtes or opt_courte in INTERDITS:
+        if opt_courte and (opt_courte in self.courtes or opt_courte in \
+                INTERDITS):
             raise ValueError("l'option courte '{}' est indisponible".format(
                     opt_courte))
         if opt_longue in longues or opt_longue in INTERDITS:
@@ -230,6 +234,7 @@ class Cherchable(BaseObj, metaclass=MetaCherchable):
             """Ne quitte pas Python."""
             raise ValueError(msg)
 
+        t1 = time.time()
         cherchable = cls()
 
         # On crée les listes d'options
@@ -244,7 +249,9 @@ class Cherchable(BaseObj, metaclass=MetaCherchable):
 
         # Ajout des options du cherchable
         for filtre in cherchable.filtres:
-            options = ["-" + filtre.opt_courte]
+            options = []
+            if filtre.opt_courte:
+                options.append("-" + filtre.opt_courte)
             if filtre.opt_longue:
                 options.append("--" + filtre.opt_longue)
 
@@ -321,4 +328,9 @@ class Cherchable(BaseObj, metaclass=MetaCherchable):
                     ligne.append(aff)
                 retour_aff.ajouter_ligne(*ligne)
 
-            return retour_aff.afficher()
+            t2 = time.time()
+            temps = str(round(t2 - t1, 3)).replace(".", ",")
+            s = "s" if len(retour) > 1 else ""
+            res = retour_aff.afficher()
+            return res + "\n {} résultat{s}, recherche en {}s".format(
+                    len(retour), temps, s=s)

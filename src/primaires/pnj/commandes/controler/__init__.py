@@ -1,5 +1,5 @@
 # -*-coding:Utf-8 -*
-# Copyright (c) 2012 LE GOFF Vincent
+# Copyright (c) 2010-2016 LE GOFF Vincent
 # All rights reserved.
 # 
 # Redistribution and use in source and binary forms, with or without
@@ -54,16 +54,35 @@ class CmdControler(Commande):
     def interpreter(self, personnage, dic_masques):
         """Interprétation de la commande"""
         cle = dic_masques["cle"].cle
-        try:
-            pnj = importeur.pnj.PNJ[cle]
-        except KeyError:
-            personnage << "|err|Ce PNJ est introuvable.|ff|"
-        else:
+
+        # Si la clé correspond exactement à un identifant de PNJ, c'est lui
+        pnj = importeur.pnj.PNJ.get(cle)
+        if not pnj:
+            # Sinon c'est peut-être une clé de prototype
+            proto = importeur.pnj.prototypes.get(cle)
+            if proto:
+                if len(proto.pnj) == 0:
+                    # proto trouvé mais pas de PNJ
+                    personnage << "Il n'existe aucun PNJ pour le " \
+                                  "prototype {}.".format(proto)
+                    return
+                elif len(proto.pnj) == 1:
+                    pnj = proto.pnj[0]
+                else:
+                    # Lister les PNJ du proto
+                    ids = [x.identifiant for x in proto.pnj]
+                    personnage << "PNJ existants pour le prototype {} :\n" \
+                            "  {}".format(proto, '\n  '.join(ids))
+                    return
+
+        if pnj:
             if pnj.controle_par is not None:
                 personnage << "|err|Ce PNJ est déjà contrôlé.|ff|"
                 return
-            
+
             pnj.controle_par = personnage
             contexte = Controler(personnage, pnj)
             personnage.contextes.ajouter(contexte)
             personnage << contexte.accueil()
+            return
+        personnage << "|err|Aucun PNJ ou prototype de ce nom trouvé.|ff|"

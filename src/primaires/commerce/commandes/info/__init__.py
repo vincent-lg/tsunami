@@ -1,6 +1,6 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2013 LE GOFF Vincent
+# Copyright (c) 2010-2016 LE GOFF Vincent
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -30,6 +30,8 @@
 
 """Package contenant la commande 'info'."""
 
+from fractions import Fraction
+
 from primaires.interpreteur.commande.commande import Commande
 
 class CmdInfo(Commande):
@@ -41,11 +43,11 @@ class CmdInfo(Commande):
         Commande.__init__(self, "infos", "infos")
         self.nom_categorie = "objets"
         self.schema = "<objet:id_objet_magasin|nom_objet_magasin>"
-        self.aide_courte = "affiche des informations surn un produit"
+        self.aide_courte = "affiche des informations sur un produit"
         self.aide_longue = \
             "Cette commande permet d'afficher des informations sur un " \
             "produit vendu par un magasin. Vous pouvez utiliser, comme pour " \
-            "la commade %acheter%, soit le nom d'un objet en vente soit son " \
+            "la commande %acheter%, soit le nom d'un objet en vente soit son " \
             "|ent|#<numéro>|ff|, comme |ent|#1|ff|. Pour un objet, vous " \
             "pourrez regarder le produit avant de l'acheter, ce qui peut " \
             "parfois être utile. Cette commande donne différentes " \
@@ -61,9 +63,24 @@ class CmdInfo(Commande):
 
 
         magasin = salle.magasin
-        if magasin.vendeur is None:
+        vendeur = magasin.vendeur
+        if vendeur is None:
             personnage << "|err|Aucun vendeur n'est présent pour l'instant.|ff|"
             return
+
         no_ligne = dic_masques["objet"].no_ligne
         service, qtt = magasin.inventaire[no_ligne]
+
+        if service.type_achat == "objet" and service.est_de_type("livre"):
+            personnage << "|err|Vous ne pouvez consulter un livre " \
+                    "sans l'acheter.|ff|"
+            return
+
+        # Appel du script correspondant
+        evt = vendeur.script["marchand"]["infos"]
+        evt.executer(pnj=vendeur, personnage=personnage,
+                type=service.type_achat, cle=service.cle,
+                quantite=Fraction(qtt))
+
+        # Envoie de la description du service
         personnage << service.regarder(personnage)

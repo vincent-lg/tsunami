@@ -1,6 +1,6 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2010 LE GOFF Vincent
+# Copyright (c) 2010-2016 LE GOFF Vincent
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -37,9 +37,13 @@ class ChoixGenre(Contexte):
 
     """Contexte demandant au client de choisir le genre de son personnage.
 
+    Le genre est fonction de la race choisie. Une race peut être
+    configurée pour avoir deux genres, un seul ou plus de deux.
+
     """
 
     nom = "personnage:creation:choix_genre"
+
     def __init__(self, pere):
         """Constructeur du contexte"""
         Contexte.__init__(self, pere)
@@ -66,12 +70,15 @@ class ChoixGenre(Contexte):
         genres = self.pere.joueur.race.genres
         genres = [supprimer_accents(g.lower()) for g in genres.liste_genres]
 
-        if not genre in genres:
+        trouve = False
+        for t_genre in genres:
+            if t_genre.startswith(genre):
+                genre = t_genre
+                trouve = True
+                break
+
+        if not trouve:
             self.pere << "|err|Ce genre n'est pas disponible.|ff|"
         else:
             self.pere.joueur.genre = genre
-
-            if self.pere.joueur not in self.pere.compte.joueurs:
-                self.pere.compte.ajouter_joueur(self.pere.joueur)
-            self.pere.joueur.contextes.vider()
-            self.pere.joueur.pre_connecter()
+            importeur.joueur.migrer_ctx_creation(self)

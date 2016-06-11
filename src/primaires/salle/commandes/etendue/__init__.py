@@ -1,6 +1,6 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2010 LE GOFF Vincent
+# Copyright (c) 2010-2016 LE GOFF Vincent
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -37,6 +37,7 @@ from primaires.interpreteur.commande.commande import Commande
 from .carte import PrmCarte
 from .creer import PrmCreer
 from .cote import PrmCote
+from .editer import PrmEditer
 from .info import PrmInfo
 from .obstacle import PrmObstacle
 
@@ -69,5 +70,6 @@ class CmdEtendue(Commande):
         self.ajouter_parametre(prm_carte)
         self.ajouter_parametre(prm_creer)
         self.ajouter_parametre(prm_cote)
+        self.ajouter_parametre(PrmEditer())
         self.ajouter_parametre(prm_info)
         self.ajouter_parametre(prm_obstacle)

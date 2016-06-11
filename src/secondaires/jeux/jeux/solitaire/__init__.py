@@ -1,6 +1,6 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2010 DAVY Guillaume
+# Copyright (c) 2010-2016 DAVY Guillaume
 # All rights reserved.
 # 
 # Redistribution and use in source and binary forms, with or without
@@ -48,6 +48,11 @@ class Jeu(BaseJeu):
     """
     
     nom = "solitaire"
+    
+    def init(self):
+        """Construction du jeu."""
+        pass
+    
     @property
     def personnage(self):
         """Retourne le personnage jouant au jeu."""

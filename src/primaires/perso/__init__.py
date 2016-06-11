@@ -1,6 +1,6 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2010 LE GOFF Vincent
+# Copyright (c) 2010-2016 LE GOFF Vincent
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -52,6 +52,8 @@ from .templates.etat import Etat
 from .templates.position import Position
 from .templates.allonge import Allonge
 from .templates.assis import Assis
+from .prompt import prompts
+from .prompt.defaut import PromptDefaut
 
 class Module(BaseModule):
 
@@ -80,6 +82,7 @@ class Module(BaseModule):
         self.talents = {}
         self.etats = {}
         self.positions = {}
+        self.prompts = prompts
 
     def config(self):
         """Méthode de configuration.
@@ -148,11 +151,18 @@ class Module(BaseModule):
                 "Hook appelé pour retourner le verbe de déplacement.")
         importeur.hook.ajouter_hook("personnage:verbe_arriver",
                 "Hook appelé pour retourner le verbe d'arriver.")
+        importeur.hook.ajouter_hook("personnage:score",
+                "Hook appelé quand un personnage consulte son score.")
+        importeur.hook.ajouter_hook("personnage:points_apprentissage",
+                "Hook pour ajouter des points d'apprentissage")
 
         BaseModule.config(self)
 
     def init(self):
         """Initialisation du module"""
+        # Ajout du prompt
+        self.ajouter_prompt(PromptDefaut)
+
         # On construit le niveau
         niveaux = Niveaux
         niveaux.nb_niveaux = self.cfg_niveaux.nb_niveaux
@@ -192,8 +202,10 @@ class Module(BaseModule):
             commandes.asseoir.CmdAsseoir(),
             commandes.chercher.CmdChercher(),
             commandes.commande.CmdCommande(),
+            commandes.d.CmdD(),
             commandes.equipement.CmdEquipement(),
             commandes.lever.CmdLever(),
+            commandes.m.CmdM(),
             commandes.niveaux.CmdNiveaux(),
             commandes.prompt.CmdPrompt(),
             commandes.quete.CmdQuete(),
@@ -203,6 +215,7 @@ class Module(BaseModule):
             commandes.skedit.CmdSkedit(),
             commandes.sklist.CmdSklist(),
             commandes.talents.CmdTalents(),
+            commandes.v.CmdV(),
         ]
 
         for cmd in self.commandes:
@@ -246,6 +259,21 @@ class Module(BaseModule):
         squelette = self.squelettes[cle]
         del self.squelettes[cle]
         squelette.detruire()
+
+    def get_race(self, nom_race):
+        """Retourne la race correspondante.
+
+        Lève une exception ValueError si la race ne peut être trouvée.
+        La recherche se fait indépendemment des majuscules ou accents.
+
+        """
+        sa_nom_race = supprimer_accents(nom_race).lower()
+        for race in self.races:
+            if supprimer_accents(race.nom).lower() == sa_nom_race:
+                return race
+
+        raise ValeuError("la race {} est introuvable".format(
+                repr(nom_race)))
 
     def creer_race(self, nom):
         """Crée la race du nom indiqué"""
@@ -313,12 +341,29 @@ class Module(BaseModule):
         niveau = Niveau(cle, nom)
         self.niveaux[cle] = niveau
 
-    def ajouter_talent(self, cle, nom, niveau, difficulte):
+    def get_points_apprentissage(self, personnage):
+        """Retourne le nombre de points d'apprentissage maximum.
+
+        Ce calcul ne prend pas en compte les points déjà consommés
+        par le personnage. On peut étendre le calcul (en ajoutant
+        des talents "caché") grâce à l'hook
+        'personnage:points_apprentissage'.
+
+        """
+        talents = [t for t in self.talents.values() if t.liberer_points]
+        plus = importeur.hook["personnage:points_apprentissage"].executer(
+                personnage)
+        talents = len(talents) * 50 + sum(plus)
+        return talents
+
+    def ajouter_talent(self, cle, nom, niveau, difficulte,
+            liberer_points=True):
         """Ajoute un talent."""
         if cle in self.talents:
             raise ValueError("un talent de clé {} existe déjà".format(cle))
 
-        talent = Talent(self.niveaux, cle, nom, niveau, difficulte)
+        talent = Talent(self.niveaux, cle, nom, niveau, difficulte,
+                liberer_points)
         self.talents[cle] = talent
 
     def ajouter_etat(self, cle, classe=None):
@@ -338,3 +383,11 @@ class Module(BaseModule):
         position = Position(cle, etat_m, etat_f)
         self.positions[cle] = position
         return position
+
+    def ajouter_prompt(self, prompt):
+        """Ajoute un prompt.
+
+        Cette méthode attend en paramètre une classe héritée de Prompt.
+
+        """
+        self.prompts[prompt.nom] = prompt

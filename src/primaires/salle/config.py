@@ -1,6 +1,6 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2010 LE GOFF Vincent
+# Copyright (c) 2010-2016 LE GOFF Vincent
 # All rights reserved.
 # 
 # Redistribution and use in source and binary forms, with or without
@@ -39,7 +39,7 @@ cfg_salle = r"""
 # Cette salle est celle dans laquelle tout joueur nouvellement créé sera
 # placé. Elle sera créée par défaut si elle n'existe pas ou n'a pas pu
 # être chargée.
-# Précisez l'identifiant de la salle sous la forme 'zone:mnémonic'.
+# Précisez l'identifiant de la salle sous la forme 'zone:mnémonique'.
 # Par exemple : "depart:1"
 salle_arrivee = "depart:1"
 
@@ -48,7 +48,7 @@ salle_arrivee = "depart:1"
 # dans laquelle il était au moment de se déconnecter a été effacée ou est
 # introuvable.
 # Tout comme la salle d'arrivée, précisez l'identifiant sous la forme
-# 'zone:mnémonic'.
+# 'zone:mnémonique'.
 salle_retour = "depart:1"
 
 ## Feux

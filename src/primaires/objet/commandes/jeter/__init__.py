@@ -1,6 +1,6 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2012 LE GOFF Vincent
+# Copyright (c) 2010-2016 LE GOFF Vincent
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -40,7 +40,7 @@ class CmdJeter(Commande):
         """Constructeur de la commande"""
         Commande.__init__(self, "jeter", "throw")
         self.nom_categorie = "objets"
-        self.schema = "<nom_objet> sur/to <element_observable>"
+        self.schema = "<nom_objet> sur/at <element_observable>"
         self.aide_courte = "jète un objet"
         self.aide_longue = \
                 "Cette commande permet de jeter un objet vers ou sur " \

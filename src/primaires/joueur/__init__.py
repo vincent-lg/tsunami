@@ -1,6 +1,6 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2010 LE GOFF Vincent
+# Copyright (c) 2010-2016 LE GOFF Vincent
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -33,6 +33,7 @@
 from datetime import datetime
 
 from abstraits.module import *
+from primaires.format.fonctions import supprimer_accents
 from primaires.joueur import commandes
 from primaires.joueur import masques
 from primaires.joueur.config import cfg_joueur
@@ -55,6 +56,7 @@ class Module(BaseModule):
     primaire 'perso'.
 
     """
+
     def __init__(self, importeur):
         """Constructeur du module"""
         BaseModule.__init__(self, importeur, "joueur", "primaire")
@@ -63,20 +65,28 @@ class Module(BaseModule):
         self.joueurs = {}
         self.compte_systeme = ""
         self.joueur_systeme = ""
+        self.ordre_creation = []
         self.ticks = {}
         for no in range(1, NB_TICKS + 1):
             self.ticks[no] = []
 
     def config(self):
         """Méthode de configuration du module"""
+        type(importeur).espace["joueurs"] = self.joueurs
         config = type(self.importeur).anaconf.get_config("joueur",
             "joueur/joueur.cfg", "config joueur", cfg_joueur)
         self.groupe_par_defaut = config.groupe_par_defaut
         self.compte_systeme = config.compte_systeme
         self.joueur_systeme = config.joueur_systeme
+        ordre = config.ordre_creation
+        for nom in ordre:
+            self.ordre_creation.append("personnage:creation:{}".format(nom))
+
         # On crée les hooks du module
         importeur.hook.ajouter_hook("joueur:connecte",
                 "Hook appelé après qu'un joueur se soit connecté.")
+        importeur.hook.ajouter_hook("joueur:deconnecte",
+                "Hook appelé avant qu'un joueur se déconnecte.")
         importeur.hook.ajouter_hook("joueur:erreur",
                 "Hook appelé quand une erreur se produit.")
 
@@ -135,8 +145,11 @@ class Module(BaseModule):
 
     def preparer(self):
         """Préparation du module.
+
         On s'assure que :
         -   les joueurs dits connectés le soient toujours
+
+        On ajoute aussi les évènements.
 
         """
         for joueur in self.importeur.connex.joueurs:
@@ -165,10 +178,18 @@ class Module(BaseModule):
 
         self.compte_systeme = self.importeur.connex.get_compte(
                 self.compte_systeme)
+        type(importeur).espace["compte_systeme"] = self.compte_systeme
         if self.joueur_systeme not in self.joueurs.keys():
             self.compte_systeme.creer_joueur(self.joueur_systeme)
 
         self.joueur_systeme = self.joueurs[self.joueur_systeme]
+        type(importeur).espace["systeme"] = self.joueur_systeme
+
+        # Ajout des évènements
+        importeur.evt.ajouter_evenement("connecte", "Un joueur se connecte",
+                "Connexion de {0.nom}.", "joueur:connecte")
+        importeur.evt.ajouter_evenement("deconnecte", "Un joueur se " \
+                "déconnecte", "Déconnexion de {0.nom}.", "joueur:deconnecte")
 
     def ajouter_joueur_tick(self, joueur):
         """Ajoute un joueur au tick semblant le moins chargé."""
@@ -191,6 +212,34 @@ class Module(BaseModule):
         for joueur in self.ticks[no]:
             joueur.tick()
 
+    def get_joueur(self, nom_joueur):
+        """Retourne le joueur dont le nom est indiqué.
+
+        Si le joueur du nom indiqué n'est pas retrouvé, lève
+        une exception KeyError.
+        La recherche se fait indépenemment des majuscules et accents.
+
+        """
+        nom_joueur = supprimer_accents(nom_joueur).lower()
+        for joueur in self.joueurs.values():
+            if supprimer_accents(joueur.nom).lower() == nom_joueur:
+                return joueur
+
+        raise KeyError("joueur {} introuvable".format(repr(nom_joueur)))
+
+    def joueur_existe(self, nom_joueur):
+        """Retourne True si le joueur indiqué existe, False sinon.
+
+        La recherche se fait indépendamment des majuscules ou accents.
+
+        """
+        try:
+            joueur = self.get_joueur(nom_joueur)
+        except KeyError:
+            return False
+
+        return True
+
     def get_joueurs_presents(self, depuis):
         """Retourne les joueurs qui se sont connectés depuis le temps indqué.
 
@@ -202,3 +251,52 @@ class Module(BaseModule):
         joueurs = [j for j in joueurs if j.derniere_connexion and (mtn - \
                 j.derniere_connexion).total_seconds() <= depuis]
         return joueurs
+
+    def renommer_joueur(self, joueur, nom):
+        """Change le nom du joueur précisé."""
+        sa_nom = supprimer_accents(nom).lower()
+        if supprimer_accents(joueur.nom).lower() == sa_nom:
+            # Pas beosin de changer le nom, c'est le même
+            return
+
+        if self.joueur_existe(nom):
+            raise ValueError("il y a déjà un joueur nommé {}".format(
+                    repr(nom)))
+
+        del self.joueurs[joueur.nom]
+        joueur.nom = nom.capitalize()
+        self.joueurs[joueur.nom] = joueur
+
+    def migrer_ctx_creation(self, contexte):
+        """Cherche le contexte de création suivant.
+
+        Si il n'y a pas de contexte suivant, connecte le joueur.
+
+        """
+        ordre = list(self.ordre_creation)
+        # On retire les contextes invalides
+        if not importeur.perso.races:
+            if "personnage:creation:choix_race" in ordre:
+                ordre.remove("personnage:creation:choix_race")
+            if "personnage:creation:choix_genre" in ordre:
+                ordre.remove("personnage:creation:choix_genre")
+
+        print(ordre)
+        if contexte.nom in ordre:
+            # Déplace au prochain contexte valide
+            actuel = ordre.index(contexte.nom)
+            if actuel < (len(self.ordre_creation) - 1):
+                nom = ordre[actuel + 1]
+                contexte.migrer_contexte(nom)
+            else:
+                if contexte.pere.joueur not in contexte.pere.compte.joueurs:
+                    contexte.pere.compte.ajouter_joueur(contexte.pere.joueur)
+                contexte.pere.joueur.contextes.vider()
+                contexte.pere.joueur.pre_connecter()
+        else:
+            nouv_joueur = Joueur()
+            nouv_joueur.instance_connexion = contexte.pere
+            contexte.pere.joueur = nouv_joueur
+            nouv_joueur.compte = contexte.pere.compte
+            nom = ordre[0]
+            contexte = contexte.migrer_contexte(nom)

@@ -1,6 +1,6 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2010 DAVY Guillaume
+# Copyright (c) 2010-2016 DAVY Guillaume
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -50,6 +50,10 @@ class Module(BaseModule):
         self.jeux = {}
         self.plateaux = {}
         self.parties = []
+        
+        # On charge automatiquement les jeux définis dans jeux
+        self.charger_jeux()
+        self.charger_plateaux()
 
     def config(self):
         """Configuration du module."""
@@ -65,10 +69,6 @@ class Module(BaseModule):
 
     def init(self):
         """Initialisation du module."""
-        # On charge automatiquement les jeux définis dans jeux
-        self.charger_jeux()
-        self.charger_plateaux()
-
         # On charge les parties
         self.parties = self.importeur.supenr.charger_groupe(Partie)
 

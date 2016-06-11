@@ -1,6 +1,6 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2012 LE GOFF Vincent
+# Copyright (c) 2010-2016 LE GOFF Vincent
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -31,7 +31,7 @@
 """Fichier contenant le paramètre 'mien' de la commande 'rapport'."""
 
 from primaires.interpreteur.masque.parametre import Parametre
-from primaires.format.fonctions import couper_phrase
+from primaires.format.fonctions import couper_phrase, echapper_accolades
 
 class PrmMien(Parametre):
 
@@ -49,8 +49,9 @@ class PrmMien(Parametre):
 
     def interpreter(self, personnage, dic_masques):
         """Interprétation du paramètre"""
-        rapports = [r for r in list(importeur.rapport.rapports.values()) \
-                if r.ouvert and r.assigne_a is personnage]
+        rapports = [r for r in list(importeur.rapport.rapports.values()) if \
+                r.ouvert and r.assigne_a is personnage]
+        rapports = sorted(rapports, key=lambda r: r.int_priorite)
         if not rapports:
             personnage << "|err|Aucun rapport ne vous est assigné.|ff|"
             return
@@ -79,4 +80,4 @@ class PrmMien(Parametre):
                     + titre.ljust(ljust_titre) + " |")
         lignes.append(
             "+" + "-" * (l_id + l_createur + ljust_titre + 8) + "+")
-        personnage << "\n".join(lignes)
+        personnage << echapper_accolades("\n".join(lignes))

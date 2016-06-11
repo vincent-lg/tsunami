@@ -1,6 +1,6 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2010 LE GOFF Vincent
+# Copyright (c) 2010-2016 LE GOFF Vincent
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -82,6 +82,10 @@ class Boussole(Instrument):
         ven_dir = round(ven_dir / self.precision) * self.precision
         nav_dir = (navire.direction.direction + 90) % 360
         nav_dir = round(nav_dir / self.precision) * self.precision
+        navire.donnees["direction"] = nav_dir
+        navire.donnees["nom_direction"] = navire.direction.nom_direction
+        navire.donnees["direction_vent"] = ven_dir
+        navire.donnees["nom_direction_vent"] = vent.nom_direction
         msg_vent = lisser("Le vent souffle de le {} ({}°).".format(
                 vent.nom_direction, ven_dir))
         msg_navire = lisser("Le navire se dirige vers le {} ({}°).".format(

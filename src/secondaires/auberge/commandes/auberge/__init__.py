@@ -1,6 +1,6 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2013 LE GOFF Vincent
+# Copyright (c) 2010-2016 LE GOFF Vincent
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -31,10 +31,12 @@
 """Package contenant la commande 'auberge'."""
 
 from primaires.interpreteur.commande.commande import Commande
+from .ajouter import PrmAjouter
 from .creer import PrmCreer
 from .editer import PrmEditer
 from .liste import PrmListe
 from .supprimer import PrmSupprimer
+from .voir import PrmVoir
 
 class CmdAuberge(Commande):
 
@@ -54,7 +56,9 @@ class CmdAuberge(Commande):
 
     def ajouter_parametres(self):
         """Ajout des paramètres."""
+        self.ajouter_parametre(PrmAjouter())
         self.ajouter_parametre(PrmCreer())
         self.ajouter_parametre(PrmEditer())
         self.ajouter_parametre(PrmListe())
         self.ajouter_parametre(PrmSupprimer())
+        self.ajouter_parametre(PrmVoir())

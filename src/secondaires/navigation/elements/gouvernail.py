@@ -1,6 +1,6 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2010 LE GOFF Vincent
+# Copyright (c) 2010-2016 LE GOFF Vincent
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -65,7 +65,6 @@ class Gouvernail(BaseElement):
 
     def tenir(self, personnage):
         """Méthode demandant au personnage de tenir le gouvernail."""
-        self.tenu = personnage
         personnage.etats.ajouter("tenir_gouvernail")
         personnage << "Vous empoignez fermement {}.".format(
                 self.nom.lower())
@@ -74,7 +73,6 @@ class Gouvernail(BaseElement):
 
     def relacher(self, personnage):
         """Méthode demandant au personnage de relâcher le gouvernail."""
-        self.tenu = None
         if "tenir_gouvernail" in personnage.etats:
             personnage.etats.retirer("tenir_gouvernail")
         personnage << "Vous relâchez {}.".format(

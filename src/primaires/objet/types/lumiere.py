@@ -1,6 +1,6 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2014 LE GOFF Vincent
+# Copyright (c) 2010-2016 LE GOFF Vincent
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -35,6 +35,7 @@ from datetime import datetime
 from bases.objet.attribut import Attribut
 from corps.aleatoire import *
 from primaires.interpreteur.editeur.entier import Entier
+from primaires.interpreteur.editeur.flag import Flag
 from primaires.interpreteur.editeur.selection import Selection
 from .base import BaseType
 
@@ -53,11 +54,16 @@ class Lumiere(BaseType):
     def __init__(self, cle=""):
         """Constructeur de l'objet"""
         BaseType.__init__(self, cle)
+        self.emplacement = "mains"
+        self.positions = (1, 2)
         self.duree_max = 1
         self.types_combustibles = ["pierre"]
+        self.masculin = True
+
         self.etendre_editeur("x", "durée max", Entier, self, "duree_max", 0)
         self.etendre_editeur("ty", "types de combustibles", Selection,
                 self, "types_combustibles", TYPES_COMBUSTIBLES)
+        self.etendre_editeur("ma", "genre masculin", Flag, self, "masculin")
 
         # Attributs propres à l'objet (non au prototype)
         self._attributs = {
@@ -71,6 +77,31 @@ class Lumiere(BaseType):
             return ", ".join(sorted(self.types_combustibles))
         else:
             return "Aucun"
+
+    def get_nom(self, nombre=1, pluriels=True):
+        """Retourne le nom complet en fonction du nombre.
+
+        Par exemple :
+        Si nombre == 1 : retourne le nom singulier
+        Sinon : retourne le nombre et le nom pluriel
+
+        """
+        ajout = ""
+        e = "" if self.masculin else "e"
+        if getattr(self, "allumee_depuis", None):
+            ajout = " allumé{e}".format(e=e)
+        elif self.a_brulee():
+            ajout = " consumé{e}".format(e=e)
+        else:
+            ajout = " éteint{e}".format(e=e)
+
+        if nombre <= 0:
+            raise ValueError("la fonction get_nom a été appelée " \
+                    "avec un nombre négatif ou nul.")
+        elif nombre == 1:
+            return self.nom_singulier + ajout
+        else:
+            return BaseType.get_nom(self, nombre, pluriels)
 
     def a_brulee(self):
         """Cette propriété est vraie si la lumière est épuisée."""
@@ -86,15 +117,35 @@ class Lumiere(BaseType):
         if allumee_depuis is None:
             allumee_depuis = datetime.now()
 
-        if duree > self.duree_max:
+        if duree >= self.duree_max:
             return True
 
         actuellement = datetime.now()
-        diff = (actuellement - allumee_depuis).total_seconds()
+        diff = (actuellement - allumee_depuis).total_seconds() / 60
         if duree + diff > self.duree_max:
             return True
 
         return False
+
+    def duree_en_cours(self):
+        """Retourne la durée en cours.
+
+        Cette méthode retourne la durée réelle qui tient compte du
+        moment où la lumière a été allumée.
+
+        """
+        duree = getattr(self, "duree", None)
+        allumee_depuis = getattr(self, "allumee_depuis", None)
+
+        if duree is None:
+            duree = 0
+
+        if allumee_depuis is None:
+            allumee_depuis = datetime.now()
+
+        actuellement = datetime.now()
+        diff = (actuellement - allumee_depuis).total_seconds() / 60
+        return duree + diff
 
     def etendre_script(self):
         """Extension du scripting."""
@@ -111,14 +162,18 @@ class Lumiere(BaseType):
         var_objet = evt_allume.ajouter_variable("objet", "Objet")
         var_objet.aide = "l'objet allumé"
 
-        evt_eteint = self.script.creer_evenement("allume")
+        evt_eteint = self.script.creer_evenement("éteint")
         evt_eteint.aide_courte = "le personnage éteint l'objet"
         evt_eteint.aide_longue = \
             "Cet évènement est appelé quand le personnage éteint l'objet " \
             "lumière avec la commande associée. On ne peut pas empêcher " \
             "la commande de s'exécuter dans ce script. Notez que " \
             "l'objet est automatiquement éteint quand le combustible " \
-            "s'épuise, ce qui appelle aussi ce script."
+            "s'épuise, ce qui appelle aussi ce script. Notez que " \
+            "dans ce cas, la variable personnage peut être nulle " \
+            "(la lumière peut être posée à terre, par exemple). Testez " \
+            "si le personnage existe (si personnage:) avant de lui " \
+            "envoyer un message."
         var_perso = evt_eteint.ajouter_variable("personnage", "Personnage")
         var_perso.aide = "le personnage éteignant l'objet"
         var_objet = evt_eteint.ajouter_variable("objet", "Objet")
@@ -153,3 +208,22 @@ class Lumiere(BaseType):
             "n'est nécessaire pour l'allumer, ou bien d'avoir une " \
             "lumière\npossédant plusieurs types possibles.\n\n" \
             "Types actuels : {objet.str_types_combustibles}"
+
+    def nettoyage_cyclique(self):
+        """Nettoyage cyclique de la lumière."""
+        if self.allumee_depuis is None or not self.a_brulee():
+            return
+
+        parent = self.grand_parent
+        from primaires.perso.personnage import Personnage
+        if isinstance(parent, Personnage):
+            self.script["éteint"].executer(objet=self, personnage=parent)
+            self.allumee_depuis = None
+            self.duree = self.duree_max
+
+    def acheter(self, qtt, magasin, transaction):
+        """Quand on achète une lumière."""
+        BaseType.acheter(self, qtt, magasin, transaction)
+        personnage = transaction.initiateur
+        personnage.envoyer_tip("Entrez la commande %allumer% pour " \
+                "l'utiliser.")

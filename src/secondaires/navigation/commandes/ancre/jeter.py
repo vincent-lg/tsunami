@@ -1,11 +1,11 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2010 LE GOFF Vincent
+# Copyright (c) 2010-2016 LE GOFF Vincent
 # All rights reserved.
-# 
+#
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are met:
-# 
+#
 # * Redistributions of source code must retain the above copyright notice, this
 #   raise of conditions and the following disclaimer.
 # * Redistributions in binary form must reproduce the above copyright notice,
@@ -14,7 +14,7 @@
 # * Neither the name of the copyright holder nor the names of its contributors
 #   may be used to endorse or promote products derived from this software
 #   without specific prior written permission.
-# 
+#
 # THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
 # AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
 # IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -36,11 +36,11 @@ from primaires.interpreteur.masque.parametre import Parametre
 VIT_MAX = 2 # vitesse maximum
 
 class PrmJeter(Parametre):
-    
+
     """Commande 'ancre jeter'.
-    
+
     """
-    
+
     def __init__(self):
         """Constructeur du paramètre"""
         Parametre.__init__(self, "jeter", "drop")
@@ -48,47 +48,39 @@ class PrmJeter(Parametre):
         self.aide_longue = \
             "Cette commande jète l'ancre présente dans la salle où " \
             "vous vous trouvez."
-    
+
     def interpreter(self, personnage, dic_masques):
         """Interprétation du paramètre"""
         salle = personnage.salle
+        if "ancre" in personnage.etats:
+            personnage << "Vous cessez de peser sur le cabestan."
+            salle.envoyer("{} cesse de peser sur le cabestan.", personnage)
+            personnage.etats.retirer("ancre")
+            return
+
+        personnage.agir("ancre")
         if not hasattr(salle, "navire") or salle.navire is None or \
                 salle.navire.etendue is None:
             personnage << "|err|Vous n'êtes pas sur un navire.|ff|"
             return
-        
+
         navire = salle.navire
         etendue = navire.etendue
         if not hasattr(salle, "ancre"):
             personnage << "|err|Il n'y a pas d'ancre ici.|ff|"
             return
-        
+
         ancre = salle.ancre
         if not ancre:
             personnage << "|err|Vous ne voyez aucune ancre ici.|ff|"
             return
-        
+
+        profondeur = navire.profondeur
         if ancre.jetee:
             personnage << "|err|Cette ancre est déjà jetée.|ff|"
-        elif ancre.longueur < etendue.profondeur:
-            personnage << "|err|Vous ne pouvez jeter l'ancre ici.|ff|"
         elif navire.vitesse.norme >= VIT_MAX:
             personnage << "|err|Le navire va encore trop vite.|ff|"
+        elif ancre.longueur < profondeur:
+            personnage << "|err|Vous ne pouvez jeter l'ancre ici.|ff|"
         else:
-            vitesse = navire.vitesse.norme
-            navire.vitesse.x = 0
-            navire.vitesse.y = 0
-            navire.vitesse.z = 0
-            navire.acceleration.x = 0
-            navire.acceleration.y = 0
-            navire.acceleration.z = 0
-            navire.immobilise = True
-            ancre.jetee = True
-            personnage << "Vous jetez l'ancre."
-            personnage.salle.envoyer("{} jète l'ancre.", personnage)
-            if vitesse > 1:
-                navire.envoyer("Le navire tremble violemment quand son " \
-                        "ancre touche le fond.")
-            else:
-                navire.envoyer("Le navire frémit légèrement quand son " \
-                        "ancre touche le fond.")
+            ancre.jeter(personnage)

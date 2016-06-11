@@ -1,6 +1,6 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2010 LE GOFF Vincent
+# Copyright (c) 2010-2016 LE GOFF Vincent
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -35,6 +35,7 @@ type(importeur).man_logs.creer_logger("navigation", "ordres", "ordres.log")
 type(importeur).man_logs.creer_logger("navigation", "monstres", "monstres.log")
 
 import os
+from random import randint
 
 from vector import *
 
@@ -46,6 +47,7 @@ from primaires.salle.salle import Salle
 from primaires.vehicule.vecteur import Vecteur
 from secondaires.navigation.config import CFG_TEXTE
 from .navire import Navire
+from .navire_automatique import NavireAutomatique
 from .elements import types as types_elements
 from .elements.base import BaseElement
 from .vent import Vent
@@ -65,6 +67,10 @@ from .navires_vente import NaviresVente
 from .matelots_vente import MatelotsVente
 from .repere import Repere
 from .trajet import Trajet
+from .prompt import PromptNavigation
+from .cale import TYPES as CALE_TYPES
+from .templates.tenir_gouvernail import TenirGouvernail
+from .templates.tenir_rames import TenirRames
 
 class Module(BaseModule):
 
@@ -85,6 +91,7 @@ class Module(BaseModule):
         self.nav_logger = type(self.importeur).man_logs.creer_logger(
                 "navigation", "navires", "navires.log")
         self.navires = {}
+        self.navires_automatiques = {}
         self.elements = {}
         self.types_elements = types_elements
         self.vents = {}
@@ -101,6 +108,7 @@ class Module(BaseModule):
                 "navires": Visible.trouver_navires,
                 "reperes": Repere.trouver_reperes,
         }
+        type(importeur).espace["navires"] = self.navires
 
     def config(self):
         """Configuration du module."""
@@ -116,19 +124,25 @@ class Module(BaseModule):
         pli_voile.msg_refus = "Vous êtes en train de replier la voile"
         pli_voile.msg_visible = "replie une voile ici"
         pli_voile.act_autorisees = ["regarder", "parler"]
-        ten_gouv = self.importeur.perso.ajouter_etat("tenir_gouvernail")
-        ten_gouv.msg_refus = "Vous tenez actuellement le gouvernail"
-        ten_gouv.msg_visible = "tient le gouvernail ici"
-        ten_gouv.act_autorisees = ["regarder", "parler"]
+        charger_canon = self.importeur.perso.ajouter_etat("charger_canon")
+        charger_canon.msg_refus = "Vous êtes en train de charger le canon"
+        charger_canon.msg_visible = "charge le canon ici"
+        charger_canon.act_autorisees = ["parler"]
+        self.importeur.perso.ajouter_etat("tenir_gouvernail", TenirGouvernail)
         u_loch = self.importeur.perso.ajouter_etat("utiliser_loch")
         u_loch.msg_refus = "Vous êtes en train de manipuler le loch"
         u_loch.msg_visible = "manipule le loch ici"
         u_loch.act_autorisees = ["regarder", "parler"]
+        point = self.importeur.perso.ajouter_etat("faire_point")
+        point.msg_refus = "Vous êtes en train de faire votre point"
+        point.msg_visible = "fait le point ici"
+        point.act_autorisees = ["parler"]
+        ancre = self.importeur.perso.ajouter_etat("ancre")
+        ancre.msg_refus = "Vous êtes occué avec l'ancre."
+        ancre.msg_visible = "manipule l'ancre ici"
+        ancre.act_autorisees = ["regarder", "parler"]
 
-        ten_rames = self.importeur.perso.ajouter_etat("tenir_rames")
-        ten_rames.msg_refus = "Vous tenez actuellement les rames"
-        ten_rames.msg_visible = "rame ici"
-        ten_rames.act_autorisees = ["regarder", "parler"]
+        self.importeur.perso.ajouter_etat("tenir_rames", TenirRames)
 
         # Ajout du niveau
         importeur.perso.ajouter_niveau("navigation", "navigation")
@@ -149,10 +163,19 @@ class Module(BaseModule):
             "correspondant à ce prototype doit avoir été définie au " \
             "préalable."
 
+        # Ajout d'hooks
+        importeur.hook.ajouter_hook("navire:sombre",
+                "Hook appelé quand un navire fait naufrage.")
+
         BaseModule.config(self)
 
     def init(self):
         """Chargement des navires et modèles."""
+        self.importeur.scripting.valeurs["navire"] = self.navires
+
+        # Ajout du prompt
+        importeur.perso.ajouter_prompt(PromptNavigation)
+
         self.importeur.hook["salle:regarder"].ajouter_evenement(
                 self.navire_amarre)
         self.importeur.hook["salle:regarder"].ajouter_evenement(
@@ -163,14 +186,22 @@ class Module(BaseModule):
                 "Commandes de navigation"
         self.importeur.hook["pnj:arrive"].ajouter_evenement(
                 self.combat_matelot)
+        self.importeur.hook["pnj:attaque"].ajouter_evenement(
+                self.armer_matelot)
+        self.importeur.hook["pnj:détruit"].ajouter_evenement(
+                self.detruire_pnj)
         self.importeur.hook["pnj:meurt"].ajouter_evenement(
-                self.rendre_equipage)
+                self.meurt_PNJ)
         self.importeur.hook["pnj:nom"].ajouter_evenement(
                 Equipage.get_nom_matelot)
         self.importeur.hook["salle:trouver_chemins_droits"].ajouter_evenement(
                 self.trouver_chemins_droits)
         self.importeur.hook["stats:infos"].ajouter_evenement(
                 self.stats_navigation)
+        self.importeur.hook["personnage:deplacer"].ajouter_evenement(
+                self.modifier_prompt)
+        self.importeur.hook["objet:doit_garder"].ajouter_evenement(
+                self.objets_en_cale)
 
         # Ajout des talents
         importeur.perso.ajouter_talent("calfeutrage", "calfeutrage",
@@ -188,11 +219,21 @@ class Module(BaseModule):
         # On récupère les navires
         navires = self.importeur.supenr.charger_groupe(Navire)
         for navire in navires:
-            self.navires[navire.cle] = navire
+            self.ajouter_navire(navire)
 
         nb_navires = len(navires)
         self.nav_logger.info(format_nb(nb_navires,
                 "{nb} navire{s} récupéré{s}"))
+
+        # On récupère les navires automatiques
+        fiches = self.importeur.supenr.charger_groupe(NavireAutomatique)
+        for fiche in fiches:
+            self.ajouter_navire_automatique(fiche)
+
+        nb_autos = len(fiches)
+        self.nav_logger.info(format_nb(nb_autos,
+                "{nb} fiche{s} de navire{s} automatique{s} " \
+                "récupérée{s}", fem=True))
 
         # On récupère les éléments
         elements = self.importeur.supenr.charger_groupe(BaseElement)
@@ -252,18 +293,12 @@ class Module(BaseModule):
         # On charge les prototypes
         chemin = os.path.join(self.chemin, "monstre", "types")
         pychemin = "secondaires.navigation.monstre.types"
-        print("Explore", chemin)
         for nom_fichier in os.listdir(chemin):
             if nom_fichier.startswith("_") or not nom_fichier.endswith(".py"):
                 continue
 
             nom_fichier = pychemin + "." + nom_fichier[:-3]
-            print("Charge", nom_fichier)
             __import__(nom_fichier)
-
-        #modeles = self.importeur.supenr.charger_groupe(ModeleNavire)
-        #for modele in modeles:
-        #    self.modeles[modele.cle] = modele
 
         # Ajout des actions différées
         self.importeur.diffact.ajouter_action("dep_navire", TPS_VIRT,
@@ -274,15 +309,14 @@ class Module(BaseModule):
                 self.nauffrages)
         self.importeur.diffact.ajouter_action("tick_chantiers", 60,
                 self.tick_chantiers)
-        self.importeur.diffact.ajouter_action("tick_equipages", 1,
-                self.tick_equipages)
-        self.importeur.diffact.ajouter_action("controle_equipages", 3,
-                self.controle_equipages)
 
         # Ajout des bateaux au module salle
         self.importeur.salle.salles_a_cartographier.append(
                 self.get_navires_presents)
 
+        # Ajout d'évènements
+        importeur.evt.ajouter_evenement("sombre", "Un navire sombre",
+                "Naufrage de {navire.cle}.", "navire:sombre")
         BaseModule.init(self)
 
     def ajouter_commandes(self):
@@ -294,6 +328,8 @@ class Module(BaseModule):
             commandes.cale.CmdCale(),
             commandes.calfeutrer.CmdCalfeutrer(),
             commandes.canon.CmdCanon(),
+            commandes.canot.CmdCanot(),
+            commandes.cap.CmdCap(),
             commandes.chantier.CmdChantier(),
             commandes.debarquer.CmdDebarquer(),
             commandes.detailler.CmdDetailler(),
@@ -305,10 +341,12 @@ class Module(BaseModule):
             commandes.loch.CmdLoch(),
             commandes.matelot.CmdMatelot(),
             commandes.navire.CmdNavire(),
+            commandes.navire_automatique.CmdNavireAutomatique(),
             commandes.passerelle.CmdPasserelle(),
+            commandes.pavillon.CmdPavillon(),
+            commandes.point.CmdPoint(),
             commandes.rames.CmdRames(),
             commandes.saborder.CmdSaborder(),
-            commandes.shedit.CmdShedit(),
             commandes.vent.CmdVent(),
             commandes.voile.CmdVoile(),
         ]
@@ -317,6 +355,8 @@ class Module(BaseModule):
             self.importeur.interpreteur.ajouter_commande(cmd)
 
         # Ajout des éditeurs
+        self.importeur.interpreteur.ajouter_editeur(
+                editeurs.autonavire.EdtNaedit)
         self.importeur.interpreteur.ajouter_editeur(
                 editeurs.matedit.EdtMatedit)
         self.importeur.interpreteur.ajouter_editeur(
@@ -334,10 +374,21 @@ class Module(BaseModule):
         self.nav_logger.info("Mise à jour des navires...")
         for navire in self.navires.values():
             for salle in navire.salles.values():
+                salle.illuminee = True
                 for element in salle.elements:
                     element.mettre_a_jour_attributs()
-            navire.construire_depuis_modele()
-            if not navire.modele.graph:
+                rames = salle.rames
+                if rames:
+                    rames.vitesse = "immobile"
+                    rames.centrer()
+                    if rames.tenu:
+                        rames.tenu.etats.retirer("tenir_rames")
+
+            navire.construire_depuis_modele(False)
+            if (len(navire.salles) ** 2 - len(navire.salles)) != \
+                    len(navire.modele.graph):
+                self.nav_logger.info("Calcul du graph du modèle de " \
+                        "navire {}.".format(navire.modele.cle))
                 navire.modele.generer_graph()
         self.nav_logger.info("... mise à jour des navires terminée.")
 
@@ -348,9 +399,26 @@ class Module(BaseModule):
                 if matelot.ordres:
                     matelot.nettoyer_ordres()
                     matelot.executer_ordres()
+            navire.equipage.points_max = navire.equipage.points_actuels
+        self.nav_logger.info("Mise à jour des matelots terminée.")
 
         # On renseigne le terrain récif
-        Navire.obs_recif = self.importeur.salle.obstacles["récif"]
+        Navire.obs_recif = (
+                self.importeur.salle.obstacles["récif"],
+                self.importeur.salle.obstacles["rapide"],
+                self.importeur.salle.obstacles["banc de sable"],
+                self.importeur.salle.obstacles["corail"],
+        )
+
+        for obstacle in Navire.obs_recif:
+            obstacle.symbole = "!"
+
+        # On renseigne les types dynamiques dans la cale
+        for nom_type in importeur.objet.get_types_herites("matériau"):
+            CALE_TYPES[nom_type] = "marchandises"
+
+        for nom_type in importeur.objet.get_types_herites("outil"):
+            CALE_TYPES[nom_type] = "outils"
 
     def creer_modele(self, cle):
         """Crée un modèle de navire et l'ajoute dans le dictionnaire.
@@ -394,7 +462,18 @@ class Module(BaseModule):
 
     def ajouter_navire(self, navire):
         """Ajoute le navire à la liste."""
-        self.navires[navire.cle] = navire
+        cle = navire.cle
+        self.navires[cle] = navire
+
+        # Créé les actions différées
+        self.importeur.diffact.ajouter_action("tick_equipages_{}".format(cle),
+                1, self.tick_equipages, navire)
+        self.importeur.diffact.ajouter_action("tick_vigies_{}".format(cle),
+                randint(0, 20), self.tick_vigies, navire)
+        self.importeur.diffact.ajouter_action("controle_equipages_{}".format(
+                cle), randint(0, 5), self.controle_equipages, navire)
+        self.importeur.diffact.ajouter_action("objectif_equipages_{}".format(
+                cle), randint(0, 15), self.objectif_equipages, navire)
 
     def supprimer_navire(self, cle):
         """Supprime le navire dont la clé est passée en paramètre."""
@@ -402,8 +481,33 @@ class Module(BaseModule):
             raise KeyError("le navire de clé {} est introuvable".format(cle))
 
         navire = self.navires[cle]
+
+        # Destruction des action différées
+        self.importeur.diffact.retirer_action("tick_equipages_{}".format(cle),
+                False)
+        self.importeur.diffact.retirer_action("tick_vigies_{}".format(cle),
+                False)
+        self.importeur.diffact.retirer_action("controle_equipages_{}".format(
+                cle), False)
+        self.importeur.diffact.retirer_action("objectif_equipages_{}".format(
+                cle), False)
+
         navire.detruire()
         del self.navires[cle]
+
+    def creer_navire_automatique(self, cle):
+        """Crée un navire automatique."""
+        fiche = NavireAutomatique(cle)
+        self.ajouter_navire_automatique(fiche)
+        return fiche
+
+    def ajouter_navire_automatique(self, fiche):
+        """Ajoute le navire automatique à la liste."""
+        self.navires_automatiques[fiche.cle] = fiche
+
+    def supprimer_navire_automatique(self, cle):
+        """Supprime le navire automatique dont la clé est précisée."""
+        self.navires_automatiques.pop(cle).detruire()
 
     def creer_element(self, cle, type_elt):
         """Crée un élément du type indiqué.
@@ -427,6 +531,18 @@ class Module(BaseModule):
         element = self.elements[cle]
         element.detruire()
         del self.elements[cle]
+
+    def objets_en_cale(self):
+        """Retourne tous les objets en cale."""
+        objets = []
+        for navire in self.navires.values():
+            cale = navire.cale
+            if cale:
+                for objet in cale.conteneur:
+                    objets.append(objet)
+
+        print("sauve", objets)
+        return objets
 
     def get_vents_etendue(self, cle):
         """Retourne une liste des vents de l'étendue."""
@@ -541,7 +657,7 @@ class Module(BaseModule):
         """Fait avancer les navires."""
         self.importeur.diffact.ajouter_action("dep_navire", TPS_VIRT,
                 self.avancer_navires)
-        for navire in self.navires.values():
+        for navire in list(self.navires.values()):
             if navire.etendue:
                 navire.avancer(DIST_AVA)
 
@@ -556,7 +672,7 @@ class Module(BaseModule):
                     navire.virer(orientation)
 
     def nauffrages(self):
-        """Gère les nauffrages."""
+        """Gère les naufrages."""
         self.importeur.diffact.ajouter_action("nauffrages", 5,
                 self.nauffrages)
         for navire in list(self.navires.values()):
@@ -578,24 +694,59 @@ class Module(BaseModule):
         for chantier in self.chantiers.values():
             chantier.executer_commandes()
 
-    def tick_equipages(self):
+    def tick_equipages(self, navire):
         """Tick des équipages."""
-        self.importeur.diffact.ajouter_action("tick_equipages", 1,
-                self.tick_equipages)
-        equipages = [n.equipage for n in self.navires.values() if \
-                len(n.equipage.matelots) > 0]
-        for equipage in equipages:
-            equipage.tick()
+        cle = navire.cle
+        self.importeur.diffact.ajouter_action("tick_equipages_{}".format(cle),
+                1, self.tick_equipages, navire)
 
-    def controle_equipages(self):
+        if not navire.equipage.matelots:
+            return
+
+        navire.equipage.tick()
+
+    def tick_vigies(self, navire):
+        """Tick les vigies."""
+        cle = navire.cle
+        self.importeur.diffact.ajouter_action("tick_vigies_{}".format(
+                cle), 5, self.tick_vigies, navire)
+
+        if not navire.equipage.matelots:
+            return
+
+        if not navire.immobilise and navire.vitesse.norme > 0:
+            navire.equipage.verifier_vigie()
+
+    def controle_equipages(self, navire):
         """Contrôle des équipages."""
-        self.importeur.diffact.ajouter_action("controle_equipages", 3,
-                self.controle_equipages)
-        equipages = [n.equipage for n in self.navires.values() if \
-                len(n.equipage.matelots) > 0]
-        for equipage in equipages:
-            for controle in equipage.controles.values():
-                controle.controler()
+        cle = navire.cle
+        self.importeur.diffact.ajouter_action("controle_equipages_{}".format(
+                cle), 3, self.controle_equipages, navire)
+
+        if not navire.equipage.matelots:
+            return
+
+        if navire.immobilise:
+            return
+
+        for controle in navire.equipage.controles.values():
+            controle.controler()
+
+    def objectif_equipages(self, navire):
+        """Travail sur les objectifs des équipages."""
+        cle = navire.cle
+        self.importeur.diffact.ajouter_action("objectif_equipages_{}".format(
+                cle), 5, self.objectif_equipages, navire)
+
+        if not navire.equipage.matelots:
+            return
+
+        navire.equipage.objectifs = [o for o in navire.equipage.objectifs if \
+                o.actif]
+        prioritaire = True
+        for objectif in navire.equipage.objectifs:
+            objectif.verifier(prioritaire)
+            prioritaire = False
 
     def navire_amarre(self, salle, liste_messages, flags):
         """Si un navire est amarré, on l'affiche."""
@@ -608,8 +759,8 @@ class Module(BaseModule):
             for t_salle in navire.salles.values():
                 if t_salle.amarre and t_salle.amarre.attachee is salle:
                     e = "" if navire.modele.masculin else "e"
-                    liste_messages.insert(0, "{} est amarré{e} ici.".format(
-                            navire.desc_survol.capitalize(), e=e))
+                    liste_messages.insert(0, "*  {} est amarré{e} ici.".format(
+                            navire.desc_survol, e=e))
                     return
 
     def navire_accoste(self, salle, liste_messages, flags):
@@ -625,9 +776,8 @@ class Module(BaseModule):
         if sortie and sortie.salle_dest and hasattr(sortie.salle_dest,
                 "navire"):
             navire = sortie.salle_dest.navire
-            e = "" if navire.modele.masculin else "e"
-            liste_messages.insert(0, "{} a accosté{e} ici.".format(
-                        navire.desc_survol.capitalize(), e=e))
+            liste_messages.insert(0, "*  {} a accosté ici.".format(
+                        navire.desc_survol))
 
     def combat_matelot(self, pnj, arrive):
         """Méthode appelé quand un PNJ arrive dans la salle d'un autre.
@@ -637,27 +787,69 @@ class Module(BaseModule):
 
         """
         if pnj is not arrive and hasattr(pnj, "identifiant") and \
-                hasattr(arrive, "identifiant"):
-            if pnj.identifiant in self.matelots and arrive.identifiant in \
-                    self.matelots:
-                matelot = self.matelots[pnj.identifiant]
-                arrive = self.matelots[arrive.identifiant]
+                pnj.identifiant in self.matelots:
+            matelot = self.matelots[pnj.identifiant]
+            navire = matelot.navire
+            immobilise = getattr(navire, "immobilise", True)
+            equipage = matelot.equipage
+            if not immobilise and equipage and not equipage.est_matelot(
+                    arrive):
+                matelot.armer()
+                pnj.attaquer(arrive)
 
-    def rendre_equipage(self, pnj, adversaire):
-        """Méthode appelée quand un PNJ meurt.
+    def armer_matelot(self, pnj, adversaire):
+        """Méthode appelé quand un PNJ est attaqué.
 
-        Cette méthode est appelée quand un PNJ meurt et permet de
-        déterminer, si le PNJ est un matelot, si l'équipage doit se
-        rendre.
+        On profite de cette méthode (reliée à un hook) pour demander
+        au matelot derrière le PNJ (si existe) de s'armer si besoin.
 
         """
-        print(pnj, "meurt tué par", adversaire)
+        print(pnj, "est attaqué")
+        if hasattr(pnj, "identifiant") and pnj.identifiant in self.matelots:
+            matelot = self.matelots[pnj.identifiant]
+            navire = matelot.navire
+            immobilise = getattr(navire, "immobilise", True)
+            equipage = matelot.equipage
+            if not immobilise and equipage:
+                matelot.armer()
+
+    def meurt_PNJ(self, pnj, adversaire):
+        """PNJ meurt, tué par personnage.
+
+        Si pnj est un matelot, affiche une tip si le statut du navire
+        passe en abordable.
+
+        """
+        if adversaire and hasattr(pnj, "identifiant") and \
+                pnj.identifiant in self.matelots:
+            matelot = self.matelots[pnj.identifiant]
+            navire = matelot.navire
+            equipage = matelot.equipage
+            if equipage:
+                actuels = equipage.points_actuels
+                futurs = actuels - matelot.poste.points
+                if not est_capturable(navire, actuels) and est_capturable(
+                        navire, futurs):
+                    adversaire.envoyer_tip("Vous pouvez maintenant " \
+                            "conquérir ce navire en utilisant %équipage% " \
+                            "%équipage:conquérir%.")
+
+    def detruire_pnj(self, pnj):
+        """Détruit le matelot spécifié."""
+        if pnj.identifiant in self.matelots:
+            matelot = self.matelots[pnj.identifiant]
+            if matelot.equipage:
+                matelot.equipage.supprimer_matelot(matelot.nom, False)
+            else:
+                self.matelots.pop(pnj.identifiant).detruire()
 
     def get_symbole(self, point):
         """Retourne le symbole correspondant."""
         if isinstance(point, Salle) and point.nom_terrain in \
                 TERRAINS_ACCOSTABLES:
             return "#"
+        elif hasattr(point, "symbole"):
+            return point.symbole
         elif isinstance(point, Navire):
             return "*"
         elif isinstance(point, Repere):
@@ -712,6 +904,9 @@ class Module(BaseModule):
         """Retourne la distance minimum avec tous les navires présents."""
         distances = []
         for navire in self.navires.values():
+            if navire.etendue is None:
+                continue
+
             for salle in navire.salles.values():
                 t_x, t_y, t_z = salle.coords.x, salle.coords.y, salle.coords.z
                 t_vecteur = Vector(t_x, t_y, t_z)
@@ -742,7 +937,7 @@ class Module(BaseModule):
           joints par sorties.
         * La salle du personnage est une salle de navire : dans ce
           cas, on retourne les autres navires autour, c'est-à-dire
-          qui ont une salle à moins de 5 brasses. Cela demande de
+          qui ont une salle à moins de 10 brasses. Cela demande de
           vérifier chaque salle de chaque navire et est surtout utile
           pour recruter des matelots d'un autre navire en mer.
 
@@ -752,7 +947,7 @@ class Module(BaseModule):
         if getattr(salle, "navire", None) is None:
             # Premier cas, salle de la terre ferme
             for navire in importeur.navigation.navires.values():
-                if navire.proprietaire is not personnage:
+                if not navire.a_le_droit(personnage, "maître d'équipage"):
                     continue
 
                 if not navire.accoste:
@@ -763,19 +958,23 @@ class Module(BaseModule):
         else:
             # Second cas, c'est une salle de navire
             navire = salle.navire
-            if navire.accoste:
-                return []
+            if not navire.a_le_droit(personnage, "maître d'équipage"):
+                return
 
             coords = [s.coords.tuple() for s in navire.salles.values()]
             for autre in importeur.navigation.navires.values():
-                if navire is autre or autre.proprietaire is not personnage:
+                if navire is autre or not autre.a_le_droit(
+                        personnage, "maître d'équipage") or \
+                        autre.etendue is None:
                     continue
 
                 for autre_salle in autre.salles.values():
                     tup = salle.coords.tuple()
-                    distance = min(mag(tup + c) for c in coords)
-                    if distance < 2:
+                    distance = min(mag(tup[0], tup[1], tup[2], *c) for c in \
+                            coords)
+                    if distance < 4:
                         navires.append(autre)
+                        break
 
         navires.sort(key=lambda n: n.cle)
         return navires
@@ -843,3 +1042,12 @@ class Module(BaseModule):
                 i += 1
 
         infos.append(msg)
+
+    def modifier_prompt(self, personnage, destination, sortie, endurance):
+        """Modifie le prompt du personnage se déplaçant."""
+        if getattr(destination, "navire", None):
+            # On active le prompt de navigation
+            personnage.selectionner_prompt("navigation")
+        else:
+            # On désélectionne le prompt
+            personnage.deselectionner_prompt("navigation")

@@ -1,6 +1,6 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2014 LE GOFF Vincent
+# Copyright (c) 2010-2016 LE GOFF Vincent
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -45,3 +45,13 @@ pas capable de ce type d'objectifs.
 Chaque objectif est décrit dans une classe à part.
 
 """
+
+from secondaires.navigation.equipage.objectifs.couler import Couler
+from secondaires.navigation.equipage.objectifs.rejoindre import Rejoindre
+from secondaires.navigation.equipage.objectifs.rejoindre_navire import \
+        RejoindreNavire
+from secondaires.navigation.equipage.objectifs.rejoindre_et_couler import \
+        RejoindreEtCouler
+from secondaires.navigation.equipage.objectifs.suivre_cap import SuivreCap
+from secondaires.navigation.equipage.objectifs.suivre_navire import \
+        SuivreNavire

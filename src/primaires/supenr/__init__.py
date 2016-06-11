@@ -1,6 +1,6 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2010 LE GOFF Vincent
+# Copyright (c) 2010-2016 LE GOFF Vincent
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -35,6 +35,7 @@ import os
 import pickle
 import sys
 import time
+from yaml import dump, load
 
 transforms = []
 
@@ -79,7 +80,9 @@ class Module(BaseModule):
         self.logger = type(self.importeur).man_logs.creer_logger("supenr", \
                 "supenr")
         self.enregistre_actuellement = False
+        self.fichiers = {}
         self.pret = False
+        self.met_preparer = []
 
         # Objets utiles pour MongoDB
         self.mongo_db = None
@@ -95,6 +98,9 @@ class Module(BaseModule):
         des fichiers-données a été défini.
         Cette donnée peut également se trouver dans les données globales de
         configuration.
+
+        Une fois qu'on a obtenu cette donnée, on charge les fichiers
+        yml qui servent de complément à l'enregistrement.
 
         """
         global REP_ENRS
@@ -128,6 +134,19 @@ class Module(BaseModule):
         sys.setrecursionlimit(12000)
 
         self.pret = True
+
+        # Chargement des fichiers yml
+        if importeur.sauvegarde:
+            for nom_fichier in os.listdir(REP_ENRS):
+                if nom_fichier.endswith(".yml"):
+                    fichier = open(REP_ENRS + os.sep + nom_fichier, "r")
+                    contenu = fichier.read()
+                    donnees = load(contenu)
+                    nom = nom_fichier[:-4]
+                    self.fichiers[nom] = donnees
+                    self.logger.info("Chargement du fichier YML {}".format(
+                            repr(nom)))
+
         BaseModule.config(self)
 
     def config_mongo(self):
@@ -154,12 +173,19 @@ class Module(BaseModule):
             self.charger()
 
             # Création de l'action différée pour enregistrer périodiquement
-            importeur.diffact.ajouter_action("enregistrement", 60 * 60,
-                    self.enregistrer_periodiquement)
-        else: # Mongo
-            importeur.diffact.ajouter_action("enregistrement", 1,
-                    self.mongo_enregistrer_file)
+            #importeur.diffact.ajouter_action("enregistrement", 60 * 60,
+            #        self.enregistrer_periodiquement)
+        #else: # Mongo
+            #importeur.diffact.ajouter_action("enregistrement", 1,
+            #        self.mongo_enregistrer_file)
         BaseModule.init(self)
+
+    def preparer(self):
+        """Appel des méthodes différées."""
+        for liste in self.met_preparer:
+            callback = liste[0]
+            arguments = liste[1:]
+            callback(*arguments)
 
     def detruire(self):
         """Destruction du module"""
@@ -169,6 +195,22 @@ class Module(BaseModule):
             self.mongo_enregistrer_file(False)
 
         BaseModule.detruire(self)
+
+    def sauver_fichier(self, nom, donnees):
+        """Sauvegarde le fichier XML précisé.
+
+        Le fichier sera le nom avec l'extension '.yml'. Les
+        données doivent être transmises dans un dictionnaire.
+
+        """
+        if not importeur.sauvegarde:
+            return
+
+        chemin = REP_ENRS + os.sep + nom + ".yml"
+        contenu = dump(donnees, default_flow_style=False)
+        fichier = open(chemin, "w")
+        fichier.write(contenu)
+        fichier.close()
 
     def enregistrer(self):
         """Méthode appelée pour enregistrer TOUS les objets par pickle."""
@@ -212,8 +254,8 @@ class Module(BaseModule):
         On enregistre tous les objets dans la sauvegarde pickle.
 
         """
-        importeur.diffact.ajouter_action("enregistrement", 60 * 60,
-                self.enregistrer_periodiquement)
+        #importeur.diffact.ajouter_action("enregistrement", 60 * 60,
+        #        self.enregistrer_periodiquement)
         if self.enregistre_actuellement:
             return
 

@@ -1,6 +1,6 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2012 LE GOFF Vincent
+# Copyright (c) 2010-2016 LE GOFF Vincent
 # All rights reserved.
 # 
 # Redistribution and use in source and binary forms, with or without
@@ -130,10 +130,14 @@ class Page(Contexte):
             self.curseur += 1
             self.pere.envoyer(self.accueil())
         elif msg.startswith("c"):
+            mots = msg.split(" ")
+            if len(mots) < 2:
+                self.pere << "|err|Précisez un numéro de chapitre.|ff|"
+                return
             try:
-                num_chap = int(msg.split(" ")[1])
+                num_chap = int(mots[1])
                 assert 0 < num_chap <= len(self.chapitres)
-            except ValueError:
+            except (ValueError, AssertionError):
                 self.pere << "|err|Précisez un numéro de chapitre valide.|ff|"
             else:
                 self.curseur = self.chapitres[num_chap - 1]

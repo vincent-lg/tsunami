@@ -1,6 +1,6 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2010 LE GOFF Vincent
+# Copyright (c) 2010-2016 LE GOFF Vincent
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -134,9 +134,11 @@ class Equipement(BaseObj):
         courante a simplement l'avantage d'afficher une erreur explicite
         en cas de problème.
 
+        La recherche se fait indépendemment des majuscules ou accents.
+
         """
-        nom = supprimer_accents(nom_membre)
-        noms = [(supprimer_accents(membre.nom), i) for i, membre in \
+        nom = supprimer_accents(nom_membre).lower()
+        noms = [(supprimer_accents(membre.nom).lower(), i) for i, membre in \
                 enumerate(self.__membres)]
         noms = dict(noms)
 
@@ -396,7 +398,7 @@ class Inventaire:
 
     def __iter__(self):
         """Parcourt des objets."""
-        return iter(self.objets)
+        return iter(self.objets + self.non_uniques)
 
     def get_objets(self, simple=False):
         """Récupère les objets de l'inventaire."""
@@ -470,3 +472,25 @@ class Inventaire:
                 yield (prototype, qtt, t_conteneur)
             else:
                 yield (prototype, qtt)
+
+    def get_objets_cle(self, cle):
+        """Retourne les objets ayant pour clé la clé précisée.
+
+        Cette méthode ne parcourt que les objets uniques.
+
+        """
+        objets = []
+        for objet in self:
+            if objet.cle == cle:
+                objets.append(objet)
+
+        return objets
+
+    def get_objets_type(self, nom_type):
+        """Retourne les objets possédés du type indiqué."""
+        objets = []
+        for objet in self:
+            if objet.est_de_type(nom_type):
+                objets.append(objet)
+
+        return objets

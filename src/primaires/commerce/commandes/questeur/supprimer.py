@@ -1,6 +1,6 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2012 LE GOFF Vincent
+# Copyright (c) 2010-2016 LE GOFF Vincent
 # All rights reserved.
 # 
 # Redistribution and use in source and binary forms, with or without
@@ -55,4 +55,4 @@ class PrmSupprimer(Parametre):
             personnage << "Le questeur a bien été supprimé."
         else:
             personnage << "|err|Aucun questeur n'a été défini dans " \
-                    "cette salle."
+                    "cette salle.|ff|"

@@ -1,6 +1,6 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2010 LE GOFF Vincent
+# Copyright (c) 2010-2016 LE GOFF Vincent
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -35,7 +35,7 @@ from primaires.scripting.instruction import ErreurExecution
 
 class ClasseFonction(Fonction):
 
-    """Retourne la salle d'un personnage."""
+    """Retourne la salle d'un personnage, d'un objet ou d'après une clé de salle."""
 
     @classmethod
     def init_types(cls):
@@ -52,7 +52,7 @@ class ClasseFonction(Fonction):
     def salle_chaine(cle):
         """Retourne la salle correspondante à la clé entrée.
 
-        La clé doit être la zone de la salle et son mnémonic
+        La clé doit être la zone de la salle et son mnémonique
         séparés par le signe deux points. Par exemple, "picte:1".
 
         """
@@ -72,7 +72,7 @@ class ClasseFonction(Fonction):
           * objet : l'objet dont on veut retrouver la salle.
 
         Attention : un objet peut se trouver possédé par un personnage. Dans
-        ce cas, la salle retournée est celle dans lequel se trouve le
+        ce cas, la salle retournée est celle dans laquelle se trouve le
         personnage. Notez aussi que l'objet peut se trouver nullepart
         (cela arrive en cas d'erreur sur une fonction 'creer_objet' par
         exemple, mais aussi dans d'autres situations pour certains objets

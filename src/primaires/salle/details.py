@@ -1,6 +1,6 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2010 LE GOFF Vincent
+# Copyright (c) 2010-2016 LE GOFF Vincent
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -36,6 +36,7 @@ from .detail import Detail
 class Details(BaseObj):
 
     """Cette classe est un conteneur de détails.
+
     Elle contient les détails observables d'une salle, que l'on peut voir
     avec la commande look.
 
@@ -84,19 +85,66 @@ class Details(BaseObj):
 
         return detail
 
-    def get_detail(self, nom):
+    def get_detail(self, nom, flottants=False):
         """Renvoie le détail 'nom', si elle existe.
+
         A la différence de __getitem__(), cette fonction accepte en paramètre
         un des synonymes du détail recherchée.
 
         """
         res = None
-        for d_nom, detail in self._details.items():
+        details = self._details.copy()
+        if self.parent and flottants:
+            description = self.parent.description
+            for paragraphe in description.paragraphes:
+                p, flottantes = description.charger_descriptions_flottantes(
+                        paragraphe)
+                for flottante in flottantes:
+                    for d in flottante.details:
+                        if d.nom not in details:
+                            details[d.nom] = d
+
+        for d_nom, detail in details.items():
             if nom == d_nom or nom in detail.synonymes:
                 res = detail
 
         return res
 
-    def detail_existe(self, nom):
+    def detail_existe(self, nom, flottants=False):
         """Renvoie True si le détail 'nom' existe"""
-        return self.get_detail(nom) is not None
+        return self.get_detail(nom, flottants) is not None
+
+    def copier_depuis(self, details, dereferencer=False):
+        """Copie les détails depuis d'autres.
+        
+        Si 'deferencer' est à True, alors les descriptions des
+        détails sont déréferencées au fur et à mesure.
+        
+        """
+        for detail in details:
+            nom = detail.nom
+            n_detail = self.get_detail(nom)
+            if n_detail is None:
+                n_detail = self.ajouter_detail(nom)
+            
+            n_detail.synonymes = list(detail.synonymes)
+            n_detail.titre = detail.titre
+            if dereferencer:
+                n_detail.description.copier_depuis(detail.description)
+            else:
+                n_detail.description = detail.description
+            n_detail.positions = dict(detail.positions)
+            n_detail.est_visible = detail.est_visible
+            n_detail.script.copier_depuis(detail.script)
+            n_detail.peut_asseoir = detail.peut_asseoir
+            n_detail.peut_allonger = detail.peut_allonger
+            n_detail.facteur_asseoir = detail.facteur_asseoir
+            n_detail.facteur_allonger = detail.facteur_allonger
+            n_detail.connecteur = detail.connecteur
+            n_detail.nb_places_assises = detail.nb_places_assises
+            n_detail.nb_places_allongees = detail.nb_places_allongees
+            n_detail.flags = detail.flags
+            n_detail._peut_supporter = detail._peut_supporter
+            n_detail.message_supporte = detail.message_supporte
+            n_detail.message_installation = detail.message_installation
+            n_detail.message_desinstallation = detail.message_desinstallation

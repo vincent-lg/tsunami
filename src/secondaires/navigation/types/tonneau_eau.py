@@ -1,6 +1,6 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2014 LE GOFF Vincent
+# Copyright (c) 2010-2016 LE GOFF Vincent
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -82,9 +82,15 @@ class TonneauEau(BaseType):
 
     # Actions sur les objets
     def regarder(self, personnage):
-        """Quand on regarde la boussole."""
+        """Quand on regarde le tonneau."""
         moi = BaseType.regarder(self, personnage)
-        contenu = self.gorgees_contenu / self.gorgees_max_contenu
+        # Cette description peut être appelée dans une échoppe, suite à
+        # l'utilisation de la commande "infos", donc self.gorgees_contenu
+        # peut être absent.
+        gorgees_contenu = getattr(self, "gorgees_contenu",
+                self.gorgees_max_contenu)
+
+        contenu = gorgees_contenu / self.gorgees_max_contenu
         if contenu == 0:
             retour = "Ce tonneau est vide."
         elif contenu <= 0.05:
@@ -98,7 +104,7 @@ class TonneauEau(BaseType):
         elif contenu < 0.6:
             retour = "Ce tonneau est à moitié vide... ou à moitié plein."
         elif contenu < 0.8:
-            retour = "Ce tonneau est rempli au trois quart."
+            retour = "Ce tonneau est rempli aux trois quarts."
         elif contenu < 0.95:
             retour = "Ce tonneau est presque entièrement rempli."
         else:

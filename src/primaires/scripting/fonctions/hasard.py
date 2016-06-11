@@ -1,6 +1,6 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2010 LE GOFF Vincent
+# Copyright (c) 2010-2016 LE GOFF Vincent
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -46,6 +46,8 @@ class ClasseFonction(Fonction):
         cls.ajouter_types(cls.hasard, "Fraction")
         cls.ajouter_types(cls.choix_chaine, "str")
         cls.ajouter_types(cls.choix_liste, "list")
+        cls.ajouter_types(cls.choix_probable, "list", "Fraction")
+        cls.ajouter_types(cls.choix_probable, "list", "Fraction", "str")
 
     @staticmethod
     def hasard(probabilite):
@@ -97,3 +99,96 @@ class ClasseFonction(Fonction):
 
         """
         return choice(liste)
+
+    @staticmethod
+    def choix_probable(liste, colonne, moyen="pourcent"):
+        """Retourne un choix probable dans la liste indiquée.
+
+        La liste passée en paramètre doit être une liste de listes.
+        L'un des éléments de cette seconde liste doit contenir la
+        probabilité. Cette fonction peut sembler assez complexe,
+        consultez les exemples ci-dessous pour avoir une meilleure
+        idée de son fonctionnement.
+
+        Paramètres à entrer :
+
+          * liste : la liste de listes
+          * colonne : le numéro de la colonne contenant la probabilité
+          * moyen : le moyen de calculer la probabilité
+
+        Moyens disponibles :
+
+          * "pourcent" : les probabilités sont en pourcent
+          * "total" : les probabilités font référence à leur somme totale
+
+        Cette fonction peut retourner une variable vide si aucune
+        probabilité n'est trouvée.
+
+        Plusieurs exemples d'utilisation :
+
+          # Choix simple
+          objets = liste()
+          ajouter liste("pomme_rouge", 5) objets
+          ajouter liste("pomme_verte", 8) objets
+          ajouter liste("pomme_rose", 1) objets
+          # La variable 'objets' contient donc une liste de listes.
+          # Chaque liste de second niveau contient un couple :
+          # une clé d'objet en premier paramètre et une probabilité
+          # en second (colonne 2).
+          choix = hasard(objets, 2)
+          # 'choix' va contenir aléatoirement :
+          # * "pomme_rouge" (5% de chance)
+          # * "pomme_verte" (8% de chance)
+          # * "pomme_rose" (1% de chance)
+          # * Une variable vide (86% de chance)
+
+          # Dans ce contexte, la somme de toute les probabilités ne
+          # fait pas 100, il y a donc une chance que la fonction
+          # 'hasard' ne retourne qu'une variable vide.
+          # Vous pouvez aussi demander à cette variable de se baser
+          # sur le total des probabilités.
+          choix = hasard(objets, 2, "total")
+          # choix va contenir aléatoirement :
+          # * "pomme_rouge" (5 chance sur 14)
+          # * "pomme_verte" (8 chances sur 14)
+          # * "pomme_rose" (1 chances sur 14)
+
+          # Dans ce cas, la variable retournée ne peut jamais être vide.
+
+          # Si votre liste de second niveau contient plus de deux
+          # éléments, la fonction 'hasard' retourne toute la liste.
+          objets = liste()
+          ajouter liste("pomme_rouge", 5, "une pomme rouge") objets
+          ajouter liste("pomme_verte", 8, "une pomme verte") objets
+          ajouter liste("pomme_rose", 1, "une pomme rose ?") objets
+          # Ici 'objets' contient une liste de listes de trois
+          # éléments (la clé, la probabilité toujours en colonne 2
+          # et un nom associé). Appeler 'hasard' va retourner la
+          # liste sélectionnée, car le système ne sait pas quel
+          # élément il doit retourner, donc les retourne tous.
+          # Vous devrez ensuite les extraire.
+          choix = hasard(objets, 2)
+          # 'choix' contient aléatoirement :
+          # * Une variable vide
+          # * liste("pomme_rouge", 5, "une pomme rouge")
+          # * liste("pomme_verte", 8, "une pomme verte")
+          # * liste("pomme_rose", 1, "une pomme rose ?")
+
+        """
+        colonne = int(colonne - 1)
+        poids = [float(element[colonne]) for element in liste]
+        total = 100
+        if moyen == "total":
+            total = sum(poids)
+
+        rnd = random() * total
+        for element in liste:
+            element = list(element)
+            probabilite = float(element[colonne])
+            rnd -= probabilite
+            if rnd < 0:
+                if len(element) == 2:
+                    del element[colonne]
+                    return element[0]
+                else:
+                    return element

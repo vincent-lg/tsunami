@@ -1,11 +1,11 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2010 DAVY Guillaume
+# Copyright (c) 2010-2016 DAVY Guillaume
 # All rights reserved.
-# 
+#
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are met:
-# 
+#
 # * Redistributions of source code must retain the above copyright notice, this
 #   list of conditions and the following disclaimer.
 # * Redistributions in binary form must reproduce the above copyright notice,
@@ -14,7 +14,7 @@
 # * Neither the name of the copyright holder nor the names of its contributors
 #   may be used to endorse or promote products derived from this software
 #   without specific prior written permission.
-# 
+#
 # THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
 # AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
 # IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -34,35 +34,37 @@ from . import Editeur
 from primaires.format.fonctions import *
 
 class Choix(Editeur):
-    
+
     """Contexte-éditeur choix.
-    
+
     Ce contexte permet de faire choisir l'utilisateur une option
     parmis une liste prédéfinie à l'avance
-    
+
     """
-    
+
     nom = "editeur:base:choix"
-    
+
     def __init__(self, pere, objet=None, attribut=None, liste=None):
         """Constructeur de l'éditeur."""
         Editeur.__init__(self, pere, objet, attribut)
         self.liste = liste or []
-    
+
     @property
     def str_liste(self):
         """Retourne une chaîne représentant la liste."""
         liste = self.liste
         if not liste:
             return ""
-        
+
         liste = [str(e) for e in liste]
         return ", ".join(liste)
-    
+
     def accueil(self):
         """Retourne l'aide courte"""
-        return self.aide_courte.format(objet=self.objet, liste=self.str_liste)
-    
+        valeur = getattr(self.objet, self.attribut)
+        return self.aide_courte.format(objet=self.objet, liste=self.str_liste,
+                valeur=valeur)
+
     def interpreter(self, msg):
         """Interprétation du contexte"""
         liste = self.liste

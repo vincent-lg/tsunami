@@ -1,6 +1,6 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2010 LE GOFF Vincent
+# Copyright (c) 2010-2016 LE GOFF Vincent
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -55,6 +55,7 @@ class CmdPrendre(Commande):
         nom_objet = self.noeud.get_masque("nom_objet")
         nom_objet.proprietes["conteneurs"] = \
                 "dic_masques['conteneur'] and " \
+                "hasattr(dic_masques['conteneur'].objet, 'conteneur') and " \
                 "(dic_masques['conteneur'].objet.conteneur.iter_nombres(), " \
                 ") or (personnage.salle.objets_sol.iter_nombres(), )"
         nom_objet.proprietes["quantite"] = "True"
@@ -63,7 +64,6 @@ class CmdPrendre(Commande):
         conteneur.proprietes["conteneurs"] = \
                 "(personnage.equipement.tenus.iter_nombres(), " \
                 "personnage.salle.objets_sol.iter_nombres())"
-        conteneur.proprietes["types"] = "('conteneur', )"
         conteneur.proprietes["quantite"] = "True"
 
     def interpreter(self, personnage, dic_masques):
@@ -77,15 +77,28 @@ class CmdPrendre(Commande):
         depuis = dic_masques["conteneur"]
         depuis = depuis and depuis.objet or None
 
+        if depuis and not depuis.est_de_type("conteneur") and not \
+                depuis.est_de_type("machine") and not depuis.est_de_type(
+                "meuble"):
+            personnage << "|err|Vous ne pouvez rien prendre dans " \
+                    "{}.|ff|".format(depuis.get_nom())
+            return
+
         pris = 0
+        ramasses = []
         for objet, qtt, conteneur in objets:
-            if not objet.peut_prendre or objet.flags & \
+            if not objet.peut_ramasser() or objet.flags & \
                     FLAGS["ne peut pas prendre"] != 0:
                 personnage << "Vous ne pouvez pas prendre {} avec vos " \
                         "mains...".format(objet.nom_singulier)
                 return
             if nombre > qtt:
                 nombre = qtt
+
+            if depuis and depuis.est_de_type("machine"):
+                depuis.script["récupère"]["avant"].executer(
+                        personnage=personnage, machine=depuis, objet=objet)
+
             try:
                 dans = personnage.ramasser(objet, depuis, nombre)
             except SurPoids as err:
@@ -100,6 +113,7 @@ class CmdPrendre(Commande):
             else:
                 personnage.salle.objets_sol.retirer(objet, nombre)
             pris += 1
+            ramasses.append(objet)
 
         if pris == 0:
             personnage << "|err|Vous n'avez aucune main de libre.|ff|"
@@ -108,7 +122,20 @@ class CmdPrendre(Commande):
         if pris < nombre:
             pris = nombre
 
-        if depuis:
+        if depuis and depuis.est_de_type("machine"):
+            depuis.script["récupère"]["après"].executer(
+                    personnage=personnage, machine=depuis, objets=ramasses)
+        elif depuis and depuis.est_de_type("meuble"):
+            msg_prend = depuis.messages["prend"]
+            msg_prend = msg_prend.replace("$meuble", depuis.get_nom(1))
+            msg_prend = msg_prend.replace("$objet", objet.get_nom(pris))
+            personnage << msg_prend
+            msg_oprend = depuis.messages["oprend"]
+            msg_oprend = msg_oprend.replace("$meuble", depuis.get_nom(1))
+            msg_oprend = msg_oprend.replace("$objet", objet.get_nom(pris))
+            msg_oprend = msg_oprend.replace("$personnage", "{}")
+            personnage.salle.envoyer(msg_oprend, personnage)
+        elif depuis:
             personnage << "Vous prenez {} depuis {}.".format(
                     objet.get_nom(pris), depuis.nom_singulier)
             personnage.salle.envoyer("{{}} prend {} depuis {}.".format(

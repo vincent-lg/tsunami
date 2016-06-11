@@ -1,6 +1,6 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2014 LE GOFF Vincent
+# Copyright (c) 2010-2016 LE GOFF Vincent
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -96,7 +96,8 @@ class Etats(BaseObj):
         for tuple in etats:
             cle = tuple[0]
             args = tuple[1:]
-            self.ajouter(cle, *args)
+            importeur.diffact.ajouter_action("e_{}".format(id(list(cle))),
+                    0, self.ajouter, cle, *args)
 
     def get(self, cle_etat):
         """Retourne, si trouvé, l'état dont la clé correspond.
@@ -136,7 +137,7 @@ class Etats(BaseObj):
         """Retire le premier état dont la clé correspond.
 
         Si le flag supprimer est à True (par défaut il l'est), alors l'état
-        est supprimé proprement c'est-à-dire que sa méthode 'suppriemr' est
+        est supprimé proprement c'est-à-dire que sa méthode 'supprimer' est
         appelée. Certains états redéfinissent cette méthode pour des
         actions particulières mais il faut s'assurer dans ce cas que la
         méthode ne s'appelle pas récursivement. Si un état supprimé veut

@@ -1,6 +1,6 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2012 LE GOFF Vincent
+# Copyright (c) 2010-2016 LE GOFF Vincent
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -42,6 +42,7 @@ class Neige(AffectionSalle):
         self.force_max = 60
         self.duree_max = 120
         self.visible = True
+        self.tick_actif = False
 
     def __getnewargs__(self):
         return ()
@@ -110,3 +111,12 @@ class Neige(AffectionSalle):
     def message_detruire(self, affection):
         """Destruction de l'affection de salle."""
         return "La neige fond, ne laissant que quelques flaques au sol."
+
+    def programmer_destruction(self, affection):
+        """Programme la destruction de la neige.
+
+        D'etruit les bonhommes de neige de la salle.
+
+        """
+        AffectionSalle.programmer_destruction(self, affection)
+        affection.affecte.supprimer_bonhommes_neige()

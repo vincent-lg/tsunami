@@ -1,6 +1,6 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2012 LE GOFF Vincent
+# Copyright (c) 2010-2016 LE GOFF Vincent
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -109,7 +109,7 @@ class PrmListe(Parametre):
                             avc=avc))
                 lignes.append("+" + "-" * (l_id + l_createur + ljust_titre + \
                         32) + "+")
-                personnage << "\n".join(lignes)
+                personnage << echapper_accolades("\n".join(lignes))
         else:
             if not rapports:
                 personnage << "|err|Aucun rapport n'a été envoyé.|ff|"

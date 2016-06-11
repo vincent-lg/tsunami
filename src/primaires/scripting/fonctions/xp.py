@@ -1,6 +1,6 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2013 LE GOFF Vincent
+# Copyright (c) 2010-2016 LE GOFF Vincent
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -41,6 +41,7 @@ class ClasseFonction(Fonction):
     @classmethod
     def init_types(cls):
         cls.ajouter_types(cls.xp, "Personnage")
+        cls.ajouter_types(cls.xp_niveau, "Fraction")
 
     @staticmethod
     def xp(pnj):
@@ -65,3 +66,23 @@ class ClasseFonction(Fonction):
             return Fraction(xp)
 
         return Fraction(0)
+
+    @staticmethod
+    def xp_niveau(niveau):
+        """Retourne l'XP du niveau sélectionné.
+
+        Le numéro du niveau doit être précisé (entre 1 et 100,
+        ou le nombre réel en fonction de votre configuration).
+
+        Paramètres à entrer :
+
+          * niveau : le numéro du niveau (un nombre)
+
+        Exemple d'utilisation :
+
+          xp = xp(5)
+          donner_xp personnage "combat" xp
+
+        """
+        xp = importeur.perso.gen_niveaux.grille_xp[int(niveau)][1]
+        return Fraction(xp)

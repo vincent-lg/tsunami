@@ -1,6 +1,6 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2010 LE GOFF Vincent
+# Copyright (c) 2010-2016 LE GOFF Vincent
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -67,16 +67,23 @@ class EdtPresentation(Presentation):
 
     def construire(self, prototype):
         """Construction de l'éditeur"""
+        # Type (lecture seule)
+        type = self.ajouter_choix("type", "type", Uniligne, prototype,
+                "nom_type")
+        type.parent = self
+        type.apercu = "{valeur}"
+        type.lecture_seule = True
+
         # Noms
         noms = self.ajouter_choix("noms", "n", EdtNoms, prototype)
         noms.parent = self
-        noms.apercu = "{objet.nom_singulier}"
+        noms.apercu = "{valeur}"
 
         # Description
-        description = self.ajouter_choix("description", "d", Description, \
-                prototype)
+        description = self.ajouter_choix("description", "d", Description,
+                prototype, "description")
         description.parent = self
-        description.apercu = "{objet.description.paragraphes_indentes}"
+        description.apercu = "{valeur}"
         description.aide_courte = \
             "| |tit|" + "Description de l'objet {}".format(prototype).ljust(
             76) + "|ff||\n" + self.opts.separateur
@@ -90,6 +97,7 @@ class EdtPresentation(Presentation):
         flags = self.ajouter_choix("flags", "fl", Flags, prototype, "flags",
                 FLAGS)
         flags.parent = self
+        flags.apercu = "{valeur}"
         flags.aide_courte = \
             "Flags d'objet de {} :".format(prototype.cle)
 
@@ -130,7 +138,7 @@ class EdtPresentation(Presentation):
         # Prix
         prix = self.ajouter_choix("prix", "p", Entier, prototype, "prix", 1)
         prix.parent = self
-        prix.apercu = "{objet.prix}"
+        prix.apercu = "{valeur}"
         prix.prompt = "Entrez un prix supérieur à 1 :"
         prix.aide_courte = \
             "Entrez la valeur de l'objet.\n\nValeur actuelle : {objet.prix}"
@@ -140,6 +148,7 @@ class EdtPresentation(Presentation):
                 "poids_unitaire")
         poids.parent = self
         poids.prompt = "Entrez le poids unitaire de l'objet : "
+        poids.apercu = "{valeur} Kg"
         poids.aide_courte = \
             "Entrez le poids unitaire de l'objet.\n\nPoids actuel : " \
             "{objet.poids_unitaire}"
@@ -149,6 +158,9 @@ class EdtPresentation(Presentation):
             rac, ligne, editeur, objet, attr, sup = extension
             env = self.ajouter_choix(ligne, rac, editeur, objet, attr, *sup)
             env.parent = self
+
+        # Extensions de l'éditeur
+        importeur.hook["editeur:etendre"].executer("objet", self, prototype)
 
         # Script
         scripts = self.ajouter_choix("scripts", "sc", EdtScript,

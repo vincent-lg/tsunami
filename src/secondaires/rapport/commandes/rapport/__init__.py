@@ -1,6 +1,6 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2012 LE GOFF Vincent
+# Copyright (c) 2010-2016 LE GOFF Vincent
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -37,6 +37,7 @@ Dans ce fichier se trouve la commande même.
 from primaires.interpreteur.commande.commande import Commande
 from .assigner import PrmAssigner
 from .bug import PrmBug
+from .commenter import PrmCommenter
 from .dupliquer import PrmDupliquer
 from .editer import PrmEditer
 from .evolution import PrmEvolution
@@ -71,6 +72,7 @@ class CmdRapport(Commande):
         """Ajout des paramètres"""
         self.ajouter_parametre(PrmAssigner())
         self.ajouter_parametre(PrmBug())
+        self.ajouter_parametre(PrmCommenter())
         self.ajouter_parametre(PrmDupliquer())
         self.ajouter_parametre(PrmEditer())
         self.ajouter_parametre(PrmEvolution())

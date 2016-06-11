@@ -1,6 +1,6 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2014 LE GOFF Vincent
+# Copyright (c) 2010-2016 LE GOFF Vincent
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -79,7 +79,6 @@ class ClasseAction(Action):
         nombre = int(nombre) if nombre else None
         nb = 0
         for plante in list(importeur.botanique.salles.get(salle, [])):
-            print("Nombre", nombre)
             if plante.cle == cle_plante.lower():
                 if nombre is None or nb < nombre:
                     importeur.botanique.supprimer_plante(plante.identifiant)

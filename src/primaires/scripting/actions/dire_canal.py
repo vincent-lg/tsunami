@@ -1,6 +1,6 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2013 LE GOFF Vincent
+# Copyright (c) 2010-2016 LE GOFF Vincent
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -33,18 +33,19 @@
 import textwrap
 
 from primaires.scripting.action import Action
-from primaires.scripting.utile.fonctions import get_variables
 
 class ClasseAction(Action):
 
     """Envoi un message sur un canal précisé."""
+
+    entrer_variables = True
 
     @classmethod
     def init_types(cls):
         cls.ajouter_types(cls.dire_canal, "str", "str")
 
     @staticmethod
-    def dire_canal(nom_canal, message):
+    def dire_canal(nom_canal, message, variables=None):
         """Envoie un message au canal.
 
         Les paramètres attendus sont :
@@ -61,8 +62,6 @@ class ClasseAction(Action):
             dire_canal "imm" "Le joueur ${nom} vient d'accomplir cette quête"
 
         """
-        variables = importeur.scripting.execute_test[-1].evenement.espaces. \
-                variables
         try:
             canal = importeur.communication.canaux[nom_canal]
         except KeyError:

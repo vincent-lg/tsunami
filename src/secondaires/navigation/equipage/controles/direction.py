@@ -1,6 +1,6 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2014 LE GOFF Vincent
+# Copyright (c) 2010-2016 LE GOFF Vincent
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -37,7 +37,6 @@ from secondaires.navigation.equipage.controle import Controle
 class Direction(Controle):
 
     """Classe représentant le contrôle 'direction'.
-
     Ce contrôle est en charge de la direction du navire. Si le navire
     est équipé de rames et gouvernail, les deux sont utilisés pour
     contrôler la direction du navire. Malgré tout, le gouvernail a tendance
@@ -57,33 +56,9 @@ class Direction(Controle):
         direction = (self.direction + 90) % 360
         return "Sur {}°.".format(direction)
 
-    def controler(self):
-        """Contrôle l'avancement du contrôle."""
+    def verifier_cap(self):
+        """Change le cap du navire si nécessaire."""
         commandant = self.commandant
-        if commandant is None:
-            return
-
-        personnage = commandant.personnage
-        equipage = self.equipage
-        navire = self.navire
-        gouvernail = navire.gouvernail
-        rames = navire.rames
-        actuelle = navire.direction.direction
-        objectif = self.direction
-        difference = objectif - actuelle
-        f_difference = fabs(difference)
-        pr_rames = navire.orientation
-        pr_rames = 3 if pr_rames < 3 else pr_rames
-        if f_difference <= pr_rames and sum(r.orientation for r in rames) != 0:
-            equipage.demander("ramer", "centre", personnage=personnage,
-                    exception=commandant)
-
-    def decomposer(self):
-        """Décompose le contrôle en volontés."""
-        commandant = self.commandant
-        if commandant is None:
-            return
-
         personnage = commandant.personnage
         equipage = self.equipage
         navire = self.navire
@@ -97,18 +72,38 @@ class Direction(Controle):
         elif difference > 180:
             difference = difference - 360
 
-        print("Difference", difference)
         f_difference = fabs(difference)
-        if f_difference < 1:
+        pr_rames = 3
+        if f_difference <= pr_rames and sum(r.orientation for r in rames) != 0:
+            equipage.demander("ramer", "centre", personnage=personnage,
+                    exception=commandant)
             return
 
-        pr_rames = navire.orientation
+        if f_difference < 2 or navire.orientation != 0:
+            return
+
         if gouvernail:
             equipage.demander("virer_gouvernail", objectif,
                     personnage=personnage, exception=commandant)
 
         if rames:
-            if f_difference > pr_rames:
+            if f_difference > 3:
                 vers = "gauche" if difference < 0 else "droite"
                 equipage.demander("ramer", vers, personnage=personnage,
                         exception=commandant)
+
+    def controler(self):
+        """Contrôle l'avancement du contrôle."""
+        commandant = self.commandant
+        if commandant is None:
+            return
+
+        self.verifier_cap()
+
+    def decomposer(self):
+        """Décompose le contrôle en volontés."""
+        commandant = self.commandant
+        if commandant is None:
+            return
+
+        self.verifier_cap()

@@ -1,6 +1,6 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2010 LE GOFF Vincent
+# Copyright (c) 2010-2016 LE GOFF Vincent
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -140,7 +140,7 @@ class Membre(BaseObj):
         # Un emplacement est considéré comme libre si aucun objet n'est tenu
         # ni équipé
         equipable = False
-        if self.tenu is None:
+        if self.tenu is None or self.tenu is objet:
             equipable = True
 
         if objet is None:

@@ -1,6 +1,6 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2012 LE GOFF Vincent
+# Copyright (c) 2010-2016 LE GOFF Vincent
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -41,6 +41,7 @@ class CanneAPeche(BaseType):
     """
 
     nom_type = "canne à pêche"
+    empilable_sur = ["vêtement"]
 
     def __init__(self, cle=""):
         """Constructeur de l'objet"""
@@ -63,7 +64,7 @@ class CanneAPeche(BaseType):
         tension.aide_courte = \
             "Entrez la |ent|tension maximum|ff| de la canne ou |cmd|/|ff| " \
             "pour revenir à la fenêtre parente.\n\n" \
-            "La tension maximum défini le plus lourd poisson " \
+            "La tension maximum définit le plus lourd poisson " \
             "pouvant être pêché. Si\n" \
             "un poisson plus lourd se porte sur la canne, celle-ci " \
             "se brisera.\n\n" \

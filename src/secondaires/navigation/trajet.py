@@ -1,6 +1,6 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2013 LE GOFF Vincent
+# Copyright (c) 2010-2016 LE GOFF Vincent
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -52,6 +52,7 @@ class Trajet(BaseObj):
         """Constructeur du trajet."""
         BaseObj.__init__(self)
         self.cle = cle
+        self.etendue = None
         self.point_depart = None
         self.points = OrderedDict()
 

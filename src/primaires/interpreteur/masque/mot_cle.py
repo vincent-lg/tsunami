@@ -1,6 +1,6 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2010 LE GOFF Vincent
+# Copyright (c) 2010-2016 LE GOFF Vincent
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -51,10 +51,15 @@ class MotCle(Commande):
         self.francais = francais
         self.anglais = anglais
         self.nom = francais
+        self.gauche = False
 
     def __str__(self):
         """Fonction d'affichage"""
         return self.francais + "/" + self.anglais
+
+    @property
+    def nom_francais(self):
+        return self.francais
 
     def init(self):
         """On ne fait rien."""
@@ -82,10 +87,13 @@ class MotCle(Commande):
             commande[:] = chaine_vers_liste(masque.a_interpreter)
             str_commande = liste_vers_chaine(commande)
             sa_commande = supprimer_accents(str_commande).lower()
-            mot_cle = " " + mot_cle
-            if (mot_cle + " ") in sa_commande or sa_commande.endswith(
-                    mot_cle):
-                fin = sa_commande.rindex(mot_cle)
+            mot_cle = " " + mot_cle + " "
+            if mot_cle in sa_commande:
+                if self.gauche:
+                    fin = sa_commande.index(mot_cle)
+                else:
+                    fin = sa_commande.rindex(mot_cle)
+
                 masque.a_interpreter = str_commande[:fin]
                 fin += len(mot_cle)
                 commande[:] = commande[fin:]

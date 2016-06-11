@@ -1,6 +1,6 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2010 LE GOFF Vincent
+# Copyright (c) 2010-2016 LE GOFF Vincent
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -35,6 +35,8 @@ import re
 from abstraits.obase import *
 from primaires.format.constantes import COULEURS
 from primaires.format.tableau import Tableau, GAUCHE, DROITE
+from primaires.objet.objet import Objet
+from primaires.objet.vente_unique import VenteUnique
 
 class Magasin(BaseObj):
 
@@ -204,22 +206,42 @@ class Magasin(BaseObj):
 
         raise ValueError("le service {} {} n'existe pas".format(type, cle))
 
-    def ajouter_inventaire(self, service, qtt, inc_qtt=True):
+    def ajouter_inventaire(self, service, qtt, inc_qtt=True,
+            forcer_unique=False):
         """Ajoute des services dans l'inventaire.
+
+        Si service est de type objet, on applique la règle
+        d'unicité : si l'objet semble unique (son nom est différent
+        de celui de son prototype), on l'ajoute dans un service à
+        part.
 
         Si inc_qtt est à True, la quantité spécifiée est ajoutée à celle
         du service de l'inventaire, si présent. Sinon, la quantité du
         service, si présent, est remplacée par la nouvelle.
 
+        Si le paramètre forcer_unique est à True, et que l'on veut vendre
+        un objet, celui-ci est automatiquement ajouté comme un objet
+        unique.
+
         """
         services = list(self.inventaire)
-        trouve = False
-        for i, (t_service, t_qtt) in enumerate(services):
-            if t_service is service:
-                qtt = qtt if not inc_qtt else qtt + t_qtt
-                services[i] = (t_service, qtt)
-                trouve = True
-                break
+        trouve = unique = False
+        if isinstance(service, Objet):
+            if forcer_unique or service.nom_singulier != \
+                    service.prototype.nom_singulier:
+                service = VenteUnique(service)
+                unique = True
+            else:
+                importeur.objet.supprimer_objet(service.identifiant)
+                service = service.prototype
+
+        if not unique:
+            for i, (t_service, t_qtt) in enumerate(services):
+                if t_service is service:
+                    qtt = qtt if not inc_qtt else qtt + t_qtt
+                    services[i] = (t_service, qtt)
+                    trouve = True
+                    break
 
         if not trouve:
             services.append((service, qtt))
@@ -286,14 +308,22 @@ class Magasin(BaseObj):
 
         if self.max_vente_total >= 0 and self.valeur_inventaire + \
                 valeur_achat * qtt > self.max_vente_total:
-            vendeur.envoyer("{} vous dit : je n'ai rien besoin de plus, " \
+            vendeur.envoyer("{} vous dit : je n'ai besoin de rien de plus, " \
                     "merci.", acheteur)
             return False
 
         return valeur_achat * qtt
 
-    def renouveler(self):
+    def renouveler(self, vider=False):
         """Renouvelle l'inventaire depuis le stock."""
+        if vider:
+            for service, qtt in self.inventaire:
+                if service.type_achat == "unique":
+                    importeur.objet.supprimer_objet(
+                            service.objet.identifiant)
+
+            self.inventaire[:] = []
+
         for service, qtt, flags in self.stock:
             self.ajouter_inventaire(service, qtt, inc_qtt=False)
 

@@ -1,6 +1,6 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2010 LE GOFF Vincent
+# Copyright (c) 2010-2016 LE GOFF Vincent
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -170,11 +170,13 @@ class MUDmail(BaseObj):
 
     def envoyer_email(self, dest):
         """Envoie l'e-mail au destinataire."""
+        if not dest.compte.email:
+            return
+
         destinateur = "equipe"
         destinataire = dest.compte.adresse_email
         expediteur = self.expediteur.nom
-        sujet = "Vous avez reçu un nouveau message sur " \
-                "VanciaMUD : " + self.sujet
+        sujet = "[VanciaMUD] : " + self.sujet
         nom_compte = dest.compte.nom
         contenu = self.afficher().replace("|tab|", "   ")
         corps = contenu + bas_page.format(nom_compte=nom_compte,

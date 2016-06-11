@@ -1,6 +1,6 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2010 LE GOFF Vincent
+# Copyright (c) 2010-2016 LE GOFF Vincent
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -52,6 +52,7 @@ from .options import UOptions
 class Module(BaseModule):
 
     """Cette classe est la classe gérant tous les interpréteurs.
+
     Elle recense les différents contextes, en crée certains et permet
     à chaque module de créer ses propres contextes, commandes, éditeurs...
 
@@ -130,6 +131,17 @@ class Module(BaseModule):
                 "h": "haut",
                 "b": "bas",
         }
+
+        # Erreurs des commandes
+        self.erreurs = {}
+
+    def config(self):
+        """Configuration du module."""
+        # Ajout des hooks
+        importeur.hook.ajouter_hook("editeur:etendre",
+                "Hook appelé pour étendre les éditeurs.")
+
+        BaseModule.config(self)
 
     def init(self):
         """Initialisation du module"""
@@ -239,8 +251,6 @@ class Module(BaseModule):
 
         for cmd in commandes:
             if cmd.repartir(personnage, masques, lst_commande):
-                self.logger_cmd.info("{} envoie {}".format(personnage.nom,
-                        str_commande))
                 trouve = True
                 break
 
@@ -287,6 +297,7 @@ class Module(BaseModule):
         str_commande = liste_vers_chaine(lst_commande)
 
         nom_commande = str_commande.split(":")[0]
+
         # On parcourt la liste des commandes
         for noeud in commandes:
             if noeud.commande.nom_francais == nom_commande:

@@ -1,11 +1,11 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2010 DAVY Guillaume
+# Copyright (c) 2010-2016 DAVY Guillaume
 # All rights reserved.
-# 
+#
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are met:
-# 
+#
 # * Redistributions of source code must retain the above copyright notice, this
 #   list of conditions and the following disclaimer.
 # * Redistributions in binary form must reproduce the above copyright notice,
@@ -14,7 +14,7 @@
 # * Neither the name of the copyright holder nor the names of its contributors
 #   may be used to endorse or promote products derived from this software
 #   without specific prior written permission.
-# 
+#
 # THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
 # AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
 # IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -35,46 +35,74 @@ from primaires.format.dictionnaires import DictSansAccent
 from primaires.format.fonctions import supprimer_accents
 
 class Selection(Editeur):
-    
+
     """Contexte-éditeur selection.
-    
+
     Ce contexte permet de faire sélectionner à l'utilisateur 0, 1, N ou tous
-    les éléments d'une liste.
-    
+    les éléments d'une liste. Si la liste passée en paramètre
+    est une liste vide, la sélection peut porter sur n'importe quel
+    choix.
+
     """
-    
+
     nom = "editeur:base:selection"
-    
+
     def __init__(self, pere, objet=None, attribut=None, liste=None):
         """Constructeur de l'éditeur"""
         Editeur.__init__(self, pere, objet, attribut)
         self.liste = liste or []
-    
+
+    def entrer(self):
+        """Quand on entre dans le contexte"""
+        valeur = getattr(self.objet, self.attribut, None)
+        if valeur is None:
+            print("reset selection")
+            setattr(self.objet, self.attribut, [])
+
     def accueil(self):
         """Retourne l'aide courte"""
-        return self.aide_courte.format(objet = self.objet)
-    
+        valeur = getattr(self.objet, self.attribut)
+        valeur = ", ".join(sorted([str(v) for v in valeur]))
+        return self.aide_courte.format(objet=self.objet, valeur=valeur)
+
+    @staticmethod
+    def afficher_apercu(apercu, objet, valeur, liste=None):
+        """Affichage de l'aperçu."""
+        liste = liste or []
+        if valeur == ["*"]:
+            valeur = "tous"
+        else:
+            valeur = ", ".join(sorted([str(v) for v in valeur]))
+        Valeur = valeur.capitalize()
+        return apercu.format(objet=objet, valeur=valeur, Valeur=Valeur)
+
     def interpreter(self, msg):
         """Interprétation du contexte"""
-        msg = supprimer_accents(msg).lower()
-        if msg == "*":
+        nom = msg
+        msg_sa = supprimer_accents(msg).lower()
+
+        if self.liste and msg == "*":
             setattr(self.objet, self.attribut, ["*"])
         else:
-            # On constitue un dictionnaire des données sélectionnées
-            # En clé, c'est le nom de la donnée
-            # En valeur, True si la clé a été sélectionné, False sinon
-            selectionne = DictSansAccent((nom, False) for nom in self.liste)
-            for nom in getattr(self.objet, self.attribut):
-                if nom in selectionne.keys():
-                    selectionne[nom] = True
-            
-            if msg in selectionne.cles_sa():
-                selectionne[msg] = not selectionne[msg]
+            # Si la chaîne est déjà sélectionnée, on la supprime
+            selectionnes = getattr(self.objet, self.attribut)
+            selectionnes_sa = [supprimer_accents(s).lower() for s in \
+                    selectionnes]
+            if msg_sa in selectionnes_sa:
+                selectionnes = [s for s in selectionnes if \
+                        supprimer_accents(s).lower() != msg_sa]
+            elif self.liste:
+                liste_sa = [supprimer_accents(l) for l in self.liste]
+                if msg_sa in liste_sa:
+                    if "*" in selectionnes:
+                        selectionnes.remove("*")
+                    selectionnes.append(self.liste[liste_sa.index(msg_sa)])
+                else:
+                    self.pere << "Élément introuvable : {}".format(msg)
+                    return
             else:
-                self.pere << "|err|L'option {} est invalide.|ff|".format(msg)
-                return
-            
-            selectionne = [nom for nom, val in selectionne.items() if val]
-            setattr(self.objet, self.attribut, selectionne)
-        
+                selectionnes.append(msg)
+
+            setattr(self.objet, self.attribut, selectionnes)
+
         self.actualiser()

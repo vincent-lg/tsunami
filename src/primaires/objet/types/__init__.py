@@ -1,6 +1,6 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2010 LE GOFF Vincent
+# Copyright (c) 2010-2016 LE GOFF Vincent
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -112,6 +112,10 @@ from .cadavre import Cadavre
 
 # Matériau
 from .matiere import Matiere
+from .outil import Outil
+from .machine import Machine
+from .meuble import Meuble
+from .sac_materiau import SacMateriau
 from .fourrure import Fourrure
 from .peau import Peau
 from .os import Os
@@ -121,3 +125,6 @@ from .vegetal import Vegetal
 from .bois import Bois
 
 from .boule_neige import BouleNeige
+
+# Orbes de communication
+from .orbe import Orbe

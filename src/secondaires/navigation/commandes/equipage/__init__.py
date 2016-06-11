@@ -1,6 +1,6 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2013 LE GOFF Vincent
+# Copyright (c) 2010-2016 LE GOFF Vincent
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -36,7 +36,9 @@ Dans ce fichier se trouve la commande même.
 
 from primaires.interpreteur.commande.commande import Commande
 from .annuler import PrmAnnuler
+from .conquerir import PrmConquerir
 from .controle import PrmControle
+from .objectif import PrmObjectif
 from .ordre import PrmOrdre
 
 class CmdEquipage(Commande):
@@ -61,5 +63,7 @@ class CmdEquipage(Commande):
     def ajouter_parametres(self):
         """Ajout des paramètres"""
         self.ajouter_parametre(PrmAnnuler())
+        self.ajouter_parametre(PrmConquerir())
         self.ajouter_parametre(PrmControle())
+        self.ajouter_parametre(PrmObjectif())
         self.ajouter_parametre(PrmOrdre())

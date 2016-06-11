@@ -1,6 +1,6 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2013 LE GOFF Vincent
+# Copyright (c) 2010-2016 LE GOFF Vincent
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -73,8 +73,8 @@ class Virer(Ordre):
                 cote = -1
 
             # On change d'inclinaison du gouvernail si nécessaire
-            direction_actuelle = int(nav_direction)
-            direction_voulue = int(direction)
+            direction_actuelle = round(nav_direction)
+            direction_voulue = round(direction)
             diff = (direction_voulue - direction_actuelle) % 360
             if diff > 180:
                 diff = 360 - diff

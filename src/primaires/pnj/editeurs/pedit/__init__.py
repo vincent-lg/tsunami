@@ -1,6 +1,6 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2010 LE GOFF Vincent
+# Copyright (c) 2010-2016 LE GOFF Vincent
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -36,8 +36,10 @@ from primaires.interpreteur.editeur.presentation import Presentation
 from primaires.interpreteur.editeur.description import Description
 from primaires.interpreteur.editeur.uniligne import Uniligne
 from primaires.interpreteur.editeur.entier import Entier
+from primaires.interpreteur.editeur.flags import Flags
 from primaires.interpreteur.editeur.flottant import Flottant
 from primaires.scripting.editeurs.edt_script import EdtScript
+from primaires.pnj.prototype import FLAGS
 from .edt_noms import EdtNoms
 from .edt_stats import EdtStats
 from .edt_race import EdtRace
@@ -88,6 +90,13 @@ class EdtPedit(Presentation):
         description.aide_courte = \
             "| |tit|" + "Description du PNJ {}".format(prototype).ljust(
             76) + "|ff||\n" + self.opts.separateur
+
+        # Flags
+        flags = self.ajouter_choix("flags", "fl", Flags, prototype, "flags",
+                FLAGS)
+        flags.parent = self
+        flags.aide_courte = \
+            "Flags du prototype de PNJ {} :".format(prototype.cle)
 
         # Stats
         stats = self.ajouter_choix("stats", "s", EdtStats, \
@@ -181,12 +190,12 @@ class EdtPedit(Presentation):
         xp = self.ajouter_choix("xP", "x", Flottant, prototype,
                 "gain_xp")
         xp.parent = self
-        xp.apercu = "{objet.gain_xp}% ({objet.gain_xp_absolu} XP)"
+        xp.apercu = "{valeur}% ({objet.xp_absolue} XP)"
         xp.prompt = "Entrez le pourcentage d'XP reçue par l'adversaire : "
         xp.aide_courte = \
             "Entrez le pourcentage d'XP relative gagnée par l'adversaire lors " \
             "de la mort du\nPNJ.\n\n" \
-            "Pourcentage actuel : {objet.gain_xp}%"
+            "Pourcentage actuel : {valeur}% ({objet.xp_absolue} XP)"
 
         # Stats à entraîner
         en = self.ajouter_choix("stats pouvant être entraînées", "en",
@@ -199,13 +208,16 @@ class EdtPedit(Presentation):
             "ou les PNJ construits sur ce\nprototype ne pourront pas " \
             "entraîner cette stat au-delà du niveau maximum\nspécifié."
 
+        # Extensions de l'éditeur
+        importeur.hook["editeur:etendre"].executer("pnj", self, prototype)
+
         # Script
         scripts = self.ajouter_choix("scripts", "sc", EdtScript,
                 prototype.script)
         scripts.parent = self
 
         # À dépecer
-        depecer = self.ajouter_choix("à dépecer", "dé", EdtADepecer,
+        depecer = self.ajouter_choix("à dépecer", "de", EdtADepecer,
                 prototype)
         depecer.parent = self
         depecer.aide_courte = \

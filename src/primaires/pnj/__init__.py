@@ -1,6 +1,6 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2010 LE GOFF Vincent
+# Copyright (c) 2010-2016 LE GOFF Vincent
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -68,6 +68,9 @@ class Module(BaseModule):
         for no in range(1, NB_TICKS + 1):
             self.ticks[no] = []
 
+        type(importeur).espace["prototypes_pnj"] = self._prototypes
+        type(importeur).espace["PNJ"] = self._PNJ
+
     def config(self):
         """Méthode de configuration du module"""
         importeur.hook.ajouter_hook("pnj:arrive",
@@ -88,7 +91,7 @@ class Module(BaseModule):
         # Ajout des états
         depece = importeur.perso.ajouter_etat("depece")
         depece.msg_refus = "Vous êtes en train de dépecer un cadavre."
-        depece.msg_visible = "dépece un cadavre ici"
+        depece.msg_visible = "dépèce un cadavre ici"
         depece.act_autorisees = ["regarder", "parler"]
 
         BaseModule.config(self)
@@ -100,7 +103,8 @@ class Module(BaseModule):
             self._prototypes[prototype.cle] = prototype
 
         pnjs = self.importeur.supenr.charger_groupe(PNJ)
-        pnjs = [p for p in pnjs if hasattr(p, "identifiant")]
+        pnjs = [p for p in pnjs if hasattr(p, "identifiant") and \
+                p.prototype]
         for pnj in pnjs:
             self._PNJ[pnj.identifiant] = pnj
 

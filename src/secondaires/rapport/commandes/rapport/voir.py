@@ -1,6 +1,6 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2012 LE GOFF Vincent
+# Copyright (c) 2010-2016 LE GOFF Vincent
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -30,8 +30,6 @@
 
 """Fichier contenant le paramètre 'voir' de la commande 'rapport'."""
 
-from primaires.format.date import get_date
-from primaires.format.fonctions import echapper_accolades
 from primaires.interpreteur.masque.parametre import Parametre
 from secondaires.rapport.constantes import CLR_STATUTS, CLR_AVC
 
@@ -64,20 +62,4 @@ class PrmVoir(Parametre):
                     personnage and not rapport.public:
                 personnage << "|err|Vous ne pouvez lire ce rapport.|ff|"
             else:
-                createur = rapport.createur.nom if rapport.createur \
-                        else "personne"
-                ret = "Rapport #" + str(rapport.id) + " : " + rapport.titre
-                ret += "\nCatégorie : " + rapport.type + " (" + \
-                        rapport.categorie + ")"
-                ret += "\nStatut : " + rapport.statut + ", avancement : " + \
-                        str(rapport.avancement) + "%"
-                ret += "\nCe rapport est classé en priorité " + \
-                        rapport.priorite + "."
-                ret += "\nDétail :\n"
-                ret += echapper_accolades(str(rapport.description))
-                ret += "\nRapport envoyé par " + createur + " " + \
-                        get_date(rapport.date.timetuple()) + "\n"
-                if personnage.est_immortel():
-                    ret += "Depuis " + str(rapport.salle) + " "
-                ret += "Assigné à " + rapport.aff_assigne_a + ".\n"
-                personnage << ret
+                personnage << rapport.get_description_pour(personnage)

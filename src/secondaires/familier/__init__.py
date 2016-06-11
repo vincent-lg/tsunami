@@ -1,6 +1,6 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2014 LE GOFF Vincent
+# Copyright (c) 2010-2016 LE GOFF Vincent
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -33,6 +33,7 @@
 from random import choice
 
 from abstraits.module import *
+from corps.aleatoire import choix_probable_liste
 from primaires.affection.personnage import AffectionPersonnage
 from primaires.format.fonctions import format_nb
 from primaires.perso.exceptions.action import ExceptionAction
@@ -44,6 +45,7 @@ from secondaires.familier.familier import Familier
 from secondaires.familier.familiers_vente import FamiliersVente
 from secondaires.familier.fiche import FicheFamilier
 from secondaires.familier import masques
+from secondaires.familier.prompt import PromptMonture
 from secondaires.familier.templates.attache import Attache
 from secondaires.familier.templates.chevauche import Chevauche
 from secondaires.familier.templates.guide import Guide
@@ -80,12 +82,12 @@ class Module(BaseModule):
         self.importeur.scripting.a_charger.append(self)
 
         # Ajout des flags de salle
-        FLAGS_SALLE.ajouter("écurie")
-        FLAGS_SALLE.ajouter("peut chevaucher")
-        FLAGS_SALLE.ajouter("accueille familiers")
+        FLAGS_SALLE.ajouter("écurie", 8)
+        FLAGS_SALLE.ajouter("peut chevaucher", 16)
+        FLAGS_SALLE.ajouter("accueille familiers", 32)
 
         # Ajout des flags des affections
-        AffectionPersonnage.def_flags.ajouter("ne peut chevaucher")
+        AffectionPersonnage.def_flags.ajouter("ne peut chevaucher", 4)
 
         # Ajout des états
         chevauche = self.importeur.perso.ajouter_etat("chevauche", Chevauche)
@@ -97,6 +99,13 @@ class Module(BaseModule):
         broute.msg_refus = "Vous broutez de l'herbe..."
         broute.msg_visible = "broute l'herbe ici"
         broute.act_autorisees = ["regarder", "parler", "ingerer",
+                "lancersort", "geste", "bouger"]
+
+        # État frugivore
+        frugi = self.importeur.perso.ajouter_etat("frugi")
+        frugi.msg_refus = "Vous êtes en train de chercher des fruits"
+        frugi.msg_visible = "cherche des fruits ici"
+        frugi.act_autorisees = ["regarder", "parler", "ingerer",
                 "lancersort", "geste", "bouger"]
 
         chasse = self.importeur.perso.ajouter_etat("chasse")
@@ -122,9 +131,13 @@ class Module(BaseModule):
 
     def init(self):
         """Chargement des objets du module."""
+        # Ajout du prompt
+        importeur.perso.ajouter_prompt(PromptMonture)
+
         # Ajout des talents
         importeur.perso.ajouter_talent("apprivoisement", "apprivoisement",
                 "dressage", 0.4)
+
         # On récupère les fiches de familier
         fiches = self.importeur.supenr.charger_groupe(FicheFamilier)
         for fiche in fiches:
@@ -356,8 +369,11 @@ class Module(BaseModule):
                     personnage.envoyer("|err|{} ne peut pas bouger.|ff|", pnj)
                     return False
 
-                if destination.interieur and not (destination.a_flag(
-                        "écurie") or destination.a_flag("peut chevaucher")):
+                if destination.interieur and not \
+                familier.fiche.aller_interieur and \
+                        not (destination.a_flag("écurie") or \
+                        destination.a_flag("peut chevaucher") or \
+                        destination.a_flag("accueille familiers")):
                     personnage.envoyer("|err|{} ne peut aller là.|ff|",
                             pnj)
                     return False
@@ -473,20 +489,23 @@ class Module(BaseModule):
             fiche = familier.fiche
             if "chasse" in pnj.etats:
                 self.faire_chasser(familier)
-            elif "broute" in pnj.etats:
+            elif "broute" in pnj.etats or "frugi" in pnj.etats:
                 self.faire_brouter(familier)
             elif familier.doit_chasser or familier.maitre is None or not \
                     familier.maitre.est_connecte():
                 if pnj.etats:
                     pass
                 elif pnj.salle.a_flag("écurie"):
-                    pass
+                    familier.diminuer_faim(1)
+                    familier.diminuer_soif(1)
                 elif fiche.regime == "carnivore":
                     pnj.etats.ajouter("chasse")
                 elif fiche.regime == "herbivore":
                     pnj.etats.ajouter("broute")
+                elif fiche.regime == "frugivore":
+                    pnj.etats.ajouter("frugi")
 
-            if fiche.regime in ("herbivore", "carnivore"):
+            if fiche.regime in ("herbivore", "carnivore", "frugivore"):
                 self.donner_faim_soif(familier)
 
     def faire_chasser(self, familier):
@@ -543,6 +562,11 @@ class Module(BaseModule):
             return
 
         # On cherche les sorties possible de déplacement
+        if fiche.regime == "herbivore":
+            terrains_autorises = ("rive", "plaine")
+        elif fiche.regime == "frugivore":
+            terrains_autorises = ("rive", "plaine", "forêt")
+
         sorties = []
         for sortie in salle.sorties:
             if sortie.direction in ("bas", "haut") and not \
@@ -550,7 +574,7 @@ class Module(BaseModule):
                 continue
 
             if sortie.salle_dest and sortie.salle_dest.nom_terrain in \
-                    ("rive", "plaine") and not sortie.salle_dest.interieur:
+                    terrains_autorises and not sortie.salle_dest.interieur:
                 sorties.append(sortie)
 
         if sorties:
@@ -590,17 +614,19 @@ class Module(BaseModule):
         if identifiant in self.familiers:
             familier = self.familiers[identifiant]
             while pnj.points_entrainement != 0:
-                stats = ["force", "agilite", "robustesse", "intelligence"]
+                stats = familier.fiche.stats_progres
                 selections = []
-                for nom in stats:
+                probabilites = []
+                for nom, probabilite in stats:
                     stat = pnj.stats[nom]
                     if stat.base < stat.marge_max:
                         selections.append(nom)
+                        probabilites.append(probabilite)
 
                 if not selections:
                     return
 
-                stat = choice(selections)
+                stat = choix_probable_liste(selections, probabilites)
                 self.logger.info("{} gagne en {}.".format(pnj.identifiant,
                         stat))
                 pnj.gagner_stat(stat)

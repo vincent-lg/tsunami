@@ -1,6 +1,6 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2014 LE GOFF Vincent
+# Copyright (c) 2010-2016 LE GOFF Vincent
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -66,6 +66,7 @@ class ClasseFonction(Fonction):
 
         """
         chaine = supprimer_accents(chaine)
+        expression = expression.replace("_b_", "|")
         try:
             return re.search(expression, chaine, re.I)
         except re.error as err:

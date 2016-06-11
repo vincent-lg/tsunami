@@ -1,6 +1,6 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2012 LE GOFF Vincent
+# Copyright (c) 2010-2016 LE GOFF Vincent
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -66,6 +66,7 @@ class Poste(metaclass=MetaPoste):
     """
 
     nom = ""
+    points = 0
     def __init__(self):
         """Constructeur du poste."""
         self.autorite = 0
@@ -92,5 +93,6 @@ from . import voilier
 from . import charpentier
 from . import vigie
 from . import rameur
+from . import sabreur
 from . import chirurgien
 from . import maitre_cuisinier

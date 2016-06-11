@@ -1,6 +1,6 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2010 LE GOFF Vincent
+# Copyright (c) 2010-2016 LE GOFF Vincent
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -109,6 +109,17 @@ class Script(BaseObj):
         """Retourne un dictionnaire déréférencé des blocs."""
         return dict(self.__blocs)
 
+    def copier_depuis(self, script):
+        """Copie le script self depuis le script indiqué."""
+        for evenement in script.evenements.values():
+            sa_evenement = supprimer_accents(evenement.nom).lower()
+            if sa_evenement in self.__evenements.keys():
+                evt = self.__evenements[sa_evenement]
+            else:
+                evt = self.creer_evenement_dynamique(evenement.nom)
+            
+            evt.copier_depuis(evenement)
+    
     def creer_evenement(self, evenement):
         """Crée et ajoute l'évènement dont le nom est précisé en paramètre.
 

@@ -1,6 +1,6 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2013 LE GOFF Vincent
+# Copyright (c) 2010-2016 LE GOFF Vincent
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -45,6 +45,8 @@ class ChargerBoulet(Ordre):
     """
 
     cle = "charger_boulet"
+    etats_autorises = ("charger_canon", "")
+
     def __init__(self, matelot, navire, canon=None, bruyant=False):
         Ordre.__init__(self, matelot, navire, canon, bruyant)
         self.canon = canon
@@ -63,11 +65,8 @@ class ChargerBoulet(Ordre):
             yield SignalAbandonne("Il n'y a pas de boulet de canon en " \
                     "cale !", self.bruyant)
 
-        canon.projectile = boulet
-        personnage << "Vous chargez {} dans {}.".format(
-                boulet.get_nom(), canon.nom)
-        salle.envoyer("{{}} charge {} dans {}.".format(boulet.get_nom(),
-                canon.nom), personnage)
+        yield canon.pre_charger(personnage)
+        canon.post_charger(personnage, boulet)
         yield SignalTermine()
 
     def prendre_boulet_canon(self, personnage):

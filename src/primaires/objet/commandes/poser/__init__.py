@@ -1,6 +1,6 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2010 LE GOFF Vincent
+# Copyright (c) 2010-2016 LE GOFF Vincent
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -60,7 +60,6 @@ class CmdPoser(Commande):
         conteneur.proprietes["conteneurs"] = \
                 "(personnage.equipement.inventaire_simple, " \
                 "personnage.salle.objets_sol)"
-        conteneur.proprietes["types"] = "('conteneur', )"
 
     def interpreter(self, personnage, dic_masques):
         """Méthode d'interprétation de commande"""
@@ -73,29 +72,51 @@ class CmdPoser(Commande):
         dans = dans.objet if dans else None
 
         pose = 0
+        poses = []
+        nombre_restant = nombre
         for objet, qtt, conteneur in objets:
             if not objet.peut_prendre:
                 personnage << "Vous ne pouvez pas prendre {} avec vos " \
                         "mains...".format(objet.nom_singulier)
                 return
 
-            if nombre < qtt:
-                qtt = nombre
+            qtt = min(nombre_restant, qtt)
+            if dans and objet is dans:
+                personnage << "Impossible de mettre {} dans soi-même !" \
+                        "".format(objet.nom_singulier)
+                return
+
+            if dans and objet.est_de_type("conteneur") \
+                    and objet.contient_recursif(dans):
+                personnage << "Impossible de mettre {} dans un objet " \
+                        "qu'il contient lui-même.".format(objet.nom_singulier)
+                return
 
             if dans and not (dans.est_de_type("conteneur") and \
                     dans.accepte_type(objet) and dans.peut_contenir(
+                    objet, qtt)) and not (dans.est_de_type("machine") and \
+                    dans.machine_conteneur and dans.peut_contenir(objet, qtt)) \
+                    and not (dans.est_de_type("meuble") and dans.peut_contenir(
                     objet, qtt)):
                 personnage << "|err|{} ne peut pas contenir {}.|ff|".format(
                         dans.get_nom(), objet.get_nom(qtt))
                 return
 
+            if dans and dans.est_de_type("machine"):
+                dans.script["entrepose"]["avant"].executer(
+                        personnage=personnage, machine=dans, objet=objet)
+
+            if not objet.e_existe:
+                continue
+
             conteneur.retirer(objet, qtt)
+
             if dans:
                 if hasattr(dans, "conteneur"):
                     try:
                         dans.conteneur.ajouter(objet, qtt)
                     except SurPoids as err:
-                        personnage << "|err|" + str(err) + ".|ff|"
+                        personnage << "|err|" + str(err) + "|ff|"
                         personnage << "|err|{} tombe sur le sol.|ff|".format(
                                 objet.get_nom(qtt))
                         personnage.salle.objets_sol.ajouter(objet, qtt)
@@ -104,24 +125,40 @@ class CmdPoser(Commande):
                 personnage.salle.objets_sol.ajouter(objet, qtt)
 
             pose += qtt
+            poses.append(objet)
             if pose >= nombre:
                 break
-            nombre -= qtt
-            if nombre <= 0:
+            nombre_restant -= qtt
+            if nombre_restant <= 0:
                 break
 
         if dans:
-            if getattr(dans, "meuble_support", False):
-                connecteur = "sur"
+            if dans.est_de_type("machine"):
+                dans.script["entrepose"]["après"].executer(
+                        personnage=personnage, machine=dans, objets=poses)
+            elif dans.est_de_type("meuble"):
+                msg_pose = dans.messages["pose"]
+                msg_pose = msg_pose.replace("$meuble", dans.get_nom(1))
+                msg_pose = msg_pose.replace("$objet", objet.get_nom(pose))
+                personnage << msg_pose
+                msg_opose = dans.messages["opose"]
+                msg_opose = msg_opose.replace("$meuble", dans.get_nom(1))
+                msg_opose = msg_opose.replace("$objet", objet.get_nom(pose))
+                msg_opose = msg_opose.replace("$personnage", "{}")
+                personnage.salle.envoyer(msg_opose, personnage)
             else:
-                connecteur = "dans"
+                if getattr(dans, "meuble_support", False):
+                    connecteur = "sur"
+                else:
+                    connecteur = "dans"
 
-            personnage << "Vous déposez {} {connecteur} {}.".format(
-                    objet.get_nom(pose), dans.nom_singulier,
-                    connecteur=connecteur)
-            personnage.salle.envoyer("{{}} dépose {} {connecteur} {}.".format(
+                personnage << "Vous déposez {} {connecteur} {}.".format(
                         objet.get_nom(pose), dans.nom_singulier,
-                        connecteur=connecteur), personnage)
+                        connecteur=connecteur)
+                personnage.salle.envoyer("{{}} dépose {} {connecteur} " \
+                            "{}.".format(objet.get_nom(pose),
+                            dans.nom_singulier, connecteur=connecteur),
+                            personnage)
         else:
             personnage << "Vous posez {}.".format(objet.get_nom(pose))
             personnage.salle.envoyer("{{}} pose {}.".format(

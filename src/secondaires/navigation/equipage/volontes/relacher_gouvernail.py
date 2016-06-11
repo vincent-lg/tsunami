@@ -1,6 +1,6 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2013 LE GOFF Vincent
+# Copyright (c) 2010-2016 LE GOFF Vincent
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -70,6 +70,7 @@ class RelacherGouvernail(Volonte):
 
         navire = self.navire
         ordres = []
+        matelot.invalider_ordres("virer")
         relacher = OrdreRelacherGouvernail(matelot, navire)
         ordres.append(relacher)
         ordres.append(self.revenir_affectation(matelot))

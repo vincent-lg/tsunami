@@ -1,6 +1,6 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2012 NOEL-BARON Léo
+# Copyright (c) 2010-2016 NOEL-BARON Léo
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -54,7 +54,11 @@ class Filtre:
         if self.type:
             courte += " ARG"
             longue += "=ARG" if self.opt_longue else ""
-        return courte + ", " + longue if self.opt_longue else courte
+
+        if self.opt_courte:
+            return courte + ", "+ longue if self.opt_longue else courte
+        else:
+            return longue
 
     def tester(self, objet, valeur):
         """Teste le filtre"""

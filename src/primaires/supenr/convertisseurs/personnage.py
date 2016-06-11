@@ -1,6 +1,6 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2010 LE GOFF Vincent
+# Copyright (c) 2010-2016 LE GOFF Vincent
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -62,3 +62,10 @@ class Convertisseur:
         del objet._cle_etat
         del objet.position
         del objet.occupe
+
+    def depuis_version_6(objet, classe):
+        """Mise à jour du prompt."""
+        objet.set_version(classe, 7)
+        prompt = objet._prompt
+        del objet._prompt
+        objet.prompts["défaut"] = prompt

@@ -1,6 +1,6 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2010 DAVY Guillaume
+# Copyright (c) 2010-2016 DAVY Guillaume
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -147,11 +147,16 @@ class Sort(BaseObj):
 
         return False
 
-    def concentrer(self, personnage, cible, apprendre=True, lattence_min=True):
+    def concentrer(self, personnage, cible, apprendre=True,
+            lattence_min=True, maitrise=None):
         """Fait concentrer le sort à 'personnage'."""
-        maitrise = 100
+        if maitrise is None:
+            maitrise = 100
+
         if apprendre:
-            maitrise = personnage.pratiquer_sort(self.cle)
+            p_maitrise = personnage.sorts[self.cle]
+            if maitrise < 1 or maitrise > p_maitrise:
+                maitrise = p_maitrise
 
         maitrise = Fraction(maitrise)
 
@@ -166,7 +171,16 @@ class Sort(BaseObj):
         variables["personnage"] = personnage
         variables["maitrise"] = maitrise
         variables["salle"] = personnage.salle
-        self.executer_script(personnage, "concentration", **variables)
+        try:
+            self.executer_script(personnage, "concentration", **variables)
+        except InterrompreCommande:
+            print("On apprend pas")
+            return
+        else:
+            print("On apprend")
+            if apprendre:
+                personnage.pratiquer_sort(self.cle)
+
         action = self.lancer
         if self.echoue(personnage, cible) and apprendre:
             action = self.echouer

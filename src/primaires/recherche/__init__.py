@@ -1,6 +1,6 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2012 NOEL-BARON Léo
+# Copyright (c) 2010-2016 NOEL-BARON Léo
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -57,9 +57,12 @@ class Module(BaseModule):
         self._cherchables = l_cherchables
         self.types_filtres = types
 
-    def init(self):
-        """Initialisation du module"""
-        BaseModule.init(self)
+    def config(self):
+        """Configuration du module."""
+        importeur.hook.ajouter_hook("recherche:filtres",
+                "Hook appelé quand on s'apprête à chercher dans un cherchable")
+
+        BaseModule.config(self)
 
     def ajouter_commandes(self):
         """Ajout des commandes"""

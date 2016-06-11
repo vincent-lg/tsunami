@@ -1,6 +1,6 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2013 LE GOFF Vincent
+# Copyright (c) 2010-2016 LE GOFF Vincent
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -65,7 +65,11 @@ class Feu(Volonte):
 
     def executer(self, matelot):
         """Exécute la volonté."""
-        self.navire.equipage.ajouter_ennemi(self.adverse)
+        if self.navire.equipage.a_objectif("couler", self.adverse):
+            personnage << "|err|Ce semble être déjà le cas.|ff|"
+            return
+
+        self.navire.equipage.ajouter_objectif("couler", self.adverse)
 
     def crier_ordres(self, personnage):
         """On fait crier l'ordre au personnage."""

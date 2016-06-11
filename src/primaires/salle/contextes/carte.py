@@ -1,6 +1,6 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2013 LE GOFF Vincent
+# Copyright (c) 2010-2016 LE GOFF Vincent
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -66,15 +66,15 @@ class CarteEtendue(Contexte):
 
     nom = "salle:etendue:carte"
 
-    def __init__(self, pere):
+    def __init__(self, pere, x=None, y=None):
         """Constructeur du contexte"""
         Contexte.__init__(self, pere)
         self.opts.prompt_prf = ""
         self.opts.prompt_clr = ""
         self.opts.nl = False
         self.etendue = None
-        self.x = None
-        self.y = None
+        self.x = x
+        self.y = y
         self.nb_lignes = 16
         self.nb_col = 30
 

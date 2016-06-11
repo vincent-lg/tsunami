@@ -1,6 +1,6 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2012 LE GOFF Vincent
+# Copyright (c) 2010-2016 LE GOFF Vincent
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -51,6 +51,7 @@ class Module(BaseModule):
         self.rapports = {}
         self.commandes = []
         self.traces = {}
+        type(importeur).espace["rapports"] = self.rapports
 
     def init(self):
         """Méthode d'initialisation du module"""
@@ -126,20 +127,28 @@ class Module(BaseModule):
 
     def stats_rapports(self, infos):
         """Ajoute les stats concernant les rapports."""
-        rapports = list(self.rapports.values())
-        ouverts = [r for r in rapports if r.ouvert]
-        dupliques = [r for r in rapports if r.statut == "dupliqué"]
-        assignes = [r for r in rapports if r.assigne_a is not None]
-
+        tous_rapports = list(self.rapports.values())
         msg = "|tit|Rapports :|ff|"
-        msg += "\n  {} ouverts sur {} en tout".format(
-                len(ouverts), len(rapports))
-        if len(rapports) > 0:
-            msg += " ({}%)".format(int(len(ouverts) / len(rapports) * 100))
+        for type_rapport in "faute", "bug", "évolution", "suggestion":
+            e = "" if type_rapport == "bug" else "e"
+            type_reel = "bug" if type_rapport == "faute" else type_rapport
+            rapports = [r for r in tous_rapports if r.type == type_reel]
+            if type_rapport == "faute":
+                rapports = [r for r in rapports
+                        if r.categorie == "faute"]
+            elif type_rapport == "bug":
+                rapports = [r for r in rapports
+                        if r.categorie != "faute"]
+            ouverts = [r for r in rapports if r.ouvert]
+            assignes = [r for r in rapports if r.assigne_a is not None
+                    and r.ouvert]
 
-        msg += "\n  {} rapports dupliqués".format(len(dupliques))
-        msg += "\n  {} rapports assignés".format(len(assignes))
-        if len(rapports) > 0:
-            msg += " ({}%)".format(int(len(assignes) / len(rapports) * 100))
+            msg += "\n  {:<11} : {} ouvert{e}s".format(
+                    type_rapport.capitalize() + "s", len(ouverts), e=e)
+            if len(rapports):
+                msg += " ({:>3}%)".format(
+                        int(len(ouverts) / len(rapports) * 100))
+            msg += ", {} assigné{e}s, {} en tout".format(
+                    len(assignes), len(rapports), e=e)
 
         infos.append(msg)

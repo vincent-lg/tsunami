@@ -1,6 +1,6 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2010 LE GOFF Vincent
+# Copyright (c) 2010-2016 LE GOFF Vincent
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -39,6 +39,7 @@ import telnetlib as tlib
 OPTIONS = {
     "masquer": tlib.IAC + tlib.WILL + tlib.ECHO,
     "afficher": tlib.IAC + tlib.WONT + tlib.ECHO,
+    "hello": tlib.IAC + tlib.AYT,
 }
 
 class InstanceConnexion(BaseObj):

@@ -1,6 +1,6 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2010 LE GOFF Vincent
+# Copyright (c) 2010-2016 LE GOFF Vincent
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -170,7 +170,7 @@ class ClientConnecte:
             return message
         else:
             sub = message[index + 1:index + 3]
-            if sub[0] in (DO, DONT, WILL, WONT):
+            if sub and sub[0] in (DO, DONT, WILL, WONT):
                 fin = index + 3
             else:
                 fin = index + 2

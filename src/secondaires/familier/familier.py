@@ -1,6 +1,6 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2014 LE GOFF Vincent
+# Copyright (c) 2010-2016 LE GOFF Vincent
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -147,7 +147,7 @@ class Familier(BaseObj):
 
     def augmenter_faim(self, modifieur):
         """Augmente la faim du PNJ."""
-        self.faim = round(self.soif + modifieur, 2)
+        self.faim = round(self.faim + modifieur, 2)
 
         if self.faim > 100:
             self.faim = 100
@@ -219,3 +219,15 @@ class Familier(BaseObj):
             importeur.combat.creer_combat(auteur.salle, auteur, cible)
             auteur.envoyer("Vous attaquez {}.", cible)
             cible.envoyer("{} vous attaque.", auteur)
+
+    def enfourcher(self, personnage):
+        """Enfourche le familier."""
+        personnage.etats.ajouter("chevauche", self)
+        self.chevauche_par = personnage
+        personnage.selectionner_prompt("monture")
+
+    def desarconner(self, personnage):
+        """Descend du dos de ce familier."""
+        personnage.etats.retirer("chevauche")
+        self.chevauche_par = None
+        personnage.deselectionner_prompt("monture")

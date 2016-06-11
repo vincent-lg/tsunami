@@ -1,6 +1,6 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2010 LE GOFF Vincent
+# Copyright (c) 2010-2016 LE GOFF Vincent
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -47,7 +47,16 @@ class CmdDonner(Commande):
                 "a/to <cible:personnage_present|nom_pnj>"
         self.aide_courte = "donne un objet"
         self.aide_longue = \
-                ""
+                "Cette commande permet de donner un ou plusieurs " \
+                "objets à un autre personnage présent dans la salle. " \
+                "La forme simple de cette commande est |cmd|donner " \
+                "nom de l'objet à nom du personnage|ff| (ou |cmd|give " \
+                "nom de l'objet to nom du personnage|ff|, si vous " \
+                "êtes en anglais). Vous pouvez également préciser, " \
+                "avant le nom de l'objet, un nombre représentant " \
+                "le nombre d'objets à donner au personnage cible. " \
+                "Exemple : |cmd|donner 2 botte à tavernier|ff| (ou " \
+                "|cmd|give 2 botte to tavernier|ff| en anglais)."
 
     def ajouter(self):
         """Méthode appelée lors de l'ajout de la commande à l'interpréteur"""

@@ -1,6 +1,6 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2012 LE GOFF Vincent
+# Copyright (c) 2010-2016 LE GOFF Vincent
 # All rights reserved.
 # 
 # Redistribution and use in source and binary forms, with or without
@@ -102,7 +102,7 @@ class PrmDeposer(Parametre):
         
         montant = questeur.deposer(personnage, prototype, somme)
         if montant == 0:
-            personnage << "|err|Vous n'avez rien à déposer apparemment.|ff|"
+            personnage << "|err|Vous ne pouvez pas déposer cette somme.|ff|"
         else:
             personnage.envoyer("{{}} entrepose votre argent dans ses " \
                     "coffres et ajoute {} pièces de bronze sur votre " \

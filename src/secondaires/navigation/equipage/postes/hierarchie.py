@@ -1,6 +1,6 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2013 LE GOFF Vincent
+# Copyright (c) 2010-2016 LE GOFF Vincent
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -37,12 +37,13 @@ HIERARCHIE = {
     "voilier": ["voilier", "matelot"],
     "vigie": ["vigie", "matelot"],
     "rameur": ["rameur", "matelot"],
+    "sabreur": ["sabreur", "matelot"],
     "maître cuisinier": ["maître cuisinier"],
     "chirurgien": ["chirurgien"],
     "officier": ["officier", "maître d'équipage", "second", "capitaine"],
-    "maître d'équipage": ["maître d'équipage", "officier"],
-    "second": ["second", "maître d'équipage", "officier"],
-    "capitaine": ["capitaine", "second", "maître d'équipage"],
+    "maître d'équipage": ["maître d'équipage", "second", "capitaine"],
+    "second": ["second", "capitaine"],
+    "capitaine": ["capitaine"],
     "commandant": ["capitaine", "second"],
 }
 
@@ -53,6 +54,7 @@ ORDRE = [
     "voilier",
     "vigie",
     "rameur",
+    "sabreur",
     "maître cuisinier",
     "chirurgien",
     "officier",

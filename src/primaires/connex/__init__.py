@@ -1,6 +1,6 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2010 LE GOFF Vincent
+# Copyright (c) 2010-2016 LE GOFF Vincent
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -57,12 +57,15 @@ class Module(BaseModule):
         self.instances = {}
         self.cnx_logger = type(self.importeur).man_logs.creer_logger( \
                 "connex", "connexions")
+
         # Comptes
         self.comptes = {}
         self.cpt_logger = type(self.importeur).man_logs.creer_logger( \
                 "connex", "comptes")
         self.joueurs_bannis = []
         self.bannissements_temporaires = {}
+        self.table_logger = importeur.man_logs.creer_logger("connex", "table")
+        type(importeur).espace["comptes"] = self.comptes
 
     def config(self):
         """Configuration du module.

@@ -1,6 +1,6 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2010 LE GOFF Vincent
+# Copyright (c) 2010-2016 LE GOFF Vincent
 # All rights reserved.
 # 
 # Redistribution and use in source and binary forms, with or without
@@ -61,8 +61,7 @@ class CmdRemplir(Commande):
         plat.proprietes["conteneurs"] = \
                 "(personnage.equipement.inventaire, " \
                 "personnage.salle.objets_sol)"
-        plat.proprietes["types"] = "('conteneur de nourriture', " \
-                "'conteneur de potion')"
+        plat.proprietes["types"] = "('conteneur de nourriture', )"
     
     def interpreter(self, personnage, dic_masques):
         """Méthode d'interprétation de commande"""
@@ -89,6 +88,7 @@ class CmdRemplir(Commande):
             if poids_total > dans.poids_max:
                 if pose == 0:
                     personnage << "Vous ne pouvez rien y poser de plus."
+                    return
                 else:
                     break
             

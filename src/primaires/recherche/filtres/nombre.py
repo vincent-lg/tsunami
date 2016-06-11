@@ -1,6 +1,6 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2014 LE GOFF VINCENT
+# Copyright (c) 2010-2016 LE GOFF VINCENT
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -54,7 +54,7 @@ class Nombre(TypeFiltre):
 
     Ce filtre est utilisé pour chercher un nombre avec des opérateurs
     spécifiques. Par exemple on peut chercher 5 pour une recherche simple
-    (égale à 5). On peut aussi chercher <3 pour trouver ceux inférieures à 3.
+    (égale à 5). On peut aussi chercher <3 pour trouver ceux inférieurs à 3.
 
     """
 
@@ -82,6 +82,8 @@ class Nombre(TypeFiltre):
         recherche, False sinon.
 
         """
+        attribut = float(attribut)
+
         # Est-ce un simple nombre ?
         if RE_SIMPLE.search(valeur):
             valeur = valeur.replace(",", ".")
@@ -91,8 +93,8 @@ class Nombre(TypeFiltre):
         intervalle = RE_COMPLETE.search(valeur)
         if intervalle:
             groupes = intervalle.groups()
-            borne_inf = groupes[0] + "." + groupes[1] if groupes[1] else "0"
-            borne_sup = groupes[2] + "." + groupes[3] if groupes[3] else "0"
+            borne_inf = groupes[0] + "." + (groupes[1] if groupes[1] else "0")
+            borne_sup = groupes[2] + "." + (groupes[3] if groupes[3] else "0")
             borne_inf = float(borne_inf)
             borne_sup = float(borne_sup)
             return borne_inf <= attribut <= borne_sup
@@ -103,7 +105,10 @@ class Nombre(TypeFiltre):
                 if valeur.startswith(operateur):
                     valeur = valeur[len(operateur):]
                     valeur = valeur.replace(",", ".")
-                    valeur = float(valeur)
+                    try:
+                        valeur = float(valeur)
+                    except ValueError:
+                        raise TypeError("format de nombre {} inconnu".format(repr(valeur)))
                     return fonction(attribut, valeur)
 
         raise TypeError("format de nombre {} inconnu".format(repr(valeur)))

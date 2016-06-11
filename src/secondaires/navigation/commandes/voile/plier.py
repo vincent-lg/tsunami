@@ -1,6 +1,6 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2010 LE GOFF Vincent
+# Copyright (c) 2010-2016 LE GOFF Vincent
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -60,7 +60,7 @@ class PrmPlier(Parametre):
 
         voile = voiles[0]
         if not voile.hissee:
-            personnage << "|err|Cette voile est déjà plié.|ff|"
+            personnage << "|err|Cette voile est déjà pliée.|ff|"
         else:
             yield voile.pre_plier(personnage)
             voile.post_plier(personnage)

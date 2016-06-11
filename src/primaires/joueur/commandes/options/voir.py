@@ -1,11 +1,11 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2010 LE GOFF Vincent
+# Copyright (c) 2010-2016 LE GOFF Vincent
 # All rights reserved.
-# 
+#
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are met:
-# 
+#
 # * Redistributions of source code must retain the above copyright notice, this
 #   list of conditions and the following disclaimer.
 # * Redistributions in binary form must reproduce the above copyright notice,
@@ -14,7 +14,7 @@
 # * Neither the name of the copyright holder nor the names of its contributors
 #   may be used to endorse or promote products derived from this software
 #   without specific prior written permission.
-# 
+#
 # THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
 # AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
 # IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -35,11 +35,11 @@ from reseau.connexions.client_connecte import ENCODAGES
 from primaires.format.fonctions import oui_ou_non
 
 class PrmVoir(Parametre):
-    
+
     """Commande 'options voir'.
-    
+
     """
-    
+
     def __init__(self):
         """Constructeur du paramètre"""
         Parametre.__init__(self, "voir", "view")
@@ -49,7 +49,7 @@ class PrmVoir(Parametre):
             "Cette commande permet de voir l'état actuel des options que " \
             "vous pouvez éditer avec la commande %options%. Elle donne aussi " \
             "un aperçu des valeurs disponibles."
-    
+
     def interpreter(self, personnage, dic_masques):
         """Interprétation du paramètre"""
         langue = personnage.langue_cmd
@@ -58,6 +58,8 @@ class PrmVoir(Parametre):
         res = "Options actuelles :\n\n"
         res += "  Couleurs : {}\n".format(oui_ou_non(
                 personnage.compte.couleur))
+        res += "  Envoi d'e-mails de notification de MudMails : {}\n".format(
+                oui_ou_non(personnage.compte.email))
         res += "  Envoi des newsletters : {}\n".format(oui_ou_non(
                 personnage.compte.newsletter))
         res += "  Votre encodage : |ent|" + encodage + "|ff|.\n"

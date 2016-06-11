@@ -1,6 +1,6 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2010 DAVY Guillaume
+# Copyright (c) 2010-2016 DAVY Guillaume
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -159,6 +159,13 @@ class Vecteur(BaseObj):
     def copier(self):
         """Retourne une copie de self"""
         return Vecteur(self.x, self.y, self.z, self.parent)
+
+    def est_nul(self, arrondi=3):
+        """Retourne True si le vcteur est considéré comme nul."""
+        x = round(self._x, arrondi)
+        y = round(self._y, arrondi)
+        z = round(self._z, arrondi)
+        return x == 0 and y == 0 and z == 0
 
     def tourner_autour_x(self, angle):
         """Tourne autour de l'âxe X.

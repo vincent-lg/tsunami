@@ -1,6 +1,6 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2010 LE GOFF Vincent
+# Copyright (c) 2010-2016 LE GOFF Vincent
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -127,9 +127,9 @@ def get_bytes(msg, ncod_optionnel):
     """
     if isinstance(msg, str):
         if ncod_optionnel:
-            msg = msg.encode(ncod_optionnel)
+            msg = msg.encode(ncod_optionnel, errors="replace")
         else:
-            msg = supprimer_accents(msg).encode()
+            msg = supprimer_accents(msg).encode(errors="replace")
 
     return msg
 
@@ -297,7 +297,12 @@ def couper_phrase(phrase, couper):
 
 def oui_ou_non(flag):
     """Retourne 'oui' si le flag est True, 'non' sinon."""
-    mots = {True:"|vrc|oui|ff|", False:"|rgc|non|ff|"}
+    mots = {
+        True: "|vrc|oui|ff|",
+        False: "|rgc|non|ff|",
+        None: "|rgc|non|ff|",
+    }
+
     return mots[flag]
 
 def format_nb(nb, message, fem=False):
@@ -313,11 +318,11 @@ def format_nb(nb, message, fem=False):
         "est": "sont" if nb > 1 else "est",
     }
     if nb == 0:
-        mots["nb"] = "Aucune" if fem else "Aucun"
+        mots["nb"] = "aucune" if fem else "aucun"
     elif nb == 1:
-        mots["nb"] = "Une" if fem else "Un"
+        mots["nb"] = "une" if fem else "un"
 
-    return message.format(**mots)
+    return message.format(**mots).capitalize()
 
 def aff_flottant(flottant, arrondi=3):
     """Retourne le flottant sous la forme d'une chaîne de caractères.

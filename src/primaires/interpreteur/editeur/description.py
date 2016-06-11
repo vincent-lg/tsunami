@@ -1,6 +1,6 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2010 LE GOFF Vincent
+# Copyright (c) 2010-2016 LE GOFF Vincent
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -30,6 +30,7 @@
 
 """Ce fichier définit le contexte-éditeur 'Description'."""
 
+from primaires.format.description import Description as Desc
 from primaires.format.fonctions import *
 from primaires.interpreteur.editeur.env_objet import EnveloppeObjet
 from . import Editeur
@@ -47,12 +48,27 @@ class Description(Editeur):
 
     def __init__(self, pere, objet=None, attribut=None):
         """Constructeur de l'éditeur"""
+        attribut = attribut or "description"
         Editeur.__init__(self, pere, objet, attribut)
         self.opts.echp_sp_cars = False
-        self.nom_attribut = attribut or "description"
+        self.nom_attribut = attribut
+        contenu = ""
+        if objet:
+            contenu = getattr(self.objet, self.nom_attribut)
+            if contenu is None:
+                setattr(self.objet, self.nom_attribut, "")
+            else:
+                contenu = str(contenu)
+
+        self.description_complete = Desc(parent=objet, scriptable=False)
+        if contenu:
+            for paragraphe in contenu.split("\n"):
+                self.description_complete.ajouter_paragraphe(
+                        paragraphe.replace("|nl|", " "))
+
         self.ajouter_option("?", self.opt_aide)
         self.ajouter_option("j", self.opt_ajouter_paragraphe)
-        self.ajouter_option("i", self.opt_inserer_paragraphe)
+        self.ajouter_option("a", self.opt_inserer_paragraphe)
         self.ajouter_option("d", self.opt_supprimer)
         self.ajouter_option("r", self.opt_remplacer)
         self.ajouter_option("e", self.opt_editer_evt)
@@ -63,7 +79,11 @@ class Description(Editeur):
     @property
     def description(self):
         """Retourne la description, attribut de self.objet"""
-        return getattr(self.objet, self.nom_attribut)
+        attribut = getattr(self.objet, self.nom_attribut)
+        if isinstance(attribut, str):
+            return self.description_complete
+
+        return attribut
 
     def get_prompt(self):
         """Retourne le prompt."""
@@ -76,9 +96,30 @@ class Description(Editeur):
         else:
             return "-> "
 
-    def get_apercu(self):
-        """Aperçu de la description"""
-        return self.apercu.format(objet = self.objet.description)
+    @staticmethod
+    def afficher_apercu(apercu, objet, valeur):
+        if valeur is None:
+            return ""
+
+        if isinstance(valeur, str):
+            description = Desc(parent=objet, scriptable=False)
+
+            for paragraphe in valeur.split("\n"):
+                description.ajouter_paragraphe(
+                        paragraphe.replace("|nl|", " "))
+
+            valeur = description
+
+        valeur = valeur.paragraphes_indentes
+        return apercu.format(objet=objet, valeur=valeur)
+
+    def mettre_a_jour(self):
+        """Met à jour l'attribut si nécessaire."""
+        attribut = getattr(self.objet, self.nom_attribut)
+        if isinstance(attribut, str):
+            contenu = self.description_complete.affichage_simple("|nl|")
+            print("Contenu", contenu)
+            setattr(self.objet, self.nom_attribut, contenu)
 
     def accueil(self):
         """Retourne l'aide"""
@@ -122,6 +163,9 @@ class Description(Editeur):
         """
         msg = \
             "Liste des options disponibles :\n" \
+            " - |ent|/d *|ff| pour supprimer toute la description\n" \
+            " - |ent|/d <numéro du paragraphe>|ff| pour supprimer un " \
+            "paragraphe\n" \
             " - |ent|/a <numéro du paragraphe> <texte>|ff| pour ajouter " \
             "du texte\n   à la fin du paragraphe spécifié\n" \
             " - |ent|/j <numéro du paragraphe> <texte>|ff| pour insérer " \
@@ -140,7 +184,7 @@ class Description(Editeur):
                 " - |ent|/re <ancien nom> <nouveau nom>|ff| renomme la " \
                 "description dynamique"
 
-            self.pere << msg
+        self.pere << msg
 
     def opt_ajouter_paragraphe(self, arguments):
         """Ajoute un paragraphe.
@@ -169,6 +213,7 @@ class Description(Editeur):
             return
 
         description.paragraphes.insert(numero - 1, texte)
+        self.mettre_a_jour()
         self.actualiser()
 
     def opt_inserer_paragraphe(self, arguments):
@@ -202,6 +247,7 @@ class Description(Editeur):
             paragraphe += " "
         paragraphe += texte
         description.paragraphes[numero - 1] = paragraphe
+        self.mettre_a_jour()
         self.actualiser()
 
     def opt_supprimer(self, arguments):
@@ -215,6 +261,7 @@ class Description(Editeur):
         description = self.description
         if arguments == "*": # on supprime toute la description
             description.vider()
+            self.mettre_a_jour()
             self.actualiser()
         else:
             # Ce doit être un nombre
@@ -227,6 +274,7 @@ class Description(Editeur):
                 self.pere << "|err|Numéro de ligne inexistant.|ff|"
             else:
                 description.supprimer_paragraphe(no)
+                self.mettre_a_jour()
                 self.actualiser()
 
     def opt_remplacer(self, arguments):
@@ -243,6 +291,7 @@ class Description(Editeur):
             self.pere << "|err|Syntaxe invalide.|ff|"
         else:
             description.remplacer(recherche, remplacer_par)
+            self.mettre_a_jour()
             self.actualiser()
 
     def opt_editer_evt(self, arguments):
@@ -364,12 +413,14 @@ class Description(Editeur):
                     description.supprimer_paragraphe(-1)
             elif not msg:
                 description.saut_de_ligne = True
+                self.mettre_a_jour()
                 self.actualiser()
                 return
         elif options.a_option(personnage, OPT_AUTOTAB) and msg:
             msg = "|tab|" + msg
         description.ajouter_paragraphe(msg)
         description.saut_de_ligne = False
+        self.mettre_a_jour()
         self.actualiser()
 
 from primaires.scripting.editeurs.edt_instructions import EdtInstructions

@@ -1,6 +1,6 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2010 DAVY Guillaume
+# Copyright (c) 2010-2016 DAVY Guillaume
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -102,7 +102,7 @@ class Vehicule(BaseObj):
         self.acceleration = Vecteur(0, 0, 0, self)
         self.direction = Direction(self, 1, 0, 0)
 
-        self.frottement = Frottement(self,0.7)
+        self.frottement = Frottement(self, 0.7)
 
         self.forces = [self.frottement]
 

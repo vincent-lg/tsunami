@@ -1,6 +1,6 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2010 LE GOFF Vincent
+# Copyright (c) 2010-2016 LE GOFF Vincent
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -46,26 +46,64 @@ class ClasseAction(Action):
     @classmethod
     def init_types(cls):
         cls.ajouter_types(cls.dire_personnage, "Personnage", "str")
+        cls.ajouter_types(cls.dire_personnage, "Personnage", "str", "str")
         cls.ajouter_types(cls.dire_salle, "Salle", "str")
+        cls.ajouter_types(cls.dire_salle, "Salle", "str", "str")
         cls.ajouter_types(cls.dire_joueur, "str", "str")
 
     @staticmethod
-    def dire_personnage(personnage, message, variables):
-        """Envoie un message au personnage."""
+    def dire_personnage(personnage, message, flags="", variables=None):
+        """Envoie un message au personnage.
+
+        Paramètres à préciser :
+
+          * personnage : le personnage à qui envoyer le message
+          * message : le message à envoyer (une chaîne)
+          * flags (optionnel) : un ou plusieurs flags, séparés par un espace
+
+        Flags disponibles :
+
+          * "sp" : envoie sans prompt
+
+        """
+        flags = flags.lower()
+        for flag in flags.split(" "):
+            if flag == "sp":
+                personnage.sans_prompt()
+
+        message = message.replace("|nl|", "\n")
         message = message.replace("_b_nl_b_", "\n")
-        personnage.envoyer(message, **variables)
+        f_variables = get_variables(variables, message)
+        personnage.envoyer(message, **f_variables)
 
     @staticmethod
-    def dire_salle(salle, message, variables):
+    def dire_salle(salle, message, flags="", variables=None):
         """Envoie un message aux personnages présents dans la salle.
 
-        A noter que tous les personnages contenus dans des variables de
+        Paramètres à préciser :
+
+          * salle : la salle à laquelle envoyer le message
+          * message : le message à envoyer (une chaîne)
+          * flags (optionnel) : un ou plusieurs flags, séparés par un espace
+
+        Flags disponibles :
+
+          * "sp" : envoie sans prompt
+
+        À noter que tous les personnages contenus dans des variables de
         ce script, s'il y en a, sont exclus de la liste et ne reçoivent
         donc pas ce message.
 
         """
+        flags = flags.lower()
+        message = message.replace("|nl|", "\n")
         message = message.replace("_b_nl_b_", "\n")
         f_variables = get_variables(variables, message)
+        f_variables["lisser"] = True
+        for flag in flags.split(" "):
+            if flag == "sp":
+                f_variables["prompt"] = False
+
         salle.envoyer(message, **f_variables)
 
     @staticmethod

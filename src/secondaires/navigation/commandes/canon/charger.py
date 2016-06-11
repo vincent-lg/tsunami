@@ -1,6 +1,6 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2013 LE GOFF Vincent
+# Copyright (c) 2010-2016 LE GOFF Vincent
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -86,8 +86,5 @@ class PrmCharger(Parametre):
             salle.objets_sol.ajouter(a_projectile)
 
         conteneur.retirer(projectile)
-        canon.projectile = projectile
-        personnage << "Vous chargez {} dans {}.".format(
-                projectile.get_nom(), canon.nom)
-        salle.envoyer("{{}} charge {} dans {}.".format(projectile.get_nom(),
-                canon.nom), personnage)
+        yield canon.pre_charger(personnage)
+        canon.post_charger(personnage, projectile)

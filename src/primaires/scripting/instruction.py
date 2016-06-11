@@ -1,6 +1,6 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2010 LE GOFF Vincent
+# Copyright (c) 2010-2016 LE GOFF Vincent
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -36,6 +36,7 @@ l'exception ErreurExecution.
 from collections import OrderedDict
 
 from abstraits.obase import BaseObj, MetaBaseObj
+from primaires.format.fonctions import supprimer_couleurs
 from .exceptions import ErreurScripting
 
 instructions = OrderedDict() # dictionnaire des instructions {nom: classe}
@@ -96,6 +97,11 @@ class Instruction(BaseObj, metaclass=MetaInstruction):
     def __getnewargs__(self):
         return ()
 
+    @property
+    def sans_couleurs(self):
+        """Retourne l'instruction sans couleurs."""
+        return supprimer_couleurs(str(self))
+    
     @classmethod
     def peut_interpreter(cls, chaine):
         """Cette classe doit retourner True si elle peut interpréter la chaîne.

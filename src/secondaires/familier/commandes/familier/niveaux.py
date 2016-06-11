@@ -1,6 +1,6 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2014 LE GOFF Vincent
+# Copyright (c) 2010-2016 LE GOFF Vincent
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -31,6 +31,7 @@
 """Fichier contenant le paramètre 'niveaux' de la commande 'familier'."""
 
 from primaires.interpreteur.masque.parametre import Parametre
+from primaires.perso.montrer.niveaux import MontrerNiveaux
 
 class PrmNiveaux(Parametre):
 
@@ -57,31 +58,4 @@ class PrmNiveaux(Parametre):
         familier = dic_masques["nom_familier"].familier
         fiche = familier.fiche
         pnj = familier.pnj
-        grille = [(0, 1)] + list(importeur.perso.gen_niveaux.grille_xp)
-        xp = pnj.xp
-        niveau = pnj.niveau
-        xp_total = grille[niveau][1]
-        pourcentage = int(xp / xp_total * 100)
-        msg = \
-            "+-----------------+-----+-------------------+------+\n" \
-            "| {:<15} | {:>3} | {:>8}/{:>8} | {:>3}% |\n".format(
-            "Principal", niveau, xp, xp_total, pourcentage)
-
-        niveaux = sorted([(cle, nb) for cle, nb in pnj.niveaux.items()],
-                key=lambda e: e[1], reverse=True)
-        for cle, nb in niveaux:
-            nom = importeur.perso.niveaux[cle].nom.capitalize()
-            xp = pnj.xps[cle]
-            niveau = pnj.niveaux[cle]
-            if niveau == 0:
-                continue
-
-            xp_total = grille[niveau][1]
-            pourcentage = int(xp / xp_total * 100)
-            msg += \
-                    "\n| {:<15} | {:>3} | {:>8}/{:>8} | {:>3}% |\n".format(
-                    nom, niveau, xp, xp_total, pourcentage)
-
-        msg += \
-            "\n+-----------------+-----+-------------------+------+"
-        personnage << msg
+        personnage << MontrerNiveaux.montrer(pnj)

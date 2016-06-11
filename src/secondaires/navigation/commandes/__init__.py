@@ -1,6 +1,6 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2010 LE GOFF Vincent
+# Copyright (c) 2010-2016 LE GOFF Vincent
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -36,6 +36,8 @@ from . import amarre
 from . import cale
 from . import calfeutrer
 from . import canon
+from . import canot
+from . import cap
 from . import chantier
 from . import debarquer
 from . import detailler
@@ -47,9 +49,11 @@ from . import gouvernail
 from . import loch
 from . import matelot
 from . import navire
+from . import navire_automatique
 from . import passerelle
+from . import pavillon
+from . import point
 from . import rames
 from . import saborder
-from . import shedit
 from . import vent
 from . import voile

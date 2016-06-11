@@ -1,6 +1,6 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2014 LE GOFF Vincent
+# Copyright (c) 2010-2016 LE GOFF Vincent
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -82,6 +82,7 @@ class PrmControle(Parametre):
             nom = equipage.noms_controles.get(texte)
             if nom is None:
                 personnage << "|err|Contrôle introuvable.|ff|"
+                return
 
             equipage.retirer_controle(nom)
             personnage << "Le contrôle {} a été réinitialisé.".format(

@@ -1,6 +1,6 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2013 LE GOFF Vincent
+# Copyright (c) 2010-2016 LE GOFF Vincent
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -33,8 +33,10 @@
 from primaires.interpreteur.commande.commande import Commande
 from .commandes import PrmCommandes
 from .liste import PrmListe
+from .remettre import PrmRemettre
 from .renommer import PrmRenommer
 from .reparer import PrmReparer
+from .vendre import PrmVendre
 
 class CmdChantier(Commande):
 
@@ -58,5 +60,7 @@ class CmdChantier(Commande):
         """Ajout des paramètres."""
         self.ajouter_parametre(PrmCommandes())
         self.ajouter_parametre(PrmListe())
+        self.ajouter_parametre(PrmRemettre())
         self.ajouter_parametre(PrmRenommer())
         self.ajouter_parametre(PrmReparer())
+        self.ajouter_parametre(PrmVendre())

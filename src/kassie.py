@@ -1,6 +1,6 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2010 LE GOFF Vincent
+# Copyright (c) 2010-2016 LE GOFF Vincent
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -83,13 +83,15 @@ from bases.anaconf import anaconf
 from bases.logs import man_logs
 from corps.config import pere
 from primaires.format.date import *
-from bases.interactif import ConsoleInteractive
+from bases.interactif import ConsoleInteractive, ThreadConsole
 
 # Définition des fonctions appelées pour arrêter le MUD
 # Le lancement du MUD se trouve sous la fonction
 def arreter_MUD():
     """Fonction appelée pour arrêter le MUD proprement"""
     global importeur, log
+    sys.__stdout__.write("\rArrêt du MUD en cours...\n")
+    sys.__stdout__.flush()
     importeur.deconnecter_joueurs()
 
     importeur.tout_detruire()
@@ -180,17 +182,23 @@ serveur.callbacks["reception"].args = (serveur, importeur, log)
 if not lancer_serveur:
     serveur.lance = False
 
-# On configure, initialise et prépare les modules
-importeur.tout_configurer()
-importeur.tout_initialiser()
-importeur.executer_script(parser_cmd.get("script"))
-importeur.tout_preparer()
-
 # Création si demandée de la console interactive
 if "interactif" in parser_cmd.keys():
     console = ConsoleInteractive(importeur)
 else:
     console = None
+
+# On configure, initialise et prépare les modules
+importeur.tout_configurer()
+importeur.tout_initialiser()
+if "debug" not in parser_cmd.keys():
+    importeur.executer_script(parser_cmd.get("script"))
+    importeur.tout_preparer()
+
+# Création du thread pour la console interactive
+if console:
+    thread = ThreadConsole(console)
+    thread.start()
 
 # Lancement de la boucle synchro
 # Note: tout se déroule ici, dans une boucle temps réelle qui se répète
@@ -200,7 +208,7 @@ else:
 if __name__ == "__main__":
     while serveur.lance:
         if console:
-            console.boucle()
+            console.console.runcodes()
         importeur.boucle()
         serveur.verifier_connexions()
         serveur.verifier_receptions()

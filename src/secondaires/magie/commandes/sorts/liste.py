@@ -1,6 +1,6 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2012 LE GOFF Vincent
+# Copyright (c) 2010-2016 LE GOFF Vincent
 # All rights reserved.
 # 
 # Redistribution and use in source and binary forms, with or without
@@ -51,7 +51,7 @@ class PrmListe(Parametre):
         sorts = sorted([sort for sort in importeur.magie.sorts.values()], \
                 key=lambda sort: sort.cle)
         if not sorts:
-            personnage << "|err|Aucun sort n'a encore été créé."
+            personnage << "|err|Aucun sort n'a encore été créé.|ff|"
             return
         
         lignes = [

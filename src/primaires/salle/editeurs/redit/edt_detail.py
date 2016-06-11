@@ -1,6 +1,6 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2010 LE GOFF Vincent
+# Copyright (c) 2010-2016 LE GOFF Vincent
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -142,6 +142,7 @@ class EdtDetail(Presentation):
         flags = self.ajouter_choix("flags", "fl", Flags, detail, "flags",
                 FLAGS)
         flags.parent = self
+        flags.apercu = "\n    {Valeur}"
         flags.aide_courte = \
             "Flags du détail {} :".format(detail.titre)
 

@@ -1,6 +1,6 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2014 LE GOFF Vincent
+# Copyright (c) 2010-2016 LE GOFF Vincent
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -64,7 +64,9 @@ class ClasseAction(Action):
 
         """
         if "chevauche" in personnage.etats:
-            personnage.etats.retirer("chevauche")
+            etat = personnage.etats.get("chevauche")
+            if etat.monture:
+                etat.familier.desarconner(personnage)
         else:
             raise ErreurExecution("le personnage {} ne chevauche aucune " \
                     "monture".format(personnage))

@@ -1,6 +1,6 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2013 LE GOFF Vincent
+# Copyright (c) 2010-2016 LE GOFF Vincent
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -35,6 +35,7 @@ import re
 from abstraits.obase import BaseObj
 from primaires.scripting.espaces import Espaces
 from primaires.scripting.instruction import ErreurExecution
+from primaires.scripting.jeton import Jeton
 from primaires.scripting.test import Test
 from primaires.scripting.variable import Variable
 
@@ -55,6 +56,7 @@ class Bloc(BaseObj):
 
     """
 
+    nom_scripting = "le bloc"
     def __init__(self, script, nom):
         """Constructeur d'un  bloc.
 
@@ -79,6 +81,10 @@ class Bloc(BaseObj):
         return "bloc {}".format(self.nom)
 
     @property
+    def nom_complet(self):
+        return self.nom
+
+    @property
     def test(self):
         """Retourne le test et le crée si nécessaire."""
         if self.__test is None:
@@ -86,7 +92,7 @@ class Bloc(BaseObj):
 
         return self.__test
 
-    def ajouter_variable(self, nom, str_type, aide):
+    def ajouter_variable(self, nom, str_type, aide, controller_type=True):
         """Ajoute une variable.
 
         Le type est précisé en nom français.
@@ -101,10 +107,11 @@ class Bloc(BaseObj):
             "liste": "list",
         }
 
-        if str_type in types:
-            str_type = types[str_type]
-        else:
-            str_type = str_type.capitalize()
+        if controller_type:
+            if str_type in types:
+                str_type = types[str_type]
+            else:
+                str_type = str_type.capitalize()
 
         if RE_VAR.search(nom) is None:
             raise ValueError("Le nom de variable '{}' est invalide".format(
@@ -132,12 +139,15 @@ class Bloc(BaseObj):
     def executer(self, *args):
         """Execute le bloc d'instructions.
 
-        On valide d'abord le variable et leur type. En cas d'erreur,
+        On valide d'abord les variables et leur type. En cas d'erreur,
         une ErreurExcecution est levée. On récupère le résultat de la
         variable 'retour', si il y en a une, que l'on retourne au cas où.
 
         """
+        self.espaces = Espaces(self)
         variables = {}
+        jeton = Jeton()
+        jeton.complet = True
         for i, def_variable in enumerate(self.variables):
             try:
                 variable = args[i]
@@ -157,9 +167,9 @@ class Bloc(BaseObj):
 
         self.espaces.variables.update(variables)
         if self.__test:
-            self.__test.executer_instructions(self)
+            self.__test.executer_instructions(self, jeton)
 
         if "retour" in self.espaces.variables:
             return self.espaces.variables["retour"]
 
-        return None
+        return jeton

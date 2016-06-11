@@ -1,6 +1,6 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2013 LE GOFF Vincent
+# Copyright (c) 2010-2016 LE GOFF Vincent
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -40,6 +40,10 @@ class ClasseFonction(Fonction):
     @classmethod
     def init_types(cls):
         cls.ajouter_types(cls.objets_prototype, "str")
+        cls.ajouter_types(cls.objets_salle, "Salle")
+        cls.ajouter_types(cls.objets_salle, "Salle", "str")
+        cls.ajouter_types(cls.objets_personnage, "Personnage")
+        cls.ajouter_types(cls.objets_personnage, "Personnage", "str")
 
     @staticmethod
     def objets_prototype(cle_prototype):
@@ -62,3 +66,111 @@ class ClasseFonction(Fonction):
                     repr(cle_prototype)))
 
         return list(prototype.objets)
+
+    @staticmethod
+    def objets_salle(salle, type_ou_prototype=""):
+        """Retourne les objets posés dans la salle (éventuellement filtrés).
+
+        Cette fonction prend un argument obligatoire : la salle
+        dans laquelle chercher. Elle retourne une liste des objets
+        posés sur le sol de cette salle. Vous pouvez également
+        préciser un second paramètre, sous la forme d'une chaîne,
+        contenant la clé du prototype d'objet ou le type grâce
+        auquel filtrer les résultats. Voir les exemples cidessous
+        pour plus d'informations.
+
+        Paramètres à préciser :
+
+          * salle : la salle dans laquelle chercher
+          * type_ou_prototype (optionnel) : paramètre pour filtrer la liste
+
+        Exemples d'utilisation :
+
+          # Retourne tous les objets posés dans la salle
+          objets = objets(salle)
+          # Retourne les objets dans la salle du prototype "pomme_rouge"
+          pommes = objets(salle, "pomme_rouge")
+          # Retourne les objets posés dans la salle de type "arme"
+          armes = objets(salle, "+arme")
+          # Si aucun objet n'est trouvé, retourne une liste vide
+
+        """
+        objets = [o for o in salle.objets_sol._objets]
+        if type_ou_prototype:
+            if type_ou_prototype.startswith("+"):
+                nom_type = type_ou_prototype[1:]
+                objets = [o for o in objets if o.est_de_type(nom_type)]
+            else:
+                cle_prototype = type_ou_prototype
+                objets = [o for o in objets if o.cle == cle_prototype]
+
+        return objets
+
+
+    @staticmethod
+    def objets_personnage(personnage, filtre=""):
+        """Retourne une liste d'objets possédés par le personnage.
+
+        Le filtre facultatif permet de ne retourner que certains objets
+        spécifiques, en fonction de leur type ou de leur clé.
+
+        Paramètres à préciser :
+
+          * personnage : le personnage en question.
+          * filtre (facultatif) : un ou plusieurs filtres.
+
+        Le filtre est à préciser sous la forme d'une chaîne. Si on veut
+        préciser plusieurs filtres, il faut les séparer par une
+        accolade (&). Le filtre peut être soit une clé d'objet simple,
+        soit un type d'objet précédé du signe '+'. Il existe également
+        deux filtres particuliers :
+
+          * *equipement : cherche uniquement dans l'équipement du personnage.
+          * *inventaire : cherche uniquement dans l'inventaire.
+
+        Si aucune mention de l'origine n'est précisé, cherche dans
+        l'inventaire et l'équipement.
+
+        Exemples d'utilisation :
+
+          # Retourne tous les objets possédés ou équipés par le personnage
+          possedes = objets(personnage)
+          # Ne retourne que les objets équipés
+          objets = objets(personnage, "*equipement")
+          # Ne retourne que les objets possédés (sans l'équipement)
+          objets = objets(personnage, "*inventaire")
+          # Retourne les objets équipes ou possédés de clé 'sabre_bois'
+          objets = objets(personnage, "sabre_bois")
+          # Ne retourne que les objets équipés de clé 'sabre_bois'
+          objets = objets(personnage, "*equipement&sabre_bois")
+          # Retourne tous les objets possédés de type 'fruit'
+          objets = objets(personnage, "*inventaire&+fruit")
+
+        """
+        filtre = filtre or "*equipement&*inventaire"
+        filtre = filtre.lower()
+        filtres = filtre.split("&")
+        objets = []
+        origine = False
+        if "*equipement" in filtres:
+            origine = True
+            objets.extend([o for o in personnage.equipement.equipes])
+            filtres.remove("*equipement")
+        if "*inventaire" in filtres:
+            origine = True
+            objets.extend([o for o in personnage.equipement.inventaire_simple])
+            filtres.remove("*inventaire")
+
+        if not origine:
+            # On part du principe qu'on a voulu dire dans l'inventaire
+            # et l'équipement
+            objets.extend([o for o in personnage.equipement.equipes])
+            objets.extend([o for o in personnage.equipement.inventaire_simple])
+
+        for filtre in filtres:
+            if filtre.startswith("+"):
+                objets = [o for o in objets if o.est_de_type(filtre[1:])]
+            else:
+                objets = [o for o in objets if o.cle == filtre]
+
+        return objets

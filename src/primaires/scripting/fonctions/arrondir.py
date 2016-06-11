@@ -1,6 +1,6 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2014 LE GOFF Vincent
+# Copyright (c) 2010-2016 LE GOFF Vincent
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -31,8 +31,10 @@
 """Fichier contenant la fonction arrondir."""
 
 from fractions import Fraction
+from math import ceil
 
 from primaires.scripting.fonction import Fonction
+from primaires.scripting.instruction import ErreurExecution
 
 class ClasseFonction(Fonction):
 
@@ -41,6 +43,7 @@ class ClasseFonction(Fonction):
     @classmethod
     def init_types(cls):
         cls.ajouter_types(cls.arrondir, "Fraction")
+        cls.ajouter_types(cls.arrondir_opt, "Fraction", "str")
 
     @staticmethod
     def arrondir(nombre):
@@ -61,3 +64,35 @@ class ClasseFonction(Fonction):
 
         """
         return Fraction(round(nombre))
+
+    @staticmethod
+    def arrondir_opt(nombre, mode):
+        """Arrondie un nombre passé en paramètre en utilisant le mode.
+
+        Paramètres à préciser :
+
+          * nombre : le nombre à arrondir ;
+          * mode : le mode sous la forme d'une chaîne.
+
+        Modes actuellements supportés :
+
+          * "inf": arrondit le nombre à l'inférieur ;
+          * "sup" : arrondit le nombre au supérieur.
+
+        Exemples d'utilisation :
+
+          nombre = 5.1
+          nombre = arrondir(nombre, "sup")
+          # nombre vaudra 6
+          nombre = 10.8
+          nombre = arrondir(nombre, "inf")
+          # nombre vaudra 10
+
+        """
+        mode = mode.lower()
+        if mode == "inf":
+            return Fraction(int(nombre))
+        elif mode == "sup":
+            return Fraction(ceil(nombre))
+        else:
+            raise ErreurExecution("Mode {} inconnu.".format(repr(mode)))

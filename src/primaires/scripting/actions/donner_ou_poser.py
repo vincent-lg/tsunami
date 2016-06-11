@@ -1,6 +1,6 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2013 LE GOFF Vincent
+# Copyright (c) 2010-2016 LE GOFF Vincent
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -56,6 +56,13 @@ class ClasseAction(Action):
         if not objet.peut_prendre:
             raise ErreurExecution("{} ne peut pas être manipulé".format(
                     objet.get_nom()))
+
+        if objet.contenu:
+            try:
+                objet.contenu.retirer(objet)
+            except ValueError:
+                pass
+
         personnage.ramasser_ou_poser(objet)
 
     @staticmethod

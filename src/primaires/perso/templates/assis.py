@@ -1,6 +1,6 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2014 LE GOFF Vincent
+# Copyright (c) 2010-2016 LE GOFF Vincent
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -51,13 +51,21 @@ class Assis(Etat):
     def message_visible(self):
         """Retourne le message pour les autres."""
         msg = "est assis"
+        e = ""
         if self.personnage.est_feminin():
+            e = "e"
             msg += "e"
         msg += " "
         if self.sur:
             sur = self.sur
-            msg += sur.connecteur + " "
-            msg += sur.titre
+            if hasattr(sur, "messages"):
+                eassis = sur.messages["eassis"]
+                eassis = eassis.replace("$meuble", sur.get_nom())
+                eassis = eassis.replace("(e)", e)
+                return eassis
+            else:
+                msg += sur.connecteur + " "
+                msg += sur.titre
         else:
             msg += "sur le sol"
 

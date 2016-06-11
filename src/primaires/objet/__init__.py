@@ -1,6 +1,6 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2010 LE GOFF Vincent
+# Copyright (c) 2010-2016 LE GOFF Vincent
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -31,6 +31,7 @@
 """Fichier contenant le module primaire objet."""
 
 from abstraits.module import *
+from primaires.affection.personnage import AffectionPersonnage
 from primaires.format.fonctions import format_nb, supprimer_accents
 from . import types
 from . import commandes
@@ -59,6 +60,8 @@ class Module(BaseModule):
         self.cherchable_pr = None
         self.logger = importeur.man_logs.creer_logger(
                 "objets", "objets")
+        type(importeur).espace["prototypes_objets"] = self._prototypes
+        type(importeur).espace["objets"] = self._objets
 
     def config(self):
         """Configuration du module."""
@@ -84,6 +87,8 @@ class Module(BaseModule):
             "conteneur, l'ajout du service ne fonctionnera pas."
 
         # Ajout des hooks
+        importeur.hook.ajouter_hook("objet:doit_garder",
+                "Hook appelé pour connaître les objets à ne pas détruire")
         importeur.hook.ajouter_hook("objet:peut_boire",
                 "Hook appelé quand un personnage demande à boire.")
 
@@ -92,6 +97,9 @@ class Module(BaseModule):
         etat.msg_refus = "Vous êtes en train de manger."
         etat.msg_visible = "mange ici"
         etat.act_autorisees = ["regarder", "bouger"]
+
+        # Ajout des flags d'affection
+        AffectionPersonnage.def_flags.ajouter("voit dans le noir", 8)
 
         BaseModule.config(self)
 
@@ -107,19 +115,23 @@ class Module(BaseModule):
 
         objets = self.importeur.supenr.charger_groupe(Objet)
         for objet in objets:
-            self._objets[objet.identifiant] = objet
+            if objet.prototype:
+                self._objets[objet.identifiant] = objet
 
         nb_objets = len(objets)
         self.logger.info(format_nb(nb_objets, "{nb} objet{s} récupéré{s}"))
 
         self.cherchable_pry = cherchables.prototype.CherchablePrototypeObjet
+
         BaseModule.init(self)
 
     def ajouter_commandes(self):
         """Ajout des commandes dans l'interpréteur"""
         self.commandes = [
+            commandes.allumer.CmdAllumer(),
             commandes.boire.CmdBoire(),
             commandes.donner.CmdDonner(),
+            commandes.eteindre.CmdEteindre(),
             commandes.jeter.CmdJeter(),
             commandes.manger.CmdManger(),
             commandes.oedit.CmdOedit(),
@@ -179,6 +191,11 @@ class Module(BaseModule):
                 a_detruire.append(objet)
 
         a_detruire = [o for o in a_detruire if o and o.prototype]
+        for a_garder in importeur.hook["objet:doit_garder"].executer():
+            for objet in a_garder:
+                if objet in a_detruire:
+                    a_detruire.remove(objet)
+
         self.logger.info(format_nb(len(a_detruire), "{nb} objet{s} à " \
                 "détruire"))
         types = {}
@@ -199,6 +216,11 @@ class Module(BaseModule):
         # Opérations de nettoyage cycliques
         importeur.diffact.ajouter_action("net_boule de neige", 60,
                 self.nettoyage_cyclique, "boule de neige")
+        self.nettoyage_lumieres()
+
+        # Réinitialisation des scripts des prototypes
+        for prototype in self._prototypes.values():
+            prototype.etendre_script()
 
     @property
     def prototypes(self):
@@ -237,6 +259,39 @@ class Module(BaseModule):
 
         raise KeyError("type {} introuvable".format(nom_type))
 
+    def get_types_herites(self, nom_type):
+        """Retourne le nom des types hérités.
+
+        Cette méthode retourne une liste de noms de types hérités
+        du type indiqué. Le type parent est également contenu dans
+        la liste (le premier élément de la liste). Par exemple,
+        un appel à cette méthode avec "nourriture" en paramètre retournera :
+            ["nourriture", "fruit", "légume", "gâteau", ...]
+
+        """
+        def get_types(classe, types):
+            """Fonction récursive appelée pour extraire les types enfants."""
+            for nom, sous_classe in classe.types.items():
+                types.append(nom)
+                get_types(sous_classe, types)
+
+        classe = self.get_type(nom_type)
+        types = [classe.nom_type]
+        get_types(classe, types)
+        return types
+
+    def get_prototypes_de_type(self, nom_type):
+        """Retourne les prototypes d'objets de type indiqué ou descendants."""
+        type = self.get_type(nom_type)
+        return [p for p in self.prototypes.values() if isinstance(
+                p, type)]
+
+    def get_objets_de_type(self, nom_type):
+        """Retourne les objets de type indiqué ou descendant."""
+        type = self.get_type(nom_type)
+        return [o for o in self.objets.values() if isinstance(
+                o.prototype, type)]
+
     def creer_prototype(self, cle, nom_type="indéfini"):
         """Crée un prototype et l'ajoute aux prototypes existants"""
         if cle in self._prototypes:
@@ -272,6 +327,7 @@ class Module(BaseModule):
 
         objet = Objet(prototype)
         self.ajouter_objet(objet)
+        objet.script["créé"].executer(objet=objet)
         return objet
 
     def ajouter_objet(self, objet):
@@ -309,6 +365,19 @@ class Module(BaseModule):
         boule_neige = o_types["boule de neige"]
         prototypes = [p for p in self.prototypes.values() if \
                 isinstance(p, boule_neige)]
+        objets = []
+        for prototype in prototypes:
+            objets.extend(prototype.objets)
+
+        for objet in objets:
+            objet.nettoyage_cyclique()
+
+    def nettoyage_lumieres(self):
+        """Nettoyage cyclique des lmuières."""
+        importeur.diffact.ajouter_action("net_lumieres", 5,
+                self.nettoyage_lumieres)
+        prototypes = [p for p in self.prototypes.values() if \
+                p.est_de_type("lumière")]
         objets = []
         for prototype in prototypes:
             objets.extend(prototype.objets)

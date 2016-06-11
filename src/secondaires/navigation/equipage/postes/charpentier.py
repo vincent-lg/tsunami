@@ -1,6 +1,6 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2012 LE GOFF Vincent
+# Copyright (c) 2010-2016 LE GOFF Vincent
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -38,4 +38,5 @@ class Charpentier(Poste):
 
     nom = "charpentier"
     autorite = 15
+    points = 3
     nom_parent = "officier"

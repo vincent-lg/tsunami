@@ -1,6 +1,6 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2012 NOEL-BARON Léo
+# Copyright (c) 2010-2016 NOEL-BARON Léo
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -85,7 +85,7 @@ class Feu(BaseObj):
                     "sans espoir de survie."),
         )
 
-        for detail in self.salle.details:
+        for detail in self.salle.details_etendus:
             if detail.a_flag("cheminée"):
                 messages = msg_cheminee
                 cheminee = detail
@@ -177,6 +177,8 @@ class Feu(BaseObj):
         else:
             # Cas de l'incendie
             for personnage in self.salle.personnages:
+                if personnage.est_mort():
+                    continue
                 dommages = int(0.1 * personnage.vitalite_max)
                 personnage << "Le feu vous brûle la couenne."
                 try:

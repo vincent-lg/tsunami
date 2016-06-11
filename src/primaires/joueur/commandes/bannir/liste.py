@@ -1,11 +1,11 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2012 LE GOFF Vincent
+# Copyright (c) 2010-2016 LE GOFF Vincent
 # All rights reserved.
-# 
+#
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are met:
-# 
+#
 # * Redistributions of source code must retain the above copyright notice, this
 #   list of conditions and the following disclaimer.
 # * Redistributions in binary form must reproduce the above copyright notice,
@@ -14,7 +14,7 @@
 # * Neither the name of the copyright holder nor the names of its contributors
 #   may be used to endorse or promote products derived from this software
 #   without specific prior written permission.
-# 
+#
 # THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
 # AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
 # IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -35,11 +35,11 @@ from datetime import datetime
 from primaires.interpreteur.masque.parametre import Parametre
 
 class PrmListe(Parametre):
-    
+
     """Commande 'bannir liste'.
-    
+
     """
-    
+
     def __init__(self):
         """Constructeur du paramètre"""
         Parametre.__init__(self, "liste", "list")
@@ -48,7 +48,7 @@ class PrmListe(Parametre):
             "Cette commande liste les bannissements actuels, " \
             "temporaires ou prolongés, de joueurs, comptes ou " \
             "adresses."
-    
+
     def interpreter(self, personnage, dic_masques):
         """Interprétation du paramètre"""
         msg = "Bannissements actuels :\n"
@@ -57,7 +57,7 @@ class PrmListe(Parametre):
         for joueur, date in \
                 importeur.connex.bannissements_temporaires.items():
             msg_temp = joueur.nom + " ("
-            dans = (date - maintenant).seconds
+            dans = (date - maintenant).total_seconds()
             mesure = "s"
             if maintenant > date or dans < 0:
                 dans = 0
@@ -70,18 +70,18 @@ class PrmListe(Parametre):
             elif dans >= 60:
                 dans //= 60
                 mesure = "m"
-            
-            msg_temp += str(dans) + mesure + ")"
+
+            msg_temp += str(int(dans)) + mesure + ")"
             temporaires.append(msg_temp)
-        
+
         temporaires = ", ".join(temporaires)
         if not temporaires:
             temporaires = "|att|aucun|ff|"
-        
+
         joueurs = ", ".join(j.nom for j in importeur.connex.joueurs_bannis)
         if not joueurs:
             joueurs = "|att|aucun|ff|"
-        
+
         msg += "\n  Bannissements temporaires : " + temporaires
         msg += "\n  Bannissements de joueurs : " + joueurs
         personnage << msg

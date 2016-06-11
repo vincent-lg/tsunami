@@ -1,6 +1,6 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2010 LE GOFF Vincent
+# Copyright (c) 2010-2016 LE GOFF Vincent
 # All rights reserved.
 # 
 # Redistribution and use in source and binary forms, with or without
@@ -51,7 +51,11 @@ class CmdAfk(Commande):
             "pour le moment ; la raison de cette absence, si spécifiée en " \
             "argument, sera affichée dans la liste de la commande %qui%. " \
             "Lorsque vous revenez, utilisez à nouveau la commande sans " \
-            "argument pour revenir à l'état normal."
+            "argument pour revenir à l'état normal. Dans le mode " \
+            "AFK, vous serez dans un état suspendu : vous pourrez " \
+            "toujours discuter sur les canaux HRP, mais vous ne " \
+            "récupérerez plus d'endurance ou d'autres stats. Vous " \
+            "n'aurew ni faim ni soif en contre-partie."
     
     def interpreter(self, personnage, dic_masques):
         """Méthode d'interprétation de commande"""

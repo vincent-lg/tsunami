@@ -1,6 +1,6 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2014 LE GOFF Vincent
+# Copyright (c) 2010-2016 LE GOFF Vincent
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -45,9 +45,11 @@ class PrmBrouter(Parametre):
         self.aide_courte = "demande au fammilier de brouter"
         self.aide_longue = \
             "Cette commande permet d'ordonner à un familier de brouter " \
-            "l'herbe ou les plantes qui l'entourent. C'est utile " \
+            "l'herbe ou les plantes qui l'entourent, ou bien de " \
+            "chercher des fruits autour de lui si cela convient mieux " \
+            "à ses habitudes alimentaires. C'est utile " \
             "et indispensable si vous possédez des familiers " \
-            "herbivores : si vous ne les nourrissez pas, ils " \
+            "herbivores ou frugivores : si vous ne les nourrissez pas, ils " \
             "finissent par mourir du manque d'eau et de nourriture. " \
             "Si ils ont l'ordre de brouter et qu'ils se trouvent dans " \
             "une plaine ou au bord d'un cours d'eau, ils vont " \
@@ -55,16 +57,18 @@ class PrmBrouter(Parametre):
             "connecté. Notez que les carnivores chassent pour se " \
             "nourrir. Pour utiliser cette commande, précisez " \
             "simplement le nom du familier : vous devez vous trouver " \
-            "dans la même salle que lui."
+            "dans la même salle que lui. Utilisez la même commande " \
+            "pour demander au familier d'arrêter de brouter ou de " \
+            "chercher des fruits."
 
     def interpreter(self, personnage, dic_masques):
         """Interprétation du paramètre"""
         # On récupère le familier
         familier = dic_masques["nom_familier"].familier
         fiche = familier.fiche
-        if fiche.regime != "herbivore":
-            personnage << "|err|{} n'est pas un herbivore.|ff|".format(
-                    familier.nom)
+        if fiche.regime not in ("herbivore", "frugivore"):
+            personnage << "|err|{} n'est ni herbivore ni " \
+                    "frugivore.|ff|".format(familier.nom)
             return
 
         pnj = familier.pnj
@@ -72,7 +76,16 @@ class PrmBrouter(Parametre):
             pnj.etats.retirer("broute")
             personnage.salle.envoyer("{} redresse la tête.", pnj)
             return
+        elif "frugi" in pnj.etats:
+            pnj.etats.retirer("frugi")
+            personnage.salle.envoyer("{} arrête de chercher des fruits.", pnj)
+            return
 
-        pnj.etats.ajouter("broute")
-        personnage.salle.envoyer("{} baisse la tête, à la recherche " \
-                "d'herbes et de plantes à manger", pnj)
+        if fiche.regime == "herbivore":
+            pnj.etats.ajouter("broute")
+            personnage.salle.envoyer("{} baisse la tête, à la recherche " \
+                    "d'herbes et de plantes à manger", pnj)
+        elif fiche.regime == "frugivore":
+            pnj.etats.ajouter("frugi")
+            personnage.salle.envoyer("{} commence à chercher des fruits " \
+                    "mûrs ou tombés au sol.", pnj)

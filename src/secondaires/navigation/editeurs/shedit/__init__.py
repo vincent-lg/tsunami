@@ -1,6 +1,6 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2010 LE GOFF Vincent
+# Copyright (c) 2010-2016 LE GOFF Vincent
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -35,10 +35,13 @@ seront placées dans ce package
 
 """
 
+from textwrap import dedent
+
 from primaires.interpreteur.editeur.presentation import Presentation
 from primaires.interpreteur.editeur.description import Description
 from primaires.interpreteur.editeur.entier import Entier
 from primaires.interpreteur.editeur.flag import Flag
+from primaires.interpreteur.editeur.tableau import Tableau
 from primaires.interpreteur.editeur.uniligne import Uniligne
 from .edt_carte import EdtCarte
 
@@ -100,6 +103,52 @@ class EdtShedit(Presentation):
                 "masculin")
         masculin.parent = self
 
+        # Descriptions indépendantes
+        independantes = self.ajouter_choix("descriptions indépendantes", "in", Flag,
+                modele, "descriptions_independantes")
+        independantes.parent = self
+
+        # Facteurs d'orientation
+        facteurs = self.ajouter_choix("facteurs d'orientation", "f", Tableau,
+                modele, "facteurs_orientations",
+                ((("Allure", ["vent debout", "au près", "bon plein",
+                "largue", "grand largue", "vent arrière"]),
+                ("Facteur", "flottant"))))
+        facteurs.parent = self
+        facteurs.apercu = "{valeur}"
+        facteurs.aide_courte = dedent("""
+            Entrez |cmd|/|ff| pour revenir à la fenêtre parente.
+
+            Entrez une allure, un signe |cmd|/|ff| et son facteur influençant
+            la vitesse. Si ce facteur est négatif, le navire va "culer".
+            Si ce facteur est positif, la vitesse (dépendant du vent)
+            sera multipliée par le facteur de l'allure précisé. Vent
+            debout est une allure qui fait culer le navire. Le facteur
+            augmente ensuite, restant faible (ou nul) pour le près, davantage
+            pour le bon plein puis le largue, qui est souvent la
+            meilleure allure. Le facteur diminue ensuite généralement
+            pour le grand largue et le vent arrière.
+            {valeur}""".strip("\n"))
+
+        # Peut conquérir
+        peut_conquerir = self.ajouter_choix("peut conquérir", "co", Flag,
+                modele, "peut_conquerir")
+        peut_conquerir.parent = self
+
+        # Niveau
+        niveau = self.ajouter_choix("niveau", "i", Entier, modele, "niveau")
+        niveau.parent = self
+        niveau.apercu = "{objet.niveau}"
+        niveau.prompt = "Niveau du navire : "
+        niveau.aide_courte = \
+            "Entrez |ent|le niveau|ff| du navire ou |cmd|/|ff| pour " \
+            "revenir à la fenêtre parente.\n\n" \
+            "Le niveau détermine le nombre d'XP données en cas de " \
+            "récompense (quand\nun personnage conquit le navire par " \
+            "exemple). Une fraction du niveau\nest donné en XP secondaire " \
+            "du niveau navigation.\n\n" \
+            "Niveau actuel : {objet.niveau}"
+
         # Prix
         prix = self.ajouter_choix("prix unitaire", "u", Entier, modele,
                 "m_valeur", 1)
@@ -148,6 +197,26 @@ class EdtShedit(Presentation):
             "Entrez |ent|le poids maximum|ff| de la cale du navire " \
             "ou |cmd|/|ff| pour revenir\nà la fenêtre parente.\n\n" \
             "Poids maximum actuel de la cale : {objet.cale_max} kg"
+
+        # Tirant d'eau
+        tirant = self.ajouter_choix("tirant d'eau", "ti", Entier, modele,
+                "tirant_eau", 1)
+        tirant.parent = self
+        tirant.apercu = "{valeur} brasses"
+        tirant.prompt = "Tirant d'eau en brasses : "
+        tirant.aide_courte = \
+            "Entrez |ent|le tirant d'eau|ff| ou |cmd|/|ff| pour revenir " \
+            "à la fenêtre parente.\n\nLe tirant d'eau du navire est " \
+            "la distance verticale qui sépare la flotaison\nde la quille " \
+            ": c'est donc la partie immergée. Un navire avec un tirant\n" \
+            "d'eau trop important ne porura pas s'approcher des terres. " \
+            "En fonction\nde la profondeur de l'étendue, également " \
+            "spécifiée en brasses, tous\nles navires ne pourront pas " \
+            "s'y aventurer.\n\nTirant d'eau actuel : {valeur} brasses"
+
+        # Fond plat
+        plat = self.ajouter_choix("fond plat", "pl", Flag, modele, "fond_plat")
+        plat.parent = self
 
         # Carte
         carte = self.ajouter_choix("carte", "c", EdtCarte, modele)

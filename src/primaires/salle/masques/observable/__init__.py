@@ -1,6 +1,6 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2010 LE GOFF Vincent
+# Copyright (c) 2010-2016 LE GOFF Vincent
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -93,6 +93,10 @@ class Observable(Masque):
         nb = 0
 
         salle = personnage.salle
+        if not salle.voit_ici(personnage):
+            raise ErreurValidation(
+                "Il n'y a rien qui ressemble à cela par ici...", True)
+
         elt = None
 
         # On cherche dans les personnages
@@ -142,9 +146,9 @@ class Observable(Masque):
                         break
 
         if not elt:
-            nom = supprimer_accents(nom)
-            if salle.details.detail_existe(nom):
-                detail = salle.details.get_detail(nom)
+            nom = supprimer_accents(nom).lower()
+            if salle.details.detail_existe(nom, flottants=True):
+                detail = salle.details.get_detail(nom, flottants=True)
                 nb += 1
                 if nb == nombre:
                     elt = detail

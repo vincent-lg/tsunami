@@ -1,6 +1,6 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2010 LE GOFF Vincent
+# Copyright (c) 2010-2016 LE GOFF Vincent
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -43,7 +43,7 @@ from primaires.interpreteur.editeur.description import Description
 from primaires.interpreteur.editeur.flag import Flag
 from primaires.interpreteur.editeur.flags import Flags
 from primaires.interpreteur.editeur.presentation import Presentation
-from primaires.interpreteur.editeur.uniligne import Uniligne
+from primaires.interpreteur.editeur.uniligne import Uniligne, CAPITALIZE
 from primaires.salle.salle import FLAGS
 from primaires.scripting.editeurs.edt_script import EdtScript
 from .edt_coords import EdtCoords
@@ -123,23 +123,23 @@ class EdtRedit(Presentation):
             "La nom de la zone peut comporter lettres non accentuées, " \
             "chiffres et\n" \
             "undescores (le signe |ent|_|ff|).\n" \
-            "|att|Le couple 'zone:mnémonic' doit être unique et différent " \
+            "|att|Le couple 'zone:mnémonique' doit être unique et différent " \
             "pour chaque salle !|ff|\n\n" \
             "Zone actuelle : |bc|{objet.zone}|ff|"
 
-        # Mnémonic
+        # Mnémonique
         mnemonic = self.ajouter_choix("mnemonic", "m", EdtMnemonic, salle)
         mnemonic.parent = self
-        mnemonic.prompt = "Nom du mnémonic : "
+        mnemonic.prompt = "Nom du mnémonique : "
         mnemonic.apercu = "{objet.mnemonic}"
         mnemonic.aide_courte = \
-            "Entrez le |ent|mnémonic|ff| de la salle ou |cmd|/|ff| pour " \
+            "Entrez le |ent|mnémonique|ff| de la salle ou |cmd|/|ff| pour " \
             "revenir à la fenêtre mère.\n" \
-            "Le mnémonic peut comporter lettres non accentuées, chiffres et\n" \
-            "undescores (le signe |ent|_|ff|).\n" \
-            "|att|Le couple 'zone:mnémonic' doit être unique et différent " \
+            "Le mnémonique peut comporter lettres non accentuées, chiffres\n" \
+            "et undescores (le signe |ent|_|ff|).\n" \
+            "|att|Le couple 'zone:mnémonique' doit être unique et différent " \
             "pour chaque salle !|ff|\n\n" \
-            "Mnémonic actuel : |bc|{objet.mnemonic}|ff|"
+            "Mnémonique actuel : |bc|{objet.mnemonic}|ff|"
 
         # Terrain
         terrains = sorted(type(self).importeur.salle.terrains.keys())
@@ -155,7 +155,8 @@ class EdtRedit(Presentation):
             ", ".join(terrains))
 
         # Titre
-        titre = self.ajouter_choix("titre", "t", Uniligne, salle, "titre")
+        titre = self.ajouter_choix("titre", "t", Uniligne, salle, "titre",
+                0, CAPITALIZE)
         titre.parent = self
         titre.prompt = "Titre de la salle : "
         titre.apercu = "{objet.titre}"
@@ -258,6 +259,9 @@ class EdtRedit(Presentation):
             "   nord vers picte:2 et dans picte:2, une sortie sud vers " \
             "picte:1.\n" \
             " - |ent|/d <sortie>|ff| : supprime la sortie indiquée\n\n"
+
+        # Extensions de l'éditeur
+        importeur.hook["editeur:etendre"].executer("salle", self, salle)
 
         # Script
         scripts = self.ajouter_choix("scripts", "sc", EdtScript,

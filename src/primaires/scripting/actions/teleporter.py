@@ -1,6 +1,6 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2010 LE GOFF Vincent
+# Copyright (c) 2010-2016 LE GOFF Vincent
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -51,7 +51,7 @@ class ClasseAction(Action):
     def teleporter_dest(personnage, destination):
         """Téléporte le personnage vers la destination.
         La destination doit être précisée sous la forme d'une chaîne de
-        caractères : \"zone:mnémonic\". Une erreur est levée si la
+        caractères : \"zone:mnémonique\". Une erreur est levée si la
         destination ne peut être trouvée (la salle indiquée n'existe pas).
 
         """

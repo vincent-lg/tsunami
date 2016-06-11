@@ -1,11 +1,11 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2010 LE GOFF Vincent
+# Copyright (c) 2010-2016 LE GOFF Vincent
 # All rights reserved.
-# 
+#
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are met:
-# 
+#
 # * Redistributions of source code must retain the above copyright notice, this
 #   list of conditions and the following disclaimer.
 # * Redistributions in binary form must reproduce the above copyright notice,
@@ -14,7 +14,7 @@
 # * Neither the name of the copyright holder nor the names of its contributors
 #   may be used to endorse or promote products derived from this software
 #   without specific prior written permission.
-# 
+#
 # THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
 # AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
 # IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -33,19 +33,60 @@
 from primaires.scripting.fonction import Fonction
 
 class ClasseFonction(Fonction):
-    
+
     """Teste si un personnage possède un objet."""
-    
+
     @classmethod
     def init_types(cls):
         cls.ajouter_types(cls.possede_proto, "Personnage", "str")
-    
+
     @staticmethod
-    def possede_proto(personnage, prototype):
-        """Retourne vrai si le personnage possède ce prototype, faux sinon.
-        
-        Le personnage peut posséder un ou plusieurs objets modelés sur le
-        prototype.
-        
+    def possede_proto(personnage, prototype_ou_type):
+        """Retourne l'objet si le personnage possède ce prototype, faux sinon.
+
+        Paramètres à préciser :
+
+          * personnage : le personnage à tester
+          * prototype_ou_type : un nom de type ou clé de prototype
+
+        Cette fonction retourne le premier objet correspondant si
+        le personnage possède au moins un objet du prototype indiqué
+        (dans son équipement, directement, ou dans un sac). Vous
+        pouvez aussi vérifier que le personnage possède un certain
+        type d'objet en précisant le nom du type précédé d'un '+'. Voir
+        les exemples ci-dessous.
+
+        Exemples d'utilisation :
+
+          # Vérifie que le personnage possède une pomme rouge
+          pomme = possede(personnage, "pomme_rouge")
+          si pomme:
+              # La pomme rouge a pu être trouvée dans le personnage
+              # 'pomme' contient la première pomme rouge trouvée
+              # dans l'inventaire du personnage
+
+          # Si vous n'avez pas besoin de l'objet
+          si possede(personnage, "pomme_rouge"):
+              # ...
+
+          # Si vous voulez savoir si un personnage possède une arme
+          arme = possede(personnage, "+arme")
+          si arme:
+              # Même chose ici, 'arme' contient la première arme trouvée
+              nom_arme = nom_objet(arme, 1)
+              dire personnage "Vous possédez ${nom_arme}."
+
+          # Et si vous n'avez pas besoin de connaître l'objet
+          si possede(personnage, "+arme"):
+              # ...
+
         """
-        return prototype in [o.cle for o in personnage.equipement.inventaire]
+        if prototype_ou_type.startswith("+"):
+            nom_type = prototype_ou_type[1:]
+            objets = [o for o in personnage.equipement.inventaire if \
+                    o.est_de_type(nom_type)]
+        else:
+            objets = [o for o in personnage.equipement.inventaire if \
+                    o.cle == prototype_ou_type]
+
+        return objets and objets[0] or None

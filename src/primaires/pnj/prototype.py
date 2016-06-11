@@ -1,6 +1,7 @@
 # -*-coding:Utf-8 -*
+# -*-coding:Utf-8 -*
 
-# Copyright (c) 2010 LE GOFF Vincent
+# Copyright (c) 2010-2016 LE GOFF Vincent
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -33,9 +34,14 @@
 from collections import OrderedDict
 
 from abstraits.obase import BaseObj
+from bases.collections.flags import Flags
 from primaires.format.description import Description
 from primaires.perso.stats import Stats
 from .script import ScriptPNJ
+
+# Constantes
+FLAGS = Flags()
+FLAGS.ajouter("nyctalope", 2)
 
 class Prototype(BaseObj):
 
@@ -72,6 +78,7 @@ class Prototype(BaseObj):
         self.entraine_stats = {}
         self.talents = {}
         self.sorts = {}
+        self.flags = 0
 
         # Salles repop
         self.salles_repop = {}
@@ -91,11 +98,6 @@ class Prototype(BaseObj):
     def nom_race(self):
         """Retourne le nom de la race si existant ou une chaîne vide."""
         return (self.race and self.race.nom) or ""
-
-    @property
-    def gain_xp_absolu(self):
-        return int(importeur.perso.gen_niveaux.grille_xp[self.niveau - 1][1] \
-                * self.gain_xp / 100)
 
     def _get_race(self):
         return self._race
@@ -202,8 +204,24 @@ class Prototype(BaseObj):
 
         return msg
 
+    @property
+    def xp_absolue(self):
+        """Retourne l'XP absolu."""
+        try:
+            xp = importeur.perso.gen_niveaux.grille_xp[self.niveau][1]
+        except IndexError:
+            return 0
+
+        xp = int(xp * self.gain_xp / 100)
+        return xp
+
     def est_immortel(self):
         return False
+
+    def a_flag(self, nom_flag):
+        """Retourne True si le prototype a le flag, False sinon."""
+        valeur = FLAGS[nom_flag]
+        return self.flags & valeur != 0
 
     def detruire(self):
         """Destruction du prototype."""

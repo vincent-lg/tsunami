@@ -1,6 +1,6 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2010 LE GOFF Vincent
+# Copyright (c) 2010-2016 LE GOFF Vincent
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -71,6 +71,7 @@ class Compte(BaseObj):
 
         # Options
         self.couleur = True # couleurs activées par défaut
+        self.email = True
         self.newsletter = True
 
         self._construire()
@@ -144,6 +145,9 @@ class Compte(BaseObj):
                     joueur not in canal.connectes:
                 canal.rejoindre_ou_quitter(joueur, aff=False, forcer=True)
         self.joueurs.append(joueur)
+
+        # Modification des options d'éditeur de description
+        importeur.interpreteur.options.changer_option(joueur, 2)
         self._enregistrer()
 
     def supprimer_joueur(self, joueur):

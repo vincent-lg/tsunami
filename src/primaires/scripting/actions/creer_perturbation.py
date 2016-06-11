@@ -1,6 +1,6 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2012 LE GOFF Vincent
+# Copyright (c) 2010-2016 LE GOFF Vincent
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -99,3 +99,4 @@ class ClasseAction(Action):
         n_pertu.rayon = rayon
         n_pertu.statique = True
         importeur.meteo.perturbations_actuelles.append(n_pertu)
+        n_pertu.envoyer_message_debut()

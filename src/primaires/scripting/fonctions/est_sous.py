@@ -1,6 +1,6 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2012 LE GOFF Vincent
+# Copyright (c) 2010-2016 LE GOFF Vincent
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -67,11 +67,7 @@ class ClasseFonction(Fonction):
         if salle.interieur:
             return ""
 
-        for p in importeur.meteo.perturbations_actuelles:
-            if p.est_sur(salle):
-                perturbation = p
-                break
-
+        perturbation = importeur.meteo.salles.get(salle)
         if perturbation is None:
             return ""
 
@@ -87,15 +83,10 @@ class ClasseFonction(Fonction):
 
         """
         # Retrouve la perturbation sous laquelle se trouve salle
-        perturbation = None
         if salle.interieur:
             return False
 
-        for p in importeur.meteo.perturbations_actuelles:
-            if p.est_sur(salle):
-                perturbation = p
-                break
-
+        perturbation = importeur.meteo.salles.get(salle)
         if perturbation is None:
             return False
 

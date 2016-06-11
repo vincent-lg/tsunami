@@ -1,6 +1,6 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2010 LE GOFF Vincent
+# Copyright (c) 2010-2016 LE GOFF Vincent
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -113,7 +113,7 @@ class Arme(BaseType):
         return "jeter_personnage"
 
     def jeter(self, personnage, elt):
-        """Jète l'arme sur un élément."""
+        """Jette l'arme sur un élément."""
         fact = varier(personnage.agilite, 20) / 100
         fact *= (1.6 - personnage.poids / personnage.poids_max)
         fact_adv = varier(elt.agilite, 20) / 100
@@ -138,7 +138,7 @@ class Arme(BaseType):
         return reussite
 
     def jeter_personnage(self, personnage, cible):
-        """Jète l'arme sur un personnage."""
+        """Jette l'arme sur un personnage."""
         degats = self.bonus_lance + int(self.degats_fixes * 0.8)
         if self.degats_variables > 0:
             degats += randint(0, self.degats_variables)

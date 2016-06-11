@@ -1,6 +1,6 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2011 LE GOFF Vincent
+# Copyright (c) 2010-2016 LE GOFF Vincent
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -37,6 +37,7 @@ import sys
 from vector import mag
 
 from abstraits.obase import BaseObj
+from primaires.scripting.script import Script
 from .coordonnees import Coordonnees
 
 class Etendue(BaseObj):
@@ -63,8 +64,10 @@ class Etendue(BaseObj):
     """
 
     enregistrer = True
+    nom_scripting = "l'étendue d'eau"
     _nom = "etendue"
     _version = 1
+
     def __init__(self, cle):
         """Création de l'éttendue."""
         BaseObj.__init__(self)
@@ -75,7 +78,10 @@ class Etendue(BaseObj):
         self.obstacles = {}
         self.cotes = {}
         self.liens = {}
-        self.projections = {}
+        self.segments_liens = {}
+        self.origine = (None, None)
+        self.contour = None
+        self.script = ScriptEtendue(self)
         self._construire()
 
     def __getnewargs__(self):
@@ -200,6 +206,85 @@ class Etendue(BaseObj):
 
         return coordonnees
 
+    def determiner_segments_liens(self):
+        """Détermine les segments des liens en fonctions des liens définis.
+
+        À la différence des liens, qui ne sont que des points avec
+        deux coordonnées (X, Y), le segment de lien définit un
+        segment décrit par deux points. Les segments de liens sont
+        utiles pour savoir, par exemple, si un navire traverse la
+        ligne et change donc d'étendue.
+
+        """
+        liens = self.liens.copy()
+        while liens:
+            coords = list(liens.keys())[0]
+            etendue = liens[coords]
+            del liens[coords]
+            voisins = []
+
+            # On cherche tous les voisins
+            # D'abord en variant X
+            x, y = coords
+            while ((x + 1), y) in liens:
+                x += 1
+                voisin = (x, y)
+                vers = liens[voisin]
+                if etendue is vers:
+                    voisins.append(voisin)
+                    del liens[voisin]
+
+            x, y = coords
+            while ((x - 1), y) in liens:
+                x -= 1
+                voisin = (x, y)
+                vers = liens[voisin]
+                if etendue is vers:
+                    voisins.append(voisin)
+                    del liens[voisin]
+
+            if not voisins:
+                # Puis en variant Y
+                x, y = coords
+                while (x, (y + 1)) in liens:
+                    y += 1
+                    voisin = (x, y)
+                    vers = liens[voisin]
+                    if etendue is vers:
+                        voisins.append(voisin)
+                        del liens[voisin]
+
+                x, y = coords
+                while (x, (y - 1)) in liens:
+                    y -= 1
+                    voisin = (x, y)
+                    vers = liens[voisin]
+                    if etendue is vers:
+                        voisins.append(voisin)
+                        del liens[voisin]
+
+            # voisins fait 0 ou plus d'une coords de longueur
+            if len(voisins) == 0:
+                x, y = coords
+                if (x - 1, y) in etendue.points:
+                    origine = ((x - 1), y)
+                    extremite = ((x + 1), y)
+                else:
+                    origine = (x, (y - 1))
+                    extremite = (x, (y + 1))
+            else:
+                voisins.append(coords)
+                origine = min(voisins)
+                extremite = max(voisins)
+                if origine[0] < extremite[0]:
+                    origine = (origine[0] - 1, origine[1])
+                    extremite = (extremite[0] + 1, extremite[1])
+                else:
+                    origine = (origine[0], origine[1] - 1)
+                    extremite = (extremite[0], extremite[1] + 1)
+
+            self.segments_liens[(origine, extremite)] = etendue
+
     def ajouter_obstacle(self, coordonnees, obstacle):
         """Ajoute l'obstacle."""
         coordonnees = self.convertir_coordonnees(coordonnees)
@@ -253,6 +338,10 @@ class Etendue(BaseObj):
         self.liens[coordonnees] = etendue
         etendue.liens[coordonnees] = self
 
+        # On détermine les segments de liens
+        self.determiner_segments_liens()
+        etendue.determiner_segments_liens()
+
     def supprimer_obstacle(self, coordonnees):
         """Supprime un obstacle."""
         coordonnees = self.convertir_coordonnees(coordonnees)
@@ -271,6 +360,18 @@ class Etendue(BaseObj):
         etendue = self.liens.pop(coordonnees)
         if coordonnees in etendue.liens:
             del etendue.liens[coordonnees]
+
+        # On détermine les segments de liens
+        self.determiner_segments_liens()
+        etendue.determiner_segments_liens()
+
+    def trouver_contour(self):
+        """Recherche les contours de l'étendue."""
+        x, y = self.origine
+        if x is None or y is None:
+            raise ValueError("Aucune origine n'est précisée")
+
+        self.contour = self.get_contour(x, y)
 
     def get_etendues_proches(self, x, y, distance, exceptions=None):
         """Retourne les étendues liées à self suffisamment proches.
@@ -383,79 +484,193 @@ class Etendue(BaseObj):
 
         return nb
 
-    def verifier_continuite(self, x, y, e_x=None, e_y=None, o_x=None,
-            o_y=None, obstacles=None):
-        """Vérifie la continuité d'une étendue.
+    def get_contour(self, x, y, points=None, contour=None, ligne=None, premier=True):
+        """Détermine les contours de l'étendue.
 
-        Cette méthode permet de vérifier qu'une étendue d'eau est
-        complète, c'est-à-dire qu'elle forme bien un cercle. Le principe
-        est qu'on part du point x;y précisé en paramètre et qu'on
-        essaye de faire le tour complet de l'étendue. Il doit y avoir
-        un obstacle, une cote ou un lien sur les points successifs
-        parcourus et on doit pouvoir revenir sur
-        x;y au final.
+        Cette méthode retourne une liste de tuples représentant le
+        contour ordonnée selon leur proximité. Le point (x, y) donné
+        en paramètre est le point de départ de la recherche. Ensuite,
+        cette méthode cherche les points voisins, c'est-à-dire ceux
+        dont x varie de 1 ou y varie de 1, au choix (ce qui donne
+        4 possibilités). Sur ces quatre possibilités, si il y en a
+        une qui marche (il existe un point), la méthode recherche
+        le point suivant en excluant d'office le point voisin qui
+        a déjà été trouvé. Si il y en a plus d'une, la méthode cherche
+        les points suivants de chaque segment récursivement. Le but
+        est de trouver un contour, c'est-à-dire seulement les points
+        proches constituant le tour de l'étendue (et non les îles).
 
         """
-        print("Fork", x, y, e_x, e_y)
-        e_x = e_x or x
-        e_y = e_y or y
-        o_x = o_x or x
-        o_y = o_y or y
-        if obstacles is None:
-            obstacles = self.points.copy()
-            obstacles.update(self.liens)
+        if points is None:
+            points = list(self.points.keys()) + list(self.liens.keys())
 
-        complet = False
-        while not complet:
-            points = [
-                (x + 1, y),
+        if contour is None:
+            contour = []
+
+        if ligne is None:
+            ligne = []
+
+        ligne.append((x, y))
+        while True:
+            possibles = [
                 (x - 1, y),
-                (x, y + 1),
+                (x + 1, y),
                 (x, y - 1),
+                (x, y + 1),
             ]
 
-            points = [p for p in points if p not in ((x, y), (e_x, e_y))]
+            t_contour = contour + ligne
+            if len(t_contour) > 2 and t_contour[0] in possibles:
+                contour.extend(ligne)
+                return contour
 
-            # Combien de points y'a-t-il ici ?
-            points = [p for p in points if p in obstacles]
-            if len(points) == 0:
-                raise LigneBrisee("Il n'y a aucun point après " \
-                        "{}.{} (e={}.{})".format(x, y, e_x, e_y))
-            elif len(points) == 1:
-                t_x, t_y = points[0]
-                if t_x == o_x and t_y == o_y:
-                    return True
-                elif (t_x, t_y) in obstacles:
-                    x = t_x
-                    y = t_y
+            # On exclut les points déjà pris
+            # On exclut pas le premier point qui peut nous servir
+            # pour constater que la boucle est bouclée
+            possibles = [p for p in possibles if p not in (contour + ligne)]
+
+            # On cherche les points existants
+            possibles = [p for p in possibles if p in points]
+
+            # Si c'est le premier point, on en choisit un au hasard
+            if len(contour + ligne) == 1:
+                possibles = possibles[:1]
+
+            # En fonction du nombre de résultat on agit différemment
+            nb = len(possibles)
+            if nb == 0:
+                if premier:
+                    raise ValueError("Aucun point voisin après {}.{}".format(x, y))
+
+                return False
+            elif nb == 1:
+                # C'est parfait, on a qu'un voisin possible, on continue
+                x, y = possibles[0]
+                ligne.append((x, y))
+            else:
+                # Il y a plusieurs possibilités, on doit les explorer
+                for possible in possibles:
+                    t_ligne = list(ligne)
+                    retour = self.get_contour(possible[0], possible[1],
+                            points, contour, t_ligne, premier=False)
+                    if retour:
+                        return contour
+
+                # À ce stade si on a pas trouvé la branche, on s'arrête
+                if premier:
+                    raise ValueError("Le point {}.{} offrant les branches " \
+                            "{} ne peut former un contour complet".format(x, y,
+                            possibles))
+
+                return False
+
+    def croise_lien(self, origine, destination):
+        """Vérifie si le segment (origine, destination) croise un lien.
+
+        La comparaison est effectuée grâce aux segments de liens
+        définis dans l'étendue. Merlin/Gulfalf a contribué de façon
+        significative à l'algorithme de croisement. Merci à lui.
+        Si le segment croise un lien, retourne l'étendue de
+        destination. Sinon retourne None.
+
+        """
+        # On inverse les coordonnées si besoin
+        if origine[0] > destination[0]:
+            origine, destination = destination, origine
+
+        for (o_lien, d_lien), etendue in self.segments_liens.items():
+            # Définition des segments
+            # Segment AB
+            (ax, ay) = origine
+            (bx, by) = destination
+
+            # Segment CD
+            (cx, cy) = o_lien
+            (dx, dy) = d_lien
+
+            # Cas particulier : droite // à l'axe des ordonnées
+            k1 = k2 = False
+
+            # Calcul de l'équation du segment AB
+            if ax != bx: # La droite n'est pas // à l'axe des ordonnées
+                # Y = A1 X + B1
+                a1 = (by - ay) / (bx - ax)
+                b1 = ay - (ax * a1)
+            else: # La droite est // à l'axe des ordonnées
+                # X = C1
+                k1 = True
+
+            # Calcul de l'équation du segment CD
+            if cx != dx: # La droite n'est pas // à l'axe des ordonnées
+                # Y = A2 X + B2
+                a2 = (dy - cy) / (dx - cx)
+                b2 = cy - (cx * a2)
+            else: # La droite est // à l'axe des ordonnées
+                # X = C2
+                k2 = True
+
+            if k1 == False and k2 == False: # Cas général
+                # Comparaison de la pente des 2 segments
+                if a1 == a2:
                     continue
                 else:
-                    complet = False
-                    break
+                    # On calcule leur point sécant
+                    x = (b2 - b1) / (a1 - a2)
+                    y = (a1 * x ) + b1
 
-            # Sinon on doit explorer plusieurs chemins
-            for t_x, t_y in points:
-                if t_x == o_x and t_y == o_y:
-                    return True
+                    # Le point (X, Y) appartient bien à l'espace
+                    # de points du segment AB
+                    condition_ab = x >= ax and x <= bx
 
-                try:
-                    self.verifier_continuite(t_x, t_y, x, y, o_x, o_y,
-                            obstacles)
-                except LigneBrisee as err:
-                    continue
+                    # Le point (X, Y) appartient bien à l'espace de points
+                    # du segment CD
+                    condition_cd = x >= cx and x <= dx
+
+                    # Conclusion
+                    if condition_ab and condition_cd:
+                        return etendue
+                    else:
+                        continue
+            elif k1 == True and k2 == False:
+                # Le segment AB est // à l'axe des ordonnées
+                x = ax
+                y = (a2 * x) + b2
+                liste_y = sorted([ay, by])
+                if x >= cx and x <= dx and y >= liste_y[0] and y <= liste_y[1]:
+                    return etendue
                 else:
-                    complet = True
+                    continue
+            elif k1 == False and k2 == True:
+                # Les segment CD est // à 'axe des ordonnées
+                x = cx
+                y = (a1 * x) + b1
+                liste_y = sorted([cy, dy])
+                if x >= ax and x <= bx and y >= liste_y[0] and y <= liste_y[1]:
+                    return etendue
+                else:
+                    continue
+            else:
+                # Les 2 segments sont // à l'axe des ordonnées
+                continue
 
-            if not complet:
-                break
+class ScriptEtendue(Script):
 
-        if not complet:
-            raise LigneBrisee("Il y avait {} possibilités pour " \
-                    "{}.{} mais elles sont toutes brisées".format(
-                    len(points), x, y) + " " + str(erreur))
+    """Script et évènements propres aux étendues d'eau."""
 
-        return True
+    def init(self):
+        """Initialisation du script"""
+        # Événement entre
+        evt_entre = self.creer_evenement("entre")
+        evt_entre.aide_courte = "un navire entre dans l'étendue"
+        evt_entre.aide_longue = \
+            "Cet évènement est appelé quand un navire entre dans " \
+            "l'étendue, venant d'une étendue différente et " \
+            "traversant donc un lien entre étendues."
 
-class LigneBrisee(RuntimeError):
-
-    pass
+        # Configuration des variables de l'évènement entre
+        var_centre = evt_entre.ajouter_variable("centre", "Salle")
+        var_centre.aide = "la salle au centre du navire"
+        var_cle = evt_entre.ajouter_variable("cle", "str")
+        var_cle.aide = "la clé complète du navire (par exemple \"barque_8\")"
+        var_origine = evt_entre.ajouter_variable("origine", "str")
+        var_origine.aide = "la clé de l'étendue d'où vient le navire"

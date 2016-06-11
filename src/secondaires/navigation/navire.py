@@ -1,6 +1,6 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2010 LE GOFF Vincent
+# Copyright (c) 2010-2016 LE GOFF Vincent
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -31,7 +31,7 @@
 """Fichier contenant la classe Navire, détaillée plus bas."""
 
 from math import fabs, radians, sqrt
-
+from random import random
 from vector import *
 
 from abstraits.obase import BaseObj
@@ -67,7 +67,7 @@ class Navire(Vehicule):
     """
 
     enregistrer = True
-    obs_recif = None
+    obs_recif = ()
     def __init__(self, modele):
         """Constructeur du navire."""
         Vehicule.__init__(self)
@@ -81,11 +81,16 @@ class Navire(Vehicule):
         self.nom_personnalise = ""
         self.cale = Cale(self)
         self.canots = []
+        self.compteur = 0
+        self.pavillon = None
+        self.donnees = {}
 
         if modele:
             modele.vehicules.append(self)
             self.cle = importeur.navigation.dernier_ID(modele.cle)
             self.construire_depuis_modele()
+
+        self._construire()
 
     def __getnewargs__(self):
         return (None, )
@@ -203,6 +208,11 @@ class Navire(Vehicule):
         return rames
 
     @property
+    def centre(self):
+        """Retourne la salle au centre du navire."""
+        return self.salles.get((0, 0, 0))
+
+    @property
     def vent(self):
         """Retourne le vecteur du vent le plus proche.
 
@@ -261,13 +271,7 @@ class Navire(Vehicule):
     @property
     def vitesse_noeuds(self):
         """Retourne la vitesse en noeuds."""
-        vit_ecoulement = importeur.temps.cfg.vitesse_ecoulement
-        vit_ecoulement = eval(vit_ecoulement)
-        distance = self.vitesse.norme
-        distance = distance * CB_BRASSES / 1000
-        distance = distance / (TPS_VIRT / DIST_AVA)
-        distance *= vit_ecoulement
-        return distance * 3600
+        return get_vitesse_noeuds(self.vitesse.norme)
 
     @property
     def nom(self):
@@ -416,27 +420,135 @@ class Navire(Vehicule):
     def nom_proprietaire(self):
         return self.proprietaire and self.proprietaire.nom or "aucun"
 
+    @property
+    def nb_voies_eau(self):
+        """Retourne le nombre de voies d'eau du navire."""
+        nb = 0
+        for salle in self.salles.values():
+            if salle.noyable:
+                if salle.voie_eau == COQUE_OUVERTE:
+                    nb += 1
+
+        return nb
+
+    @property
+    def profondeur(self):
+        """Retourne la profondeur au-dessous de la salle centrale du navire.
+
+        La profondeur de l'étendue d'eau est pris comme base. La
+        distance avec les côtes de l'étendue (c'est-à-dire les salles
+        accostables) est ensuite utilisé pour minimiser cette profondeur.
+
+        """
+        longueur = self.get_max_distance_au_centre()
+        etendue = self.etendue
+        if not etendue:
+            return 0
+
+        profondeur = etendue.profondeur
+        centre = self.position
+        c_x, c_y, c_z = centre.x, centre.y, centre.z
+        distance = 100
+
+        for salle in etendue.cotes.values():
+            x, y, z = salle.coords.x, salle.coords.y, salle.coords.z
+            vecteur = Vector(c_x - x, c_y - y, c_z - z)
+            if vecteur.mag <= distance:
+                distance = vecteur.mag
+
+        if distance < (longueur + 1):
+            return 3
+        elif distance < 10:
+            return 10
+        else:
+            return round(profondeur * distance / 100)
+
+    def get_nom_pour(self, personnage):
+        """Retourne le nom pour le personnage précisé."""
+        return self.desc_survol
+
     def a_le_droit(self, personnage, poste="capitaine", si_present=False):
         """Retourne True si le personnage a le droit, False sinon.
 
         Le droit est calculé selon plsuieurs critères :
-            Si le navire n'a pas de propriétaire, returne True
             Si le personnage est immortel, retourne True
             Si le personnage est le propriétaire, retourne True
+            Si le personnage a le grade indiqué ou supérieur, retourne True
+
+        Si le paramètre 'est_present' est à True, n'importe quel
+        personnage a tous les droits, tant que le capitaine est à
+        bord. Cela permet par exemple à tout personnage de lever
+        l'ancre si le capitaine est à bord. Si le capitaine est
+        déconnecté, il n'est pas considéré comme étant à bord.
 
         """
-        if self.proprietaire is None:
-            return True
-
         if personnage.est_immortel():
             return True
 
-        if personnage is self.proprietaire or \
-                        (si_present and getattr(self.proprietaire.salle,
-                        "navire", None) is self):
+        if personnage is self.proprietaire:
             return True
 
+        if si_present:
+            for salle in self.salles.values():
+                if self.proprietaire in salle.personnages:
+                    return True
+
         return self.equipage.est_au_poste(personnage, poste)
+
+    def get_vitesse_rames(self, vitesses):
+        """Retourne la vitesse en distance (norme) de vecteur.
+
+        Une liste de vitesses doit être précisée en paramètre,
+        représentant une liste de chaînes dont chaque chaîne est un
+        nom de vitesse (par exemple, "lente"). Pour chaque vitesse,
+        on récupère son facteur tel qe défini dans les constantes
+        et le facteur multiplicateur défini dans le modèle.
+
+        """
+        rames = self.rames
+        facteur = 0
+        facteur_rames = self.modele.facteur_rames
+        for vitesse in vitesses:
+            facteur_vitesse = VIT_RAMES[vitesse]
+            facteur += (facteur_rames * facteur_vitesse) / len(rames)
+
+        return facteur
+
+    def get_vitesse_voiles(self, voiles, vent):
+        """Retourne la vitesse imprimée par les voiles spécifiées.
+
+        Normalement, on ne tient compte que des voiles hissées qui
+        doivent être précisées dans une lsite. Mais cette liste peut
+        contenir des objets None. Dans ce cas, on se rapporte à la
+        taille de la liste et la question posée à cette méthode est
+        simplement "calcul la distance parcourue si le navire avait
+        tant de voiles hissées".
+
+        """
+        direction = self.opt_direction
+        if not any(voiles):
+            fact_voile = len(voiles)
+        else:
+            fact_voile = sum(v.facteur_orientation(self, vent) \
+                    for v in voiles)
+
+        fact_voile = fact_voile / len(self.voiles) * 0.7
+
+        allure = (get_direction(direction) - get_direction(vent)) % 360
+        if ALL_DEBOUT < allure < (360 - ALL_DEBOUT):
+            facteur = self.vent_debout()
+        elif ALL_PRES < allure < (360 - ALL_PRES):
+            facteur = self.pres()
+        elif ALL_BON_PLEIN < allure < (360 - ALL_BON_PLEIN):
+            facteur = self.bon_plein()
+        elif ALL_LARGUE < allure < (360 - ALL_LARGUE):
+            facteur = self.largue()
+        elif ALL_GRAND_LARGUE < allure < (360 - ALL_GRAND_LARGUE):
+            facteur = self.grand_largue()
+        else:
+            facteur = self.vent_arriere()
+
+        return facteur * fact_voile * vent.mag
 
     def get_max_distance_au_centre(self):
         """Retourne la distance maximum par rapport au centre du navire."""
@@ -449,9 +561,10 @@ class Navire(Vehicule):
     def get_nom_pour(self, personnage):
         return self.desc_survol
 
-    def construire_depuis_modele(self):
+    def construire_depuis_modele(self, premiere=True):
         """Construit le navire depuis le modèle."""
         modele = self.modele
+
         # On recopie les salles
         for r_coords, salle in modele.salles.items():
             n_salle = self.salles.get(r_coords)
@@ -460,8 +573,14 @@ class Navire(Vehicule):
                         salle.r_x, salle.r_y, salle.r_z, modele, self)
             n_salle.titre = salle.titre
             n_salle.titre_court = salle.titre_court
-            n_salle.description = salle.description
-            n_salle.details = salle.details
+            n_salle.illuminee = True
+            if not modele.descriptions_independantes:
+                n_salle.description = salle.description
+                n_salle.details = salle.details
+            elif premiere:
+                n_salle.description.copier_depuis(salle.description)
+                n_salle.details.copier_depuis(salle.details, True)
+
             n_salle.interieur = salle.interieur
             n_salle.poste = salle.poste
             n_salle.noyable = salle.noyable
@@ -484,7 +603,8 @@ class Navire(Vehicule):
         # On recopie les sorties
         for salle in modele.salles.values():
             n_salle = self.salles[salle.r_coords]
-            for dir, sortie in salle.sorties._sorties.items():
+            for sortie in salle.sorties:
+                dir = sortie.direction
                 if sortie and sortie.salle_dest:
                     c_salle = self.salles[sortie.salle_dest.r_coords]
                     t_sortie = n_salle.sorties.ajouter_sortie(dir,
@@ -492,6 +612,15 @@ class Navire(Vehicule):
                             sortie.correspondante)
                     if sortie.porte:
                         t_sortie.ajouter_porte()
+
+    def reparer(self):
+        """Répare intégralement le navire."""
+        for salle in self.salles.values():
+            if salle.noyable:
+                if salle.voie_eau != COQUE_INTACTE:
+                    salle.voie_eau = COQUE_INTACTE
+                if salle.poids_eau != 0:
+                    salle.poids_eau = 0
 
     def faire_ramer(self):
         """Cette méthode fait ramer les personnages du navire.
@@ -513,9 +642,13 @@ class Navire(Vehicule):
                         personnage.salle.envoyer("{} lâche les rames " \
                                 "d'épuisement.", personnage)
                         rames.relacher()
-                        rames.vitesse = "immobile"
                         rames.tenu = None
                         personnage.etats.retirer("tenir_rames")
+            else:
+                if rames.vitesse != "immobile":
+                    rames.vitesse = "immobile"
+                if rames.orientation != 0:
+                    rames.orientation = 0
 
     def valider_coordonnees(self):
         """Pour chaque salle, valide ses coordonnées."""
@@ -525,27 +658,27 @@ class Navire(Vehicule):
 
     def vent_debout(self):
         """Retourne le facteur de vitesse par l'allure vent debout."""
-        return -0.3
+        return self.modele.facteurs_orientations["vent debout"]
 
     def pres(self):
         """Retourne le facteur de vitesse par l'allure de près."""
-        return 0.5
+        return self.modele.facteurs_orientations["au près"]
 
     def bon_plein(self):
         """Retourne le facteur de vitesse par l'allure de bon plein."""
-        return 0.8
+        return self.modele.facteurs_orientations["bon plein"]
 
     def largue(self):
         """Retourne le facteur de vitesse par l'allure de largue."""
-        return 1.2
+        return self.modele.facteurs_orientations["largue"]
 
     def grand_largue(self):
         """Retourne le facteur de vitesse par l'allure de grand largue."""
-        return 0.9
+        return self.modele.facteurs_orientations["grand largue"]
 
     def vent_arriere(self):
         """Retourne le facteur de vitesse par l'allure par vent arrière."""
-        return 0.7
+        return self.modele.facteurs_orientations["vent arrière"]
 
     def maj_salles(self):
         d = self.direction.direction + 90
@@ -561,9 +694,20 @@ class Navire(Vehicule):
         x = self.position.x
         y = self.position.y
         z = self.position.z
+        etendue = self.etendue
         vit_or = vit_fin = self.vitesse_noeuds
         origine = self.opt_position
         vitesse = self.opt_vitesse
+
+        # Si le navire est à fond plat
+        if self.modele.fond_plat and not etendue.eau_douce and \
+                etendue.profondeur > 4 and random() < 0.07:
+            print(self, "chavire")
+            self.envoyer("|err|Une vague plus haute que les autres " \
+                    "fait chavirer l'embarcation !|ff|")
+            self.sombrer()
+            return
+
         if not self.immobilise:
             # On contrôle les collisions
             # On cherche toutes les positions successives du navire
@@ -571,7 +715,7 @@ class Navire(Vehicule):
                 return
 
             Vehicule.avancer(self, temps_virtuel)
-            if self.controller_collision(collision=False):
+            if self.controller_collision():
                 # On annule le déplacement
                 self.position.x = x
                 self.position.y = y
@@ -583,26 +727,28 @@ class Navire(Vehicule):
             n_position = self.opt_position
 
             # Si le navire a croisé un lien, change d'étendue
-            etendue = self.etendue
-            for coords, autre in etendue.liens.items():
-                x, y = coords
-                if autre is etendue:
-                    continue
+            autre = etendue.croise_lien((origine.x, origine.y),
+                    (n_position.x, n_position.y))
+            if autre:
+                print(self, "change d'étendue:", autre)
+                if autre.profondeur < self.modele.tirant_eau:
+                    self.envoyer("Un grincement sonore, la quille " \
+                            "touche le fond.")
+                    # On annule le déplacement
+                    self.position.x = x
+                    self.position.y = y
+                    self.position.z = z
+                    self.maj_salles()
+                    return
 
-                v_point = Vector(x, y, etendue.altitude)
-                if in_rectangle(origine.x, origine.y, origine.z,
-                        n_position.x, n_position.y, n_position.z,
-                        x, y, etendue.altitude, 1) and origine.distance(
-                        n_position, v_point) <= 0.5:
-                    # C'est un lien, mais dans le bon sens ?
-                    pr_x, pr_y = etendue.projections[autre]
-                    pr_vec = Vector(pr_x, pr_y, etendue.altitude)
-                    if (n_position - pr_vec).mag < (origine - pr_vec).mag:
-                        # Les autres liens ne sont pas pris en compte
-                        self.etendue = autre
-                        self.position.z = autre.altitude
-                        print("On change d'étendue pour", self, self.etendue.cle)
-                        break
+                self.etendue = autre
+                self.position.z = autre.altitude
+                autre.script["entre"].executer(centre=self.centre,
+                        cle=self.cle, origine=etendue.cle)
+
+            # Enregistre la distance parcourue au compteur
+            distance = (n_position - origine).mag
+            self.compteur += distance * CB_BRASSES
 
         if vit_or <= 0.01 and vit_fin >= 0.05:
             if vit_fin < 0.2:
@@ -613,7 +759,8 @@ class Navire(Vehicule):
 
         self.en_collision = False
 
-    def controller_collision(self, destination=None, direction=None, collision=True):
+    def controller_collision(self, destination=None, direction=None,
+            collision=True, marge=0.5, debug=False):
         """Contrôle les collisions entre la position actuel et la destination.
 
         Si la direction est précisée, le navire vire (la direction
@@ -641,6 +788,10 @@ class Navire(Vehicule):
         points = tuple(etendue.get_points_proches(origine.x, origine.y,
                 diametre).items())
         points += importeur.navigation.points_navires(self)
+        if debug:
+            print("Etendue={}, centre={}, diamètre={}, nb_points={}".format(
+                    etendue.cle, centre, diametre, len(points)))
+
         # Si l'étendue a un point sur le segment
         # (position -> position + vitesse) alors collision
         for vecteur, t_salle in vecteurs:
@@ -651,13 +802,23 @@ class Navire(Vehicule):
             else:
                 projetee = vecteur + destination
 
-            b_arg = [vecteur.x, vecteur.y, vecteur.z, projetee.x, \
+            b_arg = [vecteur.x, vecteur.y, vecteur.z, projetee.x,
                     projetee.y, projetee.z]
             for coords, point in points:
-                v_point = Vector(*coords)
-                arg = b_arg + list(coords) + [etendue.altitude, 0.5]
-                if in_rectangle(*arg) and vecteur.distance(
-                        projetee, v_point) < 0.5:
+                if debug:
+                    print("De x={} y={} vers x={} y={} comparé à " \
+                            "x={} y={}".format(round(vecteur.x, 2),
+                            round(vecteur.y, 2), round(projetee.x, 2),
+                            round(projetee.y, 2), round(coords[0], 2),
+                            round(coords[1], 2)))
+                v_point = Vector(coords[0], coords[1], etendue.altitude)
+                arg = b_arg + list(coords) + [etendue.altitude, marge]
+                rectangle = in_rectangle(*arg)
+                d_marge = vecteur.distance(projetee, v_point)
+                if debug:
+                    print("in_rectangle={}, distance={}".format(
+                            rectangle, d_marge))
+                if rectangle and d_marge < marge:
                     if collision:
                         importeur.navigation.nav_logger.warning(
                                 "Collision entre {} et {}".format(
@@ -671,7 +832,8 @@ class Navire(Vehicule):
         """Méthode appelée lors d'une collision avec un point."""
         Vehicule.collision(self, salle)
         vitesse = self.vitesse_noeuds
-        if contre is type(self).obs_recif:
+        print("Collision", contre)
+        if contre in type(self).obs_recif:
             if vitesse < 0.05:
                 pass
             else:
@@ -695,6 +857,10 @@ class Navire(Vehicule):
         self.acceleration.y = 0
         self.acceleration.z = 0
 
+        # On prévient l'équipage
+        if self.equipage:
+            self.equipage.reagir_collision(salle, contre)
+
     def virer(self, n=1):
         """Vire vers tribord ou bâbord de n degrés.
 
@@ -706,18 +872,111 @@ class Navire(Vehicule):
             self.envoyer("Un léger choc se répercute sous vos pieds.")
             return
 
+        x, y, z = self.direction.tuple
         self.direction.tourner_autour_z(n)
         self.maj_salles()
-        if self.controller_collision(collision=False):
+        if self.controller_collision():
             # On annule la translation
             self.envoyer("Un léger choc se répercute sous vos pieds.")
-            self.direction.tourner_autour_z(-n)
+            self.direction.x = x
+            self.direction.y = y
+            self.direction.z = z
             self.maj_salles()
 
-    def envoyer(self, message):
-        """Envoie le message à tous les personnages présents dans le navire."""
+    def envoyer(self, message, exceptions=None, prompt=True):
+        """Envoie le message à tous les personnages présents dans le navire.
+
+        Les exceptions sont des salles qui ne recevront pas ce message.
+        Si 'prompt' est à False, le prompt sera désactivé.
+
+        """
+        exceptions = exceptions or []
         for salle in self.salles.values():
-            salle.envoyer(message)
+            if salle in exceptions:
+                continue
+
+            salle.envoyer(message, prompt=prompt)
+
+    def envoyer_autour(self, messages, rayon, exclure_navire=True):
+        """Envoie le message dans les salles autour du navire.
+
+        Par défaut, cette méthode envoie le message aux salles
+        autour du navire sans comprendre le navire-même.
+
+        Paramètres à préciser :
+
+            messages -- le ou les messages à envoyer
+            rayon -- le rayon maximum (en salles)
+            exclure_navire -- exclut ou non le navire-même
+
+        Le premier paramètre peut être soit une chaîne qui sera envoyée
+        à chaque salle autour du navire, peu importe sa distance, ou
+        bien un dictionnaire sous la forme :
+
+            {
+                distance1: "message",
+                distance2: "message2",
+                ...
+            }
+
+        Par exemple :
+
+            messages = {
+                5: "C'est tout près",
+                10: "C'est un peu plus loin",
+                15, "C'est très loin",
+            }
+            navire.envoyer_autour(messages, 20)
+            # Si la salle est à moins de 5 salles du navire, envoie le
+            # premier message, ainsi de suite pour les autres.
+
+        Enfin, les messages peuvent contenir des chaînes de remplacement :
+
+          * distance : une estimation de la distance en brasses
+          * sortie : le nom de la sortie séparant la salle du navire
+          * sortie_complete : le nom complet de la sortie
+
+        Exemple :
+
+          navire.envoyer("Vous entendez un PLOUF vers {sortie_complete} " \
+                "à {distance}."
+
+        """
+        # On regroupe les messages
+        if isinstance(messages, str):
+            messages = {rayon: messages}
+
+        # On réunit les salles concernées
+        exclues = list(self.salles.values()) if exclure_navire else []
+        centre = self.position
+        c_x, c_y, c_z = centre.x, centre.y, centre.z
+        salles = []
+
+        for salle in importeur.salle._coords.values():
+            if salle in exclues:
+                continue
+
+            x, y, z = salle.coords.x, salle.coords.y, salle.coords.z
+            vecteur = Vecteur(c_x - x, c_y - y, c_z - z)
+            if vecteur.norme <= rayon:
+                salles.append((vecteur, salle))
+
+        # Trie en fonction de la distance
+        salles = sorted(salles, key=lambda couple: couple[0].norme)
+
+        # Envoie le message
+        for vecteur, salle in salles:
+            sortie = salle.get_sortie(vecteur, None)
+            nom_distance = get_nom_distance(vecteur)
+            norme = vecteur.norme
+
+            # Cherche le bon message
+            for distance, message in sorted(tuple(messages.items())):
+                if norme <= distance:
+                    salle.envoyer(message.format(distance=nom_distance,
+                            sortie=sortie.nom,
+                            sortie_complete=sortie.nom_complet))
+                    break
 
     def synchroniser_modele(self):
         """Cette méthode force la synchronisation d'informations sur le modèle.
@@ -788,7 +1047,32 @@ class Navire(Vehicule):
                 amarre.attachee = d_salle
                 navire.immobilise = True
 
-    staticmethod
+    def mettre_en_cale_seche(self):
+        """Essaye de mettre le navire en cale sèche."""
+        # Cherche le chantier navale
+        etendue = self.etendue
+        chantier = None
+        for t_chantier in importeur.navigation.chantiers.values():
+            if t_chantier.etendue is etendue:
+                chantier = t_chantier
+                break
+
+        if chantier is None:
+            raise ValueError("Impossible de trouver le chantier " \
+                    "navale correspondant à l'étendue d'eau.")
+
+        # Replie la passerelle si il y a une passerelle
+        elt_passerelle = self.elt_passerelle
+        if elt_passerelle:
+            elt_passerelle.replier()
+
+        self.etendue = None
+        chantier.cales_seches.append(self)
+
+        for salle in self.salles.values():
+            salle.coords.valide = False
+
+    @staticmethod
     def peut_boire(personnage, objet=None):
         """Retourne une valeur si le personnage peut boire ici."""
         salle = personnage.salle
@@ -844,26 +1128,60 @@ class Navire(Vehicule):
         salle.envoyer("{{}} regarde {}.".format(self.desc_survol.lower()),
                 personnage)
         centre = self.salles[0, 0, 0]
-        variables = {
-            "nom": self.nom_personnalise,
-        }
-
         msg = "Vous regardez " + self.desc_survol + " :\n\n"
-        msg += self.modele.description.regarder(personnage, centre, variables)
+        msg += self.modele.description.regarder(personnage, centre)
+
+        if navire:
+            # On ajoute la direction du navire concurrent
+            direction = navire.direction.direction
+            direction = round((self.direction.direction - direction) / 5) * 5
+            if direction <= -180 or direction >= 180:
+                msg_dir = "sur 180°"
+            elif direction < 0:
+                msg_dir = "sur {}° bâbord".format(-direction)
+            elif direction == 0:
+                msg_dir = "sur 0°"
+            else:
+                msg_dir = "sur {}° tribord".format(direction)
+
+            msg += "\nCe navire se dirige " + msg_dir + "."
+
         personnage << msg
 
     def sombrer(self):
         """Fait sombrer le navire."""
+        importeur.hook["navire:sombre"].executer(navire=self)
+
         self.envoyer("Un grincement déchirant et le navire s'enfonce sous " \
                 "l'eau !")
         importeur.navigation.ecrire_suivi("{} sombre.".format(self.cle))
+
+        messages = {
+                5: "Un grand fracas, un grincement final, un navire sombre " \
+                   "vers {sortie_complete} à {distance}.",
+                12: "Vous entendez un grand fracas vers {sortie_complete}, " \
+                    "il semble qu'un navire sombre.",
+                30: "Vous entendez un craquement vers {sortie_complete}, il " \
+                    "semble qu'un navire sombre.",
+        }
+
+        self.envoyer_autour(messages, 30)
+
+        # Donne une récompense aux ennemis
+        if self.equipage:
+            cles = [n.cle for n in self.equipage.ennemis]
+            importeur.navigation.nav_logger.info("{} sombre " \
+                    "(ennemis={})".format(self.cle, cles))
+            self.equipage.recompenser_ennemis()
+        else:
+            importeur.navigation.nav_logger.info("{} sombre".format(self.cle))
 
         # Replie la passerelle si il y a une passerelle
         elt_passerelle = self.elt_passerelle
         if elt_passerelle:
             elt_passerelle.replier()
 
-        # Cherche la salle la plus proche du nauffrage
+        # Cherche la salle la plus proche du naufrage
         x, y, z = self.position.tuple
         salles = [s for s in importeur.salle._coords.values() if \
                 hasattr(s, "coords") and s.coords.z == z and s.nom_terrain in \
@@ -880,14 +1198,14 @@ class Navire(Vehicule):
 
         importeur.navigation.supprimer_navire(self.cle)
 
-    def enlever_canot(self, canot):
+    def remonter_canot(self, canot):
         """Cette méthode enlève le canot et le met à bord.
 
         Le canot est un autre navire (supposément un petit). Il
         est placé dans les canots du bord et pourra être descendu ailleurs.
 
         """
-        if not canot.modele.canot:
+        if not canot.modele.a_canot:
             raise ValueError("{} n'est pas un canot".format(canot))
 
         for salle in canot.salles.values():
@@ -895,13 +1213,33 @@ class Navire(Vehicule):
                 raise ValueError("{} a des personnages".format(salle))
 
         canot.etendue = None
-        for salle in canot.salles.values():
-            salle.coords.valide = False
+        self.canots.append(canot)
+        importeur.navigation.nav_logger.info("{} remonte le canot {}".format(
+                self.cle, canot.cle))
 
-        self.canots.append(canot.cle)
+    def descendre_canot(self, canot):
+        """Descend un canot qui se trouve dans self.canots."""
+        # On positionne le canot juste devant la proue
+        y = 0
+        while (0, y, 0) in self.modele.salles:
+            y += 1
+
+        p_x, p_y, p_z = self.position.tuple
+        canot.etendue = self.etendue
+        canot.position.x = p_x
+        canot.position.y = p_y + y
+        canot.position.z = p_z
+        self.canots.remove(canot)
+        importeur.navigation.nav_logger.info("{} met à l'eau le canot " \
+                "{}".format(self.cle, canot.cle))
 
     def detruire(self):
         """Destruction du self."""
+        # Replie la passerelle si il y a une passerelle
+        elt_passerelle = self.elt_passerelle
+        if elt_passerelle:
+            elt_passerelle.replier()
+
         for salle in list(self.salles.values()):
             importeur.salle.supprimer_salle(salle.ident)
 
@@ -938,7 +1276,6 @@ class Propulsion(Force):
         for rames in navire.rames:
             if rames.tenu and not rames.tenu.est_connecte():
                 rames.tenu.etats.retirer("tenir_rames")
-                rames.tenu = None
                 rames.vitesse = "immobile"
                 rames.centrer()
 
@@ -946,31 +1283,13 @@ class Propulsion(Force):
         rames = [r for r in navire.rames if r.tenu is not None]
         vecteur = vec_nul
         if voiles:
-            fact_voile = sum(v.facteur_orientation(navire, vent) \
-                    for v in voiles) / len(navire.voiles) * 0.7
-            allure = (get_direction(direction) - get_direction(vent)) % 360
-            if ALL_DEBOUT < allure < (360 - ALL_DEBOUT):
-                facteur = navire.vent_debout()
-            elif ALL_PRES < allure < (360 - ALL_PRES):
-                facteur = navire.pres()
-            elif ALL_BON_PLEIN < allure < (360 - ALL_BON_PLEIN):
-                facteur = navire.bon_plein()
-            elif ALL_LARGUE < allure < (360 - ALL_LARGUE):
-                facteur = navire.largue()
-            elif ALL_GRAND_LARGUE < allure < (360 - ALL_GRAND_LARGUE):
-                facteur = navire.grand_largue()
-            else:
-                facteur = navire.vent_arriere()
-
-            vecteur = direction * facteur * fact_voile * vent.mag
+            facteur = navire.get_vitesse_voiles(voiles, vent)
+            vecteur = direction * facteur
 
         # Calcul des rames
         if rames:
-            facts = [VIT_RAMES[rame.vitesse] for rame in rames]
-            fact = 0.8
-            for f in facts:
-                fact *= f
-
-            vecteur = vecteur + direction * fact
+            vitesses = [rame.vitesse for rame in rames]
+            facteur = navire.get_vitesse_rames(vitesses)
+            vecteur = vecteur + direction * facteur
 
         return Vecteur(vecteur.x, vecteur.y, vecteur.z)

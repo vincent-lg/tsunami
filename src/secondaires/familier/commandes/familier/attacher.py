@@ -1,6 +1,6 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2014 LE GOFF Vincent
+# Copyright (c) 2010-2016 LE GOFF Vincent
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -59,6 +59,11 @@ class PrmAttacher(Parametre):
         familier = dic_masques["nom_familier"].familier
         fiche = familier.fiche
         pnj = familier.pnj
+
+        if "attache" in pnj.etats:
+            personnage << "|err|Vous avez déjà attaché {}.|ff|".format(pnj)
+            return
+
         personnage.agir("attacherfamilier")
         if personnage.equipement.cb_peut_tenir() < 1:
             personnage << "|err|Il vous faut au moins une main libre.|ff|"
@@ -73,7 +78,7 @@ class PrmAttacher(Parametre):
         pris = []
         for perso in salle.personnages:
             if "attache" in perso.etats:
-                etat = personnage.etats.get("attache")
+                etat = perso.etats.get("attache")
                 pris.append(etat.barre_attache)
 
         libres = []

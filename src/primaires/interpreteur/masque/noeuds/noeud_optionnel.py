@@ -1,6 +1,6 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2010 LE GOFF Vincent
+# Copyright (c) 2010-2016 LE GOFF Vincent
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -129,3 +129,10 @@ class NoeudOptionnel(BaseNoeud):
             msg += " " + self.suivant.afficher(personnage)
 
         return msg
+    def extraire_masques(self, masques=None):
+        """Extraction des masques de la commande."""
+        if self.suivant:
+            self.suivant.extraire_masques(masques)
+
+        if self.interne:
+            self.interne.extraire_masques(masques)

@@ -1,6 +1,6 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2012 LE GOFF Vincent
+# Copyright (c) 2010-2016 LE GOFF Vincent
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -40,17 +40,42 @@ class ClasseFonction(Fonction):
     @classmethod
     def init_types(cls):
         cls.ajouter_types(cls.PNJ_salle, "Salle")
+        cls.ajouter_types(cls.PNJ_salle, "Salle", "str")
         cls.ajouter_types(cls.tous_PNJ, "str")
+        cls.ajouter_types(cls.zone_PNJ, "str", "str")
 
     @staticmethod
-    def PNJ_salle(salle):
+    def PNJ_salle(salle, cle=""):
         """Retourne tous les PNJ présents dans la salle.
 
         Cette fonction retourne les PNJ présents (pas les joueurs).
 
-        """
-        return salle.PNJ
+        Paramètres à préciser :
 
+          * salle : la salle dans laquelle trouver les PNJ
+          * cle (optionnel) : la clé de prototype des PNJ
+
+        Exemple d'utilisation :
+
+          # En admettant qu'une salle est contenue dans la variable salle
+          # Capture tous les PNJ d'une salle
+          liste = PNJ(salle)
+          pour chaque pnj dans liste:
+              ...
+          fait
+          # Capture seulement les PNJ de prototype 'souris'
+          liste = PNJ(salle, "souris")
+          pour chaque pnj dans liste:
+              ...
+          fait
+
+        """
+        pnj = salle.PNJ
+        if cle:
+            pnj = [p for p in pnj if p.cle == cle]
+        
+        return pnj
+    
     @staticmethod
     def tous_PNJ(cle_prototype):
         """Retourne tous les PNJ d'un prototype.
@@ -85,3 +110,38 @@ class ClasseFonction(Fonction):
                     repr(cle_prototype)))
 
         return list(prototype.pnj)
+
+    @staticmethod
+    def zone_PNJ(zone, prototype):
+        """Retourne les PNJ d'une zone particulière.
+
+        Cette fonction retourne les PNJ d'une clé indiquée d'une zone
+        indiquée. Ce peut être très utile de savoir que dans une zone
+        donnée, il y a 12 PNJ de ce prototype. C'est encore plus utile
+        pour les portions semi-isolées de l'univers (les diligences,
+        les navires).
+
+        Paramètres à préciser :
+
+          * zone : la clé de la zone (une chaîne de caractères)
+          * prototype : la clé du prototype de PNJ (une chaîne de caractères)
+
+        Exemples d'utilisation :
+
+          # On veut obtenir tous les PNJ 'lapin' de la zone 'depart'
+          lapins = PNJ("depart", "lapin")
+          # On veut obtenir tous les PNJ 'lapin' de la zone de la
+          # salle actuelle (contenue dans la variable salle)
+          zone = zone(salle)
+          lapins = PNJ(zone, "lapin")
+
+        """
+        zone = zone.lower()
+        try:
+            prototype = importeur.pnj.prototypes[prototype.lower()]
+        except KeyError:
+            raise ErreurExecution("prototype inconnu {}".format(
+                    repr(prototype)))
+
+        return [p for p in prototype.pnj if p.salle and \
+                p.salle.nom_zone == zone]

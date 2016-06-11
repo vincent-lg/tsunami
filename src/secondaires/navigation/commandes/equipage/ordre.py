@@ -1,6 +1,6 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2013 LE GOFF Vincent
+# Copyright (c) 2010-2016 LE GOFF Vincent
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -51,19 +51,15 @@ class PrmOrdre(Parametre):
             "précise. Pour chaque ordre il existe deux notations : " \
             "une notation longue (qui est la plus compréhensible) et " \
             "une notation courte qui s'écrit plus rapidement, n'étant " \
-            "composée que de quelques lettres et chiffres. Entrez " \
-            "%équipage% %équipage:ordre%|cmd| ?|ff| pour obtenir la " \
-            "liste des ordres disponibles ainsi que leur syntaxe."
+            "composée que de quelques lettres et chiffres."
 
     def interpreter(self, personnage, dic_masques):
         """Interprétation du paramètre"""
         message = supprimer_accents(dic_masques["message"].message)
-        if message == "?":
-            return self.liste_ordres(personnage)
 
         salle = personnage.salle
         if not hasattr(salle, "navire"):
-            personnage << "|err|Vous n'êtes pas sur un navire."
+            personnage << "|err|Vous n'êtes pas sur un navire.|ff|"
             return
 
         navire = salle.navire
@@ -86,6 +82,7 @@ class PrmOrdre(Parametre):
                     return
 
                 volonte = volonte(navire, *arguments)
+                volonte.initiateur = personnage
                 volonte.crier_ordres(personnage)
                 yield 0.3
                 return equipage.executer_volonte(volonte)

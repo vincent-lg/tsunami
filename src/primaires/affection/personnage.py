@@ -1,6 +1,6 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2012 LE GOFF Vincent
+# Copyright (c) 2010-2016 LE GOFF Vincent
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -30,6 +30,8 @@
 
 """Ce module contient la classe AffectionPersonnage, détaillée plus bas."""
 
+from fractions import Fraction
+
 from bases.collections.flags import Flags
 from .base import AffectionAbstraite
 from primaires.affection.script_personnage import ScriptAffectionPersonnage
@@ -41,8 +43,8 @@ class AffectionPersonnage(AffectionAbstraite):
     nom_type = "personnage"
     nom_scripting = "affection de personnage"
     def_flags = Flags()
-    def_flags.ajouter("doit être connecté")
-    def_flags.ajouter("doit être vivant")
+    def_flags.ajouter("doit être connecté", 1)
+    def_flags.ajouter("doit être vivant", 2)
 
     def __init__(self, cle):
         AffectionAbstraite.__init__(self, cle)
@@ -85,7 +87,8 @@ class AffectionPersonnage(AffectionAbstraite):
     def executer_script(self, evenement, affection, **variables):
         """Exécute le script lié."""
         self.script[evenement].executer(personnage=affection.affecte,
-                force=affection.force, duree=affection.duree, **variables)
+                force=Fraction(affection.force),
+                duree=Fraction(affection.duree), **variables)
 
     def tick(self, affection):
         """Tick l'affection."""

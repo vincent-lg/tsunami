@@ -1,6 +1,6 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2013 LE GOFF Vincent
+# Copyright (c) 2010-2016 LE GOFF Vincent
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -30,6 +30,7 @@
 
 """Fichier contenant l'action appeler."""
 
+from primaires.format.fonctions import supprimer_accents
 from primaires.scripting.action import Action
 from primaires.scripting.instruction import ErreurExecution
 
@@ -54,16 +55,56 @@ class ClasseAction(Action):
 
         Cette action prend au moins deux paramètres :
 
-        * Le script contenant le bloc. Si le bloc est défini dans le script
-          d'une salle précis, passez en premier paramètre cette salle.
-        * Le nom du bloc à appeler.
+          * Le script contenant le bloc. Si le bloc est défini dans le script
+            d'une salle précis, passez en premier paramètre cette salle.
+          * Le nom du bloc à appeler.
 
         Les autres paramètres dépendent du bloc : celui-ci peut avoir aucun,
         un ou plusieurs paramètres. Vous devez les appeler dans l'ordre dans
         cette action.
 
+        Exemple d'utilisation :
+
+          # si salle contient une salle, pour appeler son bloc 'transmettre'
+          appeler salle "transmettre"
+          # ou avec ds paramètres
+          appeler salle "transmettre" "une chaîne" 5
+
+        Notez qu'à la place de l'appelant (premier paramètre),
+        vous pouvez préciser un nom (chaîne) identifiant le scriptable.
+        Par exemple, "zone picte" ou "salle picte:8". Ces noms doivent
+        être sous la forme d'une chaîne, constituée de deux éléments
+        séparés par un espace : le nom du type de scriptable (comme
+        salle, prototype d'objet...) et l'identifiant du scriptable
+        (comme "prototype d'objet pomme_rouge").
+
+        Exeple d'utilisation :
+
+          appeler "salle depart:5" "transmettre"
+
         """
-        if not hasattr(appelant, "script"):
+        scriptables = importeur.scripting.valeurs
+
+        if isinstance(appelant, str):
+            appelant = supprimer_accents(appelant).lower()
+            trouve = False
+            for t_nom, dictionnaire in scriptables.items():
+                if appelant.startswith(t_nom):
+                    cle = appelant[len(t_nom) + 1:].lower()
+                    if cle not in dictionnaire:
+                        raise ErreurExecution("Impossible de trouver " \
+                                "le scriptable {} : clé {} " \
+                                "introuvable".format(repr(appelant), repr(cle)))
+
+                    trouve = True
+                    appelant = dictionnaire[cle]
+                    break
+
+            if not trouve:
+                raise ErreurExecution("Impossible de trouver le scriptable " \
+                        "{} : type d'information introuvable".format(
+                        repr(appelant)))
+        elif not hasattr(appelant, "script"):
             raise ErreurExecution("l'appelant {} ne semble pas avoir " \
                     "de script".format(appelant))
 

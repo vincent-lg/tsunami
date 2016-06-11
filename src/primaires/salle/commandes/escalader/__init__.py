@@ -1,6 +1,6 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2010 LE GOFF Vincent
+# Copyright (c) 2010-2016 LE GOFF Vincent
 # All rights reserved.
 # 
 # Redistribution and use in source and binary forms, with or without
@@ -44,9 +44,9 @@ class CmdEscalader(Commande):
         Commande.__init__(self, "escalader", "climb")
         self.nom_categorie = "bouger"
         self.schema = "<nom_sortie>"
-        self.aide_courte = "escalade une paroie"
+        self.aide_courte = "escalade une paroi"
         self.aide_longue = \
-            "Cette commande permet d'escalader une paroie. Il vous faut " \
+            "Cette commande permet d'escalader une paroi. Il vous faut " \
             "préciser le nom de la sortie à escalader."
     
     def interpreter(self, personnage, dic_masques):

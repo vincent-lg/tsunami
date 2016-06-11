@@ -1,6 +1,6 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2013 LE GOFF Vincent
+# Copyright (c) 2010-2016 LE GOFF Vincent
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -30,6 +30,7 @@
 
 """Fichier contenant le type Grimoire."""
 
+from bases.objet.attribut import Attribut
 from primaires.interpreteur.editeur.uniligne import Uniligne
 from primaires.objet.types.base import BaseType
 
@@ -50,6 +51,11 @@ class Grimoire(BaseType):
         BaseType.__init__(self, cle)
         self._cle_sort = ""
         self.etendre_editeur("s", "sort", Uniligne, self, "cle_sort")
+
+        # Attributs propres à l'objet (non au prototype)
+        self._attributs = {
+            "proprietaire": Attribut(None),
+        }
 
     def _get_cle_sort(self):
         return self._cle_sort
@@ -78,16 +84,26 @@ class Grimoire(BaseType):
             "Entrez |cmd|/|ff| pour revenir à la fenêtre parente.\n\n" \
             "Sort actuel : {objet.cle_sort}"
 
-    @staticmethod
-    def regarder(objet, personnage):
+    def acheter(self, quantite, magasin, transaction):
+        """Achète le grimoire."""
+        objets = BaseType.acheter(self, quantite, magasin, transaction)
+        acheteur = transaction.initiateur
+
+        for objet in objets:
+            objet.proprietaire = acheteur
+
+        acheteur.envoyer_tip("Vous êtes propriétaire de ce grimoire. " \
+                "Utilisez la commande %étudier% pour l'étudier.")
+
+    def regarder(self, personnage):
         """Le personnage regarde l'objet."""
-        sort = objet.sort
+        sort = self.sort
         if sort:
             if sort.elements[0] != personnage.element:
                 return "L'ancre ondule étrangement devant vos yeux... " \
                         "vous ne pouvez lire ce parchemin."
 
-            msg = BaseType.regarder(objet, personnage)
+            msg = BaseType.regarder(self, personnage)
             points = sort.points_tribut
             s = "s" if points > 1 else ""
             phrase = "Il vous faut {} point{s} de tribut pour apprendre ce " \

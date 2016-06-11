@@ -1,6 +1,6 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2010 LE GOFF Vincent
+# Copyright (c) 2010-2016 LE GOFF Vincent
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -92,6 +92,7 @@ class Importeur:
     }
     py_modules = {}
     sauvegarde = True
+    espace = {}
 
     def __init__(self, parser_cmd, anaconf, man_logs, serveur,
             sauvegarde=True):
@@ -104,7 +105,7 @@ class Importeur:
         -   le gestionnaire des loggers
         -   le serveur
         Ces informations sont stockées comme des attributs de classe.
-        Si un module souaite y faire apel il n'aura qu'à faire
+        Si un module souhaite y faire appel il n'aura qu'à faire
         'Importeur.attribut'.
 
         """
@@ -121,6 +122,7 @@ class Importeur:
         Importeur.sauvegarde = sauvegarde
         BaseObj.importeur = self
         __builtins__["importeur"] = self
+        type(self).espace["importeur"] = self
 
     def __str__(self):
         """Retourne sous une forme un peu plus lisible les modules importés."""

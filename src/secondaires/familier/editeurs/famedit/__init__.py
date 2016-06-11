@@ -1,6 +1,6 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2014 LE GOFF Vincent
+# Copyright (c) 2010-2016 LE GOFF Vincent
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -35,13 +35,17 @@ seront placées dans ce package
 
 """
 
+from textwrap import dedent
+
 from primaires.interpreteur.editeur.choix import Choix
-from primaires.interpreteur.editeur.flag import Flag
 from primaires.interpreteur.editeur.entier import Entier
+from primaires.interpreteur.editeur.flag import Flag
 from primaires.interpreteur.editeur.presentation import Presentation
 from primaires.interpreteur.editeur.selection import Selection
+from primaires.interpreteur.editeur.tableau import Tableau
 from primaires.interpreteur.editeur.uniligne import Uniligne
 from primaires.scripting.editeurs.edt_script import EdtScript
+from secondaires.familier.aptitudes import APTITUDES
 from secondaires.familier.constantes import *
 
 class EdtFamedit(Presentation):
@@ -78,6 +82,33 @@ class EdtFamedit(Presentation):
             "Régime actuel : |bc|{{objet.regime}}|ff|".format(
             ", ".join(REGIMES))
 
+        # Aptitudes
+        noms = ", ".join(list(APTITUDES.keys()))
+        aptitudes = self.ajouter_choix("aptitudes", "a", Tableau,
+                fiche, "aptitudes",
+                (("Aptitude", list(APTITUDES.keys())), ("Niveau", "entier")))
+        aptitudes.parent = self
+        aptitudes.apercu = "{valeur}"
+        aptitudes.aide_courte = dedent("""\
+            Entrez |cmd|/|ff| pour revenir à la fenêtre parente.
+
+            Vous pouvez configurer ici les aptitudes du familier. Le
+            tableau ci-dessous représente les aptitudes du familier
+            et le niveau à partir duquel cette aptitude est active.
+            Si vous voulez qu'un familier ait l'aptitude dès son apparition,
+            précisez un niveau de 1 (les PNJ ne peuvent pas avoir un niveau
+            inférieur). Un niveau au-delà de 100 n'aura aucun effet.
+            Aptitudes existantes : {noms}.
+            Pour ajouter une ligne dans le tableau, entrez le nom de
+            l'aptitude, un signe |cmd|/|ff| et le niveau d'activation
+            de l'aptitude. Par exemple :
+             |ent|suivre_maitre / 30|ff|
+            Utilisez l'option |ent|/s|ff| suivi du nom de l'aptitude
+            pour l'effacer de ce tableau. Par exemple :
+             |cmd|/s suivre_maitre|ff|
+            Apttitudes configurées pour ce familier :
+            {{valeur}}""".format(noms=noms))
+
         # Harnachements supportés
         harnachements = self.ajouter_choix("harnachement supportés", "h",
                 Selection, fiche, "harnachements", TYPES_HARNACHEMENT)
@@ -91,6 +122,62 @@ class EdtFamedit(Presentation):
             ", ".join(sorted(TYPES_HARNACHEMENT)) + "\nHarnachements " \
             "supportés actuellement : {objet.str_harnachements}"
 
+        # Stats pouvant progresser
+        stats = self.ajouter_choix("stats pouvant progresser", "s",
+                Tableau, fiche, "stats_progres",
+                ((("Stat", ["force", "agilite", "robustesse", "intelligence",
+                "charisme", "sensibilite"])), ("Probabilité", "entier")))
+        stats.parent = self
+        stats.prompt = "Stats pouvant augmenter automatiquement : "
+        stats.apercu = "\n{objet.str_stats_progres}"
+        stats.aide_courte = dedent("""
+            Entrez |cmd|/|ff| pour revenir à la fenêtre parente.
+
+            Vous pouvez ici préciser les stats à entaîner automatiquement
+            au passage du niveau du familier, selon certaines probabilités.
+            Vous pouvez configurer certaines stats pour être plus probables
+            que d'autres dans l'entraînement. Précisez en premier paramètre
+            le nom de la stat (comme force, agilité, ...) et en second,
+            après un signe |cmd|/|ff|, la probabilité. Au passage du
+            niveau, la probabilité de choisir cette stat dépendra de la
+            probabilité totale.
+
+            Pour ajouter ou modifier une ligne :
+                |ent|nom de la stat / probabilité|ff|
+
+            Vous pouvez supprimer une ligne en entrant l'option |cmd|/s|ff|
+            suivie du numéro de la ligne à supprimer.
+
+            Probabilités actuelles :
+            {valeur}
+        """.strip("\n"))
+
+        # Aliments supplémentaires
+        aliments_sup = []
+        noms_types = ["appât"] + list(importeur.objet.get_types_herites(
+                "nourriture"))
+        for nom_type in noms_types:
+            aliments_sup.append("+" + nom_type)
+            for prototype in importeur.objet.get_prototypes_de_type(nom_type):
+                aliments_sup.append(prototype.cle)
+
+        aliments = self.ajouter_choix("aliments supplémentaires", "al",
+                Selection, fiche, "peut_manger", aliments_sup)
+        aliments.parent = self
+        aliments.prompt = "Aliments que l'on peut donner au familier " \
+                "pour qu'il se nourrisse : "
+        aliments.apercu = "{valeur}"
+        aliments.aide_courte = dedent("""\
+            Entrez |cmd|/|ff| pour revenir à la fenêtre parente.
+
+            Pour ajouter ou retirer un aliment, entrez simplement sa clé,
+            comme |ent|pomme_rouge|ff|, ou son type précédé d'un signe
+            |ent|+|ff|, comme |ent|+légume|ff|. Si un nom de type est
+            précisé, le maître du familier pourra nourrir celui-ci en
+            utilisant n'importe quel objet de ce type.
+
+            Aliments actuels : {valeur}""")
+
         # Monture
         monture = self.ajouter_choix("peut être monté", "m", Flag, fiche,
                 "monture")
@@ -101,6 +188,11 @@ class EdtFamedit(Presentation):
                 "peut emprunter les sorties verticales", "v", Flag, fiche,
                 "sorties_verticales")
         verticales.parent = self
+
+        # Aller en intérieur
+        interieur = self.ajouter_choix("peut aller en intérieur", "l",
+                Flag, fiche, "aller_interieur")
+        interieur.parent = self
 
         # Difficulté d'apprivoisement
         difficulte = self.ajouter_choix("difficulté d'apprivoisement", "d",

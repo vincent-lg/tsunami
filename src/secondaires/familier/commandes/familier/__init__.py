@@ -1,6 +1,6 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2014 LE GOFF Vincent
+# Copyright (c) 2010-2016 LE GOFF Vincent
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -37,6 +37,7 @@ Dans ce fichier se trouve la commande même.
 from primaires.interpreteur.commande.commande import Commande
 from secondaires.familier.commandes.familier.apparaitre import PrmApparaitre
 from secondaires.familier.commandes.familier.attacher import PrmAttacher
+from secondaires.familier.commandes.familier.boire import PrmBoire
 from secondaires.familier.commandes.familier.brouter import PrmBrouter
 from secondaires.familier.commandes.familier.chasser import PrmChasser
 from secondaires.familier.commandes.familier.creer import PrmCreer
@@ -51,10 +52,12 @@ from secondaires.familier.commandes.familier.mener import PrmMener
 from secondaires.familier.commandes.familier.miens import PrmMiens
 from secondaires.familier.commandes.familier.niveaux import PrmNiveaux
 from secondaires.familier.commandes.familier.nom import PrmNom
+from secondaires.familier.commandes.familier.nourrir import PrmNourrir
 from secondaires.familier.commandes.familier.relacher import PrmRelacher
 from secondaires.familier.commandes.familier.renommer import PrmRenommer
 from secondaires.familier.commandes.familier.score import PrmScore
 from secondaires.familier.commandes.familier.tuer import PrmTuer
+from secondaires.familier.commandes.familier.xp import PrmXP
 
 class CmdFamilier(Commande):
 
@@ -77,6 +80,7 @@ class CmdFamilier(Commande):
         """Ajout des paramètres"""
         self.ajouter_parametre(PrmApparaitre())
         self.ajouter_parametre(PrmAttacher())
+        self.ajouter_parametre(PrmBoire())
         self.ajouter_parametre(PrmBrouter())
         self.ajouter_parametre(PrmChasser())
         self.ajouter_parametre(PrmCreer())
@@ -91,7 +95,9 @@ class CmdFamilier(Commande):
         self.ajouter_parametre(PrmMiens())
         self.ajouter_parametre(PrmNiveaux())
         self.ajouter_parametre(PrmNom())
+        self.ajouter_parametre(PrmNourrir())
         self.ajouter_parametre(PrmRelacher())
         self.ajouter_parametre(PrmRenommer())
         self.ajouter_parametre(PrmScore())
         self.ajouter_parametre(PrmTuer())
+        self.ajouter_parametre(PrmXP())

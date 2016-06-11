@@ -1,6 +1,6 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2012 LE GOFF Vincent
+# Copyright (c) 2010-2016 LE GOFF Vincent
 # All rights reserved.
 # 
 # Redistribution and use in source and binary forms, with or without
@@ -42,13 +42,13 @@ class CmdAppater(Commande):
         self.schema = "<nom_objet>"
         self.aide_courte = "appâte un ameçon"
         self.aide_longue = \
-            "Cette commande permet d'appâter un ameçon. Vous devez " \
+            "Cette commande permet d'appâter un hameçon. Vous devez " \
             "tenir une canne à pêche et préciser le nom de l'appât. " \
             "Certains appâts, plus durs à trouver que d'autres, " \
             "attirent aussi plus le poisson et peuvent augmenter la " \
             "chance de pêcher une prise rare. Dès lors que vous avez " \
             "pêché quelque chose, vous devez appâter de nouveau " \
-            "l'ameçon de la canne avant de la relancer."
+            "l'hameçon de la canne avant de la relancer."
     
     def ajouter(self):
         """Méthode appelée lors de l'ajout de la commande à l'interpréteur"""
@@ -78,6 +78,13 @@ class CmdAppater(Commande):
             personnage << "|err|Vous n'équipez aucune canne à pêche.|ff|"
             return
         
+        if (getattr(canne, "appat", None) is not None
+                and appat.prototype == canne.appat.prototype):
+            personnage << "|err|Vous avez déjà appâté {} avec {}.|ff|".format(
+                    canne.get_nom(), appat.get_nom())
+            return
+        
+        personnage.agir("appater")
         appat.contenu.retirer(appat)
         a_appat = canne.appat
         if a_appat:

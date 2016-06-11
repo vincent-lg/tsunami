@@ -1,6 +1,6 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2010 LE GOFF Vincent
+# Copyright (c) 2010-2016 LE GOFF Vincent
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -67,11 +67,12 @@ class EdtCarte(Editeur):
         """Supprime une salle.
 
         Syntaxe :
-            /d mnémonic
+            /d mnémonique
 
         """
+        modele = self.objet
         if modele.get_salle(arguments) is None:
-            self.pere << "|err|Le mnémonic {} est introuvable.|ff|".format(
+            self.pere << "|err|Le mnémonique {} est introuvable.|ff|".format(
                     arguments)
         else:
             modele.supprimer_salle(arguments)
@@ -81,14 +82,14 @@ class EdtCarte(Editeur):
         """Ajoute une salle à bâbord.
 
         Syntaxe :
-            /bab <mnémonic>
+            /bab <mnémonique>
 
         """
         modele = self.objet
         try:
             coords, salle = modele.get_salle(arguments)
         except ValueError:
-            self.pere << "|err|Ce mnémonic n'existe pas.|ff|"
+            self.pere << "|err|Ce mnémonique n'existe pas.|ff|"
         else:
             coords = (coords[0] - 1, coords[1], coords[2])
             try:
@@ -103,14 +104,14 @@ class EdtCarte(Editeur):
         """Ajoute une salle à tribord.
 
         Syntaxe :
-            /tri <mnémonic>
+            /tri <mnémonique>
 
         """
         modele = self.objet
         try:
             coords, salle = modele.get_salle(arguments)
         except ValueError:
-            self.pere << "|err|Ce mnémonic n'existe pas.|ff|"
+            self.pere << "|err|Ce mnémonique n'existe pas.|ff|"
         else:
             coords = (coords[0] + 1, coords[1], coords[2])
             try:
@@ -125,14 +126,14 @@ class EdtCarte(Editeur):
         """Ajoute une salle à l'avant.
 
         Syntaxe :
-            /ava <mnémonic>
+            /ava <mnémonique>
 
         """
         modele = self.objet
         try:
             coords, salle = modele.get_salle(arguments)
         except ValueError:
-            self.pere << "|err|Ce mnémonic n'existe pas.|ff|"
+            self.pere << "|err|Ce mnémonique n'existe pas.|ff|"
         else:
             coords = (coords[0], coords[1] + 1, coords[2])
             try:
@@ -147,14 +148,14 @@ class EdtCarte(Editeur):
         """Ajoute une salle à l'arrière.
 
         Syntaxe :
-            /tri <mnémonic>
+            /tri <mnémonique>
 
         """
         modele = self.objet
         try:
             coords, salle = modele.get_salle(arguments)
         except ValueError:
-            self.pere << "|err|Ce mnémonic n'existe pas.|ff|"
+            self.pere << "|err|Ce mnémonique n'existe pas.|ff|"
         else:
             coords = (coords[0], coords[1] - 1, coords[2])
             try:
@@ -169,14 +170,14 @@ class EdtCarte(Editeur):
         """Ajoute une salle en bas.
 
         Syntaxe :
-            /bas <mnémonic>
+            /bas <mnémonique>
 
         """
         modele = self.objet
         try:
             coords, salle = modele.get_salle(arguments)
         except ValueError:
-            self.pere << "|err|Ce mnémonic n'existe pas.|ff|"
+            self.pere << "|err|Ce mnémonique n'existe pas.|ff|"
         else:
             coords = (coords[0], coords[1], coords[2] - 1)
             try:
@@ -191,14 +192,14 @@ class EdtCarte(Editeur):
         """Ajoute une salle en haut.
 
         Syntaxe :
-            /hau <mnémonic>
+            /hau <mnémonique>
 
         """
         modele = self.objet
         try:
             coords, salle = modele.get_salle(arguments)
         except ValueError:
-            self.pere << "|err|Ce mnémonic n'existe pas.|ff|"
+            self.pere << "|err|Ce mnémonique n'existe pas.|ff|"
         else:
             coords = (coords[0], coords[1], coords[2] + 1)
             try:
@@ -268,7 +269,7 @@ class EdtCarte(Editeur):
         try:
             coords, salle = modele.get_salle(msg)
         except ValueError:
-            self.pere << "|err|Ce mnémonic n'existe pas.|ff|"
+            self.pere << "|err|Ce mnémonique n'existe pas.|ff|"
         else:
             enveloppe = EnveloppeObjet(EdtSalle, salle)
             enveloppe.parent = self

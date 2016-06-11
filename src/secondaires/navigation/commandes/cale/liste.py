@@ -1,6 +1,6 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2013 LE GOFF Vincent
+# Copyright (c) 2010-2016 LE GOFF Vincent
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -65,22 +65,39 @@ class PrmListe(Parametre):
         msg = ""
         cale = salle.navire.cale
         for nom in sorted(salle.cales):
-            liste = cale.conteneurs[nom]
+            noms = cale.get_noms(nom)
             msg += "\n" + nom.capitalize() + " :"
-            if liste:
-                contenu = []
-                for cle, nb in liste.items():
-                    try:
-                        prototype = importeur.objet.prototypes[cle]
-                    except KeyError:
-                        continue
-
-                    contenu.append((prototype, nb))
-
-                contenu.sort(key=lambda couple: couple[0].nom_singulier)
-                for prototype, nb in contenu:
-                    msg += "\n  " + prototype.get_nom(nb)
+            if noms:
+                for nom in noms:
+                    msg += "\n  " + nom
             else:
                 msg += "\n  Aucun"
 
-        personnage << msg.lstrip("\n")
+        msg = msg.lstrip("\n") + "\n\n"
+
+        # Affichage du poids
+        facteur = (cale.poids / cale.poids_max) * 100
+        if facteur < 7:
+            msg += "Cette cale est vide, ou peu s'en faut"
+        elif facteur < 25:
+            msg += "Cette cale n'est pas même remplie au quart"
+        elif facteur < 33:
+            msg += "Cette cale est remplie au quart"
+        elif facteur < 50:
+            msg += "Cette cale ets remplie au tiers"
+        elif facteur < 67:
+            msg += "Cette cale est à moitié remplie"
+        elif facteur < 75:
+            msg += "Cette cale est remplie aux deux tiers"
+        elif facteur < 85:
+            msg += "Cette cale est remplie aux trois quarts"
+        elif facteur < 99:
+            msg += "Cette cale est presque pleine"
+        else:
+            msg += "Cette cale est pleine à craquer"
+
+        if personnage.est_immortel():
+            msg += " ({}%)".format(int(facteur))
+
+        msg += "."
+        personnage << msg

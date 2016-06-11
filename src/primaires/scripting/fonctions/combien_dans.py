@@ -1,6 +1,6 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2012 LE GOFF Vincent
+# Copyright (c) 2010-2016 LE GOFF Vincent
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -46,7 +46,7 @@ class ClasseFonction(Fonction):
 
     @staticmethod
     def cb_dans(conteneur):
-        """RRenvoie le nombre d'objets contenus dans le conteneur."""
+        """Renvoie le nombre d'objets contenus dans le conteneur."""
         if conteneur.est_de_type("conteneur de potion"):
             return Fraction(1) if conteneur.potion else Fraction(0)
         if conteneur.est_de_type("conteneur de nourriture"):
@@ -71,6 +71,7 @@ class ClasseFonction(Fonction):
             return Fraction(len([o for o in conteneur.nourriture if \
                     o.prototype is prototype]))
         if conteneur.est_de_type("conteneur"):
-            return sum(nb for o, nb in conteneur.conteneur.iter_nombres() \
-                    if o.prototype is prototype)
+            return Fraction(
+                    sum(nb for o, nb in conteneur.conteneur.iter_nombres() \
+                    if o.prototype is prototype))
         raise ErreurExecution("{} n'est pas un conteneur".format(conteneur))

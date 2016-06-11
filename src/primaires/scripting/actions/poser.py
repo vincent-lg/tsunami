@@ -1,6 +1,6 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2010 LE GOFF Vincent
+# Copyright (c) 2010-2016 LE GOFF Vincent
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -65,9 +65,11 @@ class ClasseAction(Action):
         d'un personnage, autre conteneur...).
 
         """
-        if not conteneur.est_de_type("conteneur"):
-            raise ErreurExecution("{} n'est pas un conteneur".format(
-                    conteneur.get_nom()))
+        if not conteneur.est_de_type("conteneur") and not \
+                conteneur.est_de_type("machine"):
+            raise ErreurExecution("{} n'est pas un conteneur ou " \
+                    "machine".format(conteneur.get_nom()))
+
         if not conteneur.contenu:
             raise ErreurExecution("{} n'est contenu nul part".format(
                     conteneur.get_nom()))
@@ -104,10 +106,12 @@ class ClasseAction(Action):
         nb = int(nb)
         if not prototype in importeur.objet.prototypes:
             raise ErreurExecution("prototype {} introuvable".format(prototype))
+
         prototype = importeur.objet.prototypes[prototype]
-        if not conteneur.est_de_type("conteneur"):
-            raise ErreurExecution("{} n'est pas un conteneur".format(
-                    conteneur.get_nom()))
+        if not conteneur.est_de_type("conteneur") and not \
+                conteneur.est_de_type("machine"):
+            raise ErreurExecution("{} n'est pas un conteneur ou " \
+                    "machine".format(conteneur.get_nom()))
         if not conteneur.contenu:
             raise ErreurExecution("{} n'est contenu nul part".format(
                     conteneur.get_nom()))

@@ -1,6 +1,6 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2010 LE GOFF Vincent
+# Copyright (c) 2010-2016 LE GOFF Vincent
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -44,11 +44,23 @@ class PrmLever(Parametre):
         self.aide_courte = "lève l'ancre présente"
         self.aide_longue = \
             "Cette commande lève l'ancre présente dans la salle où " \
-            "vous vous trouvez."
+            "vous vous trouvez. Pour certaines ancres plus lourdes, " \
+            "vous aurez besoin de faire cette manoeuvre à plusieurs. Les " \
+            "autres pourront peser sur le cabestan également. Quand le " \
+            "poids exercé sur le cabestan sera assez important, l'ancre " \
+            "dérapera du fond. Vous pouvez arrêter de peser sur le " \
+            "cabestan en entrant cette commande de nouveau."
 
     def interpreter(self, personnage, dic_masques):
         """Interprétation du paramètre"""
         salle = personnage.salle
+        if "ancre" in personnage.etats:
+            personnage << "Vous cessez de peser sur le cabestan."
+            salle.envoyer("{} cesse de peser sur le cabestan.", personnage)
+            personnage.etats.retirer("ancre")
+            return
+
+        personnage.agir("ancre")
         if not hasattr(salle, "navire") or salle.navire is None or \
                 salle.navire.etendue is None:
             personnage << "|err|Vous n'êtes pas sur un navire.|ff|"
@@ -71,12 +83,10 @@ class PrmLever(Parametre):
         elif navire.passerelle:
             personnage << "|err|La passerelle est dépliée.|ff|"
         else:
-            if not navire.a_le_droit(personnage, si_present=True):
+            if navire.proprietaire and not navire.a_le_droit(personnage,
+                    si_present=True):
                 personnage << "|err|Vous ne pouvez lever l'ancre de ce " \
                         "navire.|ff|"
                 return
 
-            navire.immobilise = False
-            ancre.jetee = False
-            personnage << "Vous levez l'ancre."
-            personnage.salle.envoyer("{} lève l'ancre.", personnage)
+            ancre.lever(personnage)

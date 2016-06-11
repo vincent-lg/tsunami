@@ -1,6 +1,6 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2013 LE GOFF Vincent
+# Copyright (c) 2010-2016 LE GOFF Vincent
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -29,6 +29,8 @@
 
 
 """Fichier contenant le paramètre 'placer' de la commande 'cale'."""
+
+import traceback
 
 from primaires.interpreteur.masque.parametre import Parametre
 
@@ -86,6 +88,7 @@ class PrmPlacer(Parametre):
         try:
             nombre = cale.ajouter_objets(objets)
         except ValueError as err:
+            print(traceback.format_exc())
             personnage << "|err|" + str(err) + "|ff|"
         else:
             personnage << "Vous mettez en cale {}.".format(objet.get_nom(

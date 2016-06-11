@@ -1,6 +1,6 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2010 LE GOFF Vincent
+# Copyright (c) 2010-2016 LE GOFF Vincent
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -31,8 +31,10 @@
 """Ce fichier contient la classe Objet, détaillée plus bas."""
 
 from datetime import datetime
+from fractions import Fraction
 
 from abstraits.obase import BaseObj
+from primaires.scripting.structure import StructureSimple
 
 class Objet(BaseObj):
 
@@ -78,6 +80,7 @@ class Objet(BaseObj):
         self.prototype = prototype
         self.contenu = None # contenu dans
         self.ajoute_a = datetime.now()
+        self.visible = True
         self._construire()
         if prototype:
             self.identifiant = prototype.cle + "_" + str(
@@ -103,7 +106,7 @@ class Objet(BaseObj):
         - D'abord on cherche dans la classe
           Si trouvé et que c'est une méthode d'objet on lui passe en
           paramètre l'objet au lieu du prototype
-        - Sinon on regarde dans le prorotype.
+        - Sinon on regarde dans le prototype.
 
         """
         try:
@@ -128,12 +131,17 @@ class Objet(BaseObj):
         """Retourne le poids total.
 
         Ce peut être :
-        *   Le point unitaire pour un objet standard
+        *   Le poids unitaire pour un objet standard
         *   Le poids unitaire plus le poids de tous les objets
             contenus pour un conteneur.
 
         """
         return self.calculer_poids()
+
+    @property
+    def prix(self):
+        """Retourne le prix de l'objet."""
+        return self._get_prix()
 
     @property
     def grand_parent(self):
@@ -246,6 +254,23 @@ class Objet(BaseObj):
 
         self.prototype.detruire_objet(self)
         BaseObj.detruire(self)
+
+    def get_structure(self):
+        """Retourne la structure de l'objet."""
+        structure = StructureSimple()
+        structure.visible = Fraction(self.visible)
+        structure.peut_prendre = Fraction(self.peut_prendre)
+        self.prototype.get_structure(structure)
+        return structure
+
+    def appliquer_structure(self, structure):
+        """Applique la structure passée en paramètre."""
+        for cle, valeur in structure.donnees.items():
+            if cle == "visible":
+                self.visible = bool(valeur)
+            elif cle == "peut_prendre":
+                self.peut_prendre = bool(valeur)
+
 
 class MethodeObjet:
 

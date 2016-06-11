@@ -1,6 +1,6 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2013 LE GOFF Vincent
+# Copyright (c) 2010-2016 LE GOFF Vincent
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -85,14 +85,17 @@ class PrmRecruter(Parametre):
                 personnage << "|err|Ce navire n'est pas visible.|ff|"
                 return
 
+            if cible.etats:
+                personnage.envoyer("{} est occupé.", cible)
+                return
+
             # Feint de partir
             if navire is None:
                 sortie = [s for s in salle.sorties][0]
                 salle.envoyer("{{}} s'en va vers {}.".format(
                         sortie.nom_complet), cible)
             else:
-                personnage << "|err|Ce matelot ne s'est pas rendu.|ff|"
-                return
+                salle.envoyer("{} saute à l'eau.", cible)
                 matelot = navire.equipage.get_matelot_depuis_personnage(
                         cible)
                 if matelot:

@@ -1,6 +1,6 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2010 LE GOFF Vincent
+# Copyright (c) 2010-2016 LE GOFF Vincent
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -37,11 +37,13 @@ from primaires.information import commandes
 
 from .editeurs.hedit import EdtHedit
 from .editeurs.nledit import EdtNledit
+from .roadmap import Roadmap
 from .newsletter import Newsletter
 from .sujet import SujetAide
 from .tips import Tips
 from .versions import Versions
 from .annonces import Annonces
+from primaires.information.reboot import Reboot
 
 class Module(BaseModule):
 
@@ -60,8 +62,10 @@ class Module(BaseModule):
         self.versions = None
         self.annonces = None
         self.newsletters = []
+        self.roadmaps = []
         self.logger = importeur.man_logs.creer_logger(
                 "information", "information")
+        self.reboot = None
 
     def config(self):
         """Configuration du module"""
@@ -73,7 +77,8 @@ class Module(BaseModule):
     def init(self):
         """Initialisation du module.
 
-        On récupère les sujets d'aide enregistrés et les versions.
+        On récupère les sujets d'aide enregistrés, les versions,
+        les newsletters et la roadmap.
 
         """
         sujets = self.importeur.supenr.charger_groupe(SujetAide)
@@ -100,6 +105,9 @@ class Module(BaseModule):
         self.newsletters = sorted(importeur.supenr.charger_groupe(Newsletter),
                 key=lambda nl: nl.date_creation)
 
+        self.roadmaps = sorted(importeur.supenr.charger_groupe(Roadmap),
+                key=lambda r: r.no)
+
         # On lie la méthode joueur_connecte avec l'hook joueur_connecte
         # La méthode joueur_connecte sera ainsi appelée quand un joueur
         # se connecte
@@ -112,11 +120,13 @@ class Module(BaseModule):
         """Ajout des commandes dans l'interpréteur"""
         self.commandes = [
             commandes.aide.CmdAide(),
+            commandes.annonces.CmdAnnonces(),
             commandes.hedit.CmdHedit(),
             commandes.newsletter.CmdNewsletter(),
+            commandes.reboot.CmdReboot(),
+            commandes.roadmap.CmdRoadmap(),
             commandes.tips.CmdTips(),
             commandes.versions.CmdVersions(),
-            commandes.annonces.CmdAnnonces(),
         ]
 
         for cmd in self.commandes:
@@ -201,6 +211,45 @@ class Module(BaseModule):
         self.newsletters.append(newsletter)
         return newsletter
 
+    def creer_roadmap(self, texte):
+        """Crée un nouvel élément de la roadmap.
+
+        Le texte contient le titre sous la forme "titre : texte".
+        Par exemple, "exploration : 500 salles ouvrables". Si le
+        deux point ne peut être trouvé, l'élément n'a pas de texte,
+        juste un titre.
+
+        """
+        try:
+            titre, texte = texte.split(":")
+        except ValueError:
+            titre = texte
+            texte = ""
+
+        # On nettoie le titre et le texte
+        titre = titre.strip().lower()
+        texte = texte.strip()
+
+        if not titre:
+            raise ValueError("Le titre de cette élément de feuille " \
+                    "de route est vide.")
+
+        # On crée l'élément de la feuille de route
+        roadmap = Roadmap(titre, texte)
+        self.roadmaps.append(roadmap)
+        return roadmap
+
+    def supprimer_roadmap(self, index):
+        """Supprime un élément de la roadmap."""
+        roadmap = self.roadmaps[index]
+        roadmap.detruire()
+        del self.roadmaps[index]
+
+        for i, roadmap in enumerate(self.roadmaps):
+            roadmap.no = i + 1
+
+        Roadmap.no_actuel = len(self.roadmaps)
+
     def construire_sommaire_pour(self, personnage):
         """Retourne le sommaire de la rubrique d'aide pour personnage."""
         # On affiche la liste des sujets d'aides
@@ -244,6 +293,14 @@ class Module(BaseModule):
                     "Pour les consulter, utilisez\nla commande |ff|" \
                     "|cmd|annonces|ff||vrc|.|ff|"
 
+        # Feuilles de route
+        elts = [r for r in self.roadmaps if joueur not in r.joueurs_ayant_lu]
+        if elts:
+            joueur << "|vrc|La feuille de route a été mise à jour. " \
+                    "Pour la consulter, utilisez\nla commande " \
+                    "|cmd|roadmap|vrc|.|ff|"
+
+
     def entree_tip(self, personnage, cle):
         """Retourne True si le personnage a lue la tip, False sinon."""
         liste = self.tips.personnages.get(personnage, [])
@@ -256,3 +313,31 @@ class Module(BaseModule):
             liste.append(cle)
 
         self.tips.personnages[personnage] = liste
+
+    def get_reboot(self):
+        """Création ou retour du reboot actuel."""
+        if self.reboot:
+            return self.reboot
+
+        self.reboot = Reboot()
+        return self.reboot
+
+    def programmer_reboot(self, secondes):
+        """Programme un reboot."""
+        anciennes_versions = []
+        if self.reboot:
+            anciennes_versions = list(self.reboot.versions)
+            self.reboot.actif = False
+
+        self.reboot = Reboot()
+        for version in anciennes_versions:
+            self.reboot.versions.append(version)
+
+        self.reboot.programmer(secondes)
+
+    def detruire(self):
+        """Destruction du module."""
+        BaseModule.detruire(self)
+        if self.reboot:
+            for version in self.reboot.versions:
+                self.versions.append(version)

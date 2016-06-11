@@ -1,6 +1,6 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2012 LE GOFF Vincent
+# Copyright (c) 2010-2016 LE GOFF Vincent
 # All rights reserved.
 # 
 # Redistribution and use in source and binary forms, with or without
@@ -131,3 +131,7 @@ class EdtPeriode(Presentation):
         poids.aide_courte = \
             "Entrez le poids maximum que peut porter la plante.\n\nPoids " \
             "actuel : {objet.poids_max} kg"
+
+        # Visible
+        visible = self.ajouter_choix("visible", "vi", Flag, periode, "visible")
+        visible.parent = self

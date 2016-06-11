@@ -1,11 +1,11 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2010 LE GOFF Vincent
+# Copyright (c) 2010-2016 LE GOFF Vincent
 # All rights reserved.
-# 
+#
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are met:
-# 
+#
 # * Redistributions of source code must retain the above copyright notice, this
 #   list of conditions and the following disclaimer.
 # * Redistributions in binary form must reproduce the above copyright notice,
@@ -14,7 +14,7 @@
 # * Neither the name of the copyright holder nor the names of its contributors
 #   may be used to endorse or promote products derived from this software
 #   without specific prior written permission.
-# 
+#
 # THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
 # AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
 # IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -34,50 +34,63 @@ from .expression import Expression
 from . import expressions
 
 class Tests(Expression):
-    
+
     """Expression tests."""
-    
+
     nom = "tests"
     def __init__(self):
         """Constructeur de l'expression."""
         Expression.__init__(self)
         self.nom = None
+        self.contraire = False
         self.expressions = ()
-    
+
     def __repr__(self):
         expressions = [str(e) for e in self.expressions]
-        return " ".join(expressions)
-    
+        chaine = " ".join(expressions)
+        if self.contraire:
+            chaine = "!" + chaine
+
+        return chaine
+
     @classmethod
     def parsable(cls, chaine):
         """Retourne True si la chaîne est parsable, False sinon."""
         return True
-     
+
     @classmethod
     def parser(cls, chaine):
         """Parse la chaîne.
-        
+
         Retourne l'objet créé et la partie non interprétée de la chaîne.
-        
+
         """
         objet = cls()
         expressions = cls.expressions_def
-        
+
         # Parsage des expressions
-        types = ("nombre", "chaine", "fonction", "operateur", "connecteur", \
+        types = ("nombre", "chaine", "fonction", "operateur", "connecteur",
                 "variable", "calcul")
         expressions = []
+
+        if chaine.startswith("!"):
+            objet.contraire = True
+            chaine = chaine[1:]
+
         while chaine.strip():
             arg, chaine = cls.choisir(types, chaine)
             expressions.append(arg)
-        
+
         objet.expressions = tuple(expressions)
-        
+
         return objet, chaine
-    
+
     @property
     def code_python(self):
         """Retourne le code Python du test."""
         py_tests = [t.code_python for t in self.expressions]
         code = " ".join(py_tests)
+        if self.contraire:
+            code = "not " + code
+
         return code

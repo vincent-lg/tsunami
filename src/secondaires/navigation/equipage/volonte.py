@@ -1,6 +1,6 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2013 LE GOFF Vincent
+# Copyright (c) 2010-2016 LE GOFF Vincent
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -72,6 +72,7 @@ class Volonte(BaseObj, metaclass=MetaVolonte):
         """Construit une volonté."""
         BaseObj.__init__(self)
         self.navire = navire
+        self.initiateur = None
 
     def __getnewargs__(self):
         return (None, )
@@ -149,3 +150,8 @@ class Volonte(BaseObj, metaclass=MetaVolonte):
             return reg.groups()
 
         return None
+
+    @classmethod
+    def extraire_arguments(cls, navire):
+        """Extrait les arguments de la volonté."""
+        return ()

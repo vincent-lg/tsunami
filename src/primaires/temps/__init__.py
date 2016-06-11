@@ -1,6 +1,6 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2010 LE GOFF Vincent
+# Copyright (c) 2010-2016 LE GOFF Vincent
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -30,15 +30,19 @@
 
 """Fichier contenant le module primaire temps."""
 
+from time import time
+
 from abstraits.module import *
 from primaires.meteo.perturbations.base import OPAQUE
 from .config import cfg_temps
 from .temps import Temps
+from .variable import TempsVariable
 from . import commandes
 
 class Module(BaseModule):
 
     """Cette classe contient les informations du module primaire temps.
+
     Ce module gère le temps, son écoulement et sa mesure. Une configuration
     complète de ce module permet de savoir :
     -   quelles sont les unités de temps (années, saisons, mois...)
@@ -54,11 +58,14 @@ class Module(BaseModule):
         self.met_changer_jour = []
         self.met_changer_mois = []
         self.met_changer_annee = []
+        self.synchroniser = False
 
     def config(self):
         """Méthode de configuration du module"""
         self.cfg = type(self.importeur).anaconf.get_config("temps",
             "temps/temps.cfg", "config temps", cfg_temps)
+
+        self.synchroniser = self.cfg.synchro
 
         # On crée les hooks du module
         importeur.hook.ajouter_hook("temps:minute",
@@ -108,7 +115,26 @@ class Module(BaseModule):
         """Incrémentation du temps"""
         self.importeur.diffact.ajouter_action("inc_temps",
                 1, self.inc)
-        self.temps.inc()
+
+        t2 = time()
+        if self.synchroniser:
+            t1 = self.temps.timestamp
+            delta = int(t2 - t1)
+            if delta > 3600:
+                print("Hoquet temporel :", delta, "secondes")
+                self.temps.timestamp = t2
+                return
+
+            if delta > 100:
+                delta = 100
+            t2 = t1 + delta
+        else:
+            delta = 1
+
+        for i in range(delta):
+            self.temps.inc()
+
+        self.temps.timestamp = t2
 
     def avancer(self, secondes):
         """Avance le temps du nombre de secondes IRL données."""
@@ -124,6 +150,11 @@ class Module(BaseModule):
                 break
         if salle.exterieur and not opaque:
             liste_messages.append("|cy|" + self.temps.ciel_actuel + "|ff|")
+
+    @property
+    def variable(self):
+        """Retourne le temps variable."""
+        return TempsVariable()
 
     def changer_minute(self):
         """Change de minute."""

@@ -1,6 +1,6 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2010 LE GOFF Vincent
+# Copyright (c) 2010-2016 LE GOFF Vincent
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -31,6 +31,7 @@
 """Fichier contenant la classe Fonction, détaillée plus bas."""
 
 from fractions import Fraction
+from time import time
 
 from abstraits.obase import BaseObj
 from .parser import expressions
@@ -76,8 +77,12 @@ class Fonction(BaseObj):
     @classmethod
     def executer(cls, evenement, *parametres):
         """Exécute la fonction selon l'évènement."""
+        t1 = time()
         fonction = cls.quelle_fonction(parametres)
-        return fonction(*parametres)
+        retour = fonction(*parametres)
+        t2 = time()
+        cls.enregistrer_stats(t1, t2)
+        return retour
 
     @classmethod
     def get_methode(self, numero):
@@ -141,3 +146,23 @@ class Fonction(BaseObj):
             s_types = [types.get(t) for t in str_types]
             del cls._parametres_possibles[str_types]
             cls._parametres_possibles[tuple(s_types)] = methode
+
+    @classmethod
+    def enregistrer_stats(cls, t1, t2):
+        """Enregistre le temps d'exécution de la fonction."""
+        diff = t2 - t1
+        module = importeur.scripting
+        if diff <= module.tps_fonctions:
+            if module.nb_moy_fonctions == 0:
+                module.nb_moy_fonctions = 1
+                module.moy_fonctions = diff
+            else:
+                module.moy_fonctions = (module.moy_fonctions * \
+                        module.nb_moy_fonctions + diff) / (module.nb_moy_fonctions \
+                        + 1)
+                module.nb_moy_fonctions += 1
+        else:
+            module.nb_exc_fonctions += 1
+            ancien_diff = module.exc_fonctions.get(cls.nom, -1)
+            if ancien_diff < diff:
+                module.exc_fonctions[cls.nom] = diff

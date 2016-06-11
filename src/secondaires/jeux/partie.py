@@ -1,6 +1,6 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2010 DAVY Guillaume
+# Copyright (c) 2010-2016 DAVY Guillaume
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -41,6 +41,7 @@ class Partie(BaseObj):
     """
 
     enregistrer = True
+    
     def __init__(self, objet, jeu, plateau):
         """Constructeur de la partie."""
         BaseObj.__init__(self)

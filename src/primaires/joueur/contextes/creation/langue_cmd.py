@@ -1,11 +1,11 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2010 LE GOFF Vincent
+# Copyright (c) 2010-2016 LE GOFF Vincent
 # All rights reserved.
-# 
+#
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are met:
-# 
+#
 # * Redistributions of source code must retain the above copyright notice, this
 #   list of conditions and the following disclaimer.
 # * Redistributions in binary form must reproduce the above copyright notice,
@@ -14,7 +14,7 @@
 # * Neither the name of the copyright holder nor the names of its contributors
 #   may be used to endorse or promote products derived from this software
 #   without specific prior written permission.
-# 
+#
 # THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
 # AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
 # IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -40,31 +40,36 @@ LANGUES_DISPONIBLES = ['francais', 'anglais']
 
 class LangueCMD(Contexte):
     """Contexte demandant au client de choisir la langue de ses commandes.
+
     Les commandes qu'il entrera par la suite seront fonction de cette
     option.
-    
+
     """
+
     nom = "personnage:creation:langue_cmd"
-    
+
     def __init__(self, pere):
         """Constructeur du contexte"""
         Contexte.__init__(self, pere)
-    
+
     def accueil(self):
         """Message d'accueil du contexte"""
         return \
-            "\n|tit|-------= Choix de la langue =-------|ff|\n" \
+            "\n|tit|-------= Choix de la langue des commandes =-------|ff|\n" \
             "Entrez l'un des |ent|choix|ff| proposés ci-après.\nLa langue " \
-            "choisie sera celle des commandes en jeu ; si vous n'êtes pas\n" \
-            "familiarisé avec les MUDs, nous vous conseillons le français. " \
-            "Une fois\nen jeu, vous pourrez toujours changer grâce à la " \
-            "commande |cmd|options|ff|.\n\n" \
+            "choisie sera celle des commandes en jeu ; pas du jeu " \
+            "lui-même.\nLe retour des commandes, les descriptions, " \
+            "messages, resteront\ndans tous les cas en français.\n" \
+            "Si vous n'êtes pas familiarisé avec les MUDs, nous vous " \
+            "conseillons le " \
+            "|ent|français|ff|.\nUne fois en jeu, vous pourrez toujours " \
+            "changer grâce à la commande |cmd|options|ff|.\n\n" \
             "Langues disponibles : |cmd|français|ff|, |cmd|anglais|ff|"
-    
+
     def get_prompt(self):
         """Message de prompt"""
         return "Entrez le nom de la langue : "
-    
+
     def interpreter(self, msg):
         """Méthode d'interprétation"""
         msg = supprimer_accents(msg).lower()
@@ -79,9 +84,9 @@ class LangueCMD(Contexte):
                 self.pere.joueur.alias_anglais.update(
                         importeur.interpreteur.alias_anglais)
             races = type(self).importeur.perso.races
-            if self.pere.joueur.race is None and races:
-                self.migrer_contexte("personnage:creation:choix_race")
+            if races:
+                importeur.joueur.migrer_ctx_creation(self)
             else:
                 self.pere.compte.ajouter_joueur(self.pere.joueur)
-                
+
                 self.pere.joueur.pre_connecter()

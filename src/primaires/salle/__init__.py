@@ -1,6 +1,6 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2010 LE GOFF Vincent
+# Copyright (c) 2010-2016 LE GOFF Vincent
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -30,10 +30,11 @@
 
 """Fichier contenant le module primaire salle."""
 
+from datetime import datetime
+from fractions import Fraction
 from math import sqrt
 import re
 from random import random, randint
-from datetime import datetime
 
 from abstraits.module import *
 from primaires.format.fonctions import format_nb, supprimer_accents
@@ -51,6 +52,7 @@ from .sortie import Sortie
 from .sorties import NOMS_SORTIES
 from .zone import Zone
 from .templates.terrain import Terrain
+from .editeurs.aedit import EdtAedit
 from .editeurs.decedit import EdtDecedit
 from .editeurs.redit import EdtRedit
 from .editeurs.sbedit import EdtSbedit
@@ -140,6 +142,9 @@ class Module(BaseModule):
         for no in range(1, NB_TICKS + 1):
             self.ticks[no] = []
 
+        type(importeur).espace["salles"] = self._salles
+        type(importeur).espace["zones"] = self._zones
+
     @property
     def salles(self):
         """Retourne un dictionnaire déréférencé des salles."""
@@ -182,6 +187,10 @@ class Module(BaseModule):
         self.ajouter_terrain("rocher", "un rocher à demi immergé")
         self.ajouter_terrain("rempart", "un haut mur fortifié")
         self.ajouter_terrain("récif", "une ligne de récifs")
+        self.ajouter_terrain("rapide", "de dangereux rapides")
+        self.ajouter_terrain("banc de sable",
+                "un banc de sable à demi immergé")
+        self.ajouter_terrain("corail", "une barrière de corail")
 
         # On ajoute les niveaux
         importeur.perso.ajouter_niveau("survie", "survie")
@@ -318,6 +327,7 @@ class Module(BaseModule):
             importeur.interpreteur.ajouter_commande(cmd)
 
         # Ajout des éditeurs 'decedit', 'redit' et 'zedit'
+        importeur.interpreteur.ajouter_editeur(EdtAedit)
         importeur.interpreteur.ajouter_editeur(EdtDecedit)
         importeur.interpreteur.ajouter_editeur(EdtRedit)
         importeur.interpreteur.ajouter_editeur(EdtSbedit)
@@ -334,6 +344,8 @@ class Module(BaseModule):
             toujours là
         -   Chaque salle est dans une zone
         -   Chaque terrain a sa réciproque en obstacle
+        -   Les étendues ont toutes un contour défini
+        -   Les étendues détemrinent leurs segments de liens
 
         """
         # On récupère la configuration
@@ -407,6 +419,14 @@ class Module(BaseModule):
             for affection in salle.affections.values():
                 affection.prevoir_tick()
 
+        # On parcour les étendues
+        for etendue in self.etendues.values():
+            x, y = etendue.origine
+            if x is not None and y is not None:
+                etendue.trouver_contour()
+
+            etendue.determiner_segments_liens()
+
     def detruire(self):
         """Destruction du module.
 
@@ -471,7 +491,7 @@ class Module(BaseModule):
         if not re.search(ZONE_VALIDE, zone):
             raise ValueError("Zone {} invalide".format(zone))
         if not re.search(MNEMONIC_VALIDE, mnemonic):
-            raise ValueError("Mnémonic {} invalide ({})".format(mnemonic,
+            raise ValueError("Mnémonique {} invalide ({})".format(mnemonic,
                     MNEMONIC_VALIDE))
 
         salle = Salle(zone, mnemonic, x, y, z, valide)
@@ -877,6 +897,11 @@ class Module(BaseModule):
         """Hook appelé à chaque changement de minute."""
         minute, heure, jour, mois, annee = temps.minute, temps.heure, \
                 temps.jour + 1, temps.mois + 1, temps.annee
+        minute = Fraction(minute)
+        heure = Fraction(heure)
+        jour = Fraction(jour)
+        mois = Fraction(mois)
+        annee = Fraction(annee)
         for salle in self.ch_minute:
             salle.script["changer"]["minute"].executer(salle=salle,
                     minute=minute, heure=heure, jour=jour, mois=mois,
@@ -886,6 +911,11 @@ class Module(BaseModule):
         """Hook appelé à chaque changement d'heure."""
         minute, heure, jour, mois, annee = temps.minute, temps.heure, \
                 temps.jour + 1, temps.mois + 1, temps.annee
+        minute = Fraction(minute)
+        heure = Fraction(heure)
+        jour = Fraction(jour)
+        mois = Fraction(mois)
+        annee = Fraction(annee)
         for salle in self.ch_heure:
             salle.script["changer"]["heure"].executer(salle=salle,
                     minute=minute, heure=heure, jour=jour, mois=mois,
@@ -895,6 +925,11 @@ class Module(BaseModule):
         """Hook appelé à chaque changement de jour."""
         minute, heure, jour, mois, annee = temps.minute, temps.heure, \
                 temps.jour + 1, temps.mois + 1, temps.annee
+        minute = Fraction(minute)
+        heure = Fraction(heure)
+        jour = Fraction(jour)
+        mois = Fraction(mois)
+        annee = Fraction(annee)
         for salle in self.ch_jour:
             salle.script["changer"]["jour"].executer(salle=salle,
                     minute=minute, heure=heure, jour=jour, mois=mois,
@@ -904,6 +939,11 @@ class Module(BaseModule):
         """Hook appelé à chaque changement de mois."""
         minute, heure, jour, mois, annee = temps.minute, temps.heure, \
                 temps.jour + 1, temps.mois + 1, temps.annee
+        minute = Fraction(minute)
+        heure = Fraction(heure)
+        jour = Fraction(jour)
+        mois = Fraction(mois)
+        annee = Fraction(annee)
         for salle in self.ch_mois:
             salle.script["changer"]["mois"].executer(salle=salle,
                     minute=minute, heure=heure, jour=jour, mois=mois,
@@ -913,6 +953,11 @@ class Module(BaseModule):
         """Hook appelé à chaque changement d'année."""
         minute, heure, jour, mois, annee = temps.minute, temps.heure, \
                 temps.jour + 1, temps.mois + 1, temps.annee
+        minute = Fraction(minute)
+        heure = Fraction(heure)
+        jour = Fraction(jour)
+        mois = Fraction(mois)
+        annee = Fraction(annee)
         for salle in self.ch_annee:
             salle.script["changer"]["annee"].executer(salle=salle,
                     minute=minute, heure=heure, jour=jour, mois=mois,

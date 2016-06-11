@@ -1,6 +1,6 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2012 LE GOFF Vincent
+# Copyright (c) 2010-2016 LE GOFF Vincent
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -83,6 +83,7 @@ class Affection(BaseObj):
     def prevoir_tick(self):
         """Ajoute l'action à exécuter dans diffact."""
         nom = "aff_" + str(id(self))
-        if nom not in importeur.diffact.actions:
-            importeur.diffact.ajouter_action(nom,
-                    self.affection.duree_tick, self.affection.tick, self)
+        if self.affection.tick_actif:
+            if nom not in importeur.diffact.actions:
+                importeur.diffact.ajouter_action(nom,
+                        self.affection.duree_tick, self.affection.tick, self)

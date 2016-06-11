@@ -1,6 +1,6 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2013 LE GOFF Vincent
+# Copyright (c) 2010-2016 LE GOFF Vincent
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -112,7 +112,7 @@ class PrmPromouvoir(Parametre):
 
         if nom is None:
             personnage << "|err|Impossible de trouver le nom du poste : " \
-                    "{}.".format(nom_poste)
+                    "{}.|ff|".format(nom_poste)
         else:
             equipage.changer_poste(joueur, nom)
             personnage << lisser("{} a bien été mis au poste de {}.".format(

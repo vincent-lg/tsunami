@@ -1,11 +1,11 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2010 LE GOFF Vincent
+# Copyright (c) 2010-2016 LE GOFF Vincent
 # All rights reserved.
-# 
+#
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are met:
-# 
+#
 # * Redistributions of source code must retain the above copyright notice, this
 #   list of conditions and the following disclaimer.
 # * Redistributions in binary form must reproduce the above copyright notice,
@@ -14,7 +14,7 @@
 # * Neither the name of the copyright holder nor the names of its contributors
 #   may be used to endorse or promote products derived from this software
 #   without specific prior written permission.
-# 
+#
 # THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
 # AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
 # IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -98,42 +98,43 @@ from bases.logs import man_logs
 REP_CONFIG = os.path.expanduser("~") + os.sep + "kassie" + os.sep + "config"
 
 class Anaconf:
-    
+
     """Classe manipulant les fichiers de configuration.
-    
+
     Elle gère la lecture, l'écriture et l'interprétation de ces fichiers.
-    
+
     Chaque module primaire ou secondaire ayant besoin d'enregistrer des
     informations de configuration devra passer par anaconf.
     C'est également vrai pour les informations du corps
     (configuration générale).
-    
+
     """
-    
+
     def __init__(self):
         """Constructeur du gestionnaire de configuration."""
         self.configs = {}
-    
+
     def config(self, parser_cmd):
         """Méthode de configuration.
-        
+
         On se charge ici de modifier la valeur de REP_CONFIG
         (le chemin menant au fichier de configuration) si la ligne
         de commande précise un autre chemin. On crée le dossier
         si il n'existe pas.
-        
+
         """
         global REP_CONFIG
         if "chemin-configuration" in parser_cmd.keys():
             REP_CONFIG = parser_cmd["chemin-configuration"]
-        
+
         # On construit le répertoire s'il n'existe pas
         if not os.path.exists(REP_CONFIG):
             os.makedirs(REP_CONFIG)
-    
-    def get_config(self, nom_id, chemin="", nom_defaut="", defaut=""):
+
+    def get_config(self, nom_id, chemin="", nom_defaut="", defaut="",
+            debug=False):
         """Charge ou retourne une configuration existante.
-        
+
         Cette méthode permet de charger une configuration contenue dans
         le fichier passé en paramètre.
         Si le fichier a déjà été chargé, on retourne l'analyseur correspondant.
@@ -145,7 +146,7 @@ class Anaconf:
         Si certaines données ne sont pas trouvées dans le fichier chargé,
         on les met à jour grâce à ce paramètre et on met à jour
         le fichier de configuration.
-        
+
         """
         global REP_CONFIG
         chemin = REP_CONFIG + os.sep + chemin
@@ -167,17 +168,17 @@ class Anaconf:
                 raise RuntimeError("le chargement de l'analyseur {} " \
                         "a échoué. Droits en écriture refusés sur {}".format(
                         nom_id, chemin))
-            
+
             logger = man_logs.creer_logger("anaconf", nom_id)
             # On construit le répertoire s'il n'existe pas
             rep = os.path.split(chemin)[0]
             if not os.path.exists(rep):
                 os.makedirs(rep)
-            
+
             # On l'ajoute aux configurations chargées
             self.configs[nom_id] = Analyseur(chemin,
-                    nom_defaut, defaut, logger)
-        
+                    nom_defaut, defaut, logger, debug=debug)
+
         # On retourne l'analyseur
         return self.configs[nom_id]
 

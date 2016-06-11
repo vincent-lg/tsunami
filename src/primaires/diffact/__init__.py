@@ -1,6 +1,6 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2010 LE GOFF Vincent
+# Copyright (c) 2010-2016 LE GOFF Vincent
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -33,6 +33,7 @@
 import traceback
 
 from abstraits.module import *
+from primaires.scripting.exceptions import InterrompreCommande
 from .action_differee import ActionDifferee
 
 class Module(BaseModule):
@@ -138,13 +139,18 @@ class Module(BaseModule):
 
         """
         for nom in self.ordre_actions:
-            action = self.actions[nom]
-            if action.doit_exec():
+            action = self.actions.get(nom)
+            if action is None or action.doit_exec():
                 # On la supprime avant toute chose
                 self.retirer_action(nom)
                 # On l'exécute ensuite
+                if action is None:
+                    continue
+
                 try:
                     action.executer()
+                except InterrompreCommande:
+                    pass
                 except Exception:
                     self.logger.fatal("Une erreur s'est produite lors " \
                             "de l'exécution de l'action {}.".format(

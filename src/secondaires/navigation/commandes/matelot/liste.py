@@ -1,6 +1,6 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2013 LE GOFF Vincent
+# Copyright (c) 2010-2016 LE GOFF Vincent
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -55,7 +55,7 @@ class PrmListe(Parametre):
         """Interprétation du paramètre"""
         salle = personnage.salle
         if not hasattr(salle, "navire"):
-            personnage << "|err|Vous n'êtes pas sur un navire."
+            personnage << "|err|Vous n'êtes pas sur un navire.|ff|"
             return
 
         navire = salle.navire

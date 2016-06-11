@@ -1,6 +1,6 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2012 LE GOFF Vincent
+# Copyright (c) 2010-2016 LE GOFF Vincent
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -48,7 +48,7 @@ class CmdDepecer(Commande):
         """Constructeur de la commande"""
         Commande.__init__(self, "dépecer", "skin")
         self.schema = "<nom_objet>"
-        self.aide_courte = "dépece le cadavre d'un PNJ"
+        self.aide_courte = "dépèce le cadavre d'un PNJ"
         self.aide_longue = \
             "Cette commande permet de dépecer le cadavre d'un PNJ " \
             "présent sur le sol de la salle où vous vous " \
@@ -106,7 +106,7 @@ class CmdDepecer(Commande):
         if connaissance < objet.pnj.niveau:
             personnage << "|err|Vous faites un beau gâchis en essayant de " \
                     "dépecer ce cadavre.|ff|"
-            personnage.salle.envoyer("{} fait un beau gâchi en tentant de " \
+            personnage.salle.envoyer("{} fait un beau gâchis en tentant de " \
                     "dépecer " + objet.get_nom() + ".", personnage)
             importeur.objet.supprimer_objet(objet.identifiant)
         else:
@@ -120,5 +120,7 @@ class CmdDepecer(Commande):
                     lame.get_nom() + "."
             personnage.salle.envoyer("{} dépece " + objet.get_nom() + \
                     " avec " + lame.get_nom() + ".", personnage)
+            objet.pnj.script["depece"].executer(personnage=personnage,
+                    salle=personnage.salle)
             personnage.gagner_xp_rel(objet.pnj.niveau, objet.pnj.gain_xp // 3,
                     "survie")

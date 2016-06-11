@@ -1,6 +1,6 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2012 LE GOFF Vincent
+# Copyright (c) 2010-2016 LE GOFF Vincent
 # All rights reserved.
 # 
 # Redistribution and use in source and binary forms, with or without
@@ -49,7 +49,7 @@ class EdtPoissons(Editeur):
                 "banc {}".format(banc).ljust(76)
         msg += "|ff||\n" + self.opts.separateur + "\n"
         msg += self.aide_courte + "\n"
-        msg += "Poissons ddéfinis :"
+        msg += "Poissons définis :"
         
         # Parcours des poissons
         poissons = sorted([(poisson, proba) for poisson, proba in \

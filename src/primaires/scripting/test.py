@@ -1,6 +1,6 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2010 LE GOFF Vincent
+# Copyright (c) 2010-2016 LE GOFF Vincent
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -33,11 +33,13 @@
 import re
 import traceback
 from fractions import Fraction
+from time import time
 
 from abstraits.obase import BaseObj
 from primaires.format.fonctions import *
 from primaires.scripting.parser import expressions
 from primaires.scripting.instruction import Instruction, ErreurExecution
+from primaires.scripting.jeton import Jeton
 from primaires.scripting.exceptions import InterrompreCommande
 from primaires.scripting.constantes.connecteurs import CONNECTEURS
 from primaires.scripting.utile.fonctions import *
@@ -61,6 +63,7 @@ class Test(BaseObj):
         self.__evenement = evenement
         self.__tests = None
         self.__instructions = []
+        self.__cache = None
         self.dernier_niveau = 0
         self.etape = None
         self._construire()
@@ -99,6 +102,50 @@ class Test(BaseObj):
         acteur = self.evenement.nom_acteur
         return self.evenement.espaces.variables[acteur]
 
+    @property
+    def tests(self):
+        """Retourne le test."""
+        return self.__tests
+
+    @property
+    def sc_tests(self):
+        """Retourne le test sans couleurs sous la forme d'une chaîne.
+
+        Il s'agit de la chaîne de test scripting tel qu'elle
+        est affichée dans l'éditeur, mais sans couleurs.
+
+        """
+        return supprimer_couleurs(str(self.__tests))
+
+    def get_cache(self):
+        """Calcul le cache Python si nécessaire.
+
+        Le cache est soit écrit dans l'attribut d'instance __cache,
+        soit à calculer depuis la liste des instructions. Quand le
+        calcul complet a besoin d'être fait, l'attribut d'instance
+        '__cache' est mis à jour. Ce système permet de garder en mémoire
+        le code Python propre à un test au lieu de le redemander à
+        chaque fois, ce qui peut ralentir l'exécution.
+
+        """
+        if self.__cache is None:
+            # Calcul le cache
+            self.calculer_cache()
+
+        return self.__cache
+
+    def calculer_cache(self):
+        """Calcul le cache et l'écrit dans self.__cache."""
+        code = "def script():\n"
+        lignes = []
+        for instruction in self.__instructions:
+            lignes.append((" " * 4 * (instruction.niveau + 1)) + \
+                    instruction.code_python)
+
+        code += "\n".join(lignes)
+        code += "\n    yield None"
+        self.__cache = code
+
     def construire(self, chaine_test):
         """Construit la suite de chaînes en fonction de la chaîne.
 
@@ -113,6 +160,8 @@ class Test(BaseObj):
         instruction.deduire_niveau(self.dernier_niveau)
         self.dernier_niveau = instruction.get_niveau_suivant()
         self.__instructions.append(instruction)
+        self.calculer_cache()
+        return instruction
 
     def ajouter_instructions(self, instructions):
         """Ajoute plusieurs instructions.
@@ -139,6 +188,7 @@ class Test(BaseObj):
         instruction.niveau = ancienne_instruction.niveau
         self.__instructions[ligne] = instruction
         self.reordonner()
+        self.calculer_cache()
 
     def corriger_instruction(self, ligne, texte, remplacement):
         """Corrige l'instruction spécifiée.
@@ -173,6 +223,7 @@ class Test(BaseObj):
         instruction.niveau = niveau
         self.__instructions[ligne] = instruction
         self.reordonner()
+        self.calculer_cache()
 
     def inserer_instruction(self, ligne, message):
         """Insère une instruction à la ligne précisée."""
@@ -183,6 +234,7 @@ class Test(BaseObj):
         instruction = type_instruction.construire(message)
         self.__instructions.insert(ligne, instruction)
         self.reordonner()
+        self.calculer_cache()
 
     def supprimer_instruction(self, ligne):
         """Supprime une instruction."""
@@ -191,6 +243,7 @@ class Test(BaseObj):
 
         del self.__instructions[ligne]
         self.reordonner()
+        self.calculer_cache()
 
     def reordonner(self):
         """Vérifie et corrige les tabulations de toutes les instructions."""
@@ -213,7 +266,14 @@ class Test(BaseObj):
 
         py_code = self.__tests.code_python
         globales = self.get_globales(evenement)
-        return bool(eval(py_code, globales))
+        res = False
+        try:
+            res = bool(eval(py_code, globales))
+        except Exception as err:
+            self.erreur_execution(str(err))
+
+        return res
+
 
     def get_globales(self, evenement):
         """Retourne le dictionnaire des globales d'exécution."""
@@ -235,15 +295,23 @@ class Test(BaseObj):
 
         """
         appelant = self.appelant
-        evenement = str(self.evenement.nom)
+        evenement = str(self.evenement.nom_complet)
         tests = self.__tests and "si " + str(self) or "sinon"
         pile = traceback.format_exc()
 
         # Extraction de la ligne d'erreur
         reg = re.search("File \"\<string\>\", line ([0-9]+)", pile)
+        no_ligne = -1
         if reg:
             no_ligne = int(reg.groups()[-1]) - 1
-            ligne = echapper_accolades(str(self.__instructions[no_ligne - 1]))
+
+        if no_ligne > 0:
+            try:
+                ligne = echapper_accolades(str(self.__instructions[no_ligne - 1]))
+            except IndexError:
+                no_ligne = "|err|inconnue|ff|"
+                ligne = "Ligne inconnue."
+                message = "erreur de syntaxe"
         else:
             no_ligne = "|err|inconnue|ff|"
             ligne = "Ligne inconnue."
@@ -260,49 +328,95 @@ class Test(BaseObj):
                         "l'exécution d'un script.\nL'alerte {} a été " \
                         "créée pour en rendre compte.|ff|".format(alerte.no)
 
-    def executer_code(self, evenement, code):
+    def executer_code(self, evenement, code, personnage=None,
+            alarme=None, exc_interruption=True, bloquant=None, jeton=None):
         """Exécute le code passé en paramètre.
 
         Le code est sous la forme d'un générateur. On appelle donc
         la fonction next et récupère le retour (la valeur suivant
         le yield).
             Si ce retour est 0, on continue l'exécution (appel récursif).
+            Si le retour est un tuple, on crée une alarme
             Si le retour est un autre nombre, on diffère l'exécutçion
             Si le retour est None, on s'arrête.
 
         """
+        if personnage and alarme:
+            if not importeur.scripting.alarme_existe(personnage, alarme):
+                return
+
+        t1 = time()
+
         # Exécution
+        if bloquant and not bloquant.complet:
+            nom = "script_dif<" + str(id(code)) + ">"
+            importeur.diffact.ajouter_action(nom, 1,
+                    self.executer_code, evenement, code, personnage,
+                    alarme, False, bloquant, jeton)
+            return
+
         importeur.scripting.execute_test.append(self)
         try:
             ret = next(code)
         except ErreurExecution as err:
             self.erreur_execution(str(err))
         except InterrompreCommande as err:
-            raise err
+            if exc_interruption:
+                raise err
         except Exception as err:
             self.erreur_execution(str(err))
         else:
             if ret is None:
+                if jeton:
+                    jeton.completer()
                 return
 
             tps = 0
-            try:
-                tps = int(ret)
-                assert tps >= 0
-            except (ValueError, AssertionError):
-                pass
+            personnage = alarme = None
+            if isinstance(ret, tuple):
+                # Force l'écriture de variables indépendantes
+                code.gi_frame.f_globals["variables"] = dict(
+                        code.gi_frame.f_globals["variables"])
+                personnage = ret[1]
+                alarme = ret[2]
+                try:
+                    tps = int(ret[0])
+                    assert tps >= 0
+                except (ValueError, AssertionError):
+                    pass
+            elif isinstance(ret, Jeton):
+                tps = 1
+                bloquant = ret
+            else:
+                try:
+                    tps = int(ret)
+                    assert tps >= 0
+                except (ValueError, AssertionError):
+                    pass
 
             if tps == 0:
-                self.executer_code(evenement, code)
+                self.executer_code(evenement, code, personnage, alarme, False)
             else:
                 # On diffère l'exécution du script
                 nom = "script_dif<" + str(id(code)) + ">"
                 importeur.diffact.ajouter_action(nom, tps,
-                        self.executer_code, evenement, code)
+                        self.executer_code, evenement, code, personnage,
+                        alarme, False, bloquant, jeton)
         finally:
             importeur.scripting.execute_test.remove(self)
+            t2 = time()
+            diff = t2 - t1
+            if diff > importeur.scripting.tps_script:
+                appelant = self.appelant
+                appelant = type(appelant).nom_scripting + " " + \
+                        repr(appelant)
+                evenement = str(self.evenement.nom_complet)
+                tests = self.__tests and "si " + str(self) or "sinon"
+                ligne = "{}, évènement {}, test {}".format(appelant,
+                        evenement, tests)
+                importeur.scripting.scripts_gourmands[ligne] = diff
 
-    def executer_instructions(self, evenement):
+    def executer_instructions(self, evenement, jeton=None):
         """Convertit et exécute la suite d'instructions.
 
         Pour plus de facilité, on convertit le script en Python pour l'heure
@@ -313,15 +427,7 @@ class Test(BaseObj):
         if etape and self.acteur:
             self.acteur.quetes[etape.quete.cle].deverouiller()
 
-        code = "def script():\n"
-        lignes = []
-        instructions = self.instructions
-        for instruction in instructions:
-            lignes.append((" " * 4 * (instruction.niveau + 1)) + \
-                    instruction.code_python)
-
-        code += "\n".join(lignes)
-        code += "\n    yield None"
+        code = self.get_cache()
 
         # Constitution des globales
         globales = self.get_globales(evenement)
@@ -331,7 +437,7 @@ class Test(BaseObj):
             self.erreur_execution(str(err))
         else:
             code = globales['script']()
-            self.executer_code(evenement, code)
+            self.executer_code(evenement, code, jeton=jeton)
 
         # Si le test est relié à une quête
         if etape and self.acteur:

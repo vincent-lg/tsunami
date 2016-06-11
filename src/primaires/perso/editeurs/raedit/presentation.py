@@ -1,11 +1,11 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2010 LE GOFF Vincent
+# Copyright (c) 2010-2016 LE GOFF Vincent
 # All rights reserved.
-# 
+#
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are met:
-# 
+#
 # * Redistributions of source code must retain the above copyright notice, this
 #   list of conditions and the following disclaimer.
 # * Redistributions in binary form must reproduce the above copyright notice,
@@ -14,7 +14,7 @@
 # * Neither the name of the copyright holder nor the names of its contributors
 #   may be used to endorse or promote products derived from this software
 #   without specific prior written permission.
-# 
+#
 # THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
 # AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
 # IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -34,35 +34,36 @@
 
 from primaires.interpreteur.editeur.presentation import Presentation
 from primaires.interpreteur.editeur.description import Description
+from primaires.interpreteur.editeur.flags import Flags
 from primaires.interpreteur.editeur.uniligne import Uniligne
 from .edt_stats import EdtStats
 from .edt_squelette import EdtSquelette
 from .edt_genres import EdtGenres
 
 class EdtPresentation(Presentation):
-    
+
     """Classe définissant l'éditeur de race 'raedit'.
-    
+
     """
-    
+
     def __init__(self, personnage, race, attribut=""):
         """Constructeur de l'éditeur"""
         if personnage:
             instance_connexion = personnage.instance_connexion
         else:
             instance_connexion = None
-        
+
         Presentation.__init__(self, instance_connexion, race)
         if personnage and race:
             self.construire(race)
-    
+
     def __getnewargs__(self):
         return (None, None)
-    
+
     def construire(self, race):
         """Construction de l'éditeur"""
         race = self.objet
-        
+
         # Description
         description = self.ajouter_choix("description", "d", Description, \
                 race)
@@ -71,7 +72,14 @@ class EdtPresentation(Presentation):
         description.aide_courte = \
             "| |tit|" + "Description de la race '{}'".format(race).ljust(
             76) + "|ff||\n" + self.opts.separateur
-        
+
+        # Flags
+        flags = self.ajouter_choix("flags", "fl", Flags, race, "flags",
+                type(race).def_flags)
+        flags.parent = self
+        flags.aide_courte = \
+            "Flags de race de {} :".format(race.nom)
+
         # Genres
         genres = self.ajouter_choix("genres", "g", EdtGenres, race.genres)
         genres.parent = self
@@ -87,12 +95,12 @@ class EdtPresentation(Presentation):
             "défaut d'un genre.\n" \
             "Entrez |cmd|/|ff| pour revenir à la fenêtre parente.\n\n" \
             "{objet.tableau_genres}"
-        
+
         # Stats
         stats = self.ajouter_choix("stats", "s", EdtStats, \
                 race.stats)
         stats.parent = self
-        
+
         # Squelette
         squelette = self.ajouter_choix("squelette", "sq", EdtSquelette,
                 race)

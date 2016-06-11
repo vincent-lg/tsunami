@@ -1,6 +1,6 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2010 LE GOFF Vincent
+# Copyright (c) 2010-2016 LE GOFF Vincent
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -102,11 +102,11 @@ class CmdManger(Commande):
             if personnage.faim < 0:
                 personnage.faim = 0
             personnage.estomac += objet.poids_unitaire
+            personnage.salle.envoyer("{{}} mange {}.".format(objet.get_nom()),
+                    personnage)
             objet.script["mange"].executer(personnage=personnage, objet=objet)
             objet.contenu.retirer(objet)
             importeur.objet.supprimer_objet(objet.identifiant)
-            personnage.salle.envoyer("{{}} mange {}.".format(objet.get_nom()),
-                    personnage)
         else:
             e = "e" if personnage.est_feminin() else ""
             personnage << "Vous êtes plein{e} ; une bouchée de plus " \

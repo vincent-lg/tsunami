@@ -1,6 +1,6 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2010 LE GOFF Vincent
+# Copyright (c) 2010-2016 LE GOFF Vincent
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -31,6 +31,7 @@
 """Fichier contenant la classe Action, détaillée plus bas."""
 
 from fractions import Fraction
+from time import time
 
 from .instruction import Instruction
 from .parser import expressions, MetaExpression
@@ -108,8 +109,12 @@ class Action(Instruction):
     @classmethod
     def executer(cls, evenement, *parametres, **kw_parametres):
         """Exécute l'action selon l'évènement."""
+        t1 = time()
         action = cls.quelle_action(parametres)
-        return action(*parametres, **kw_parametres)
+        retour = action(*parametres, **kw_parametres)
+        t2 = time()
+        cls.enregistrer_stats(t1, t2)
+        return retour
 
     @classmethod
     def get_methode(self, numero):
@@ -236,3 +241,23 @@ class Action(Instruction):
 
         py_code += ".executer(" + ", ".join(py_args) + ")"
         return py_code
+
+    @classmethod
+    def enregistrer_stats(cls, t1, t2):
+        """Enregistre le temps d'exécution de l'action."""
+        diff = t2 - t1
+        module = importeur.scripting
+        if diff <= module.tps_actions:
+            if module.nb_moy_actions == 0:
+                module.nb_moy_actions = 1
+                module.moy_actions = diff
+            else:
+                module.moy_actions = (module.moy_actions * \
+                        module.nb_moy_actions + diff) / (module.nb_moy_actions \
+                        + 1)
+                module.nb_moy_actions += 1
+        else:
+            module.nb_exc_actions += 1
+            ancien_diff = module.exc_actions.get(cls.nom, -1)
+            if ancien_diff < diff:
+                module.exc_actions[cls.nom] = diff

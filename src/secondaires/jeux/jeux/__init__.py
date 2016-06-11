@@ -1,6 +1,6 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2010 DAVY Guillaume
+# Copyright (c) 2010-2016 DAVY Guillaume
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -54,6 +54,7 @@ class BaseJeu(BaseObj):
     """
 
     nom = "" # nom du jeu
+
     def __init__(self):
         """Constructeur d'un jeu.
 
@@ -72,7 +73,7 @@ class BaseJeu(BaseObj):
         return ()
 
     def peut_commencer(self):
-        """La partie peut-elle commencée ?"""
+        """La partie peut-elle commencer ?"""
         return True
 
     def peut_jouer(self, personnage):
@@ -115,8 +116,26 @@ class BaseJeu(BaseObj):
         personnage.contextes.retirer()
         personnage << "Vous quittez la partie."
         self.partie.retirer_joueur(personnage)
-        if len(self.partie.joueurs) == 0:
+        if personnage in self.partie.observateurs:
+            self.partie.observateurs.remove(personnage)
+
+        if len(self.partie.joueurs + self.partie.observateurs) == 0:
             self.partie.detruire()
+
+    def opt_reset(self, personnage, message):
+        """Force tout le monde à quitter le jeu."""
+        if personnage.est_immortel():
+            for joueur in self.partie.joueurs + self.partie.observateurs:
+                joueur.contextes.retirer()
+                joueur << "Vous quittez la partie."
+                self.partie.retirer_joueur(joueur)
+                if joueur in self.partie.observateurs:
+                    self.partie.observateurs.remove(joueur)
+
+            self.partie.detruire()
+            self.partie = None
+        else:
+            personnage << "|err|Vous ne pouvez faire cela.|ff|"
 
     def opt_v(self, personnage, message):
         """Affiche le plateau."""
@@ -125,7 +144,7 @@ class BaseJeu(BaseObj):
     def opt_o(self, personnage, message):
         """Bascule entre le mode joueur et le mode observateur."""
         if self.partie.en_cours:
-            personnage << "|err|La partie a déjà commencée.|ff|"
+            personnage << "|err|La partie a déjà commencé.|ff|"
             return
 
         if personnage in self.partie.joueurs:

@@ -1,6 +1,6 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2013 LE GOFF Vincent
+# Copyright (c) 2010-2016 LE GOFF Vincent
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -73,29 +73,19 @@ class Tirer(Volonte):
         """Trouve le canon qui peut pointer vers adverse."""
         centre = adverse.salles.get((0, 0, 0))
         equipage = self.navire.equipage
-        matelots = equipage.get_matelots_ayant_ordre("feu")
-        canons = [m.get_ordre("feu").canon for m in matelots]
-        canons = list(set(canons))
+        canons = equipage.get_canons_libres()
         vec_adverse = Vector(*centre.coords.tuple())
         nav_direction = self.navire.direction.direction
-        canon_utilise = None
-        canon_libre = None
-        for salle in self.navire.salles.values():
-            t_canon = salle.get_element("canon")
-            if t_canon:
-                t_vecteur = Vector(*salle.coords.tuple())
-                t_distance = vec_adverse - t_vecteur
-                t_direction = get_direction(t_distance)
-                t_direction = (t_direction - nav_direction) % 360
-                if salle.sabord_oriente(t_direction):
-                    if t_canon in canons:
-                        canon_utilise = t_canon
-                    else:
-                        canon_libre = t_canon
-                        break
+        for canon in canons:
+            salle = canon.parent
+            vecteur = Vector(*salle.coords.tuple())
+            distance = vec_adverse - vecteur
+            direction = get_direction(distance)
+            direction = (direction - nav_direction) % 360
+            if salle.sabord_oriente(direction):
+                return canon
 
-        canon = canon_libre or canon_utilise
-        return canon
+        return None
 
     def choisir_matelots(self, exception=None):
         """Retourne le matelot le plus apte à accomplir la volonté."""
@@ -143,7 +133,7 @@ class Tirer(Volonte):
 
         if canon.onces == 0:
             charger_poudre = ChargerPoudre(matelot, navire, canon,
-                    self.bruyant)
+                    5, self.bruyant)
             ordres.append(charger_poudre)
 
         if canon.projectile is None:

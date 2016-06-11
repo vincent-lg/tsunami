@@ -1,6 +1,6 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2013 LE GOFF Vincent
+# Copyright (c) 2010-2016 LE GOFF Vincent
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -71,9 +71,8 @@ class CmdEnfourcher(Commande):
 
         if "chevauche" in personnage.etats:
             familier = personnage.etats.get("chevauche").monture
+            familier.desarconner(personnage)
             pnj = familier.pnj
-            personnage.etats.retirer("chevauche")
-            familier.chevauche_par = None
             personnage.envoyer_lisser("Vous descendez du dos de {}.", pnj)
             personnage.salle.envoyer("{} descend du dos de {}.", personnage,
                     pnj)
@@ -100,7 +99,7 @@ class CmdEnfourcher(Commande):
             personnage << "|err|Vous ne pouvez faire cela.|ff|"
             return
 
-        personnage.etats.ajouter("chevauche", familier)
-        familier.chevauche_par = personnage
+        personnage.agir("enfourcher")
+        familier.enfourcher(personnage)
         personnage.envoyer("Vous enfourchez {}.", pnj)
         personnage.salle.envoyer("{} enfourche {}.", personnage, pnj)

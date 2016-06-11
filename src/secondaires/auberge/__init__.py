@@ -1,6 +1,6 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2013 LE GOFF Vincent
+# Copyright (c) 2010-2016 LE GOFF Vincent
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -32,6 +32,7 @@
 
 from abstraits.module import *
 from primaires.format.fonctions import format_nb
+from primaires.pnj.prototype import FLAGS as FLAGS_PNJ
 from primaires.salle.salle import Salle
 from secondaires.auberge.auberge import Auberge
 from secondaires.auberge.commandes import *
@@ -56,6 +57,13 @@ class Module(BaseModule):
         self.commandes = []
         self.logger = self.importeur.man_logs.creer_logger(
                 "auberge", "auberge", "auberge.log")
+        type(importeur).espace["auberges"] = self.auberges
+
+    def config(self):
+        """Configuration du module."""
+        # Ajout des flags de salle
+        FLAGS_PNJ.ajouter("peut visiter les auberges", 1)
+        BaseModule.config(self)
 
     def init(self):
         """Chargement des navires et modèles."""
@@ -88,6 +96,17 @@ class Module(BaseModule):
         # Ajout des éditeurs
         self.importeur.interpreteur.ajouter_editeur(
                 editeurs.aubedit.EdtAubedit)
+
+    def preparer(self):
+        """Préparation du module."""
+        self.verifier_auberges()
+
+    def verifier_auberges(self):
+        """Vérification cyclique des auberges et expirations."""
+        importeur.diffact.ajouter_action("auberges", 3600,
+                self.verifier_auberges)
+        for auberge in self.auberges.values():
+            auberge.verifier_chambres()
 
     def get_auberge(self, salle):
         """Retourne, si trouvé, l'auberge définie dans la salle.
@@ -131,6 +150,10 @@ class Module(BaseModule):
     @staticmethod
     def peut_entrer(salle, personnage):
         """Retourne True si le personnage peut entrer dans la salle."""
+        if hasattr(personnage, "identifiant") and personnage.prototype.a_flag(
+                "peut visiter les auberges"):
+            return True
+
         for auberge in importeur.auberge.auberges.values():
             if salle.ident in auberge.chambres:
                 chambre = auberge.chambres[salle.ident]
@@ -147,7 +170,7 @@ class Module(BaseModule):
         salle = joueur.salle
         for auberge in self.auberges.values():
             for chambre in auberge.chambres.values():
-                if salle is chambre.salle:
+                if salle in chambre.salles:
                     chambre.verifier_expiration()
                     if chambre.proprietaire is not joueur:
                         # On téléporte le joueur dans la salle de l'auberge

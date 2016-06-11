@@ -1,6 +1,6 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2010 LE GOFF Vincent
+# Copyright (c) 2010-2016 LE GOFF Vincent
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -31,6 +31,7 @@
 """Ce fichier contient la classe BaseType, détaillée plus bas."""
 
 from fractions import Fraction
+from math import sqrt
 
 from abstraits.obase import BaseObj
 from primaires.format.description import Description
@@ -226,8 +227,20 @@ class BaseType(BaseObj, metaclass=MetaType):
                 noms_sup.reverse()
                 for nom in noms_sup:
                     if nombre >= nom[0]:
-                        return nom[1]
+                        variables = {}
+                        variables["nb"] = nombre
+                        for i in range(2, 1 + int(sqrt(nombre))):
+                            variables["nb{}".format(i)] = nombre // i
+
+                        return nom[1].format(nb=nombre,
+                                nb2=nombre // 2, nb4=nombre // 4,
+                                nb8=nombre // 8, nb16=nombre // 16)
+
             return str(nombre) + " " + self.nom_pluriel
+
+    def get_nom_pour(self, personnage):
+        """Retourne le nom pour le personnage précisé."""
+        return self.get_nom()
 
     def get_nom_etat(self, nombre):
         """Retourne le nom et l'état en fonction du nombre."""
@@ -283,9 +296,13 @@ class BaseType(BaseObj, metaclass=MetaType):
     def acheter(self, quantite, magasin, transaction):
         """Achète les objets dans la quantité spécifiée."""
         salle = magasin.parent
+        objets = []
         for i in range(quantite):
             objet = importeur.objet.creer_objet(self)
             salle.objets_sol.ajouter(objet)
+            objets.append(objet)
+
+        return objets
 
     def peut_vendre(self, vendeur):
         """Retourne True si peut vendre l'objet."""
@@ -296,9 +313,14 @@ class BaseType(BaseObj, metaclass=MetaType):
         valeur = self.m_valeur
         return valeur * 0.7
 
-    def regarder(self, personnage):
+    def peut_ramasser(self):
+        """Essaye de ramasser l'objet."""
+        return self.peut_prendre
+
+    def regarder(self, personnage, variables=None):
         """Le personnage regarde l'objet"""
         salle = personnage.salle
+        variables = variables or {}
         personnage << "Vous regardez {} :".format(self.get_nom())
         autre = "{{}} regarde {}.".format(self.get_nom())
         salle.envoyer(autre, personnage)
@@ -307,7 +329,7 @@ class BaseType(BaseObj, metaclass=MetaType):
         self.script["regarde"]["avant"].executer(
                 objet=self, personnage=personnage)
 
-        description = self.description.regarder(personnage, self)
+        description = self.description.regarder(personnage, self, variables)
         if not description:
             description = "Il n'y a rien de bien intéressant à voir."
 
@@ -336,7 +358,7 @@ class BaseType(BaseObj, metaclass=MetaType):
         return ""
 
     def jeter(self, personnage, sur):
-        """Jète self sur sur.
+        """Jette self sur sur.
 
         Les paramètres sont les mêmes que veut_jeter.
 
@@ -364,3 +386,17 @@ class BaseType(BaseObj, metaclass=MetaType):
     def nettoyage_cyclique(self):
         """Nettoyage cyclique de l'objet si besoin."""
         pass
+
+    def get_structure(self, structure):
+        """Retourne la structure étenduee.
+
+        La structure doit être envoyée par l'objet. Il est peu probable
+        d'avoir besoin d'appeler cette méthode direction.
+
+        """
+        flags = []
+        for nom, valeur in FLAGS.items():
+            if self.flags & valeur != 0:
+                flags.append(nom)
+
+        structure.flags = flags

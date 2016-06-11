@@ -1,6 +1,6 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2010 DAVY Guillaume
+# Copyright (c) 2010-2016 DAVY Guillaume
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -45,19 +45,32 @@ class CmdLancer(Commande):
         """Constructeur de la commande"""
         Commande.__init__(self, "lancer", "cast")
         self.groupe = "pnj"
-        self.schema = "<nom_sort> (sur/to <cible_sort>)"
+        self.schema = "(<nombre>) <nom_sort> (sur/to <cible_sort>)"
         self.nom_categorie = "combat"
         self.aide_courte = "lance un sort"
         self.aide_longue = \
             "Cette commande lance un sort dans la salle où vous vous " \
             "trouvez, à condition que vous maîtrisiez ce sort bien entendu. " \
-            "Vous pouvez préciser une cible si le sort en demande une."
+            "Si le sort doit être lancé sur une cible (un autre " \
+            "personnage, par exemple), vous pouvez préciser un fragment " \
+            "du nom de la cible après le mot-clé |ent|sur|ff| (ou " \
+            "|ent|to|ff|) en anglais). Notez que si vous visez une cible " \
+            "à distance, vous n'avez pas besoin de préciser la cible " \
+            "en paramètre du sort. Vous pouvez également, avant le " \
+            "nom du sort, préciser la puissance du sort (entre |ent|1|ff| " \
+            "et |ent|100|ff|). Par exemple %lancer%|cmd|5 nom du " \
+            "sort|ff|."
 
     def interpreter(self, personnage, dic_masques):
         """Méthode d'interprétation de commande"""
         from primaires.joueur.joueur import Joueur
         sort = dic_masques["nom_sort"].sort
         parchemin = dic_masques["nom_sort"].parchemin
+
+        maitrise = None
+        if dic_masques["nombre"]:
+            maitrise = dic_masques["nombre"].nombre
+
         personnage.agir("lancersort")
         cible = dic_masques["cible_sort"] and dic_masques["cible_sort"].cible \
                 or None
@@ -68,6 +81,7 @@ class CmdLancer(Commande):
                     "ici.|ff|"
             return
 
+        importeur.combat.verifier_cible(personnage)
         if cible is None and sort.type_cible == "personnage":
             if sort.offensif:
                 combat = importeur.combat.combats.get(personnage.salle.ident)
@@ -108,10 +122,11 @@ class CmdLancer(Commande):
                 personnage.agir("magie")
                 personnage.etats.ajouter("magie")
                 if parchemin:
-                    sort.concentrer(personnage, None, apprendre=False)
+                    sort.concentrer(personnage, None, apprendre=False,
+                            maitrise=maitrise)
                     parchemin.charges -= 1
                 else:
-                    sort.concentrer(personnage, None)
+                    sort.concentrer(personnage, None, maitrise=maitrise)
         else:
             if sort.type_cible == "aucune":
                 personnage << "|err|Ce sort ne peut être lancé sur une " \
@@ -135,7 +150,8 @@ class CmdLancer(Commande):
                 personnage.agir("magie")
                 personnage.etats.ajouter("magie")
                 if parchemin:
-                    sort.concentrer(personnage, cible, apprendre=False)
+                    sort.concentrer(personnage, cible, apprendre=False,
+                            maitrise=maitrise)
                     parchemin.charges -= 1
                 else:
-                    sort.concentrer(personnage, cible)
+                    sort.concentrer(personnage, cible, maitrise=maitrise)

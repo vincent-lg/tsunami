@@ -1,6 +1,6 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2012 LE GOFF Vincent
+# Copyright (c) 2010-2016 LE GOFF Vincent
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -77,7 +77,8 @@ class PrmDetacher(Parametre):
             return
 
         navire = d_salle.navire
-        if not navire.a_le_droit(personnage, si_present=True):
+        if navire.proprietaire and not navire.a_le_droit(personnage,
+                si_present=True):
             personnage << "|err|Vous ne pouvez désamarrer ce " \
                     "navire.|ff|"
             return

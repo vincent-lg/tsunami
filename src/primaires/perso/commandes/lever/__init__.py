@@ -1,6 +1,6 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2012 LE GOFF Vincent
+# Copyright (c) 2010-2016 LE GOFF Vincent
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -52,6 +52,10 @@ class CmdLever(Commande):
                 personnage.etats:
             personnage << "|err|Vous n'êtes ni assis ni allongé.|ff|"
             return
+
+        repos = personnage.etats.get("assis")
+        if repos is None:
+            repos = personnage.etats.get("allonge")
 
         personnage.etats.retirer("assis")
         personnage.etats.retirer("allonge")

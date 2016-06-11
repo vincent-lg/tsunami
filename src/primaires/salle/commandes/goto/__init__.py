@@ -1,6 +1,6 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2010 LE GOFF Vincent
+# Copyright (c) 2010-2016 LE GOFF Vincent
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -46,7 +46,7 @@ class CmdGoto(Commande):
         self.aide_longue = \
             "Cette commande vous permet de vous déplacer rapidement dans " \
             "l'univers. Vous pouvez lui passer en paramètre l'identifiant " \
-            "d'une salle sous la forme |cmd|zone:mnémonic|ff|, " \
+            "d'une salle sous la forme |cmd|zone:mnémonique|ff|, " \
             "par exemple |ent|picte:1|ff|, ou alors un nom de joueur. " \
             "Exemple : %goto% |ent|nom_du_joueur|ff|."
 

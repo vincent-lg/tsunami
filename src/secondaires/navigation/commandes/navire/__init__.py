@@ -1,6 +1,6 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2010 LE GOFF Vincent
+# Copyright (c) 2010-2016 LE GOFF Vincent
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -36,15 +36,19 @@ Dans ce fichier se trouve la commande même.
 
 from primaires.interpreteur.commande.commande import Commande
 from .creer import PrmCreer
+from .caleseche import PrmCaleseche
 from .detruire import PrmDetruire
 from .direction import PrmDirection
+from .editer import PrmEditer
 from .etendue import PrmEtendue
 from .info import PrmInfo
 from .liste import PrmListe
 from .matelot import PrmMatelot
 from .nom import PrmNom
 from .proprietaire import PrmProprietaire
+from .reparer import PrmReparer
 from .teleporter import PrmTeleporter
+from .zero import PrmZero
 
 class CmdNavire(Commande):
 
@@ -73,13 +77,17 @@ class CmdNavire(Commande):
         prm_liste = PrmListe()
         prm_teleporter = PrmTeleporter()
 
+        self.ajouter_parametre(PrmCaleseche())
         self.ajouter_parametre(prm_creer)
         self.ajouter_parametre(prm_detruire)
         self.ajouter_parametre(prm_direction)
+        self.ajouter_parametre(PrmEditer())
         self.ajouter_parametre(prm_etendue)
         self.ajouter_parametre(prm_info)
         self.ajouter_parametre(prm_liste)
         self.ajouter_parametre(PrmMatelot())
         self.ajouter_parametre(PrmNom())
         self.ajouter_parametre(PrmProprietaire())
+        self.ajouter_parametre(PrmReparer())
         self.ajouter_parametre(prm_teleporter)
+        self.ajouter_parametre(PrmZero())

@@ -1,6 +1,6 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2014 LE GOFF Vincent
+# Copyright (c) 2010-2016 LE GOFF Vincent
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -53,6 +53,8 @@ class FicheFamilier(BaseObj):
     enregistrer = True
     nom_scripting = "familier"
     type_achat = "familier"
+    _nom = "fiche_familier"
+    _version = 1
 
     def __init__(self, cle):
         """Constructeur de la fiche."""
@@ -61,9 +63,18 @@ class FicheFamilier(BaseObj):
         self.regime = "herbivore"
         self.monture = False
         self.sorties_verticales = False
+        self.aller_interieur = False
+        self.stats_progres = [
+                ["force", 10],
+                ["agilite", 10],
+                ["robustesse", 10],
+                ["intelligence", 10],
+        ]
         self.difficulte_apprivoisement = 10
         self.harnachements = []
         self.m_valeur = 50
+        self.peut_manger = []
+        self.aptitudes = {}
         self.script = ScriptFiche(self)
 
     def __getnewargs__(self):
@@ -96,6 +107,18 @@ class FicheFamilier(BaseObj):
     @property
     def str_harnachements(self):
         return ", ".join(sorted(self.harnachements))
+
+    @property
+    def str_stats_progres(self):
+        lignes = []
+        stats = sorted(self.stats_progres, key=lambda c: c[1], reverse=True)
+        total = sum(c[1] for c in self.stats_progres)
+        for stat, probabilite in stats:
+            pourcentage = round(probabilite / total * 100)
+            lignes.append("   {} pour {} ({}%)".format(
+                    stat, probabilite, pourcentage))
+
+        return "\n".join(lignes)
 
     @property
     def nom_achat(self):

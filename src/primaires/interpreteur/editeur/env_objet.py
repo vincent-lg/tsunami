@@ -1,11 +1,11 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2010 LE GOFF Vincent
+# Copyright (c) 2010-2016 LE GOFF Vincent
 # All rights reserved.
-# 
+#
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are met:
-# 
+#
 # * Redistributions of source code must retain the above copyright notice, this
 #   list of conditions and the following disclaimer.
 # * Redistributions in binary form must reproduce the above copyright notice,
@@ -14,7 +14,7 @@
 # * Neither the name of the copyright holder nor the names of its contributors
 #   may be used to endorse or promote products derived from this software
 #   without specific prior written permission.
-# 
+#
 # THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
 # AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
 # IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -25,29 +25,31 @@
 # INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
 # CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
-# pereIBILITY OF SUCH DAMAGE.
+# POSSIBILITY OF SUCH DAMAGE.
 
 
 """Ce fichier définit la classe 'enveloppe_objet' détaillée lus bas."""
 
+from textwrap import dedent
+
 from abstraits.obase import BaseObj
 
 class EnveloppeObjet(BaseObj):
-    
+
     """Cette classe définit une enveloppe contenant :
     -   l'éditeur (une zone de texte uniligne, multi-ligne, une liste...)
     -   l'édité : l'objet qui doit êre édité
     -   l'attribut : l'attribut qui doit être modifié
-    
+
     On peut trouver en plus quelques informations permettant de construire
     l'éditeur :
     -   l'aide courte : un message d'aide courte, affiché directement
         dans l'accueil
     -   l'aide longue : un message plus long affiché quand on demande de
         l'aide sur l'éditeur
-    
+
     """
-    
+
     def __init__(self, editeur, edite, attribut="", *sup):
         """Constructeur de l'enveloppe"""
         BaseObj.__init__(self)
@@ -63,10 +65,20 @@ class EnveloppeObjet(BaseObj):
         self.action = ""
         self.confirme = ""
         self.type = None
-    
+        self.lecture_seule = False
+
     def __getnewargs__(self):
         return (None, None, None)
-    
+
+    def aider(self, aide):
+        """Change l'aide courte.
+
+        L'aide courte précisée peut se trouver sous la forme longue
+        (sur plusieurs lignes avec de l'indentation qui sera retirée).
+
+        """
+        self.aide_courte = dedent(aide.strip("\n"))
+
     def construire(self, pere):
         """Retourne l'éditeur construit"""
         editeur = self.editeur(pere, self.objet, self.attribut, *self.sup)
@@ -81,10 +93,14 @@ class EnveloppeObjet(BaseObj):
             editeur.confirme = self.confirme
         if self.type:
             editeur.type = self.type
-        
+
         return editeur
-    
+
     def get_apercu(self):
         """Retourne l'aperçu"""
-        return self.apercu.format(objet = self.objet)
-    
+        valeur = ""
+        if self.attribut:
+            valeur = getattr(self.objet, self.attribut)
+
+        return self.editeur.afficher_apercu(self.apercu, self.objet,
+                    valeur, *self.sup)

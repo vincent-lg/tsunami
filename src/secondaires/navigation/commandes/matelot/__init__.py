@@ -1,6 +1,6 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2013 LE GOFF Vincent
+# Copyright (c) 2010-2016 LE GOFF Vincent
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -38,11 +38,13 @@ from primaires.interpreteur.commande.commande import Commande
 from .affecter import PrmAffecter
 from .creer import PrmCreer
 from .editer import PrmEditer
+from .info import PrmInfo
 from .liste import PrmListe
 from .poste import PrmPoste
 from .promouvoir import PrmPromouvoir
 from .recruter import PrmRecruter
 from .renommer import PrmRenommer
+from .retirer import PrmRetirer
 from .score import PrmScore
 
 class CmdMatelot(Commande):
@@ -67,9 +69,11 @@ class CmdMatelot(Commande):
         self.ajouter_parametre(PrmAffecter())
         self.ajouter_parametre(PrmCreer())
         self.ajouter_parametre(PrmEditer())
+        self.ajouter_parametre(PrmInfo())
         self.ajouter_parametre(PrmListe())
         self.ajouter_parametre(PrmPoste())
         self.ajouter_parametre(PrmPromouvoir())
         self.ajouter_parametre(PrmRecruter())
         self.ajouter_parametre(PrmRenommer())
+        self.ajouter_parametre(PrmRetirer())
         self.ajouter_parametre(PrmScore())

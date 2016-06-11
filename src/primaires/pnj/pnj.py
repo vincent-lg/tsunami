@@ -1,6 +1,6 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2010 LE GOFF Vincent
+# Copyright (c) 2010-2016 LE GOFF Vincent
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -190,11 +190,15 @@ class PNJ(Personnage):
 
     def get_nom_pour(self, personnage, retenu=True):
         """Retourne le nom pour le personnage passé en paramètre."""
-        noms = importeur.hook["pnj:nom"].executer(self, personnage)
-        if any(noms):
-            return noms[0]
+        if retenu:
+            noms = importeur.hook["pnj:nom"].executer(self, personnage)
+            if any(noms):
+                return noms[0]
 
         return self.nom_singulier
+
+    def ajout_description_pour_imm(self):
+        return " |vr|[{}]|ff|".format(self.identifiant)
 
     def est_connecte(self):
         return True
@@ -240,7 +244,11 @@ class PNJ(Personnage):
     def tick(self):
         """Méthode appelée à chaque tick."""
         Personnage.tick(self)
-        self.script["tick"].executer(pnj=self)
+        try:
+            self.script["tick"].executer(pnj=self)
+        except Exception:
+            pass
+
         importeur.hook["pnj:tick"].executer(self)
 
     def regarder(self, personnage):
@@ -284,3 +292,12 @@ class PNJ(Personnage):
     def tuer(self, victime):
         """Le personnage self vient de tuer la victime."""
         self.script["tue"].executer(personnage=victime, pnj=self)
+
+    def noyable(self):
+        """Retourne True si le personnage est noyable, False sinon."""
+        return False
+
+    def essayer_nage(self, origine, destination):
+        """Essaye de nager (un PNJ réussit toujours)."""
+        return True
+

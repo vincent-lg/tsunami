@@ -1,6 +1,6 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2012 LE GOFF Vincent
+# Copyright (c) 2010-2016 LE GOFF Vincent
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -59,7 +59,7 @@ class ClasseAction(Action):
         et après ignorées (voir plus bas).
 
         """
-        message = message.replace("_b_", "|")
+        message = message.replace("_b_", "|").replace("|nl|", "\n")
         personnage.envoyer_tip(message)
 
     @staticmethod
@@ -76,5 +76,5 @@ class ClasseAction(Action):
             raise ErreurExecution("une clé vide a été passée pour " \
                     "envoyer une tip unique")
 
-        message = message.replace("_b_", "|")
+        message = message.replace("_b_", "|").replace("|nl|", "\n")
         personnage.envoyer_tip(message, cle=cle, unique=True)

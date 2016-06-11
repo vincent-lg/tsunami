@@ -1,6 +1,6 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2013 LE GOFF Vincent
+# Copyright (c) 2010-2016 LE GOFF Vincent
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -33,6 +33,7 @@
 from primaires.interpreteur.editeur.entier import Entier
 from primaires.interpreteur.editeur.flottant import Flottant
 from primaires.interpreteur.editeur.presentation import Presentation
+from primaires.interpreteur.editeur.selection_objet import SelectionObjet
 from primaires.interpreteur.editeur.uniligne import Uniligne
 
 class EdtChambre(Presentation):
@@ -66,3 +67,14 @@ class EdtChambre(Presentation):
         prix.aide_courte = \
             "Entrez le |ent|prix|ff| par jour de la location de la " \
             "chambre.\n\nPrix par jour actuel : {objet.prix_par_jour}"
+
+        # Dependances
+        deps = self.ajouter_choix("dépendances", "d", SelectionObjet,
+                chambre, "dependances", importeur.salle.salles)
+        deps.parent = self
+        deps.prompt = "Identifiant de la salle à ajouter ou supprimer : "
+        deps.apercu = "{valeur}"
+        deps.aide_courte = \
+            "Entrez l'|ent|identifiant|ff| d'une dépendance pour l'ajouter " \
+            "ou la supprimer.\n\nDépendances actuelles : {valeur}"
+

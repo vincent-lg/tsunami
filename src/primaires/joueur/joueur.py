@@ -1,6 +1,6 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2010 LE GOFF Vincent
+# Copyright (c) 2010-2016 LE GOFF Vincent
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -31,6 +31,7 @@
 """Fichier contenant la classe Joueur, détaillée plus bas."""
 
 from datetime import datetime
+from textwrap import dedent
 
 from abstraits.obase import BaseObj
 from corps.fonctions import lisser as fn_lisser
@@ -39,6 +40,7 @@ from primaires.perso.personnage import Personnage
 from primaires.format.description import Description
 
 class Joueur(Personnage):
+
     """Classe représentant un joueur, c'est-à-dire un personnage connecté
     grâce à un client, à différencier des PNJ qui sont des personnages
     virtuels, animés par l'univers.
@@ -48,6 +50,9 @@ class Joueur(Personnage):
     sous_rep = "joueurs"
 
     enregistrer = True
+    _nom = "joueur"
+    _version = 1
+
     def __init__(self):
         """Constructeur du joueur"""
         Personnage.__init__(self)
@@ -171,6 +176,23 @@ class Joueur(Personnage):
         if self.derniere_connexion:
             # On appelle l'hook à la connexion
             type(self).importeur.hook["joueur:connecte"].executer(self)
+            self << dedent("""
+                |rg|ATTENTION : Le système de sauvegarde doit être changé.|ff|
+                La sauvegarde de l'univers ne fonctionne plus sur la
+                machine. Un nouveau système de sauvegarde va être mis en
+                place au plus vite. Cette modification nécessaitera
+                cependant pas mal de travail, et pourra prendre plusieurs
+                jours. Le MUD continuera à tourner dans l'intervalle, mais
+                l'univers ne sera plus sauvegardé. Vous pouvez continuer à
+                vous connecter au jeu, discuter sur les canaux, mais les
+                modifications apportées à votre joueur ou à l'univers seront
+                perdues à la nouvelle sauvegarde.
+
+                L'équipe des immortels fait son possible pour vous
+                permettre de jouer à nouveau sur Vancia.
+
+                Merci de votre compréhension, merci pour vos encouragements.
+            """)
 
         self.derniere_connexion = datetime.now()
         self.adresse_ip = self.instance_connexion.adresse_ip
@@ -184,6 +206,9 @@ class Joueur(Personnage):
         retiré de l'univers) mais son client peut être maintenu.
 
         """
+        if self.connecte:
+            importeur.hook["joueur:deconnecte"].executer(self)
+
         self.connecte = False
         salle = self.salle
         if salle:
@@ -222,8 +247,13 @@ class Joueur(Personnage):
         elif hasattr(personnage, "retenus") and self in personnage.retenus \
                 and retenu:
             return personnage.retenus[self]
+        elif getattr(personnage, "controle_par", None):
+            return self.get_nom_pour(personnage.controle_par, retenu)
         else:
             return self.get_distinction_visible()
+
+    def ajout_description_pour_imm(self):
+        return " |vr|[Joueur {}]|ff|".format(self.nom)
 
     def sans_prompt(self):
         """Désactive le prompt pour le prochain message envoyé."""
@@ -246,6 +276,8 @@ class Joueur(Personnage):
                     l_aff.append(objet.get_nom_pour(self))
                 else:
                     return
+            elif hasattr(objet, "get_nom_pour"):
+                l_aff.append(objet.get_nom_pour(self))
             else:
                 l_aff.append(str(objet))
 
@@ -256,6 +288,8 @@ class Joueur(Personnage):
                     d_aff[cle] = objet.get_nom_pour(self)
                 else:
                     return
+            elif hasattr(objet, "get_nom_pour"):
+                d_aff[cle] = objet.get_nom_pour(self)
             else:
                 d_aff[cle] = str(objet)
 
@@ -268,6 +302,12 @@ class Joueur(Personnage):
 
     def tick(self):
         """Méthode appelée à chaque tick."""
+        if self.instance_connexion:
+            self.instance_connexion.envoyer_options("hello")
+
+        if self.afk:
+            return
+
         if self.est_mort():
             self.cpt_mort += 1
             if self.cpt_mort <= 12:
@@ -294,7 +334,7 @@ class Joueur(Personnage):
         msg_soif = [
             (20, ("Vous avez soif.", 0)),
             (60, ("La soif vous assèche le gosier.", 0)),
-            (80, ("Votre gorge asséchée vous fait souffrir le martyr.", 5)),
+            (80, ("Votre gorge asséchée vous fait souffrir le martyre.", 5)),
             (95, ("Votre vision se trouble sous l'effet de la déshydratation.",
                     20)),
         ]
@@ -309,11 +349,11 @@ class Joueur(Personnage):
         ]
         if not self.est_immortel():
             if self.soif >= 100:
-                self << "Vous mourrez de soif."
+                self << "Vous mourez de soif."
                 self.mourir()
                 return
             if self.faim >= 100:
-                self << "Vous mourrez de faim."
+                self << "Vous mourez de faim."
                 self.mourir()
                 return
             for seuil, msg in reversed(msg_soif):
@@ -323,7 +363,7 @@ class Joueur(Personnage):
                     try:
                         self.vitalite -= msg[1]
                     except DepassementStat:
-                        self << "Vous mourrez de soif."
+                        self << "Vous mourez de soif."
                         self.mourir()
                         return
                     break
@@ -334,7 +374,7 @@ class Joueur(Personnage):
                     try:
                         self.vitalite -= msg[1]
                     except DepassementStat:
-                        self << "Vous mourrez de faim."
+                        self << "Vous mourez de faim."
                         self.mourir()
                         return
                     break
@@ -342,3 +382,16 @@ class Joueur(Personnage):
     def mourir(self, adversaire=None, recompenser=True):
         Personnage.mourir(self, adversaire, recompenser)
         self.cpt_mort = 0
+
+    def get_structure(self):
+        """Retourne la structure simple du personnage."""
+        structure = Personnage.get_structure(self)
+        structure.nom = self.nom
+        return structure
+
+    def appliquer_structure(self, structure):
+        """Applique la structure passée en paramètre."""
+        Personnage.appliquer_structure(self, structure)
+        for cle, valeur in structure.donnees.items():
+            if cle == "nom":
+                importeur.joueur.renommer_joueur(self, valeur)

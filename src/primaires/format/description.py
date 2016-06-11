@@ -1,6 +1,6 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2010 LE GOFF Vincent
+# Copyright (c) 2010-2016 LE GOFF Vincent
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -34,6 +34,7 @@ import re
 from textwrap import wrap
 
 from abstraits.obase import BaseObj
+from corps.fonctions import lisser
 from .fonctions import *
 
 # Constantes
@@ -84,16 +85,21 @@ class Description(BaseObj):
 
     def __str__(self):
         """Retourne la description sous la forme d'un texte 'str'"""
-        res = []
-        for paragraphe in self.paragraphes:
-            paragraphe = self.wrap_paragraphe(paragraphe)
-            paragraphe = paragraphe.replace("|nl|", "\n")
-            res.append(paragraphe)
-        return "\n".join(res)
+        return self.affichage_simple()
 
     def __bool__(self):
         """Retourne True si la description n'est pas vide, False sinon."""
         return bool(str(self))
+
+    def copier_depuis(self, description):
+        """Copie une description dans une autre.
+
+        Cette méthode copie le contenu de la description et des scripts.
+
+        """
+        self.paragraphes = list(description.paragraphes)
+        self.scriptable = description.scriptable
+        self.script.copier_depuis(description.script)
 
     def maj_auto(self):
         """Appelle le callback (si défini) pour mettre à jour le parent."""
@@ -142,6 +148,15 @@ class Description(BaseObj):
         self.maj_auto()
         self._enregistrer()
 
+    def affichage_simple(self, nl="\n"):
+        res = []
+        for paragraphe in self.paragraphes:
+            paragraphe = self.wrap_paragraphe(paragraphe, nl)
+            paragraphe = paragraphe.replace("|nl|", nl)
+            res.append(paragraphe)
+
+        return "\n".join(res)
+
     def wrap_paragraphe(self, paragraphe, lien="\n", aff_sp_cars=False):
         """Wrap un paragraphe et le retourne"""
         if aff_sp_cars:
@@ -168,6 +183,10 @@ class Description(BaseObj):
     def regarder(self, personnage, elt=None, variables=None):
         """Le personnage regarde la description."""
         variables = variables or {}
+        for ajout in importeur.hook["description:ajouter_variables"].executer(
+                self, personnage, elt):
+            variables.update(ajout)
+
         description = ""
         desc_flottantes = []
         elt = elt or self.parent
@@ -219,7 +238,8 @@ class Description(BaseObj):
 
         paragraphes = []
         for paragraphe in description.split("\n"):
-            paragraphes.append("\n".join(wrap(paragraphe, TAILLE_LIGNE)))
+            paragraphes.append("\n".join(wrap(lisser(paragraphe),
+                    TAILLE_LIGNE)))
 
 
         return "\n".join(paragraphes)

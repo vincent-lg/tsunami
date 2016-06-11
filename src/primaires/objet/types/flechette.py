@@ -1,6 +1,6 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2012 LE GOFF Vincent
+# Copyright (c) 2010-2016 LE GOFF Vincent
 # All rights reserved.
 # 
 # Redistribution and use in source and binary forms, with or without
@@ -30,6 +30,8 @@
 
 """Fichier contenant le type fléchette."""
 
+from fractions import Fraction
+
 from corps.aleatoire import *
 from .base import BaseType
 from .cible import Cible
@@ -50,7 +52,7 @@ class Flechette(BaseType):
         return "jeter_cible"
     
     def jeter(self, personnage, elt):
-        """Jète la fléchette sur un élément."""
+        """Jette la fléchette sur un élément."""
         fact = varier(personnage.agilite, 20) / 100
         fact *= (1.6 - personnage.poids / personnage.poids_max)
         reussite = chance_sur(fact * 100 + varier(30, 10))
@@ -71,3 +73,6 @@ class Flechette(BaseType):
         personnage.salle.envoyer("{} frappe {} ({}) !".format(
                 self.get_nom().capitalize(), touche.nom, touche.msg_points))
         personnage.salle.objets_sol.ajouter(self)
+        cible.script["touche"].executer(personnage=personnage,
+                cible=cible, flechette=self, element=touche.nom,
+                points=Fraction(touche.points))

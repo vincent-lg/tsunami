@@ -1,6 +1,6 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2010 LE GOFF Vincent
+# Copyright (c) 2010-2016 LE GOFF Vincent
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -31,8 +31,10 @@
 """Package contenant les commandes du module information."""
 
 from . import aide
+from . import annonces
 from . import hedit
 from . import newsletter
+from . import reboot
+from . import roadmap
 from . import tips
 from . import versions
-from . import annonces

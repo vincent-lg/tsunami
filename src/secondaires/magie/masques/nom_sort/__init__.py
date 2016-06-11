@@ -1,6 +1,6 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2010 LE GOFF Vincent
+# Copyright (c) 2010-2016 LE GOFF Vincent
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -82,8 +82,8 @@ class NomSort(Masque):
                 return True
 
         for objet in personnage.equipement.inventaire:
-            if objet.nom_type == "parchemin" and contient(objet.sort.nom,
-                    nom_sort) and objet.charges > 0:
+            if objet.est_de_type("parchemin") and objet.sort and contient(
+                    objet.sort.nom, nom_sort) and objet.charges > 0:
                 self.sort = objet.sort
                 self.parchemin = objet
                 return True

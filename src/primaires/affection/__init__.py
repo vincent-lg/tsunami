@@ -1,6 +1,6 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2012 LE GOFF Vincent
+# Copyright (c) 2010-2016 LE GOFF Vincent
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -82,6 +82,12 @@ class Module(BaseModule):
         affections = self.importeur.supenr.charger_groupe(AffectionAbstraite)
         for affection in affections:
             self.ajouter_affection(affection)
+
+        # Renseigne les valeurs scriptables
+        importeur.scripting.valeurs.update({
+                "affection de personnage": self.aff_personnages,
+                "affection de salle": self.aff_salles,
+        })
 
         BaseModule.init(self)
 

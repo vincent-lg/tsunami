@@ -1,6 +1,6 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2010 LE GOFF Vincent
+# Copyright (c) 2010-2016 LE GOFF Vincent
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -57,6 +57,7 @@ class Module(BaseModule):
         self.perturbations_actuelles = []
         self.temperature = 0
         self.temperature_dynamique = True
+        self.salles = {}
 
     def config(self):
         """Configuration du module"""
@@ -86,6 +87,11 @@ class Module(BaseModule):
 
     def preparer(self):
         """Préparation du module"""
+        # Renseigne le cache des salles
+        for perturbation in self.perturbations_actuelles:
+            for salle in perturbation.liste_salles_sous:
+                self.salles[salle] = perturbation
+
         if self.temperature_dynamique:
             min, max = self.cfg.temperatures[importeur.temps.temps.mois]
             self.temperature = randint(min, max)
@@ -99,44 +105,10 @@ class Module(BaseModule):
     def cycle_meteo(self):
         self.importeur.diffact.ajouter_action("cycle_meteo", 60,
                 self.cycle_meteo)
+
         # On tue les perturbations trop vieilles
         for pertu in self.perturbations_actuelles:
-            sous = pertu.liste_salles_sous
-            if pertu.age >= pertu.duree:
-                i = randint(0, 100)
-                nom_pertu_enchainer = ""
-                msg_enchainement = ""
-                for fin in pertu.fins_possibles:
-                    if i <= fin[2]:
-                        nom_pertu_enchainer = fin[0]
-                        msg_enchainement = fin[1]
-                        break
-                if not nom_pertu_enchainer:
-                    for salle in sous:
-                        if salle.exterieur:
-                            salle.envoyer("|cy|" + pertu.message_fin + "|ff|",
-                                    prompt=False)
-                else:
-                    for salle in sous:
-                        if salle.exterieur:
-                            salle.envoyer("|cy|" + msg_enchainement + "|ff|",
-                                    prompt=False)
-                    cls_pertu_enchainer = None
-                    for pertu_existante in self.perturbations:
-                        if pertu_existante.nom_pertu == nom_pertu_enchainer:
-                            cls_pertu_enchainer = pertu_existante
-                            break
-                    if cls_pertu_enchainer is not None:
-                        pertu_enchainer = cls_pertu_enchainer(pertu.centre)
-                        pertu_enchainer.rayon = pertu.rayon
-                        pertu_enchainer.dir = pertu.dir
-                        self.perturbations_actuelles.append(pertu_enchainer)
-                pertu.detruire()
-                self.perturbations_actuelles.remove(pertu)
-                continue
-
-            # On fait bouger les perturbations existantes
-            pertu.cycle(sous)
+            pertu.tick()
 
         # On tente de créer une perturbation
         if len(self.perturbations_actuelles) < self.cfg.nb_pertu_max:
@@ -173,24 +145,44 @@ class Module(BaseModule):
                         break
                 if not deja_pertu:
                     self.perturbations_actuelles.append(n_pertu)
-                    for salle in n_pertu.liste_salles_sous:
-                        if salle.exterieur:
-                            salle.envoyer("|cy|" + n_pertu.message_debut + \
-                                    "|ff|", prompt=False)
+                    n_pertu.envoyer_message_debut()
                 else:
                     n_pertu.detruire()
 
     def donner_meteo(self, salle, liste_messages, flags):
         """Affichage de la météo d'une salle"""
+        res = ""
         if salle.exterieur:
-            res = ""
-            for pertu in self.perturbations_actuelles:
-                if pertu.est_sur(salle):
-                    res += pertu.message_pour(salle)
-                    break
-            if not res:
+            perturbation = self.salles.get(salle)
+            if perturbation:
+                res += perturbation.message_pour(salle)
+            else:
                 res += self.cfg.beau_temps
             liste_messages.append("|cy|" + res + "|ff|")
+
+    def get_perturbation(self, salle):
+        """Retourne la perturbation sur la salle ou None.
+
+        Note importante : ce calcul se fait sur les coordonnées de
+        la salle. Quand c'est possible, préférer utiliser le
+        dictionnaire des salles qui se comporte comme un cache
+        des perturbations. Par exemple :
+            perturbation = importeur.meteo.salles.get(salle)
+            if perturbation:
+               ...
+
+        Cette méthode 'get_perturbation' n'utilise pas ce
+        dictionnaire et parcourt toutes les perturbations pour
+        retourner celle recouvrant une salle. Cette méthode est
+        nécessairement plus gourmande, bien qu'utiliser le
+        cache puisse donner lieu à des approximations parfois.
+
+        """
+        for pertu in self.perturbations_actuelles:
+            if pertu.est_sur(salle):
+                return pertu
+
+        return None
 
     def changer_temperature(self):
         """Change aléatoirement la température."""

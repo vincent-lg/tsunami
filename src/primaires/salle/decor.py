@@ -1,6 +1,6 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2012 LE GOFF Vincent
+# Copyright (c) 2010-2016 LE GOFF Vincent
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -77,6 +77,10 @@ class Decor(BaseObj):
 
     def get_nom_etat(self, nombre=1):
         return self.prototype.get_nom_etat(nombre)
+
+    def get_nom_pour(self, personnage):
+        """Retourne le nom pour le personnage précisé."""
+        return self.get_nom()
 
     def regarder(self, personnage):
         """Le personnage regarde self."""

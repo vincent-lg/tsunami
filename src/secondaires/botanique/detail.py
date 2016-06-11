@@ -1,6 +1,6 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2012 LE GOFF Vincent
+# Copyright (c) 2010-2016 LE GOFF Vincent
 # All rights reserved.
 # 
 # Redistribution and use in source and binary forms, with or without
@@ -58,7 +58,7 @@ class DetailMod(Detail):
         """
         msg = "Vous regardez la végétation alentours :\n"
         plantes = importeur.botanique.salles.get(self.parent, [])
-        plantes = [p for p in plantes if p.cycle.visible]
+        plantes = [p for p in plantes if p.cycle.visible and p.periode.visible]
         if not plantes:
             return "|att|Vous ne voyez rien de récoltable ici.|ff|"
         

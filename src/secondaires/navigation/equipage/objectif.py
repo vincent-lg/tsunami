@@ -1,6 +1,6 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2014 LE GOFF Vincent
+# Copyright (c) 2010-2016 LE GOFF Vincent
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -57,8 +57,8 @@ class Objectif(BaseObj, metaclass=MetaObjectif):
     méthodes et attributs donnés dans cette classe doivent pouvoir être
     utilisés sur tous les objectifs.
 
-    Un objectif définit un but qu'un équipage doit attendre. Ils peuvent
-    être de forme diverses, comme rejoindre un point précis, suivre un
+    Un objectif définit un but qu'un équipage doit atteindre. Ils peuvent
+    être de formes diverses, comme rejoindre un point précis, suivre un
     navire, le rattraper ou se mettre en formation sur lui. En fonction
     des objectifs actuels, un capitaine ou second (PNJ) donnera la suite
     d'ordres nécessaires à leur accomplissement.
@@ -77,6 +77,104 @@ class Objectif(BaseObj, metaclass=MetaObjectif):
     """
 
     cle = None
-    def __init__(self, equipage):
+    logger = type(importeur).man_logs.get_logger("ordres")
+    def __init__(self, equipage, *args):
         BaseObj.__init__(self)
         self.equipage = equipage
+        self.arguments = args
+
+    def __getnewargs__(self):
+        return (None, )
+
+    def __repr__(self):
+        return "<Objectif {}:{} {}>".format(self.cle_navire, self.cle,
+                self.arguments)
+
+    @property
+    def navire(self):
+        return self.equipage and self.equipage.navire or None
+
+    @property
+    def cle_navire(self):
+        navire = self.navire
+        return navire and navire.cle or "inconnu"
+
+    @property
+    def commandant(self):
+        """Retourne le commandant (PNJ) du navire."""
+        commandants = self.equipage.get_matelots_au_poste("commandant",
+                libre=False)
+        if commandants:
+            return commandants[0]
+
+        return None
+
+    def debug(self, message):
+        """Log le message précisé en paramètre en ajoutant des informations."""
+        message = "Objectif {}:{}, {}".format(self.cle_navire, self.cle,
+                message)
+        self.logger.debug(message)
+
+    def info(self, message):
+        """Log le message précisé en paramètre en ajoutant des informations."""
+        message = "Objectif {}:{}, {}".format(self.cle_navire, self.cle,
+                message)
+        self.logger.info(message)
+
+    def warning(self, message):
+        """Log le message précisé en paramètre en ajoutant des informations."""
+        message = "Objectif {}:{}, {}".format(self.cle_navire, self.cle,
+                message)
+        self.logger.warning(message)
+
+    @property
+    def actif(self):
+        """L'objectif est-il toujours actif ?"""
+        return True
+
+    def afficher(self):
+        """Méthode à redéfinir retournant l'affichage de l'objectif."""
+        raise NotImplementedError
+
+    def creer(self):
+        """L'objectif est créé.
+
+        Cette méthode doit se charger de décomposer l'objectif en
+        contrôles, volontés ou ordres. En revanche, il s'agit d'une
+        première estimation : un objectif se différencie d'une volonté
+        en ce qu'il vérifie de loin en loin que les volontés correspondent
+        bien aux meilleures chances d'atteindre l'objectif. Si on fait
+        un objectif pour aller à un point (x, y), il ne suffit pas de
+        créer les contrôles de vitesse et de direction pour se rendre
+        à ce point (x, y), il faut vérifier de loin en loin qu'il n'y
+        a pas d'obstacle ou autre.
+
+        """
+        raise NotImplementedError
+
+    def verifier(self, prioritaire):
+        """Vérifie que l'objectif est toujours valide.
+
+        La priorité est un booléen traduisant la priorité de l'objectif
+        par rapport à la pile des objectifs. Un objectif de prioritaire
+        True est en haut de la pile, c'est-à-dire qu'aucun autre
+        objectif n'a la priorité. On utilise ce système pour
+        contrôler les objectifs parfois conflictuels d'un équipage.
+        Par exemple, un équipage pourrait avoir comme premier
+        objectif de se rendre au point (5, 0) mais comme
+        second objectif de rejoindre et couler le navire Z. Pour
+        couler le navire Z il faut s'en rapprocher. L'objectif pourrait
+        considérer qu'il vaut mieux modifier les contrôles de direction
+        et de vitesse. Cependant, puisque l'objectif prioritaire est
+        de rejoindre le point (5, 0), l'objectif secondaire (de
+        prioritaire False) ne cherchera pas à altérer la vitesse ou
+        la direction. L'objectif reste actif, cependant, ce qui veut
+        dire que si le navire se rapproche du navire Z en allant vers
+        (5, 0), il essayera de le couler.
+
+        """
+        raise NotImplementedError
+
+    def reagir_collision(self, salle, contre):
+        """Réagit à une collision."""
+        pass

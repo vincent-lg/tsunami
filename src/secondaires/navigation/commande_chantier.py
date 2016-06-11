@@ -1,6 +1,6 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2013 LE GOFF Vincent
+# Copyright (c) 2010-2016 LE GOFF Vincent
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -150,6 +150,11 @@ class CommandeChantierNaval(BaseObj):
         navire = self.navire
         return lisser("Réparation de " + navire.nom)
 
+    def nom_remettre(self):
+        """Retourne le nom de la commande quand on remet un navire à l'eau."""
+        navire = self.navire
+        return lisser("Remise à l'eau de " + navire.nom)
+
     # Types de commande
     def cmd_acheter(self):
         """Achète un navire."""
@@ -176,12 +181,10 @@ class CommandeChantierNaval(BaseObj):
                 if (t_x, t_y, t_z) in points:
                     vecteurs.append(vecteur)
                 else:
-                    print(t_x, t_y, t_z, "not in", points)
                     invalide = True
                     break
 
             if invalide:
-                print("Point invalide", x, y, z, t_x, t_y, t_z)
                 continue
 
             # On vérifie que la distance minimale avec TOUS les points
@@ -192,7 +195,6 @@ class CommandeChantierNaval(BaseObj):
                         importeur.navigation.distance_min_avec_navires(
                         vecteur))
             distances = [d for d in distances if d is not None]
-            print("Distances", x, y, z, distances)
             if len(distances) == 0 or min(distances) >= 1:
                 point = (x, y, z)
                 break
@@ -234,13 +236,23 @@ class CommandeChantierNaval(BaseObj):
             raise CommandeInterrompue("Le navire n'est plus dans le " \
                     "chantier naval")
 
+        navire.reparer()
+
+    def cmd_remettre(self):
+        """Remet le navire à l'eau."""
+        navire = self.navire
+        etendue = self.chantier.etendue
+
+        # Si le navire est en collision, annule le déplacement
+        navire.etendue = etendue
+        if navire.controller_collision(collision=False):
+            navire.etendue = None
+            raise CommandeInterrompue("Le navire n'a plus de place")
 
         for salle in navire.salles.values():
-            if salle.noyable:
-                if salle.voie_eau != COQUE_INTACTE:
-                    salle.voie_eau = COQUE_INTACTE
-                if salle.poids_eau != 0:
-                    salle.poids_eau = 0
+            salle.coords.valide = True
+
+        navire.arreter()
 
 
 

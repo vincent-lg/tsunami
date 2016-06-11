@@ -1,6 +1,6 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2010 LE GOFF Vincent
+# Copyright (c) 2010-2016 LE GOFF Vincent
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -92,8 +92,10 @@ class Commande(Masque):
     def _set_aide_courte(self, aide):
         """Change l'aide courte"""
         if len(aide) > NB_MAX_CAR_AIDE_COURTE:
-            raise ValueError("la chaîne d'aide entrée pour cette commande " \
-                    "est trop longue")
+            aide = aide[:NB_MAX_CAR_AIDE_COURTE]
+            print("la chaîne d'aide entrée pour la commande {} " \
+                    "est trop longue ({} caractères)".format(self.nom,
+                    len(aide)))
 
         self._aide_courte = aide
 
@@ -165,6 +167,24 @@ class Commande(Masque):
         """Retourne les différents noms possibles des commandes."""
         return (self.nom_francais, self.nom_anglais)
 
+    @property
+    def nom_complet_francais(self):
+        """Retourne le nom complet en français."""
+        if self.parente:
+            nom = self.parente.nom_complet_francais + " "
+
+        nom += self.nom_francais
+        return nom
+
+    @property
+    def nom_complet_anglais(self):
+        """Retourne le nom complet en anglais."""
+        if self.parente:
+            nom = self.parente.nom_complet_anglais + " "
+
+        nom += self.nom_anglais
+        return nom
+
     def ajouter(self):
         """Méthode appelée quand on ajoute la commande à l'interpréteur"""
         pass
@@ -182,6 +202,7 @@ class Commande(Masque):
             fin_pos = len(str_commande)
 
         str_commande = str_commande[:fin_pos]
+
         # Si la commande est gvide, elle n'est pas validée
         if not str_commande:
             return False
@@ -292,6 +313,7 @@ class Commande(Masque):
         aide += "\n\n"
 
         aide_longue = self.remplacer_mots_cles(personnage, self.aide_longue)
+
         # Si l'aide contient des sauts de ligne, ne formatte pas
         if "\n" not in aide_longue:
             aide_longue = textwrap.fill(aide_longue, longueur_ligne)
@@ -332,6 +354,9 @@ class Commande(Masque):
                     aide_longue = textwrap.wrap(aide_longue, aligner)
                     aide_longue = ("\n" + (taille + 5) * " ").join(
                             aide_longue)
+                else:
+                    aide_longue = ("\n" + (taille + 5) * " ").join(
+                            aide_longue.split("\n"))
 
                 aide += aide_longue
 
@@ -417,3 +442,15 @@ class Commande(Masque):
                 nom = "commandes_{}".format(Commande.nb_actions)
                 type(self).importeur.diffact.ajouter_action(nom, tps,
                         self.execution_progressive, generateur)
+
+    def detruire(self):
+        """Destruction de la commande."""
+        # Destruction des paramètres récursivement
+        for noeud in self.parametres.values():
+            noeud.commande.detruire()
+
+        importeur.interpreteur.groupes.supprimer_commande(self)
+        if self.parente:
+            del self.parente.parametres[self.nom]
+
+        importeur.interpreteur.commandes.remove(self.noeud)

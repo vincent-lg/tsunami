@@ -1,6 +1,6 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2010 LE GOFF Vincent
+# Copyright (c) 2010-2016 LE GOFF Vincent
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -35,8 +35,9 @@ et traite chaque cas indépendamment.
 
 """
 
-import sys
 import getopt
+import os
+import sys
 
 class ParserCMD(dict):
 
@@ -79,10 +80,18 @@ class ParserCMD(dict):
         # - p (port) : port d'écoute du serveur
         # - r (script) : script avant préparation
         # - s 'serveur) : lancer le serveur (on ou off)
-        flags_courts = "c:e:hil:p:r:s:"
-        flags_longs = ["chemin-configuration=", "chemin-enregistrement=",
-                "help", "interactif", "chemin-logs=", "port=", "script",
-                "serveur="]
+        flags_courts = "c:de:hi:l:p:r:s:"
+        flags_longs = [
+                "chemin-configuration=",
+                "debug",
+                "chemin-enregistrement=",
+                "help",
+                "interactif=",
+                "chemin-logs=",
+                "port=",
+                "script",
+                "serveur=",
+        ]
 
         # Création de l'objet analysant la ligne de commande
         try:
@@ -107,6 +116,13 @@ class ParserCMD(dict):
                 sys.exit(1)
             elif nom in ["-i", "--interactif"]:
                 self["interactif"] = True
+                if val == "0":
+                    fichier = open(os.devnull, "w", encoding="utf-8")
+                else:
+                    fichier = open(val, "a", buffering=1, encoding="utf-8")
+
+                sys.stdout = fichier
+                sys.stderr = fichier
             elif nom in ["-p", "--port"]:
                 # On doit tenter de convertir le port
                 try:
@@ -116,6 +132,9 @@ class ParserCMD(dict):
                     sys.exit(1)
                 else:
                     self["port"] = port
+            elif nom in ["-d", "--debug"]:
+                self["debug"] = True
+                print("Lancement du MUD en mode debug (sans échec).")
             elif nom in ["-r", "--script"]:
                 self["script"] = val
             elif nom in ["-s", "--serveur"]:
@@ -140,6 +159,7 @@ class ParserCMD(dict):
             "Options disponibles :\n" \
             "\n" \
             "-c, chemin-configuration\n" \
+            "-d, debug\n" \
             "-e, chemin-enregistrement\n" \
             "-h, help : affiche ce message d'aide\n" \
             "-i, interactif : lance Kassie en mode débuggage interactif\n" \

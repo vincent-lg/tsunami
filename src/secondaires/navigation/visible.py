@@ -1,7 +1,7 @@
 # -*-coding:Utf-8 -*
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2012 LE GOFF Vincent
+# Copyright (c) 2010-2016 LE GOFF Vincent
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -157,6 +157,34 @@ class Visible:
                 if c_angle >= 180:
                     break
 
+    def get_tries(self):
+        """Retourne les points triés en classes.
+
+        Au lieu d'avoir un seul dictionnaire {angle: (vecteur, point)},
+        on a un dictionnaire contenant en clé le nom de l classe de
+        l'obstacle et en valeur un dictionnaire contenant les obstacles.
+        Par exemple, voilà ce qu'on pourrait obtenir :
+            {
+                "navire": {
+                    5: (vecteur, autre_navire),
+                },
+                "obstacle": {
+                    10, falaise,
+                    15: ville,
+                },
+            }
+
+        """
+        tries = {}
+
+        for angle, (vecteur, point) in self.points.items():
+            nom = type(point).__name__.lower()
+            dictionnaire = tries.get(nom, {})
+            dictionnaire[angle] = (vecteur, point)
+            tries[nom] = dictionnaire
+
+        return tries
+
     @classmethod
     def observer(cls, personnage, portee, precision, exceptions=None):
         """Méthode de classe construisant une instance de classe.
@@ -167,7 +195,7 @@ class Visible:
             La précision en degré à laquelle les détails seront arrondis.
             Les exceptions sous la forme d'un dicitonnaire.
 
-        Les exceptions doivent être précisés sous la forme:
+        Les exceptions doivent être précisées sous la forme :
             {"attribut": valeur}
 
         Pour chaque point, on essaye de récupérer l'attribut (grâce à
@@ -219,13 +247,13 @@ class Visible:
         x, y, z = pos_coords
         position = Vector(x, y, altitude)
         navires = [n for n in importeur.navigation.navires.values() if \
-                mag(n.position.x, n.position.y, altitude, position.x, \
-                position.y, altitude) - n.get_max_distance_au_centre() <= \
-                portee]
+                n.etendue and mag(n.position.x, n.position.y, altitude,
+                position.x, position.y, altitude) - \
+                n.get_max_distance_au_centre() <= portee]
         for t_navire in navires:
             # On détermine la salle la plus proche
             t_salles = [s for s in t_navire.salles.values() if \
-                    s.coords.z == 0]
+                    s.coords.z == 0 and s.coords.valide]
             for t_salle in t_salles:
                 # Calcul de la distance entre salle et t_salle
                 t_coords = t_salle.coords.tuple()

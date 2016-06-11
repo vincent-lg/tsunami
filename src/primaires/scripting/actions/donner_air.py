@@ -1,6 +1,6 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2013 LE GOFF Vincent
+# Copyright (c) 2010-2016 LE GOFF Vincent
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -59,8 +59,4 @@ class ClasseAction(Action):
         if personnage.est_mort() or personnage.est_immortel():
             return
 
-        nom = "noyade_" + personnage.nom_unique
-        if nom in importeur.diffact.actions:
-            # On supprime l'ancienne action
-            importeur.diffact.retirer_action(nom)
-            importeur.diffact.ajouter_action(nom, 5, personnage.act_noyer, 5)
+        personnage.degre_noyade = 0

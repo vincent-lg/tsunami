@@ -1,6 +1,6 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2014 LE GOFF Vincent
+# Copyright (c) 2010-2016 LE GOFF Vincent
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -53,7 +53,7 @@ class PrmTuer(Parametre):
         cible = dic_masques["personnage_present"].personnage
         pnj = familier.pnj
         if cible is personnage:
-            personnage.envoyer("|err|{} refuse de vous attaquer.", pnj)
+            personnage.envoyer("|err|{} refuse de vous attaquer.|ff|", pnj)
             return
 
         if cible is pnj:

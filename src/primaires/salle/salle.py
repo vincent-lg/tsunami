@@ -1,6 +1,6 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2010 LE GOFF Vincent
+# Copyright (c) 2010-2016 LE GOFF Vincent
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -31,11 +31,14 @@
 """Fichier contenant la classe Salle, détaillée plus bas."""
 
 from collections import OrderedDict
+from fractions import Fraction
 
 from abstraits.obase import BaseObj
 from bases.collections.flags import Flags
 from primaires.affection.affection import Affection
 from primaires.format.description import Description
+from primaires.format.fonctions import supprimer_accents
+from primaires.scripting.structure import StructureSimple
 from primaires.vehicule.vecteur import Vecteur
 from .bonhomme_neige import *
 from .chemin import Chemin
@@ -53,9 +56,9 @@ ZONE_VALIDE = r"^[a-z0-9_]{3,20}$"
 MNEMONIC_VALIDE = r"^[a-z0-9_]{1,15}$"
 
 FLAGS = Flags()
-FLAGS.ajouter("anti combat")
-FLAGS.ajouter("anti magie")
-FLAGS.ajouter("invisible à distance")
+FLAGS.ajouter("anti combat", 1)
+FLAGS.ajouter("anti magie", 2)
+FLAGS.ajouter("invisible à distance", 4)
 
 class Salle(BaseObj):
 
@@ -77,9 +80,9 @@ class Salle(BaseObj):
         modules, comme 'vehicule', de fonctionner. Si votre salle n'a pas de
         coordonnées, vous devrez créer chaque sortie "à la main".
         Les salles ne sont donc pas identifiées par leurs coordonnées, sauf
-        dans certains cas, mais bien par leur zone et mnémonic. Ce couple
+        dans certains cas, mais bien par leur zone et mnémonique. Ce couple
         caractérise de façon unique une salle dans l'univers.
-        Exemple : une ssalle ayant pour zone 'picte' et pour mnémonic '1'
+        Exemple : une salle ayant pour zone 'picte' et pour mnémonique '1'
         sera accessible depuis la clé 'picte:1' ; aucune autre salle de
         l'univers ne pourra posséder cette clé 'picte:1'.
 
@@ -88,8 +91,8 @@ class Salle(BaseObj):
     nom_scripting = "la salle"
     _nom = "salle"
     _version = 4
-
     enregistrer = True
+
     def __init__(self, zone, mnemonic, x=0, y=0, z=0, valide=True):
         """Constructeur de la salle"""
         BaseObj.__init__(self)
@@ -121,6 +124,9 @@ class Salle(BaseObj):
         # Décors
         self.decors = []
 
+        # Propriétaires de la salle (maison, cabine de bateau, etc)
+        self._proprietaires = []
+
         self._construire()
 
     def __getnewargs__(self):
@@ -137,6 +143,12 @@ class Salle(BaseObj):
     def _get_nom_zone(self):
         return self._nom_zone
     def _set_nom_zone(self, zone):
+        prochain_ident = zone.lower() + ":" + self._mnemonic
+        autre = importeur.salle.salles.get(prochain_ident)
+        if autre is not None and autre is not self:
+            raise ValueError("L'identifiant {} est déjà utilisé".format(
+                    repr(prochain_ident)))
+
         ident = self.ident
         self._nom_zone = zone.lower()
         type(self).importeur.salle.changer_ident(ident, self.ident)
@@ -144,6 +156,12 @@ class Salle(BaseObj):
     def _get_mnemonic(self):
         return self._mnemonic
     def _set_mnemonic(self, mnemonic):
+        prochain_ident = self._nom_zone + ":" + mnemonic.lower()
+        autre = importeur.salle.salles.get(prochain_ident)
+        if autre is not None and autre is not self:
+            raise ValueError("L'identifiant {} est déjà utilisé".format(
+                    repr(prochain_ident)))
+
         ident = self.ident
         self._mnemonic = mnemonic.lower()
         type(self).importeur.salle.changer_ident(ident, self.ident)
@@ -184,7 +202,7 @@ class Salle(BaseObj):
     @property
     def terrain(self):
         """Retourne l'objet terrain."""
-        return type(self).importeur.salle.terrains[self.nom_terrain]
+        return importeur.salle.terrains[self.nom_terrain]
 
     @property
     def desc_survol(self):
@@ -215,11 +233,128 @@ class Salle(BaseObj):
 
         return objets
 
+    @property
+    def a_magasin(self):
+        """Y a-t-il un magasin dans cette salle ?"""
+        return self.magasin is not None
+
+    @property
+    def nb_sorties(self):
+        """Retourne le mombre de sorties."""
+        sorties = [s for s in self.sorties if s and s.salle_dest]
+        return len(sorties)
+
+    @property
+    def details_etendus(self):
+        """Retourne la liste des détails étendus.
+
+        Cette méthode retourne les détails de la salle et ceux des
+        flottantes contenus dans la description.
+
+        """
+        details = self.details._details.copy()
+        description = self.description
+        for paragraphe in description.paragraphes:
+            p, flottantes = description.charger_descriptions_flottantes(
+                    paragraphe)
+            for flottante in flottantes:
+                for d in flottante.details:
+                    if d.nom not in details:
+                        details[d.nom] = d
+
+        return tuple(details.values())
+
+    @property
+    def proprietaires(self):
+        """Retourne les propriétaires."""
+        return self._proprietaires
+
+    def changer_terrain(self, nouveau_terrain):
+        """Change le terrain de la salle."""
+        nouveau_terrain = supprimer_accents(nouveau_terrain).lower()
+        for terrain in importeur.salle.terrains.keys():
+            sa_terrain = supprimer_accents(terrain).lower()
+            if sa_terrain == nouveau_terrain:
+                self.nom_terrain = terrain
+                return
+
+        raise ValueError("terrain {} inconnu".format(repr(nouveau_terrain)))
+
+    def voit_ici(self, personnage):
+        """Retourne True si le personnage peut voir ici, False sinon.
+
+        Un personnage peut voir dans la salle si :
+            Il est immortel
+            La salle est illuminée
+            Le personnage est un PNJ nyctalope
+            Le personnage est un PNJ contrôlé par un immortel
+            Il y a un feu dans la salle
+            La race du personnage est nyctalope
+            Le personnage a une affection qui lui permet de voir dans le noir
+            La salle est en extérieure et :
+                Il fait jour ou
+                Le ciel est dégagé
+            Une lumière est posée sur le sol
+            Le personnage a une lumière
+
+        """
+        if personnage.est_immortel():
+            return True
+
+        if self.illuminee:
+            return True
+
+        if hasattr(personnage, "prototype") and \
+                (personnage.prototype.a_flag("nyctalope") or \
+                personnage.controle_par):
+            return True
+
+        if self.ident in importeur.salle.feux:
+            return True
+
+        # Vérification de la race
+        if personnage.race and personnage.race.a_flag("nyctalope"):
+            return True
+
+        # Vérification de l'affection
+        for affection in personnage.affections.values():
+            if affection.affection.a_flag("voit dans le noir"):
+                return True
+
+        if not self.interieur:
+            if importeur.temps.temps.il_fait_jour:
+                return True
+
+            perturbation = importeur.meteo.salles.get(self)
+            if perturbation is None or not perturbation.est_opaque():
+                return True
+
+        # Vérification des lumières au sol
+        for objet in self.objets_sol:
+            if objet.est_de_type("lumière") and objet.allumee_depuis:
+                return True
+
+        # Vérification des lumières équipées
+        for objet in personnage.equipement.equipes:
+            if objet.est_de_type("lumière") and objet.allumee_depuis:
+                return True
+
+        return False
+
     def a_detail_flag(self, flag):
         """Retourne True si la salle a un détail du flag indiqué."""
         for detail in self.details:
             if detail.a_flag(flag):
                 return True
+
+        description = self.description
+        for paragraphe in description.paragraphes:
+            p, flottantes = description.charger_descriptions_flottantes(
+                    paragraphe)
+            for flottante in flottantes:
+                for d in flottante.details:
+                    if d.a_flag(flag):
+                        return True
 
         return False
 
@@ -258,7 +393,8 @@ class Salle(BaseObj):
 
         return Chemins.salles_autour(self, rayon, empruntable=empruntable)
 
-    def trouver_chemin_absolu(self, destination, rayon=5):
+    def trouver_chemin_absolu(self, destination, rayon=5,
+            explicite=False):
         """Retourne, si trouvé, le chemin menant à destination ou None.
 
         Le rayon passé en argument est celui de recherche. Plus il est
@@ -266,9 +402,13 @@ class Salle(BaseObj):
 
         """
         chemins = Chemins.salles_autour(self, rayon, absolu=True)
-        return chemins.get(destination)
+        chemin = chemins.get(destination)
+        if chemin is None and explicite:
+            raise ValueError("le chemin absolu est introuvable")
 
-    def trouver_chemin(self, destination):
+        return chemin
+
+    def trouver_chemin(self, destination, explicite=False):
         """Recherche et retourne le chemin entre deux salles.
 
         Plusieurs algorithmes de recherche sont utilisés en fonction
@@ -291,10 +431,14 @@ class Salle(BaseObj):
         *   Sinon, cherche le chemin absolu (toutes les salles
             autour de la première salle dans un rayon d'estime).
 
+        Si explicite est mis à True, lève une exception ValueError
+        décrivant pourquoi la recherche a échouée.
+
         """
         # Si l'une des salles n'a pas de coordonnées valide
         if self.coords.invalide or destination.coords.invalide:
-            return self.trouver_chemin_absolu(destination, 4)
+            return self.trouver_chemin_absolu(destination, 4,
+                    explicite=explicite)
 
         # Les deux salles ont des coordonnées valides
         # On vérifie que le rayon n'es tpas trop important
@@ -302,6 +446,10 @@ class Salle(BaseObj):
         v_destination = Vecteur(*destination.coords.tuple())
         distance = (v_destination - v_origine).norme
         if distance > 25:
+            if explicite:
+                raise ValueError("la distance entre les deux salles " \
+                        "est supérieure à 25")
+
             return None
 
         salles = Chemins.get_salles_entre(self, destination)
@@ -328,10 +476,17 @@ class Salle(BaseObj):
             a_salle = d_salle
 
         if chemin.origine is not self or chemin.destination is not destination:
+            if explicite:
+                raise ValueError("le chemin retourné ne commence ou " \
+                        "ne finit pas au bon endroit")
+
             return None
 
         if not continu and (not self.accepte_discontinu() or not \
                 destination.accepte_discontinu()):
+            if explicite:
+                raise ValueError("un chemin non continu a été retourné")
+
             return None
 
         chemin.raccourcir()
@@ -440,6 +595,11 @@ class Salle(BaseObj):
         if personnage.est_mort():
             personnage << "|err|Vous êtes inconscient et ne voyez pas " \
                     "grand chose...|ff|"
+            return
+
+        if not self.voit_ici(personnage):
+            personnage << "Il y fait trop sombre pour vos sens, " \
+                    "l'obscurité vous environne."
             return
 
         res = ""
@@ -674,3 +834,56 @@ class Salle(BaseObj):
         """Supprime les décors de clé indiquée."""
         for decor in self.get_decors(cle):
             self.supprimer_decor(decor)
+
+    def supprimer_bonhommes_neige(self):
+        """Supprime les bonhommes de neige présents."""
+        for decor in list(self.decors):
+            if isinstance(decor, BonhommeNeige):
+                self.supprimer_decor(decor)
+                self.envoyer("{} se met à fondre rapidement.".format(
+                        decor.get_nom().capitalize()))
+
+    def get_structure(self):
+        """Retourne la structure de la salle."""
+        structure = StructureSimple()
+        structure.zone = self._nom_zone
+        structure.mnemonique = self._mnemonic
+        structure.terrain = self.nom_terrain
+        structure.titre = self.titre
+        structure.interieur = Fraction(self.interieur)
+        structure.illuminee = Fraction(self.illuminee)
+        structure.proprietaires = list(self.proprietaires)
+
+        # Coordonnées
+        structure.coordonnees = Fraction(self.coords.valide)
+        structure.x = Fraction(self.coords.x)
+        structure.y = Fraction(self.coords.y)
+        structure.z = Fraction(self.coords.z)
+        return structure
+
+    def appliquer_structure(self, structure):
+        """Applique la structure passée en paramètre."""
+        for cle, valeur in structure.donnees.items():
+            if cle == "zone":
+                self.nom_zone = str(valeur)
+            elif cle == "mnemonique":
+                self.mnemonic = str(valeur)
+            elif cle == "terrain":
+                self.changer_terrain(str(valeur))
+            elif cle == "titre":
+                self.titre = str(valeur)
+            elif cle == "interieur":
+                self.interieur = bool(valeur)
+            elif cle == "illuminee":
+                self.illuminee = bool(valeur)
+            elif cle == "proprietaires":
+                proprietaires = [p for p in valeur if p]
+                self.proprietaires[:] = proprietaires
+            elif cle == "coordonnees":
+                self.coords.valide = bool(valeur)
+            elif cle == "x":
+                self.coords.x = int(valeur)
+            elif cle == "y":
+                self.coords.y = int(valeur)
+            elif cle == "z":
+                self.coords.z = int(valeur)

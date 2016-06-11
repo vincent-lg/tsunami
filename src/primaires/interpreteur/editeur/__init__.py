@@ -1,6 +1,6 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2010 LE GOFF Vincent
+# Copyright (c) 2010-2016 LE GOFF Vincent
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -76,8 +76,18 @@ class Editeur(Contexte):
             fonction = getattr(self, nom)
             self.options[rac] = fonction
 
+
+    @staticmethod
+    def afficher_apercu(apercu, objet, valeur, *args):
+        """Affichage de l'aperçu."""
+        if valeur is None:
+            valeur = "|att|non précisé|ff|"
+
+        return apercu.format(objet=objet, valeur=valeur)
+
     def ajouter_option(self, option, fonction):
         """Ajoute une option.
+
         Les options sont appelables grâce au raccourci
         '/<option> <arguments>' dans l'éditeur.
 
@@ -99,7 +109,7 @@ class Editeur(Contexte):
 
     def get_apercu(self):
         """Retourne l'aperçu"""
-        return self.apercu.format(objet = self.objet)
+        return self.apercu.format(objet=self.objet)
 
     def get_prompt(self):
         """Retourne le prompt"""
@@ -110,6 +120,7 @@ class Editeur(Contexte):
 
     def receptionner(self, msg):
         """Méthode appelée quand l'éditeur reçoit un message.
+
         On le redirige vers 'interpreter' après avoir appliqué les options
         de réception.
 

@@ -1,6 +1,6 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2010 LE GOFF Vincent
+# Copyright (c) 2010-2016 LE GOFF Vincent
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -56,6 +56,8 @@ def cb_reception(serveur, importeur, logger, client, msg):
     try:
         instance.receptionner(msg)
     except Exception:
+        msg = importeur.interpreteur.erreurs.get((instance.joueur,
+                msg), msg)
         trace = traceback.format_exc()
         logger.fatal("Exception levée lors de l'interprétation de " \
                 "l'entrée : {}".format(msg))

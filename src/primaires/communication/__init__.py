@@ -1,6 +1,6 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2010 LE GOFF Vincent
+# Copyright (c) 2010-2016 LE GOFF Vincent
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -31,6 +31,9 @@
 """Fichier contenant le module primaire communication."""
 
 import datetime
+from random import random
+
+from vector import mag
 
 from abstraits.module import *
 from primaires.format.fonctions import *
@@ -38,6 +41,7 @@ from primaires.format.tableau import Tableau, CENTRE
 from primaires.communication.config import cfg_com
 from primaires.communication import masques
 from primaires.communication import commandes
+from primaires.perso.exceptions.stat import DepassementStat
 
 from .editeurs.chedit import EdtChedit
 from .editeurs.socedit import EdtSocedit
@@ -45,6 +49,7 @@ from .editeurs.medit import EdtMedit
 from .editeurs.messagerie import EdtMessagerie
 
 from .conversations import Conversations
+from .orbes import Orbes
 from .attitudes import Attitudes
 from .attitude import INACHEVEE
 from .canaux import Canaux
@@ -72,11 +77,13 @@ class Module(BaseModule):
         self.masques = []
         self.commandes = []
         self.conversations = None
+        self.orbes = None
         self.attitudes = None
         self._canaux = None
         self.derniers_canaux = {}
         self.mails = None
         self.messages = {}
+        self.orbes_choisis = {}
 
     def config(self):
         """Configuration du module"""
@@ -98,6 +105,10 @@ class Module(BaseModule):
         self.conversations = self.importeur.supenr.charger_unique(Conversations)
         if self.conversations is None:
             self.conversations = Conversations()
+
+        self.orbes = self.importeur.supenr.charger_unique(Orbes)
+        if self.orbes is None:
+            self.orbes = Orbes()
 
         # On récupère les attitudes
         attitudes = self.importeur.supenr.charger_unique(Attitudes)
@@ -162,6 +173,7 @@ class Module(BaseModule):
             commandes.emote.CmdEmote(),
             commandes.historique.CmdHistorique(),
             commandes.messages.CmdMessages(),
+            commandes.orbe.CmdOrbe(),
             commandes.parler.CmdParler(),
             commandes.repondre.CmdRepondre(),
             commandes.socedit.CmdSocedit(),
@@ -175,6 +187,15 @@ class Module(BaseModule):
         self.importeur.interpreteur.ajouter_editeur(EdtSocedit)
         self.importeur.interpreteur.ajouter_editeur(EdtMedit)
         self.importeur.interpreteur.ajouter_editeur(EdtMessagerie)
+
+    def preparer(self):
+        """Préparation du module.
+
+        Les actions suivantes sont effectuées au lancement du module :
+            Nettoyage des orbes
+
+        """
+        self.orbes.nettoyer()
 
     @property
     def canaux(self):
@@ -318,6 +339,12 @@ class Module(BaseModule):
         elif commande.startswith(". "):
             res = True
             self.dire_dernier_canal(personnage, commande[2:])
+        elif commande.startswith("* "):
+            res = True
+            self.dire_tous_orbe(personnage, commande[2:])
+        elif commande.startswith("!") and len(commande) > 1:
+            res = True
+            self.dire_orbe(personnage, commande[1:])
         elif commande.split(" ")[0] in noms_canaux_connectes:
             res = True
             self.dire_canal(personnage, commande)
@@ -396,3 +423,145 @@ class Module(BaseModule):
             tableau.ajouter_ligne(msg_duree, canal, auteur.nom, message)
 
         return tableau
+
+    def dire_tous_orbe(self, personnage, message):
+        """Dit le message à tous les orbes."""
+        # On vérifie que le message n'est pas vide
+        if not message:
+            personnage << "|err|Que voulez-vous dire ?|ff|"
+            return
+
+        # On sélectionne les orbes du personnage
+        orbes = personnage.equipement.inventaire.get_objets_type("orbe")
+        if len(orbes) == 0:
+            personnage << "|err|Vous ne possédez pas d'orbe.|ff|"
+            return
+
+        if len(orbes) > 1:
+            orbe = importeur.communication.orbes.defauts.get(personnage)
+            if orbe is None:
+                personnage << "|err|Quel orbe souhaitez-vous utiliser ?|ff|"
+                personnage.envoyer_tip("Utilisez la commande %orbe% " \
+                        "%orbe:choisir% pour choisir votre orbe préféré.")
+                return
+            elif orbe.grand_parent is not personnage:
+                personnage << "|err|Vous ne possédez pas cet orbe.|ff|"
+                return
+        else:
+            orbe = orbes[0]
+
+        if not orbe.nom_orbe:
+            personnage << "|err|Cet orbe n'a pas de nom.|ff|"
+            personnage.envoyer_tip("Utilisez la commande %orbe% " \
+                        "%orbe:renommer% pour renommer un orbe.")
+            return
+
+        # On cherche les connectés qui ont le même type d'orbe
+        joueurs = []
+        for joueur in importeur.connex.joueurs_connectes:
+            if joueur is not personnage and \
+                    joueur.equipement.inventaire.get_objets_cle(orbe.cle):
+                joueurs.append(joueur)
+
+        # Envoie à chaque joueur du message
+        personnage << "|jn|[{}] Vous dites : {}|ff|".format(orbe.get_nom(),
+                message)
+        for joueur in joueurs:
+            self.envoyer_orbe(personnage, joueur, orbe, message)
+
+    def dire_orbe(self, personnage, message):
+        """Dit le message à un orbes."""
+        # On vérifie que le message n'est pas vide
+        if not message:
+            personnage << "|err|Que voulez-vous dire ?|ff|"
+            return
+
+        # On sélectionne les orbes du personnage
+        orbes = personnage.equipement.inventaire.get_objets_type("orbe")
+        if len(orbes) == 0:
+            personnage << "|err|Vous ne possédez pas d'orbe.|ff|"
+            return
+
+        if len(orbes) > 1:
+            orbe = importeur.communication.orbes.defauts.get(personnage)
+            if orbe is None:
+                personnage << "|err|Quel orbe souhaitez-vous utiliser ?|ff|"
+                personnage.envoyer_tip("Utilisez la commande %orbe% " \
+                        "%orbe:choisir% pour choisir votre orbe préféré.")
+                return
+            elif orbe.grand_parent is not personnage:
+                personnage << "|err|Vous ne possédez pas cet orbe.|ff|"
+                return
+        else:
+            orbe = orbes[0]
+
+        if not orbe.nom_orbe:
+            personnage << "|err|Cet orbe n'a pas de nom.|ff|"
+            personnage.envoyer_tip("Utilisez la commande %orbe% " \
+                        "%orbe:renommer% pour renommer un orbe.")
+            return
+
+        # On cherche l'orbe
+        nom = supprimer_accents(message.split(" ")[0]).lower()
+        message = " ".join(message.split(" ")[1:])
+
+        orbe_destinataire = None
+        orbes = importeur.objet.get_objets_de_type("orbe")
+        for autre_orbe in orbes:
+            if autre_orbe.nom_orbe == nom:
+                orbe_destinataire = autre_orbe
+                break
+
+        if orbe_destinataire is None:
+            personnage << "|err|Vous ne pouvez trouver cet orbe.|ff|"
+            return
+
+        destinataire = orbe_destinataire.grand_parent
+        personnage << "|jn|[{}] Vous dites à l'orbe {} : {}|ff|".format(
+                orbe.get_nom(), orbe_destinataire.nom_orbe, message)
+        self.envoyer_orbe(personnage, destinataire, orbe,
+                message, "secrètement ")
+
+    def envoyer_orbe(self, auteur, destinataire, orbe, message, ajout=""):
+        """Envoie et brouille le message en fonction de la distance."""
+        s_auteur = auteur.salle
+        s_destinataire = getattr(destinataire, "salle", destinataire)
+        if s_auteur.coords.valide and s_destinataire.coords.valide:
+            distance = mag(s_auteur.coords.x, s_auteur.coords.y,
+                    s_auteur.coords.z, s_destinataire.coords.x,
+                    s_destinataire.coords.y, s_destinataire.coords.z)
+        else:
+            distance = 20
+
+        # En fonction de la distance, essaye de prélever de la mana
+        mana = int(round(distance / 2))
+        if mana < 10:
+            mana = 10
+        elif mana > 100:
+            mana = 100
+
+        try:
+            auteur.stats.mana -= mana
+        except DepassementStat:
+            # Brouille le message
+            taux = distance / 400
+            if taux < 0.02:
+                taux = 0.02
+            elif taux > 0.3:
+                taux = 0.3
+
+            for i, car in enumerate(message):
+                if random() < taux:
+                    message = message[:i] + "?" + message[i + 1:]
+
+        # Enfin, on fait attendre le message en fonction de la distance
+        temps = distance / 100
+        if temps < 1:
+            temps = 1
+
+        importeur.communication.enregistrer_conversation("|jn|orbe|ff|",
+                destinataire, auteur, message)
+        message = "|jn|[Orbe {}] dit {}: {}|ff|".format(orbe.nom_orbe,
+                ajout, message)
+        importeur.diffact.ajouter_action("orbe_{}".format(str(id(message))),
+                temps, destinataire.envoyer, message)

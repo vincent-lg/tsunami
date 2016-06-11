@@ -1,6 +1,6 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2010 LE GOFF Vincent
+# Copyright (c) 2010-2016 LE GOFF Vincent
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -111,6 +111,10 @@ class Detail(BaseObj):
                 self.supporte = None
     peut_supporter = property(_get_peut_supporter, _set_peut_supporter)
 
+    def get_nom_pour(self, personnage):
+        """Retourne le nom pour le personnage précisé."""
+        return self.titre
+
     def a_flag(self, nom_flag):
         """Retourne True si le détail a le flag, False sinon."""
         valeur = FLAGS[nom_flag]
@@ -139,7 +143,33 @@ class ScriptDetail(Script):
 
     def init(self):
         """Initialisation du script"""
-        # Evénement regarde
+        # Événement asseoit
+        evt_asseoit = self.creer_evenement("asseoit")
+        evt_asseoit.aide_courte = "un personnage s'asseoit sur un détail"
+        evt_asseoit.aide_longue = \
+            "Cet évènement est appelé quand un personnage s'asseoit " \
+            "sur un détail dans la salle. Il se produit après le " \
+            "message comme quoi le personnage s'est assis. L'état " \
+            "a déjà été renseigné."
+
+        # Configuration des variables de l'évènement asseoit
+        var_perso = evt_asseoit.ajouter_variable("personnage", "Personnage")
+        var_perso.aide = "le personnage s'asseyant"
+
+        # Événement allonge
+        evt_allonge = self.creer_evenement("allonge")
+        evt_allonge.aide_courte = "un personnage s'allonge sur un détail"
+        evt_allonge.aide_longue = \
+            "Cet évènement est appelé quand un personnage s'allonge " \
+            "sur un détail dans la salle. Il se produit après le " \
+            "message comme quoi le personnage s'est allongé. L'état " \
+            "a déjà été renseigné."
+
+        # Configuration des variables de l'évènement allonge
+        var_perso = evt_allonge.ajouter_variable("personnage", "Personnage")
+        var_perso.aide = "le personnage s'allongeant"
+
+        # Événement regarde
         evt_regarde = self.creer_evenement("regarde")
         evt_reg_avant = evt_regarde.creer_evenement("avant")
         evt_reg_apres = evt_regarde.creer_evenement("après")

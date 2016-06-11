@@ -1,6 +1,6 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2012 LE GOFF Vincent
+# Copyright (c) 2010-2016 LE GOFF Vincent
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -36,19 +36,31 @@ TYPES = (
 )
 
 CATEGORIES = (
+    "auberge",
+    "autre",
+    "botanique",
+    "combat",
+    "commerce",
+    "communication",
+    "confort",
+    "crafting",
+    "cuisine",
     "design",
+    "exploration",
+    "équilibrage",
+    "familier",
     "faute",
+    "jeu",
+    "magie",
+    "météo",
+    "modération",
+    "navigation",
+    "progression",
+    "quête",
     "réseau",
     "scripting",
     "sécurité",
-    "communication",
-    "combat",
-    "autre",
-    "confort",
-    "navigation",
-    "cuisine",
-    "magie",
-    "équilibrage",
+    "XP",
 )
 
 STATUTS = (
@@ -60,11 +72,11 @@ STATUTS = (
 )
 
 CLR_STATUTS = {
-    "nouveau":"|vrc|",
-    "en cours":"|vr|",
-    "fermé":"|grf|",
-    "rejeté":"|rgc|",
-    "dupliqué":"|cy|",
+    "nouveau": "|vrc|",
+    "en cours": "|vr|",
+    "fermé": "|grf|",
+    "rejeté": "|rgc|",
+    "dupliqué": "|cy|",
 }
 
 CLR_AVC = (
@@ -87,21 +99,24 @@ PRIORITES = (
 )
 
 PRIORITES_VAL = {
-    "faible":0,
-    "normale":1,
-    "haute":2,
-    "urgente":3,
-    "immédiate":4,
+    "faible": 0,
+    "normale": 1,
+    "haute": 2,
+    "urgente": 3,
+    "immédiate": 4,
 }
 
 ATTRS_STATUTS = {
+    "en cours": (
+        ("avancement", 0),
+        ("ouvert", True)),
     "fermé": (
         ("avancement", 100),
         ("ouvert", False)),
     "rejeté": (
         ("ouvert", False),),
     "dupliqué": (
-        ("ouvert", False),),
+        ("ouvert", False ),),
 }
 
 COMPLETE = {

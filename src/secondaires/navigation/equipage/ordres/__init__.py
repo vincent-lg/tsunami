@@ -1,6 +1,6 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2012 LE GOFF Vincent
+# Copyright (c) 2010-2016 LE GOFF Vincent
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -37,6 +37,7 @@ ordre.py.
 
 from secondaires.navigation.equipage.ordres.deplacer import Deplacer
 from secondaires.navigation.equipage.ordres.hisser_voile import HisserVoile
+from secondaires.navigation.equipage.ordres.lever_ancre import LeverAncre
 from secondaires.navigation.equipage.ordres.long_deplacer import LongDeplacer
 from secondaires.navigation.equipage.ordres.plier_voile import PlierVoile
 from secondaires.navigation.equipage.ordres.relacher_gouvernail import \

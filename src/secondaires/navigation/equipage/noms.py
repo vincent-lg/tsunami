@@ -1,6 +1,6 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2012 LE GOFF Vincent
+# Copyright (c) 2010-2016 LE GOFF Vincent
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -31,14 +31,35 @@
 """Fichier contenant les noms des mâtelots."""
 
 NOMS_MATELOTS = [
+    "André",
     "Antoine",
-    "Émile",
-    "Pierre",
-    "Jules",
-    "Jean",
-    "Robert",
-    "Richard",
+    "Arthur",
     "Brutus",
-    "Noé",
+    "Charles",
+    "Christian",
     "Claude",
+    "David",
+    "Émile",
+    "Éric",
+    "François",
+    "Gaston",
+    "Ian",
+    "Jacques",
+    "James",
+    "Jean",
+    "Jules",
+    "Mathieu",
+    "Michel",
+    "Noé",
+    "Oscar",
+    "Patrick",
+    "Pierre",
+    "Richard",
+    "Robert",
+    "Robin",
+    "Stéphane",
+    "Thibault",
+    "Ulysse",
+    "Will",
+    "Yves",
 ]

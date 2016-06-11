@@ -1,11 +1,11 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2010 LE GOFF Vincent
+# Copyright (c) 2010-2016 LE GOFF Vincent
 # All rights reserved.
-# 
+#
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are met:
-# 
+#
 # * Redistributions of source code must retain the above copyright notice, this
 #   list of conditions and the following disclaimer.
 # * Redistributions in binary form must reproduce the above copyright notice,
@@ -14,7 +14,7 @@
 # * Neither the name of the copyright holder nor the names of its contributors
 #   may be used to endorse or promote products derived from this software
 #   without specific prior written permission.
-# 
+#
 # THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
 # AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
 # IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -38,25 +38,25 @@ from primaires.interpreteur.editeur.uniligne import Uniligne
 from .supprimer import NSupprimer
 
 class EdtPresentation(Presentation):
-    
+
     """Classe définissant l'éditeur d'élément 'eltedit'.
-    
+
     """
-    
+
     def __init__(self, personnage, element, attribut=""):
         """Constructeur de l'éditeur"""
         if personnage:
             instance_connexion = personnage.instance_connexion
         else:
             instance_connexion = None
-        
+
         Presentation.__init__(self, instance_connexion, element)
         if personnage and element:
             self.construire(element)
-    
+
     def __getnewargs__(self):
         return (None, None)
-    
+
     def construire(self, element):
         """Construction de l'éditeur"""
         # Nom
@@ -67,7 +67,7 @@ class EdtPresentation(Presentation):
         nom.aide_courte = \
             "Entrez le |ent|nom|ff| de l'élément.\n\nNom actuel : " \
             "{objet.nom}"
-        
+
         # Description
         description = self.ajouter_choix("description", "d", Description, \
                 element)
@@ -76,13 +76,10 @@ class EdtPresentation(Presentation):
         description.aide_courte = \
             "| |tit|" + "Description de l'élément {}".format(
             element.cle).ljust(74) + "|ff||\n" + self.opts.separateur
-        
+
         # Extensions
-        for extension in element._extensions_editeur:
-            rac, ligne, editeur, objet, attr, sup = extension
-            env = self.ajouter_choix(ligne, rac, editeur, objet, attr, *sup)
-            env.parent = self
-        
+        element.editer(self)
+
         # Suppression
         suppression = self.ajouter_choix("supprimer", "sup", NSupprimer, \
                 element)
@@ -92,14 +89,3 @@ class EdtPresentation(Presentation):
         suppression.action = "objet.supprimer_element"
         suppression.confirme = "L'élément {} a bien été " \
                 "supprimé.".format(element.cle)
-        
-        # Travail sur les enveloppes
-        # On appelle la méthode 'travailler_enveloppes' de l'élément
-        # Cette méthode peut travailler sur les enveloppes de la présentation
-        # (écrire une aide courte, un aperçu...)
-        enveloppes = {}
-        for rac, nom in self.raccourcis.items():
-            enveloppe = self.choix[nom]
-            enveloppes[rac] = enveloppe
-        
-        element.travailler_enveloppes(enveloppes)

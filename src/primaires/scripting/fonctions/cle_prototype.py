@@ -1,6 +1,6 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2010 LE GOFF Vincent
+# Copyright (c) 2010-2016 LE GOFF Vincent
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -41,6 +41,7 @@ class ClasseFonction(Fonction):
         cls.ajouter_types(cls.nom_prototype_objet, "Objet")
         cls.ajouter_types(cls.nom_prototype_objet, "PrototypeObjet")
         cls.ajouter_types(cls.nom_prototype_PNJ, "PNJ")
+        cls.ajouter_types(cls.nom_prototype_proto_PNJ, "PrototypePNJ")
 
     @staticmethod
     def nom_prototype_objet(objet):
@@ -51,3 +52,8 @@ class ClasseFonction(Fonction):
     def nom_prototype_PNJ(pnj):
         """Retourne la clé du prototype dont est issu le PNJ."""
         return pnj.prototype.cle
+
+    @staticmethod
+    def nom_prototype_proto_PNJ(prototype_pnj):
+        """Retourne la clé du prototype dont est issu le PNJ."""
+        return prototype_pnj.cle

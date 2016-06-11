@@ -1,6 +1,6 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2010 LE GOFF Vincent
+# Copyright (c) 2010-2016 LE GOFF Vincent
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -31,6 +31,7 @@
 """Fichier contenant le module primaire commerce."""
 
 from abstraits.module import *
+from primaires.objet.vente_unique import VenteUnique
 from . import masques
 from . import commandes
 from . import types
@@ -71,11 +72,14 @@ class Module(BaseModule):
         self.types_services = {}
         self.aides_types = {}
         self.questeurs = {}
+        type(importeur).espace["questeurs"] = self.questeurs
 
     def init(self):
         """Initialisation du module."""
         self.importeur.hook["temps:minute"].ajouter_evenement(
                 self.renouveler_magasins)
+        self.importeur.hook["objet:doit_garder"].ajouter_evenement(
+                self.doit_garder_objets)
 
         # On récupère les questeurs
         questeurs = self.importeur.supenr.charger_groupe(Questeur)
@@ -140,3 +144,14 @@ class Module(BaseModule):
                 temps.heure_minute, [])
         for magasin in magasins:
             magasin.fermer()
+
+    def doit_garder_objets(self):
+        """Retourne les objets à ne pas détruire."""
+        a_garder = []
+        for salle in importeur.salle.salles.values():
+            if salle.magasin:
+                for service, qtt in salle.magasin.inventaire:
+                    if isinstance(service, VenteUnique) and service.objet:
+                        a_garder.append(service.objet)
+
+        return a_garder

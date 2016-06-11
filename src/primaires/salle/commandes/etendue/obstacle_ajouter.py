@@ -1,6 +1,6 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2012 LE GOFF Vincent
+# Copyright (c) 2010-2016 LE GOFF Vincent
 # All rights reserved.
 # 
 # Redistribution and use in source and binary forms, with or without
@@ -66,7 +66,7 @@ class PrmObstacleAjouter(Parametre):
                     etendue)
         else:
             if point not in importeur.salle.obstacles:
-                personnage << "|err|Le point {} n'existe pas.".format(point)
+                personnage << "|err|Le point {} n'existe pas.|ff|".format(point)
             elif coords in etendue:
                 personnage << "|err|Ce point existe déjà dans l'étendue.|ff|"
             else:

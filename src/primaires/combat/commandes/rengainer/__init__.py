@@ -1,6 +1,6 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2013 LE GOFF Vincent
+# Copyright (c) 2010-2016 LE GOFF Vincent
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -67,6 +67,7 @@ class CmdRengainer(Commande):
                 "True), )"
         nom_objet.proprietes["quantite"] = "True"
         nom_objet.proprietes["conteneur"] = "True"
+        nom_objet.proprietes["heterogene"] = "True"
         conteneur = self.noeud.get_masque("conteneur")
         conteneur.proprietes["conteneurs"] = \
                 "(personnage.equipement.equipes, )"
@@ -74,8 +75,19 @@ class CmdRengainer(Commande):
     def interpreter(self, personnage, dic_masques):
         """Méthode d'interprétation de commande"""
         personnage.agir("rengainer")
-        arme, qtt, conteneur_arme = list(dic_masques[
-                "nom_objet"].objets_qtt_conteneurs)[0]
+        arme_trouvee = False
+        # On ne peut dégainer qu'un objet de type
+        for arme, _, conteneur_arme in \
+                (dic_masques["nom_objet"].objets_qtt_conteneurs):
+            if arme.est_de_type("arme"):
+                arme_trouvee = True
+                break
+        # Pas de telle arme trouvée dans l'équipement, sélectionner le premier
+        # objet de dic_masques["nom_objet"] pour permettre d'afficher un
+        # message de refus précis au joueur.
+        if not arme_trouvee:
+            arme, _, conteneur_arme = list(dic_masques[
+                    "nom_objet"].objets_qtt_conteneurs)[0]
         if not arme.est_de_type("arme"):
             personnage << "|err|Vous ne pouvez mettre {} au " \
                     "fourreau.|ff|".format(arme.get_nom())
@@ -85,9 +97,10 @@ class CmdRengainer(Commande):
             fourreau = dic_masques["conteneur"].objet
         else:
             # On recherche un fourreau disponible
-            fourreaux = [membre.equipe[-1] for membre in \
-                    personnage.equipement.membres if len(membre.equipe) > 0]
-            fourreaux = [objet for objet in fourreaux if objet and \
+            equipement = []
+            for membre in personnage.equipement.membres:
+                equipement += membre.equipe
+            fourreaux = [objet for objet in equipement if objet and \
                     objet.est_de_type("armure")]
             fourreaux = [fourreau for fourreau in fourreaux if \
                     fourreau.fourreau and fourreau.au_fourreau is None]

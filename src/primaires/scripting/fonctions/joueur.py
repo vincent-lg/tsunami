@@ -1,6 +1,6 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2014 LE GOFF Vincent
+# Copyright (c) 2010-2016 LE GOFF Vincent
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -55,8 +55,8 @@ class ClasseFonction(Fonction):
 
         """
         nom = nom.capitalize()
-        if nom in importeur.joueur.joueurs:
-            return importeur.joueur.joueurs[nom]
-        else:
+        try:
+            return importeur.joueur.get_joueur(nom)
+        except KeyError:
             raise ErreurExecution("Joueur inconnu : {}".format(
                     repr(nom)))

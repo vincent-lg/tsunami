@@ -1,6 +1,6 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2012 LE GOFF Vincent
+# Copyright (c) 2010-2016 LE GOFF Vincent
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -31,7 +31,6 @@
 """Ce fichier contient la classe Plante, détaillée plus bas."""
 
 from abstraits.obase import BaseObj
-from corps.aleatoire import varier
 
 class Plante(BaseObj):
 
@@ -102,7 +101,7 @@ class Plante(BaseObj):
                 break
 
             qtt = self.elements.get(elt.objet, 0)
-            n_qtt = varier(elt.quantite, 3, 0)
+            n_qtt = elt.quantite
             qtt += n_qtt
             if qtt > 0:
                 n_elements[elt.objet] = qtt
@@ -142,7 +141,7 @@ class Plante(BaseObj):
         """Ajuste automatiquement le cycle et la période de la plante."""
         cycle = None
         for t_cycle in self.prototype.cycles:
-            if self.age <= t_cycle.age:
+            if self.age <= t_cycle.age_max:
                 cycle = t_cycle
                 break
 

@@ -1,6 +1,6 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2013 LE GOFF Vincent
+# Copyright (c) 2010-2016 LE GOFF Vincent
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -66,18 +66,18 @@ class HisserVoiles(Volonte):
         voiles = self.navire.voiles
         voiles = [v for v in voiles if not v.hissee]
         for voile in voiles:
+            proche = []
             for matelot in matelots:
                 origine = matelot.salle.mnemonic
                 destination = voile.parent.mnemonic
                 if origine == destination:
-                    proches.append((matelot, [], voile))
+                    proche.append((matelot, [], voile))
                 else:
                     chemin = graph.get((origine, destination))
                     if chemin:
-                        proches.append((matelot, chemin, voile))
+                        proche.append((matelot, chemin, voile))
+            proches.append(min(proche, key=lambda c: len(c[1])))
 
-        proches = sorted([couple for couple in proches],
-                key=lambda couple: len(couple[1]))
         proches = proches[:self.nombre]
         return proches
 
@@ -98,13 +98,17 @@ class HisserVoiles(Volonte):
     def crier_ordres(self, personnage):
         """On fait crier l'ordre au personnage."""
         nombre = self.nombre
-        msg = "{} s'écrie : hissez-moi ".format(personnage.distinction_audible)
-        if nombre < 0:
-            msg += "ces voiles"
-        elif nombre == 1:
-            msg += "une voile"
+        if nombre is None:
+            msg = "{} s'écrie : toutes voiles dehors".format(
+                    personnage.distinction_audible)
         else:
-            msg += "{} voiles".format(nombre)
+            msg = "{} s'écrie : hissez-moi ".format(personnage.distinction_audible)
+            if nombre < 0:
+                msg += "ces voiles"
+            elif nombre == 1:
+                msg += "une voile"
+            else:
+                msg += "{} voiles".format(nombre)
 
         msg += ", et qu'ça saute !"
         self.navire.envoyer(msg)
