@@ -73,6 +73,21 @@ class UOptions(BaseObj):
     def __getnewargs__(self):
         return ()
 
+    def __getstate__(self):
+        """Enregistrement de l'objet.
+
+        MongoDB n'aime pas enregistrer des dictionnaires avec des
+        joueurs en clé, on convertit donc en nom.
+
+        """
+        attrs = BaseObj.__getstate__(self)
+        options = {}
+        for joueur, valeur in attrs["options"].items():
+            options[joueur.nom] = valeur
+
+        attrs["options"] = options
+        return attrs
+
     def get_options(self, personnage):
         """Retourne le nombre correspondant au personnage ou 0.
 
