@@ -30,6 +30,7 @@
 
 """Ce fichier contient le module primaire supenr."""
 
+from ast import literal_eval
 import copy
 import os
 import pickle
@@ -165,7 +166,6 @@ class Module(BaseModule):
                 self.mode = "pickle"
             else:
                 self.mongo_db = connexion[self.cfg.nom_mongodb]
-                #self.mongo_db.add_son_manipulator(TransformFraction())
 
     def init(self):
         """Chargement de tous les objets (pickle)."""
@@ -406,6 +406,17 @@ class Module(BaseModule):
     def mongo_charger_dictionnaire(self, dictionnaire):
         """Charge les informations d'un dictionnaire."""
         for cle, valeur in tuple(dictionnaire.items()):
+            if cle.startswith("ObjectId("):
+                del dictionnaire[cle]
+                cle = cle[9:-1]
+                nom, _id = cle.split(",")
+                cle = self.mongo_charger_objet(nom, ObjectId(_id))
+                dictionnaire[cle] = valeur
+            elif cle.startswith("(") or cle.startswith("["):
+                del dictionnaire[cle]
+                cle = literal_eval(cle)
+                dictionnaire[cle] = valeur
+
             if isinstance(valeur, list) and len(valeur) == 2 and \
                     isinstance(valeur[0], str) and isinstance(valeur[1],
                     ObjectId):
@@ -540,6 +551,22 @@ class Module(BaseModule):
 
         second = False
         for cle, valeur in tuple(attributs.items()):
+            # Transformation des clés
+            if isinstance(cle, BaseObj):
+                del attributs[cle]
+                if not "_id" in cle.__dict__:
+                    second = True
+                    continue
+
+                cle = cle._id
+                nom = self.qualname(type(cle))
+                cle = "ObjectID({},{})".format(nom, cle)
+                attributs[cle] = valeur
+            elif isinstance(cle, (tuple, list)):
+                del attributs[cle]
+                cle = str(cle)
+                attributs[cle] = valeur
+
             if isinstance(valeur, BaseObj):
                 if "_id" in valeur.__dict__:
                     attributs[cle] = (self.qualname(type(valeur)),
