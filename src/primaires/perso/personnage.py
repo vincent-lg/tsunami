@@ -1126,6 +1126,7 @@ class Personnage(BaseObj):
         else:
             concrete = Affection(affection, self, duree, force)
             self.affections[cle] = concrete
+            self._enregistrer()
             concrete.affection.executer_script("cree", concrete)
             concrete.prevoir_tick()
 

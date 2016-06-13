@@ -395,6 +395,7 @@ class Module(BaseModule):
 
         collection = self.mongo_db[nom]
         objet = classe(*classe.__getnewargs__(classe))
+        object.__setattr__(objet, "_statut", 0)
         enr = self.mongo_objets.get(nom, {})
         enr[_id] = objet
         self.mongo_objets[nom] = enr
@@ -412,6 +413,7 @@ class Module(BaseModule):
             transform.transform_outgoing(attributs, collection)
 
         objet.__setstate__(attributs)
+        objet._construire()
         return objet
 
     def mongo_charger_dictionnaire(self, dictionnaire):
