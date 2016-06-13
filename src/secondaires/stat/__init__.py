@@ -85,7 +85,6 @@ class Module(BaseModule):
             self.stats = Stats(type(self.importeur).serveur.uptime)
 
         # On ajoute les commandes du module
-        # On ajoute les commandes du module
         self.commandes = [
             commandes.stat.CmdStat(),
         ]

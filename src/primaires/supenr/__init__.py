@@ -52,6 +52,7 @@ except ImportError:
 
 from abstraits.module import *
 from abstraits.obase import *
+from primaires.supenr import commandes
 from primaires.supenr.config import cfg_supenr
 
 # Dossier d'enregistrement des fichiers-données
@@ -90,6 +91,7 @@ class Module(BaseModule):
         self.mongo_file = set()
         self.mongo_collections = {}
         self.mongo_objets = {}
+        self.mongo_table = []
         self.mongo_debug = False
 
     def config(self):
@@ -179,6 +181,15 @@ class Module(BaseModule):
             importeur.diffact.ajouter_action("enregistrement", 1,
                     self.mongo_enregistrer_file)
         BaseModule.init(self)
+
+    def ajouter_commandes(self):
+        """Ajoute les commandes à l'interpréteur."""
+        self.commandes = [
+            commandes.mongo.CmdMongo(),
+        ]
+
+        for cmd in self.commandes:
+            importeur.interpreteur.ajouter_commande(cmd)
 
     def preparer(self):
         """Appel des méthodes différées."""
@@ -511,6 +522,8 @@ class Module(BaseModule):
                 except InvalidDocument as err:
                     print(err, objet, type(objet), attributs)
                     sys.exit(1)
+                else:
+                    self.mongo_table.append((time.time(), nom, _id))
         else:
             if not attributs.get("e_existe"):
                 return
@@ -520,6 +533,9 @@ class Module(BaseModule):
             except InvalidDocument as err:
                 print(err, objet, type(objet), attributs)
                 sys.exit(1)
+            else:
+                self.mongo_table.append((time.time(), nom, _id))
+
             objet._id = _id
             enr = self.mongo_objets.get(nom, {})
             enr[_id] = objet
