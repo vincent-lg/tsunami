@@ -171,6 +171,7 @@ class Membre(BaseObj):
         self.equipe.append(objet)
         if self.parent:
             objet.contenu = self.parent.equipement.equipes
+        self._enregistrer()
 
     def tester(self, nom_flag):
         """Teste le flag nom_flag."""

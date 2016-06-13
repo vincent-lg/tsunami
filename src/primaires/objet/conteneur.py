@@ -140,6 +140,7 @@ class ConteneurObjet(BaseObj):
 
         """
         prototype = hasattr(objet, "prototype") and objet.prototype or objet
+        self._enregistrer()
         if prototype.unique:
             self.supporter_poids_sup(objet.poids)
             objet.contenu = self
@@ -169,6 +170,7 @@ class ConteneurObjet(BaseObj):
     def retirer(self, objet, nombre=1, accepte_non_trouve = False):
         """On retire l'objet du conteneur"""
         prototype = hasattr(objet, "prototype") and objet.prototype or objet
+        self._enregistrer()
         if prototype.unique:
             if objet in self._objets:
                 self._objets.remove(objet)
