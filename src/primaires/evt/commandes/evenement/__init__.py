@@ -66,10 +66,12 @@ class CmdEvenement(Commande):
             evt = importeur.evt.evenements[cle]
             if personnage in evt.inscrits:
                 evt.inscrits.remove(personnage)
+                evt._enregistrer()
                 personnage << "Vous êtes désinscrit de l'évènement {}.".format(
                         cle)
             else:
                 evt.inscrits.append(personnage)
+                evt._enregistrer()
                 personnage << "Vous êtes inscrit à l'évènement {}.".format(
                         cle)
 
