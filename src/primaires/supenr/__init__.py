@@ -428,7 +428,8 @@ class Module(BaseModule):
                 del dictionnaire[cle]
                 cle = cle[9:-1]
                 nom, _id = cle.split(",")
-                cle = self.mongo_charger_objet(nom, ObjectId(_id))
+                classe = classes_base[nom.replace("-", ".")]
+                cle = self.mongo_charger_objet(classe, ObjectId(_id))
                 dictionnaire[cle] = valeur
             elif cle.startswith("(") or cle.startswith("["):
                 del dictionnaire[cle]
@@ -581,9 +582,9 @@ class Module(BaseModule):
                     second = True
                     continue
 
+                nom = self.qualname(type(cle)).replace(".", "-")
                 cle = cle._id
-                nom = self.qualname(type(cle))
-                cle = "ObjectID({},{})".format(nom, cle)
+                cle = "ObjectId({},{})".format(nom, str(cle))
                 attributs[cle] = valeur
             elif isinstance(cle, (tuple, list)):
                 del attributs[cle]

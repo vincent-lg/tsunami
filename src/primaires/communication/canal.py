@@ -177,6 +177,7 @@ class Canal(BaseObj):
         if joueur in self.immerges:
             self.immerger_ou_sortir(joueur, False)
         self.rejoindre_ou_quitter(joueur, False)
+        self._enregistrer()
         for connecte in self.connectes:
             if connecte in type(self).importeur.connex.joueurs_connectes:
                 if connecte in self.immerges:
@@ -190,6 +191,7 @@ class Canal(BaseObj):
 
     def bannir(self, joueur):
         """Bannit un joueur du canal (méthode de modération)"""
+        self._enregistrer()
         if not joueur in self.liste_noire:
             if joueur in self.immerges:
                 self.immerger_ou_sortir(joueur, False)
@@ -214,6 +216,7 @@ class Canal(BaseObj):
 
     def promouvoir_ou_dechoir(self, joueur):
         """Promeut ou déchoit un joueur du statut de modérateur"""
+        self._enregistrer()
         if not joueur in self.moderateurs:
             for connecte in self.connectes:
                 if (connecte in self.moderateurs or connecte is self.auteur) and \
