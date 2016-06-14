@@ -346,10 +346,11 @@ class InstanceConnexion(BaseObj):
         Dans ce cas, on le cherche dans l'interpréteur.
 
         """
-        if type(nouveau_contexte) is str:
+        if isinstance(nouveau_contexte, str):
             nouveau_contexte = type(self).importeur.interpreteur. \
                 contextes[nouveau_contexte]
             self.envoyer(nouveau_contexte.accueil())
+
         self.contexte_actuel = nouveau_contexte
 
     def write(self, message):

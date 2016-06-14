@@ -145,7 +145,7 @@ class Canal(BaseObj):
             self._enregistrer()
             contexte = Immersion(joueur.instance_connexion)
             contexte.canal = type(self).importeur.communication.canaux[self.nom]
-            joueur.contexte_actuel.migrer_contexte(contexte)
+            joueur.contexte_actuel.migrer_contexte(contexte, detruire=False)
             for immerge in self.immerges:
                 if immerge in type(self).importeur.connex.joueurs_connectes:
                     if immerge is not joueur:

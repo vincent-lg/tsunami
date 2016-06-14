@@ -39,6 +39,7 @@ try:
 except ImportError:
     pass
 
+from abstraits.obase import *
 from primaires.format.tableau import Tableau, DROITE
 from primaires.interpreteur.commande.commande import Commande
 
@@ -98,12 +99,15 @@ class CmdMongo(Commande):
             if len(texte) < 3 and texte.isdigit():
                 nb = int(texte)
                 self.afficher_table(personnage, nb)
-            elif texte in importeur.supenr.mongo_objets:
+            elif texte in classes_base:
                 self.afficher_collection(personnage, texte)
             elif texte.lower() in importeur.__dict__:
                 self.afficher_module(personnage, texte.lower())
-            else:
+            elif len(texte) == 24:
                 self.afficher_objet(personnage, texte.lower())
+            else:
+                personnage << "|err|Impossible de trouver l'information " \
+                        "'{}'.|ff|".format(texte)
         else:
             self.afficher_resume(personnage)
 
@@ -140,9 +144,18 @@ class CmdMongo(Commande):
             tableau.ajouter_colonne("Objets", DROITE)
             tableau.ajouter_colonne("Enregistrement")
             for classe in classes:
-                objets = len(importeur.supenr.mongo_objets[classe])
+                objets = []
+                o_classe = classes_base[classe]
+                noms_classe = []
+                for nom, cls in classes_base.items():
+                    if issubclass(cls, o_classe):
+                        noms_classe.append(nom)
+                        objets.extend(list(importeur.supenr.mongo_objets.get(
+                                nom, {}).values()))
+                objets = len(objets)
+                print(noms_classe)
                 dernieres = [l for l in importeur.supenr.mongo_table if \
-                        l[1] == classe]
+                        l[1] in noms_classe]
                 if dernieres:
                     derniere = dernieres[-1]
                     temps = derniere[0]
@@ -160,11 +173,23 @@ class CmdMongo(Commande):
     def afficher_collection(self, personnage, nom):
         """Affiche la collection indiquée."""
         tableau = Tableau("Détail de la collection {}".format(nom))
+        tableau.ajouter_colonne("Collection")
         tableau.ajouter_colonne("Objet")
         tableau.ajouter_colonne("Champs", DROITE)
-        objets = importeur.supenr.mongo_objets[nom]
-        for _id, objet in objets.items():
-            tableau.ajouter_ligne(str(_id), len(objet.__dict__))
+        objets = []
+        noms_objet = []
+        o_classe = classes_base[nom]
+        for nom, cls in classes_base.items():
+            if issubclass(cls, o_classe):
+                for _id, objet in importeur.supenr.mongo_objets.get(
+                        nom, {}).items():
+                    if objet.e_existe:
+                        noms_objet.append((nom, str(_id), len(
+                                objet.__dict__)))
+
+        noms_objet.sort()
+        for nom, _id, attributs in noms_objet:
+            tableau.ajouter_ligne(nom, _id, attributs)
 
         personnage << tableau.afficher()
 

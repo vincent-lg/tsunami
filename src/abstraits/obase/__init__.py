@@ -149,7 +149,7 @@ class BaseObj(metaclass=MetaBaseObj):
 
     def _construire(self):
         """Construit l'objet"""
-        object.__setattr__(self, "_statut", CONSTRUIT)
+        self._statut = CONSTRUIT
 
     def detruire(self):
         """Marque l'objet comme détruit."""

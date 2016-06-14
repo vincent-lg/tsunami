@@ -166,6 +166,7 @@ class ChoisirPersonnage(Contexte):
                     self.migrer_contexte("personnage:creation:choix_genre")
                 else:
                     joueur.pre_connecter()
+                    self.detruire()
         elif msg == cmd_creer:
             if len(self.pere.compte.joueurs) >= nb_perso_max and nb_perso_max != -1:
                 self.pere.envoyer("|err|Vous ne pouvez avoir plus de {0} " \

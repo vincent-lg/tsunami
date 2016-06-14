@@ -2,10 +2,10 @@
 
 # Copyright (c) 2010-2016 LE GOFF Vincent
 # All rights reserved.
-# 
+#
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are met:
-# 
+#
 # * Redistributions of source code must retain the above copyright notice, this
 #   list of conditions and the following disclaimer.
 # * Redistributions in binary form must reproduce the above copyright notice,
@@ -14,7 +14,7 @@
 # * Neither the name of the copyright holder nor the names of its contributors
 #   may be used to endorse or promote products derived from this software
 #   without specific prior written permission.
-# 
+#
 # THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
 # AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
 # IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -36,11 +36,11 @@ from primaires.interpreteur.contexte import Contexte
 from primaires.communication.contextes.invitation import Invitation
 
 class Immersion(Contexte):
-    
+
     """Contexte d'immersion dans un canal de communication.
-    
+
     """
-    
+
     def __init__(self, pere):
         """Constructeur du contexte"""
         Contexte.__init__(self, pere)
@@ -62,8 +62,8 @@ class Immersion(Contexte):
             "p" : self.opt_promote,
             "ed" : self.opt_edit,
             "d" : self.opt_dissolve,
-            }
-    
+        }
+
     def __getstate__(self):
         """Nettoyage des options"""
         dico_attr = Contexte.__getstate__(self)
@@ -71,34 +71,34 @@ class Immersion(Contexte):
         for rac, fonction in dico_attr["options"].items():
             dico_attr["options"][rac] = fonction.__name__
         return dico_attr
-    
+
     def __setstate__(self, dico_attr):
         """Récupération du contexte"""
         Contexte.__setstate__(self, dico_attr)
         for rac, nom in self.options.items():
             fonction = getattr(self, nom)
             self.options[rac] = fonction
-    
+
     @property
     def u_nom(self):
         return "immersion:" + self.canal.nom
-    
+
     def accueil(self):
         """Message d'accueil du contexte"""
         canal = self.canal
         res = canal.clr + ">|ff| Immersion dans le canal " + canal.nom
         res += "\n  Entrez |ent|/h|ff| pour afficher l'aide."
-        
+
         return res
-    
+
     def opt_quit(self, arguments):
         """Option quitter : /q"""
         canal = self.canal
         personnage = self.pere.joueur
         canal.immerger_ou_sortir(personnage)
-        
+
         personnage << canal.clr + ">|ff| Retour au jeu."
-    
+
     def opt_who(self, arguments):
         """Option qui : /w"""
         personnage = self.pere.joueur
@@ -114,9 +114,9 @@ class Immersion(Contexte):
                 res += "\n  " + statut + connecte.nom + "|ff|"
                 if connecte in self.canal.immerges:
                     res += " (immergé)"
-        
+
         personnage << res
-    
+
     def opt_help(self, arguments):
         """Options d'affichage de l'aide : /h"""
         personnage = self.pere.joueur
@@ -153,9 +153,9 @@ class Immersion(Contexte):
             res += "modérateur"
             res += "\n   - |cmd|/ed|ff| : ouvre l'éditeur du canal"
             res += "\n   - |cmd|/d|ff| : dissout le canal"
-        
+
         personnage << res
-    
+
     def opt_invite(self, arguments):
         """Option pour inviter un ami à rejoindre le cana : /i <joueur>"""
         canal = self.canal
@@ -181,7 +181,7 @@ class Immersion(Contexte):
         contexte.actualiser()
         self.pere.joueur << "|att|Vous venez d'inviter {} à rejoindre le " \
                 "canal {}.|ff|".format(joueur.nom, canal.nom)
-    
+
     def opt_emote(self, arguments):
         """Option d'emote dans le contexte immersif"""
         canal = self.canal
@@ -201,7 +201,7 @@ class Immersion(Contexte):
                     connecte << im
                 else:
                     connecte << ex
-    
+
     def opt_eject(self, arguments):
         """Option permettant d'éjecter un joueur connecté : /e <joueur>"""
         canal = self.canal
@@ -231,7 +231,7 @@ class Immersion(Contexte):
             self.pere.joueur << "|err|Vous ne pouvez éjecter ce joueur.|ff|"
             return
         canal.ejecter(joueur)
-    
+
     def opt_ban(self, arguments):
         """Option permettant de bannir un joueur connecté : /b <joueur>"""
         canal = self.canal
@@ -257,7 +257,7 @@ class Immersion(Contexte):
             self.pere.joueur << "|err|Vous ne pouvez éjecter ce joueur.|ff|"
             return
         canal.bannir(joueur)
-    
+
     def opt_announce(self, arguments):
         """Option permettant d'envoyer une annonce : /a <message>"""
         canal = self.canal
@@ -268,7 +268,7 @@ class Immersion(Contexte):
             return
         message = arguments.rstrip(" \n")
         canal.envoyer_imp(message)
-    
+
     def opt_promote(self, arguments):
         """Option permettant de promouvoir un joueur connecté : /p <joueur>"""
         canal = self.canal
@@ -294,7 +294,7 @@ class Immersion(Contexte):
             self.pere.joueur << "|err|Ce joueur est déjà administrateur.|ff|"
             return
         canal.promouvoir_ou_dechoir(joueur)
-    
+
     def opt_edit(self, arguments):
         """Option ouvrant un éditeur du canal"""
         canal = self.canal
@@ -306,7 +306,7 @@ class Immersion(Contexte):
                 "chedit", self.pere.joueur, canal)
         self.pere.joueur.contextes.ajouter(editeur)
         editeur.actualiser()
-    
+
     def opt_dissolve(self, arguments):
         """Option permettant de dissoudre le canal"""
         canal = self.canal
@@ -319,7 +319,7 @@ class Immersion(Contexte):
         canal.rejoindre_ou_quitter(joueur, False)
         joueur << "|err|Le canal {} a été dissous.|ff|".format(canal.nom)
         canal.dissoudre()
-    
+
     def interpreter(self, msg):
         """Méthode d'interprétation du contexte"""
         if msg.startswith("/"):
@@ -332,6 +332,6 @@ class Immersion(Contexte):
                 self.pere << "|err|Option invalide ({}).|ff|".format(option)
             else: # On appelle la fonction correspondante à l'option
                 fonction = self.options[option]
-                fonction(arguments)            
+                fonction(arguments)
         else:
             self.canal.envoyer(self.pere.joueur, msg)

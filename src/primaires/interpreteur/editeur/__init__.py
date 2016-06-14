@@ -139,7 +139,8 @@ class Editeur(Contexte):
         # Si un contexte précédent est défini et que le client a entré
         # RCI_PREC, on retourne au contexte précédent
         if self.opts.rci_ctx_prec and msg == RCI_PREC:
-            self.migrer_contexte(self.opts.rci_ctx_prec)
+            self.migrer_contexte(self.opts.rci_ctx_prec, detruire=True,
+                    recursif=False)
         elif msg.startswith(RCI_PREC):
             # C'est une option
             # On extrait le nom de l'option
@@ -154,12 +155,18 @@ class Editeur(Contexte):
         else:
             self.interpreter(msg)
 
-    def migrer_contexte(self, contexte, afficher_accueil=True):
+    def fermer(self, conserver=True, recursif=True):
+        """Fermeture de l'éditeur."""
+        self.pere.joueur.contextes.retirer(self, conserver=conserver,
+                recursif=recursif)
+
+    def migrer_contexte(self, contexte, afficher_accueil=True, detruire=False,
+            recursif=True):
         """Redéfinition de la méthode 'migrer_contexte' de Contexte.
         Quand on migre un éditeur à l'autre, l'ancien éditeur doit être
         retiré de la pile.
 
         """
-        self.fermer()
-        Contexte.migrer_contexte(self, contexte, afficher_accueil)
+        self.fermer(conserver=not detruire, recursif=recursif)
+        Contexte.migrer_contexte(self, contexte, afficher_accueil, detruire=False)
         self.pere.contexte_actuel.pere = self.pere

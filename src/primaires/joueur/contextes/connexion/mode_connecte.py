@@ -181,3 +181,6 @@ class ModeConnecte(Contexte):
                 return
             except exception as err_int:
                 self.pere.joueur.envoyer(str(err_int))
+
+    def detruire(self, recursif=False):
+        raise ValueError("Destruction du mode_connecté")

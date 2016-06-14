@@ -309,7 +309,12 @@ class Module(BaseModule):
         if self.mode == "mongo":
             nom = self.qualname(type(objet))
             if "_id" in objet.__dict__:
-                self.mongo_db[nom].remove(objet._id)
+                _id = objet._id
+                self.mongo_db[nom].remove(_id)
+                if nom in self.mongo_objets:
+                    enr = self.mongo_objets[nom]
+                    if _id in enr:
+                        del enr[_id]
 
     def charger_groupe(self, groupe):
         """Cette fonction retourne les objets d'un groupe.
@@ -474,7 +479,7 @@ class Module(BaseModule):
             debug = self.mongo_debug
 
         if rappel:
-            importeur.diffact.ajouter_action("enregistrement", 10,
+            importeur.diffact.ajouter_action("enregistrement", 5,
                     self.mongo_enregistrer_file)
 
         logger.debug("Premier passage")
@@ -583,6 +588,10 @@ class Module(BaseModule):
             elif isinstance(cle, (tuple, list)):
                 del attributs[cle]
                 cle = str(cle)
+                attributs[cle] = valeur
+            elif isinstance(cle, (int, float)):
+                del attributs[cle]
+                cle = "(" + str(cle) + ")"
                 attributs[cle] = valeur
 
             if isinstance(valeur, BaseObj):
