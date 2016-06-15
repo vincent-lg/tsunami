@@ -88,7 +88,7 @@ class Module(BaseModule):
 
         # Objets utiles pour MongoDB
         self.mongo_db = None
-        self.mongo_file = set()
+        self.mongo_file = {}
         self.mongo_collections = {}
         self.mongo_objets = {}
         self.mongo_table = []
@@ -302,7 +302,7 @@ class Module(BaseModule):
     def ajouter_objet(self, objet):
         """Ajoute les objets à la file des enregistrements."""
         if self.mode == "mongo":
-            self.mongo_file.add(objet)
+            self.mongo_file[id(objet)] = objet
 
     def detruire_objet(self, objet):
         """Détruit l'objet."""
@@ -487,7 +487,7 @@ class Module(BaseModule):
 
         t1 = time.time()
         reste = []
-        for objet in self.mongo_file:
+        for objet in self.mongo_file.values():
             second, attributs = self.extraire_attributs(objet)
             logger.debug("  " + str(type(objet)) + repr(attributs))
             self.mongo_enregistrer_objet(objet, attributs)

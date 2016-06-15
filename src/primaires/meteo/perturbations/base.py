@@ -101,6 +101,7 @@ class BasePertu(BaseObj, metaclass=MetaPertu):
         # entre 1 et 100 ; la première perturbation de la liste telle que
         # nombre_tire < proba est choisie (voir nuages pour un exemple).
         self.fins_possibles = []
+        print("Création de", self, self.centre, getattr(self.centre, "e_existe", None))
         self._construire()
 
     def __getnewargs__(self):

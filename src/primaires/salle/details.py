@@ -57,6 +57,7 @@ class Details(BaseObj):
 
     def __iter__(self):
         return iter(self._details.values())
+
     def __getitem__(self, nom):
         """Retourne le détail 'nom'"""
         return self._details[nom]
@@ -64,10 +65,12 @@ class Details(BaseObj):
     def __setitem__(self, nom, detail):
         """Modifie le détail 'nom'"""
         self._details[nom] = detail
+        self._enregistrer()
 
     def __delitem__(self, nom):
         """Détruit le détail passée en paramètre"""
         del self._details[nom]
+        self._enregistrer()
 
     def iter(self):
         """Retourne un dictionnaire contenant les details"""
@@ -75,6 +78,7 @@ class Details(BaseObj):
 
     def ajouter_detail(self, nom, *args, **kwargs):
         """Ajoute un détail à la liste.
+
         Les arguments spécifiés sont transmis au constructeur de Detail.
         Le nom correspondra au self.nom du détail.
         Si un détail sous ce nom-là existe déjà, il sera écrasé.
@@ -82,6 +86,7 @@ class Details(BaseObj):
         """
         detail = Detail(nom, *args, parent=self.parent, **kwargs)
         self[nom] = detail
+        self._enregistrer()
 
         return detail
 
@@ -116,17 +121,17 @@ class Details(BaseObj):
 
     def copier_depuis(self, details, dereferencer=False):
         """Copie les détails depuis d'autres.
-        
+
         Si 'deferencer' est à True, alors les descriptions des
         détails sont déréferencées au fur et à mesure.
-        
+
         """
         for detail in details:
             nom = detail.nom
             n_detail = self.get_detail(nom)
             if n_detail is None:
                 n_detail = self.ajouter_detail(nom)
-            
+
             n_detail.synonymes = list(detail.synonymes)
             n_detail.titre = detail.titre
             if dereferencer:

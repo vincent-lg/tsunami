@@ -2,10 +2,10 @@
 
 # Copyright (c) 2010-2016 LE GOFF Vincent
 # All rights reserved.
-# 
+#
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are met:
-# 
+#
 # * Redistributions of source code must retain the above copyright notice, this
 #   list of conditions and the following disclaimer.
 # * Redistributions in binary form must reproduce the above copyright notice,
@@ -14,7 +14,7 @@
 # * Neither the name of the copyright holder nor the names of its contributors
 #   may be used to endorse or promote products derived from this software
 #   without specific prior written permission.
-# 
+#
 # THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
 # AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
 # IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -36,19 +36,19 @@ from .edt_detail import EdtDetail
 from primaires.format.fonctions import supprimer_accents
 
 class EdtDetails(Editeur):
-    
+
     """Contexte-éditeur des détails d'une salle.
     Ces détails sont observables avec la commande look ; voir ./edt_detail.py
     pour l'édition des details un par un.
-    
+
     """
-    
+
     def __init__(self, pere, objet=None, attribut=None):
         """Constructeur de l'éditeur"""
         Editeur.__init__(self, pere, objet, attribut)
         self.ajouter_option("d", self.opt_supprimer_detail)
         self.ajouter_option("s", self.opt_synonymes)
-    
+
     def accueil(self):
         """Message d'accueil du contexte"""
         salle = self.objet
@@ -56,7 +56,7 @@ class EdtDetails(Editeur):
         msg += "|ff||\n" + self.opts.separateur + "\n"
         msg += self.aide_courte
         msg += "Détails existants :\n"
-        
+
         # Parcours des détails
         details = salle.details
         liste_details = ""
@@ -72,32 +72,32 @@ class EdtDetails(Editeur):
         if not liste_details:
             liste_details += "\n Aucun détail pour l'instant."
         msg += liste_details
-        
+
         return msg
-    
+
     def opt_supprimer_detail(self, arguments):
         """Supprime le détail passé en paramètre.
         Syntaxe : /d <détail existant>
-        
+
         """
         salle = self.objet
         details = salle.details
         nom = supprimer_accents(arguments)
-        
+
         try:
             del details[nom]
         except KeyError:
             self.pere << "|err|Le détail spécifiée n'existe pas.|ff|"
         else:
             self.actualiser()
-    
+
     def opt_synonymes(self, arguments):
         """Edite les synonymes du détail donnée en premier paramètre :
             - si un synonyme existe, il est détruit
             - sinon, il est créé
         Syntaxe :
             /a <détail existant> / <synonyme 1> (/ <synonyme 2> / ...)
-        
+
         """
         salle = self.objet
         details = salle.details
@@ -105,7 +105,7 @@ class EdtDetails(Editeur):
                 arguments.split(" / ")]
         nom_detail = a_synonymes[0]
         del a_synonymes[0]
-        
+
         if not details.detail_existe(nom_detail):
             self.pere << \
                 "|err|Le détail spécifié n'existe pas.|ff|"
@@ -114,7 +114,7 @@ class EdtDetails(Editeur):
             self.pere << \
                 "|err|Vous devez préciser au moins un synonyme.|ff|"
             return
-        
+
         detail = details.get_detail(nom_detail)
         for synonyme in a_synonymes:
             if details.detail_existe(synonyme) \
@@ -125,22 +125,24 @@ class EdtDetails(Editeur):
                             .format(synonyme)
             elif synonyme in detail.synonymes:
                 detail.synonymes.remove(synonyme)
+                detail._enregistrer()
                 self.actualiser()
             else:
+                detail._enregistrer()
                 detail.synonymes.append(supprimer_accents(synonyme))
                 self.actualiser()
-    
+
     def interpreter(self, msg):
         """Interprétation de l'éditeur"""
         salle = self.objet
         details = salle.details
         msg = supprimer_accents(msg)
-        
+
         detail = details.get_detail(msg)
         if detail is None:
             detail = details.ajouter_detail(msg)
         enveloppe = EnveloppeObjet(EdtDetail, detail, "description")
         enveloppe.parent = self
         contexte = enveloppe.construire(self.pere)
-        
+
         self.migrer_contexte(contexte)
