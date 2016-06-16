@@ -84,16 +84,19 @@ class ConteneurGroupes(BaseObj):
         l'on désire le manipuler directement.
 
         """
+        self._enregistrer()
         groupe = Groupe(self, nom_groupe, flags)
         self._groupes[nom_groupe] = groupe
         return groupe
 
     def supprimer_groupe(self, nom_groupe):
         """Supprime le groupe nom_groupe"""
-        del self._groupes[nom_groupe]
+        self._enregistrer()
+        self._groupes.pop(nom_groupe).detruire()
 
     def ajouter_commande(self, commande):
         """Ajout de 'commande' dans son groupe"""
+        self._enregistrer()
         if not commande.adresse in self.commandes.keys():
             groupe = self[commande.groupe]
             self.commandes[commande.adresse] = groupe
@@ -102,12 +105,14 @@ class ConteneurGroupes(BaseObj):
         """On supprime la commande 'commande'.
 
         """
+        self._enregistrer()
         del self.commandes[commande.adresse]
 
     def changer_groupe_commande(self, chemin, nom_groupe):
         """Change le groupe d'une commande.
 
         """
+        self._enregistrer()
         nouveau_groupe = self[nom_groupe]
         self.commandes[chemin] = nouveau_groupe
 

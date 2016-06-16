@@ -79,17 +79,20 @@ class Groupe(BaseObj):
         pourront utiliser les commandes du groupe B.
 
         """
+        self._enregistrer()
         if groupe not in self.groupes_inclus:
             self.groupes_inclus.append(groupe)
 
     def supprimer_groupe_inclus(self, groupe):
         """Supprime 'groupe' des groupes inclus"""
+        self._enregistrer()
         if groupe in self.groupes_inclus:
             self.groupes_inclus.remove(groupe)
 
     def vider_groupe_inclus(self):
         """Vide les groupes inclus"""
         self.groupes_inclus = []
+        self._enregistrer()
 
     @property
     def str_flags(self):
