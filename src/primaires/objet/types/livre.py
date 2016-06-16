@@ -110,7 +110,8 @@ class Livre(BaseType):
         if self.chapitres:
             texte = msg + "\n\n" + self.get_texte_pour(personnage)
             contexte = Page(personnage.instance_connexion, texte)
-            personnage.contexte_actuel.migrer_contexte(contexte)
+            personnage.contexte_actuel.migrer_contexte(contexte,
+                    detruire=False)
             return ""
 
         return msg

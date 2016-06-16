@@ -64,14 +64,17 @@ class Versions(BaseObj):
     def __setitem__(self, id, modif):
         """Edite une modification enregistrée."""
         self.__modifications[id] = modif
+        self._enregistrer()
 
     def __delitem__(self, id):
         """Supprime une modification en fonction de son index."""
         del self.__modifications[id]
+        self._enregistrer()
 
     def append(self, texte):
         """Ajoute une modification à la liste."""
         self.__modifications.append(texte)
+        self._enregistrer()
 
     def afficher(self, offset=0):
         """Retourne les dernières modifications jusqu'à l'offset."""
@@ -90,6 +93,7 @@ class Versions(BaseObj):
 
     def afficher_dernieres_pour(self, personnage, lire=True):
         """Affiche les dernières modifications nons lues par 'personnage'."""
+        self._enregistrer()
         ret = ""
         derniere = 0
         if personnage in self._lus:

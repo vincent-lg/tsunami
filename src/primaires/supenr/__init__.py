@@ -88,6 +88,8 @@ class Module(BaseModule):
 
         # Objets utiles pour MongoDB
         self.mongo_db = None
+        self.initial = True
+        self.mongo_temporaire = {}
         self.mongo_file = {}
         self.mongo_collections = {}
         self.mongo_objets = {}
@@ -179,7 +181,7 @@ class Module(BaseModule):
                     self.enregistrer_periodiquement)
         else: # Mongo
             importeur.diffact.ajouter_action("enregistrement", 1,
-                    self.mongo_enregistrer_file)
+                    self.mongo_premier_enregistrement)
         BaseModule.init(self)
 
     def ajouter_commandes(self):
@@ -419,6 +421,9 @@ class Module(BaseModule):
 
         objet.__setstate__(attributs)
         objet._construire()
+        if self.initial:
+            self.mongo_temporaire[id(objet)] = (objet, objet.__dict__.copy())
+
         return objet
 
     def mongo_charger_dictionnaire(self, dictionnaire):
@@ -467,6 +472,33 @@ class Module(BaseModule):
                 copie.append(valeur)
 
         liste[:] = copie
+
+    def mongo_premier_enregistrement(self):
+        """Premier enregistrement des objets en MongoDB.
+
+        Cet enregistrement est un peu particulier car on n'enregistre
+        que les objets modifiés. Un objet récupéré en mémoire, en
+        effet, se reconstruit et veut se réenregistrer aussitôt, malgré
+        plusieurs verrous de sécurité. Il n'est pas nécessaire
+        d'enregistrer tout l'univers une seconde après l'avoir chargé,
+        bien que certains objets soient effectivement à jour. Il devient
+        ainsi nécessaire d'enregistrer les objets qui ont été modifiés
+        depuis leur chargement.
+
+        """
+        avant = len(self.mongo_file)
+        self.initial = False
+        for ident, (objet, attributs) in tuple(self.mongo_temporaire.items()):
+            if objet.__dict__ == attributs:
+                if ident in self.mongo_file:
+                    del self.mongo_file[ident]
+
+        self.logger.debug("Enregistrement MongoDB initial : {} objets " \
+                "à enregistrer contre {} prévus".format(len(
+                self.mongo_file), avant))
+
+        print(list(self.mongo_file.values())[:10])
+        self.mongo_enregistrer_file()
 
     def mongo_enregistrer_file(self, rappel=True, debug=False):
         """Enregistre la file des objets (mongo).

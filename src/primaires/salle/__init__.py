@@ -374,6 +374,8 @@ class Module(BaseModule):
         for salle in self.salles.values():
             if salle.magasin:
                 magasin = salle.magasin
+                magasin.ouverture = tuple(magasin.ouverture)
+                magasin.fermeture = tuple(magasin.fermeture)
                 if magasin.renouveler_ouverture:
                     liste = self.a_renouveler.get(magasin.ouverture, [])
                     liste.append(magasin)

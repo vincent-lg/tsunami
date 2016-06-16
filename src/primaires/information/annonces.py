@@ -61,14 +61,17 @@ class Annonces(BaseObj):
     def __setitem__(self, id, modif):
         """Edite une annonce enregistrée."""
         self.__annonces[id] = modif
+        self._enregistrer()
 
     def __delitem__(self, id):
         """Supprime une annonce avec l'index passé en paramètre."""
         del self.__annonces[id]
+        self._enregistrer()
 
     def append(self, texte):
         """Ajoute une annonce à la liste."""
         self.__annonces.append(texte)
+        self._enregistrer()
         # On envoie l'annonce dans le canal info.
         type(self).importeur.communication.canaux["info"].envoyer_imp( \
                                             "\n".join(wrap(texte, 75)))
@@ -108,4 +111,5 @@ class Annonces(BaseObj):
                 ret = self.afficher(len(self) - derniere)
         if lire:
             self._deja_vues[personnage] = len(self)
+        self._enregistrer()
         return ret
