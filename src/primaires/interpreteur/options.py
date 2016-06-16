@@ -128,3 +128,4 @@ class UOptions(BaseObj):
     def changer_option(self, personnage, option):
         """Change la valeur de l'option."""
         self.options[personnage] = self.get_options(personnage) ^ option
+        self._enregistrer()
