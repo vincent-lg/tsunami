@@ -169,15 +169,17 @@ class BaseObj(metaclass=MetaBaseObj):
         # On récupère la classe
         classe = type(self)
         # On appel son constructeur
-        try:
-            classe.__init__(self, *self.__getnewargs__())
-        except NotImplementedError:
-            print("Méthode __getnewargs__ non définie pour", classe)
-            sys.exit(1)
-        except TypeError as err:
-            print("Erreur lors de l'appel au constructeur de", classe, err)
-            print(traceback.format_exc())
-            sys.exit(1)
+        if importeur.supenr.mode == "pickle":
+            try:
+                classe.__init__(self, *self.__getnewargs__())
+            except NotImplementedError:
+                print("Méthode __getnewargs__ non définie pour", classe)
+                sys.exit(1)
+            except TypeError as err:
+                print("Erreur lors de l'appel au constructeur de", classe, err)
+                print(traceback.format_exc())
+                sys.exit(1)
+
         self.__dict__.update(dico_attrs)
 
         # On vérifie s'il a besoin d'une vraie mis à jour

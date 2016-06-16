@@ -419,6 +419,15 @@ class Module(BaseModule):
         for transform in transforms:
             transform.transform_outgoing(attributs, collection)
 
+        # On retire les attributs directs référençant des objets
+        # qui seront remplacés. Ce code évite les filtres de mémoire,
+        # sans les empêcher complètement.
+        for cle, valeur in attributs.items():
+            if isinstance(valeur, BaseObj) \
+                    and getattr(objet, cle, None) is not None:
+                self.logger.info("Destruction de {} : {}".format(nom, cle))
+                getattr(objet, cle).detruire()
+
         objet.__setstate__(attributs)
         objet._construire()
         if self.initial:
@@ -497,7 +506,6 @@ class Module(BaseModule):
                 "à enregistrer contre {} prévus".format(len(
                 self.mongo_file), avant))
 
-        print(list(self.mongo_file.values())[:10])
         self.mongo_enregistrer_file()
 
     def mongo_enregistrer_file(self, rappel=True, debug=False):

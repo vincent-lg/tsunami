@@ -200,7 +200,7 @@ class CmdMongo(Commande):
         objet = None
         for objets in importeur.supenr.mongo_objets.values():
             objet = objets.get(_id)
-            if objet:
+            if objet is not None:
                 classe = importeur.supenr.qualname(type(objet))
                 break
 

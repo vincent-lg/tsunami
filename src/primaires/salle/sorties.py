@@ -109,7 +109,7 @@ class Sorties(BaseObj):
         self._sorties = OrderedDict(NOMS_SORTIES)
 
         # On passe le statut en CONSTRUIT
-        self._statut = CONSTRUIT
+        self._construire()
 
     def __getnewargs__(self):
         return ()
