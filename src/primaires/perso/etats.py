@@ -122,6 +122,7 @@ class Etats(BaseObj):
         exemple).
 
         """
+        self._enregistrer()
         if vider:
             self.vider()
 
@@ -145,6 +146,7 @@ class Etats(BaseObj):
         le flag supprimer à False pour éviter une récursion infinie.
 
         """
+        self._enregistrer()
         for i, etat in enumerate(list(self.__etats)):
             if etat.cle == cle_etat:
                 if supprimer:
@@ -155,6 +157,7 @@ class Etats(BaseObj):
 
     def vider(self):
         """Vide la liste de tous les états."""
+        self._enregistrer()
         for etat in self.__etats:
             etat.supprimer()
 
@@ -162,6 +165,7 @@ class Etats(BaseObj):
 
     def reinitialiser(self):
         """Retire les états à retirer au reboot."""
+        self._enregistrer()
         for etat in list(self.__etats):
             if not etat.sauvegarder_au_reboot:
                 etat.supprimer()

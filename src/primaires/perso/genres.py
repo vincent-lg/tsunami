@@ -81,6 +81,7 @@ class Genres(BaseObj):
 
     def __delitem__(self, nom):
         """Supprime le genre"""
+        self._enregistrer()
         for genre in self._genres.keys():
             if nom == supprimer_accents(genre.lower()):
                 nom = genre
@@ -94,6 +95,7 @@ class Genres(BaseObj):
 
     def ajouter_genre(self, nom, corresp=""):
         """Ajoute un genre"""
+        self._enregistrer()
         self._genres[nom] = corresp if corresp != "" else nom
         # définition des distinctions par défaut
         if self._genres[nom] == "masculin":
@@ -140,6 +142,7 @@ class Genres(BaseObj):
 
     def changer_distinction(self, nom, distinction):
         """Change la distinction par défaut du genre."""
+        self._enregistrer()
         if nom not in [supprimer_accents(g.lower()) for g in self._genres.keys()]:
             raise KeyError(nom)
         for d in self._distinctions.keys():

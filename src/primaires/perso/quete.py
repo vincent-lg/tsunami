@@ -127,6 +127,7 @@ class Quete(BaseObj):
         Le niveau doit être un tuple.
 
         """
+        self._enregistrer()
         if niveau not in self.__niveaux:
             self.__niveaux.append(niveau)
 
@@ -138,6 +139,7 @@ class Quete(BaseObj):
             sinon l'ajoute.
 
         """
+        self._enregistrer()
         if () in self.__niveaux:
             self.__niveaux.remove(())
 
@@ -300,6 +302,7 @@ class Quete(BaseObj):
         sont validées, valide l'étape parent.
 
         """
+        self._enregistrer()
         if () in self.__niveaux:
             self.__niveaux.remove(())
 
