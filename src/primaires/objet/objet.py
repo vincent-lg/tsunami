@@ -87,6 +87,7 @@ class Objet(BaseObj):
                     prototype.no)
             prototype.no += 1
             prototype.objets.append(self)
+            prototype._enregistrer()
 
             # On copie les attributs propres à l'objet
             # Ils sont disponibles dans le prototype, dans la variable
@@ -248,6 +249,7 @@ class Objet(BaseObj):
         """Destruction de l'objet"""
         if self in self.prototype.objets:
             self.prototype.objets.remove(self)
+            self.prototype._enregistrer()
 
         if self.contenu and self in self.contenu:
             self.contenu.retirer(self)

@@ -366,6 +366,12 @@ class Joueur(Personnage):
         Personnage.mourir(self, adversaire, recompenser)
         self.cpt_mort = 0
 
+    def detruire(self):
+        """Destruction du joueur."""
+        BaseObj.detruire(self)
+        self.description = Description(parent=self, scriptable=False)
+        self.description_a_valider = Description(parent=self, scriptable=False)
+
     def get_structure(self):
         """Retourne la structure simple du personnage."""
         structure = Personnage.get_structure(self)

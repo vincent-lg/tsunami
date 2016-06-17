@@ -381,6 +381,8 @@ class BaseType(BaseObj, metaclass=MetaType):
             if self in proto.a_depecer:
                 del proto.a_depecer[self]
 
+        self.description.detruire()
+        self.script.detruire()
         BaseObj.detruire(self)
 
     def nettoyage_cyclique(self):

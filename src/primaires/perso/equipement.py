@@ -272,6 +272,23 @@ class Equipement(BaseObj):
 
         return True
 
+    def detruire(self):
+        """Destruction de l'équipement."""
+        BaseObj.detruire(self)
+        for membre in self.membres:
+            for objet in membre.equipe:
+                try:
+                    importeur.objet.supprimer_objet(objet.identifiant)
+                except KeyError:
+                    pass
+            if membre.tenu and hasattr(membre.tenu, "identifiant"):
+                try:
+                    importeur.objet.supprimer_objet(
+                            membre.tenu.identifiant)
+                except KeyError:
+                    pass
+
+
 class Equipes(BaseObj):
 
     """Classe se comportantt comme un objet conteneur.

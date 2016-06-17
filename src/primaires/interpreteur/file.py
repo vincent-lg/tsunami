@@ -160,7 +160,7 @@ class FileContexte(BaseObj):
         print("Retire", contexte, self._file, conserver)
         if contexte:
             self._file.remove(contexte)
-            print("d1", conserver)
+            print("d1", conserver, recursif)
             if not conserver:
                 contexte.detruire(recursif=recursif)
             self.actualiser_position()
@@ -179,10 +179,13 @@ class FileContexte(BaseObj):
 
     def vider(self):
         """Vide la file des contextes"""
-        for contexte in self._file:
-            contexte.detruire()
+        for contexte in list(self._file):
+            if contexte.nom == "personnage:connexion:mode_connecte":
+                continue
 
-        self._file[:] = []
+            contexte.detruire()
+            self._file.remove(contexte)
+
         self.actualiser_position()
 
     @property

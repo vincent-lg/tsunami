@@ -458,6 +458,7 @@ class Personnage(BaseObj):
         selectionnes = [p for p in self.prompts_selectionnes if p != prompt]
         selectionnes.insert(0, prompt)
         self.prompts_selectionnes[:] = selectionnes
+        self._enregistrer()
 
     def deselectionner_prompt(self, prompt):
         """Déselectionne le prompt indiqué.
@@ -470,10 +471,12 @@ class Personnage(BaseObj):
 
         selectionnes = [p for p in self.prompts_selectionnes if p != prompt]
         self.prompts_selectionnes[:] = selectionnes
+        self._enregistrer()
 
     def deselectionner_tous_prompts(self):
         """Déselectionne tous les prompts."""
         self.prompts_selectionnes[:] = []
+        self._enregistrer()
 
     def peut_etre_attaque(self):
         """Retourne True si le personnage peut être attaéqué.
@@ -496,22 +499,20 @@ class Personnage(BaseObj):
         if self.equipement and self.equipement.squelette and \
                 self in self.equipement.squelette.personnages:
             self.equipement.squelette.personnages.remove(self)
+
         if self.salle:
             self.salle.retirer_personnage(self)
 
         if self.equipement:
-            for membre in self.equipement.membres:
-                for objet in membre.equipe:
-                    try:
-                        importeur.objet.supprimer_objet(objet.identifiant)
-                    except KeyError:
-                        pass
-                if membre.tenu and hasattr(membre.tenu, "identifiant"):
-                    try:
-                        importeur.objet.supprimer_objet(
-                                membre.tenu.identifiant)
-                    except KeyError:
-                        pass
+            self.equipement.detruire()
+
+        self.contextes.detruire()
+        self.stats.detruire()
+        self.quetes.detruire()
+        self.etats.detruire()
+
+        for affection in self.affections.values():
+                affection.detruire()
 
     def get_nom_pour(self, personnage, retenu=True):
         """Retourne le nom pour le personnage passé en paramètre."""
@@ -851,6 +852,7 @@ class Personnage(BaseObj):
         if random.random() < apprendre and random.random() < 1 / proba:
             avancement += 1
             self.talents[cle_talent] = avancement
+            self._enregistrer()
             self.envoyer("Vous progressez dans l'apprentissage du " \
                     "talent {}.".format(talent.nom))
 
@@ -867,6 +869,7 @@ class Personnage(BaseObj):
         if random.random() < difficulte * restant:
             maitrise += 1
             self.sorts[cle_sort] = maitrise
+            self._enregistrer()
             self.envoyer("Vous sentez votre confiance grandir.")
 
         return maitrise
@@ -882,6 +885,7 @@ class Personnage(BaseObj):
 
     def mourir(self, adversaire=None, recompenser=True):
         """Méthode appelée quand le personage meurt."""
+        self._enregistrer()
         combat = type(self).importeur.combat.get_combat_depuis_salle(
                 self.salle)
         if combat and self in combat.combattants:
@@ -905,6 +909,7 @@ class Personnage(BaseObj):
         Retourne le nombre de niveaux gagnés.
 
         """
+        self._enregistrer()
         if niveau and niveau not in type(self).importeur.perso.niveaux:
             raise ValueError("le niveau {} n'existe pas".format(niveau))
 
@@ -1119,6 +1124,7 @@ class Personnage(BaseObj):
         Si l'affection est déjà présente, la force est modulée.
 
         """
+        self._enregistrer()
         affection = importeur.affection.get_affection("personnage", cle)
         if cle in self.affections:
             concrete = self.affections[cle]
@@ -1132,6 +1138,7 @@ class Personnage(BaseObj):
 
     def tick(self):
         """Méthode appelée à chaque tick (chaque minute)."""
+        self._enregistrer()
         stats = {
             "vitalite": "force",
             "mana": "intelligence",

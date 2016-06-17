@@ -62,6 +62,7 @@ class PNJ(Personnage):
             self.identifiant = prototype.cle + "_" + str(
                     prototype.no)
             prototype.pnj.append(self)
+            prototype._enregistrer()
 
             # On copie les attributs propres à l'objet
             # Ils sont disponibles dans le prototype, dans la variable
@@ -265,6 +266,7 @@ class PNJ(Personnage):
         Personnage.detruire(self)
         if self in self.prototype.pnj:
             self.prototype.pnj.remove(self)
+            self.prototype._enregistrer()
 
         if self.salle_origine:
             self.salle_origine.det_pnj(self)
@@ -272,6 +274,7 @@ class PNJ(Personnage):
     def decontroller(self):
         """Arrête de contrôler self."""
         if self.controle_par:
+            contexte = None
             try:
                 contexte = \
                     self.controle_par.contextes.get_contexte_par_unom(
@@ -279,7 +282,9 @@ class PNJ(Personnage):
             except KeyError:
                 pass
             else:
-                self.controle_par.contextes.retirer(contexte)
+                if contexte:
+                    self.controle_par.contextes.retirer(contexte)
+
                 self.controle_par = None
                 self.instance_connexion = None
 

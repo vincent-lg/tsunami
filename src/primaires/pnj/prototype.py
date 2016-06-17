@@ -229,4 +229,7 @@ class Prototype(BaseObj):
             if self in objet.depecer_de:
                 objet.depecer_de.remove(self)
 
+        self.description.detruire()
+        self.stats.detruire()
+        self.script.detruire()
         BaseObj.detruire(self)

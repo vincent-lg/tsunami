@@ -149,9 +149,10 @@ class ChoisirPersonnage(Contexte):
 
                 # on se connecte sur le joueur
                 joueur = self.pere.compte.joueurs[choix]
-                self.pere.joueur = joueur
                 joueur.compte = self.pere.compte
                 joueur.instance_connexion = self.pere
+                self.pere.joueur = joueur
+                joueur.connecte = False
 
                 # On log la connexion
                 importeur.connex.table_logger.info(
