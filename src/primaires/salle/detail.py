@@ -137,6 +137,13 @@ class Detail(BaseObj):
         self.script["regarde"]["apres"].executer(personnage=personnage,
                 salle=personnage.salle)
 
+    def detruire(self):
+        """Destruction du détail."""
+        BaseObj.detruire(self)
+        self.description.detruire()
+        self.script.detruire()
+
+
 class ScriptDetail(Script):
 
     """Script s'appliquant à un détail."""

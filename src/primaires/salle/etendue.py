@@ -294,6 +294,7 @@ class Etendue(BaseObj):
                     coordonnees))
 
         self.obstacles[coordonnees] = obstacle
+        self._enregistrer()
 
     def est_obstacle(self, coordonnees):
         """Retourne True si les coordonnées sont un obstacle."""
@@ -320,6 +321,7 @@ class Etendue(BaseObj):
 
         self.cotes[coordonnees] = salle
         salle.etendue = self
+        self._enregistrer()
 
     def ajouter_lien(self, coordonnees, etendue):
         """Ajoute le lien vers une autre étendue.
@@ -337,6 +339,8 @@ class Etendue(BaseObj):
 
         self.liens[coordonnees] = etendue
         etendue.liens[coordonnees] = self
+        self._enregistrer()
+        etendue._enregistrer()
 
         # On détermine les segments de liens
         self.determiner_segments_liens()
@@ -346,6 +350,7 @@ class Etendue(BaseObj):
         """Supprime un obstacle."""
         coordonnees = self.convertir_coordonnees(coordonnees)
         del self.obstacles[coordonnees]
+        self._enregistrer()
 
     def supprimer_cote(self, salle):
         """Supprime la salle des côtes."""
@@ -353,6 +358,7 @@ class Etendue(BaseObj):
         salle = self.cotes[coordonnees]
         salle.etendue = None
         del self.cotes[coordonnees]
+        self._enregistrer()
 
     def supprimer_lien(self, coordonnees):
         """Supprime un lien."""
@@ -364,6 +370,8 @@ class Etendue(BaseObj):
         # On détermine les segments de liens
         self.determiner_segments_liens()
         etendue.determiner_segments_liens()
+        self._enregistrer()
+        etendue._enregistrer()
 
     def trouver_contour(self):
         """Recherche les contours de l'étendue."""

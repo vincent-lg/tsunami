@@ -86,7 +86,6 @@ class Details(BaseObj):
         """
         detail = Detail(nom, *args, parent=self.parent, **kwargs)
         self[nom] = detail
-        self._enregistrer()
 
         return detail
 
@@ -153,3 +152,9 @@ class Details(BaseObj):
             n_detail.message_supporte = detail.message_supporte
             n_detail.message_installation = detail.message_installation
             n_detail.message_desinstallation = detail.message_desinstallation
+
+    def detruire(self):
+        """Destruction des détails."""
+        BaseObj.detruire(self)
+        for detail in self._details.values():
+            detail.detruire()
