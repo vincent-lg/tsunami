@@ -57,4 +57,4 @@ class PrmExec(Parametre):
     def interpreter(self, personnage, dic_masques):
         """Méthode d'interprétation de commande"""
         contexte = Exec(personnage.instance_connexion)
-        personnage.contexte_actuel.migrer_contexte(contexte)
+        personnage.contexte_actuel.migrer_contexte(contexte, detruire=False)

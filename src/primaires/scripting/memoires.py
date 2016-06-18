@@ -59,12 +59,14 @@ class Memoires(BaseObj):
 
     def __delitem__(self, cle):
         del self._memoires[cle]
+        self._enregistrer()
 
     def __getitem__(self, cle):
         return self._memoires[cle]
 
     def __setitem__(self, cle, valeur):
         self._memoires[cle] = valeur
+        self._enregistrer()
 
     def __contains__(self, valeur):
         return valeur in self._memoires
@@ -77,6 +79,7 @@ class Memoires(BaseObj):
         destruction, il va y avoir problème. On nettoie donc les mémoires à détruire.
 
         """
+        self._enregistrer()
         if cle in self._a_detruire and valeur in self._a_detruire[cle]:
             del self._a_detruire[cle][valeur]
         if cle in self._a_detruire and not self._a_detruire[cle]:
@@ -98,3 +101,4 @@ class Memoires(BaseObj):
         a_detruire = self._a_detruire.get(cle, {})
         a_detruire[valeur] = datetime.now() + timedelta(seconds=temps * 60)
         self._a_detruire[cle] = a_detruire
+        self._enregistrer()

@@ -225,6 +225,7 @@ class Evenement(BaseObj):
         """Ajoute un test à l'évènement."""
         test = Test(self, chaine_test)
         self.__tests.append(test)
+        self._enregistrer()
         return len(self.__tests) - 1
 
     def supprimer_test(self, indice):
@@ -232,6 +233,7 @@ class Evenement(BaseObj):
         test = self.__tests[indice]
         test.detruire()
         del self.__tests[indice]
+        self._enregistrer()
 
     def remonter_test(self, indice):
         """Remonte le test indiqué."""
@@ -242,6 +244,7 @@ class Evenement(BaseObj):
 
         tests[:] = tests[:indice - 1] + [test, tests[indice - 1]] + \
                 tests[indice + 1:]
+        self._enregistrer()
 
     def descendre_test(self, indice):
         """Descend le test indiqué."""
@@ -251,6 +254,7 @@ class Evenement(BaseObj):
             raise ValueError("Impossible de descendre ce test.")
 
         tests[:] = tests[:indice] + [tests[indice + 1], test] + tests[indice + 2:]
+        self._enregistrer()
 
     def ajouter_variable(self, nom, type):
         """Ajoute une variable au dictionnaire des variables.
@@ -270,6 +274,7 @@ class Evenement(BaseObj):
 
         variable = Variable(self, nom, type)
         self.variables[nom] = variable
+        self._enregistrer()
         for evt in self.__evenements.values():
             evt.substituer_variable(nom, variable)
 
@@ -278,11 +283,13 @@ class Evenement(BaseObj):
     def substituer_variable(self, nom, variable):
         """Modifie la variable nom."""
         self.variables[nom] = variable
+        self._enregistrer()
 
     def supprimer_variable(self, nom):
         """Supprime, si trouvé, la variable."""
         if nom in self.variables:
-            del self.variables[nom]
+            self._enregistrer()
+            self.variables.pop(nom).detruire()
 
         for evt in self.__evenements.values():
             evt.supprimer_variable(nom)
@@ -300,6 +307,7 @@ class Evenement(BaseObj):
 
         sa_evenement = supprimer_accents(evenement).lower()
 
+        self._enregistrer()
         if sa_evenement in self.__evenements.keys():
             evt = self.evenements[sa_evenement]
             evt.nom = evenement
@@ -315,7 +323,7 @@ class Evenement(BaseObj):
     def supprimer_evenement(self, evenement):
         """Supprime l'évènement en le retirant de son parent."""
         evenement = supprimer_accents(evenement).lower()
-        del self.__evenements[evenement]
+        self.__evenements.pop(evenement).detruire()
 
     def renommer_evenement(self, ancien, nouveau):
         """Renomme un évènement.
@@ -329,10 +337,12 @@ class Evenement(BaseObj):
         evt = self.__evenements.pop(ancien)
         evt.nom = nouveau
         self.__evenements[nouveau] = evt
+        self._enregistrer()
 
     def executer(self, forcer=False, **variables):
         """Exécution de l'évènement."""
-        self.espaces = Espaces(self)
+        # On écrit le nouvel espace ainsi pour éviter l'enregistrement
+        object.__setattr__(self, "espaces", Espaces(self))
         self.espaces.variables.update(variables)
         var_manquantes = tuple(v for v in self.variables \
                 if v not in self.espaces.variables)
@@ -350,3 +360,18 @@ class Evenement(BaseObj):
             self.sinon.executer_instructions(self)
 
         return 0
+
+    def detruire(self):
+        """Destruction de l'évènement."""
+        BaseObj.detruire(self)
+        for variable in self.variables.values():
+            variable.detruire()
+
+        for evenement in self.__evenements.values():
+            evenement.detruire()
+
+        for test in self.__tests:
+            test.detruire()
+
+        if self.__sinon:
+            self.__sinon.detruire()

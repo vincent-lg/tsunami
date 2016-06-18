@@ -148,6 +148,7 @@ class Exec(Contexte):
                 return
 
             py_code = (" " * 4 * instruction.niveau) + instruction.code_python
+            instruction.detruire()
             sys.stdin = self.pere
             sys.stdout = self.pere
             sys.stderr = self.pere
@@ -169,6 +170,8 @@ class Exec(Contexte):
 
     def opt_q(self, arguments):
         """Quitte le contexte."""
+        self.evenement.detruire()
+        self.test.detruire()
         self.fermer()
         self.pere << "Fermeture de la console scripting."
 

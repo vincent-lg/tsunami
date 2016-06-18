@@ -78,6 +78,7 @@ class StructureSimple(BaseObj):
             object.__setattr__(self, nom, valeur)
         else:
             self.donnees[nom] = valeur
+            self._enregistrer()
 
     def get_nom_pour(self, personnage):
         """Affichage d'une structure."""

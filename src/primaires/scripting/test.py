@@ -450,3 +450,9 @@ class Test(BaseObj):
         """Retire (si nécessaire) le nom des __builtins__."""
         if nom in __builtins__:
             del __builtins__[nom]
+
+    def detruire(self):
+        """Destruction du test."""
+        BaseObj.detruire(self)
+        for instruction in self.__instructions:
+            instruction.detruire()

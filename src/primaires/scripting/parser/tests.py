@@ -94,3 +94,9 @@ class Tests(Expression):
             code = "not " + code
 
         return code
+
+    def detruire(self):
+        """Destruction de l' expression."""
+        super(Tests, self).detruire()
+        for expression in self.expressions:
+            expression.detruire()

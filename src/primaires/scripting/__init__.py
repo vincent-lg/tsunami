@@ -135,6 +135,10 @@ class Module(BaseModule):
                 "Hook appelé quand l'action changer_nom est exécutée.")
         importeur.hook.ajouter_hook("scripting:deplacer_alea_personnage",
                 "Hook appelé quand l'action deplacer_alea est exécutée.")
+        # Chargement des actions
+        self.charger_actions()
+        self.charger_fonctions()
+
         BaseModule.config(self)
 
     def init(self):
@@ -144,9 +148,6 @@ class Module(BaseModule):
         if self.memoires is None:
             self.memoires = Memoires()
 
-        # Chargement des actions
-        self.charger_actions()
-        self.charger_fonctions()
         if self.cfg_exportation.active:
             self.ecrire_documentation()
 

@@ -642,7 +642,7 @@ class Module(BaseModule):
                 else:
                     del attributs[cle]
                     second = True
-            elif isinstance(valeur, list):
+            elif isinstance(valeur, (list, tuple)):
                 attributs[cle] = valeur = list(valeur)
                 sous = self.extraire_liste(valeur)
                 if sous:
