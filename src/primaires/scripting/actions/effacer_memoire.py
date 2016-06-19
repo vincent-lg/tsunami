@@ -35,9 +35,12 @@ from fractions import Fraction
 
 from primaires.scripting.action import Action
 from primaires.scripting.instruction import ErreurExecution
+from primaires.scripting.structure import StructureSimple
+from primaires.temps.variable import TempsVariable
 
 # Constantes
 RE_TEMPS = re.compile(r"^[0-9]+[mhj]$")
+
 class ClasseAction(Action):
 
     """Efface ou programme l'effacement d'une mémoire de scripting."""
@@ -76,6 +79,7 @@ class ClasseAction(Action):
 
         """
         temps = temps_en_minutes(temps)
+        importeur.scripting.memoires._enregistrer()
         if temps:
             try:
                 importeur.scripting.memoires.programmer_destruction(
@@ -86,7 +90,9 @@ class ClasseAction(Action):
 
         if salle in importeur.scripting.memoires:
             if cle in importeur.scripting.memoires[salle]:
-                del importeur.scripting.memoires[salle][cle]
+                valeur = importeur.scripting.memoires[salle].pop(cle)
+                if isinstance(valeur, (StructureSimple, TempsVariable)):
+                    valeur.detruire()
                 importeur.scripting.memoires.nettoyer_memoire(salle, cle)
             else:
                 raise ErreurExecution("la mémoire {}:{} n'existe pas".format(
@@ -117,6 +123,7 @@ class ClasseAction(Action):
          *  "38m" est équivalent à 38.
 
         """
+        importeur.scripting.memoires._enregistrer()
         personnage = hasattr(personnage, "prototype") and \
                 personnage.prototype or personnage
         temps = temps_en_minutes(temps)
@@ -130,7 +137,9 @@ class ClasseAction(Action):
 
         if personnage in importeur.scripting.memoires:
             if cle in importeur.scripting.memoires[personnage]:
-                del importeur.scripting.memoires[personnage][cle]
+                valeur = importeur.scripting.memoires[personnage].pop(cle)
+                if isinstance(valeur, (StructureSimple, TempsVariable)):
+                    valeur.detruire()
             else:
                 raise ErreurExecution("la mémoire {}:{} n'existe pas".format(
                         personnage, cle))
@@ -162,6 +171,7 @@ class ClasseAction(Action):
          *  "38m" est équivalent à 38.
 
         """
+        importeur.scripting.memoires._enregistrer()
         temps = temps_en_minutes(temps)
         if temps:
             try:
@@ -173,7 +183,9 @@ class ClasseAction(Action):
 
         if objet in importeur.scripting.memoires:
             if cle in importeur.scripting.memoires[objet]:
-                del importeur.scripting.memoires[objet][cle]
+                valeur = importeur.scripting.memoires[objet].pop(cle)
+                if isinstance(valeur, (StructureSimple, TempsVariable)):
+                    valeur.detruire()
                 importeur.scripting.memoires.nettoyer_memoire(objet, cle)
             else:
                 raise ErreurExecution("la mémoire {}:{} n'existe pas".format(

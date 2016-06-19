@@ -33,6 +33,10 @@
 
 from abstraits.obase import *
 
+# Constantes
+NOMS_RESERVES = ("id", "_id", "structure", "e_existe", "donnees", "_statut",
+        "_dict_version")
+
 class StructureSimple(BaseObj):
 
     """Classe contenant une simple structure non enregistrée.
@@ -54,7 +58,6 @@ class StructureSimple(BaseObj):
         """Constructeur d'une variable"""
         BaseObj.__init__(self)
         self.donnees = {}
-        self._construire()
 
     def __getnewargs__(self):
         return ()
@@ -74,15 +77,25 @@ class StructureSimple(BaseObj):
 
     def __setattr__(self, nom, valeur):
         """Modifie la donnée."""
-        if not self.construit:
-            object.__setattr__(self, nom, valeur)
+        if nom in NOMS_RESERVES:
+            BaseObj.__setattr__(self, nom, valeur)
         else:
             self.donnees[nom] = valeur
+            if isinstance(valeur, BaseObj):
+                valeur._construire()
             self._enregistrer()
 
     def get_nom_pour(self, personnage):
         """Affichage d'une structure."""
         return str(self)
+
+    def detruire(self):
+        """Destruction de la structure."""
+        BaseObj.detruire(self)
+        from primaires.temps.variable import TempsVariable
+        for valeur in self.donnees.values():
+            if isinstance(valeur, (TempsVariable, StructureSimple)):
+                valeur.detruire()
 
 
 class StructureComplete(StructureSimple):
@@ -97,6 +110,7 @@ class StructureComplete(StructureSimple):
                 "structure": structure,
                 "id": 0,
         })
+        self._construire()
 
     def __getnewargs__(self):
         return ("inconnu", )

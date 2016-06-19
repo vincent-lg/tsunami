@@ -133,4 +133,5 @@ class Condition(Instruction):
     def detruire(self):
         """Destruction de l'instruction."""
         super(Condition, self).detruire()
-        self.tests.detruire()
+        if self.tests:
+            self.tests.detruire()

@@ -34,6 +34,8 @@ from datetime import datetime, timedelta
 from collections import OrderedDict
 
 from abstraits.obase import BaseObj, MetaBaseObj
+from primaires.scripting.structure import StructureSimple
+from primaires.temps.variable import TempsVariable
 from .exceptions import ErreurScripting
 
 class Memoires(BaseObj):
@@ -67,6 +69,9 @@ class Memoires(BaseObj):
     def __setitem__(self, cle, valeur):
         self._memoires[cle] = valeur
         self._enregistrer()
+        if isinstance(valeur, BaseObj):
+            print("On stock", valeur)
+            valeur._construire()
 
     def __contains__(self, valeur):
         return valeur in self._memoires
@@ -81,7 +86,7 @@ class Memoires(BaseObj):
         """
         self._enregistrer()
         if cle in self._a_detruire and valeur in self._a_detruire[cle]:
-            del self._a_detruire[cle][valeur]
+            valeur = self._a_detruire[cle].pop(valeur)
         if cle in self._a_detruire and not self._a_detruire[cle]:
             del self._a_detruire[cle]
 

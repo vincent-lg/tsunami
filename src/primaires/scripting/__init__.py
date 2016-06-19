@@ -38,6 +38,7 @@ from datetime import datetime
 
 from abstraits.module import *
 from primaires.format.fonctions import format_nb, supprimer_accents
+from primaires.temps.variable import TempsVariable
 from .instruction import Instruction
 from .boucle import Boucle
 from .condition import Condition
@@ -59,7 +60,7 @@ from .script import scripts
 from .alerte import Alerte
 from .commande_dynamique import CommandeDynamique
 from .memoires import Memoires
-from .structure import StructureComplete
+from .structure import StructureSimple, StructureComplete
 from .editeur_personnalise import EditeurPersonnalise
 
 class Module(BaseModule):
@@ -623,6 +624,9 @@ class Module(BaseModule):
                             variables = evenement.deduire_variables(
                                     cle, nom=valeur, valeur=valeur_memoire)
                             evenement.executer(**variables)
+                        if isinstance(valeur_memoire, (TempsVariable,
+                                StructureSimple)):
+                            valeur_memoire.detruire()
 
             if not self.memoires._a_detruire[cle]:
                 del self.memoires._a_detruire[cle]

@@ -117,6 +117,6 @@ class Fonction(Expression):
 
     def detruire(self):
         """Destruction de l' expression."""
-        super(Tests, self).detruire()
+        super(Fonction, self).detruire()
         for parametre in self.parametres:
             parametre.detruire()

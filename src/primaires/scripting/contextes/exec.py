@@ -148,7 +148,6 @@ class Exec(Contexte):
                 return
 
             py_code = (" " * 4 * instruction.niveau) + instruction.code_python
-            instruction.detruire()
             sys.stdin = self.pere
             sys.stdout = self.pere
             sys.stderr = self.pere

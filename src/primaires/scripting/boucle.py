@@ -128,5 +128,7 @@ class Boucle(Instruction):
     def detruire(self):
         """Destruction de l'instruction."""
         super(Boucle, self).detruire()
-        self.variable.detruire()
-        self.expression.detruire()
+        if self.variable:
+            self.variable.detruire()
+        if self.expression:
+            self.expression.detruire()

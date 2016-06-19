@@ -99,5 +99,7 @@ class Affectation(Instruction):
     def detruire(self):
         """Destruction de l'instruction."""
         super(Affectation, self).detruire()
-        self.variable.detruire()
-        self.expression.detruire()
+        if self.variable:
+            self.variable.detruire()
+        if self.expression:
+            self.expression.detruire()
