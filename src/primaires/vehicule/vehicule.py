@@ -184,3 +184,18 @@ class Vehicule(BaseObj):
             resultat += operation(vec).coordonnees.entier()
 
         return resultat
+
+    def detruire(self):
+        """Destruction du véhicule."""
+        BaseObj.detruire(self)
+        self.position.detruire()
+        self.vitesse.detruire()
+        self.acceleration.detruire()
+        self.direction.detruire()
+        self.frottement.detruire()
+
+        for force in self.forces:
+            force.detruire()
+
+        for salle in self.salles.values():
+            salle.detruire()
