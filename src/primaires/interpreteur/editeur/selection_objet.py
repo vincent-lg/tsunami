@@ -97,6 +97,9 @@ class SelectionObjet(Editeur):
             else:
                 liste.append(objet)
             liste[:] = [e for e in liste if e]
+            if hasattr(self.objet, "_enregistrer"):
+                self.objet._enregistrer()
+
             self.actualiser()
         else:
             self.pere << "|err|La clé {} est introuvable.|ff|".format(

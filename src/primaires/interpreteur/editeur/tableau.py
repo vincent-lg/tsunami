@@ -233,6 +233,9 @@ class Tableau(Editeur):
         else:
             objet.append(msgs)
 
+        if hasattr(self.objet, "_enregistrer"):
+            self.objet._enregistrer()
+
         if self.callback:
             methode = getattr(self.objet, self.callback)
             methode()
