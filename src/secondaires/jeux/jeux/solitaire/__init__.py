@@ -2,10 +2,10 @@
 
 # Copyright (c) 2010-2016 DAVY Guillaume
 # All rights reserved.
-# 
+#
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are met:
-# 
+#
 # * Redistributions of source code must retain the above copyright notice, this
 #   list of conditions and the following disclaimer.
 # * Redistributions in binary form must reproduce the above copyright notice,
@@ -14,7 +14,7 @@
 # * Neither the name of the copyright holder nor the names of its contributors
 #   may be used to endorse or promote products derived from this software
 #   without specific prior written permission.
-# 
+#
 # THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
 # AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
 # IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -40,33 +40,33 @@ def abs(valeur):
     return int(fabs(valeur))
 
 class Jeu(BaseJeu):
-    
+
     """Ce jeu définit le solitaire.
-    
+
     Il est rattaché au plateau solitaire.
-    
+
     """
-    
+
     nom = "solitaire"
-    
+
     def init(self):
         """Construction du jeu."""
         pass
-    
+
     @property
     def personnage(self):
         """Retourne le personnage jouant au jeu."""
         return self.partie.personnage
-    
+
     def jouer(self, personnage, msg):
         """Joue au jeu.
-        
+
         On doit entrer deux coordonnées séparées par un espace.
-        
+
         La première est la coordonnée de la case possédant une boule.
-        
+
         La seconde est la coordonnée n'en possédant pas.
-        
+
         """
         plateau = self.plateau
         partie = self.partie
@@ -80,16 +80,18 @@ class Jeu(BaseJeu):
             coord_a = self.get_coord(coord_a)
             if not coord_de or not coord_a:
                 return
-            
+
             coord_entre = self.coup_valide(coord_de, coord_a)
             if coord_entre:
                 plateau.cases[coord_a] = plateau.cases[coord_de]
                 plateau.cases[coord_de] = CaseVide()
                 plateau.cases[coord_entre] = CaseVide()
+                plateau._enregistrer()
+                self._enregistrer()
                 partie.afficher_tous()
             else:
                 personnage << "|err|Ce coup est invalide.|ff|"
-    
+
     def get_coord(self, coord):
         """Retourne la coordonnée."""
         coord = coord.upper()
@@ -99,22 +101,22 @@ class Jeu(BaseJeu):
             self.personnage << "|err|Syntaxe invalide pour une coordonnée : " \
                     "{}|ff|".format(coord)
             return
-        
+
         if coord not in self.plateau.cases:
             self.personnage << "|err|La case {} n'existe pas.|ff|".format(
                     coord)
             return
-        
+
         return coord
-    
+
     def coup_valide(self, coord_de, coord_a):
         """Retourne True si le coup est valide.
-        
+
         Au solitaire, un coup est valide si :
             coord_de et coord_a sont séparés par une case occupée
             coord_a est vide
             coord_de est occupée
-        
+
         """
         c_de, c_a = coord_de[0], coord_a[0]
         l_de, l_a = int(coord_de[1]), int(coord_a[1])

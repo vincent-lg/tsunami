@@ -41,7 +41,7 @@ class Partie(BaseObj):
     """
 
     enregistrer = True
-    
+
     def __init__(self, objet, jeu, plateau):
         """Constructeur de la partie."""
         BaseObj.__init__(self)
@@ -55,6 +55,7 @@ class Partie(BaseObj):
         self.en_cours = False
         self.nb_tours = 0
         self.finie = False
+        self._construire()
 
     def __getnewargs__(self):
         return (None, None, None)
@@ -73,6 +74,7 @@ class Partie(BaseObj):
         """Ajoute le personnage comme joueur."""
         if self.jeu.nb_joueurs_max > len(self.__joueurs):
             self.__joueurs.append(personnage)
+            self._enregistrer()
             if self.tour is None:
                 self.tour = personnage
 
@@ -82,6 +84,7 @@ class Partie(BaseObj):
 
     def retirer_joueur(self, personnage):
         """Retire le joueur de la partie."""
+        self._enregistrer()
         if "jeu" in personnage.etats:
             personnage.etats.retirer("jeu")
         if personnage in self.__joueurs:
@@ -138,4 +141,6 @@ class Partie(BaseObj):
     def detruire(self):
         """Destruction de la partie."""
         self.objet.partie = None
+        self.jeu.detruire()
+        self.plateau.detruire()
         BaseObj.detruire(self)

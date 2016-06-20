@@ -2,10 +2,10 @@
 
 # Copyright (c) 2010-2016 DAVY Guillaume
 # All rights reserved.
-# 
+#
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are met:
-# 
+#
 # * Redistributions of source code must retain the above copyright notice, this
 #   list of conditions and the following disclaimer.
 # * Redistributions in binary form must reproduce the above copyright notice,
@@ -14,7 +14,7 @@
 # * Neither the name of the copyright holder nor the names of its contributors
 #   may be used to endorse or promote products derived from this software
 #   without specific prior written permission.
-# 
+#
 # THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
 # AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
 # IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -35,16 +35,16 @@ from .bille import Bille
 from .vide import CaseVide
 
 class Plateau(BasePlateau):
-    
+
     """Plateau de solitaire.
-    
+
     Il est utilisé pour jouer au... solitaire.
-    
+
     """
-    
+
     jeux = ["solitaire"]
     nom = "solitaire"
-    
+
     def init(self):
         """Initialisation du plateau."""
         self.cases = {
@@ -86,7 +86,7 @@ class Plateau(BasePlateau):
             "D7": Bille(),
             "E7": Bille(),
         }
-    
+
     def afficher(self, personnage, jeu, partie):
         """Affiche la partie en cours au personnage."""
         plateau = \
@@ -98,5 +98,12 @@ class Plateau(BasePlateau):
             "5 {A5} {B5} {C5} {D5} {E5} {F5} {G5}\n" \
             "7   {B6} {C6} {D6} {E6} {F6}  \n" \
             "8     {C7} {D7} {E7}  "
-        
+
         return plateau.format(**self.cases)
+
+    def detruire(self):
+        """Destruction du plateau."""
+        BaseObj.detruire(self)
+        for case in self.cases.values():
+            if case:
+                case.detruire()

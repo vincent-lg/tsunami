@@ -113,7 +113,8 @@ class BaseJeu(BaseObj):
     # la méthode opt_q
     def opt_q(self, personnage, message):
         """Quitte le jeu."""
-        personnage.contextes.retirer()
+        contexte = personnage.contextes.get_contexte_par_unom("jeux:jouer")
+        personnage.contextes.retirer(contexte)
         personnage << "Vous quittez la partie."
         self.partie.retirer_joueur(personnage)
         if personnage in self.partie.observateurs:
@@ -121,6 +122,7 @@ class BaseJeu(BaseObj):
 
         if len(self.partie.joueurs + self.partie.observateurs) == 0:
             self.partie.detruire()
+            self.partie = None
 
     def opt_reset(self, personnage, message):
         """Force tout le monde à quitter le jeu."""

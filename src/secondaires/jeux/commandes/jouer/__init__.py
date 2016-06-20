@@ -90,5 +90,4 @@ class CmdJouer(Commande):
         partie.ajouter_joueur(personnage)
         contexte = ContextePlateau(personnage.instance_connexion, objet,
                 partie)
-        personnage.contextes.ajouter(contexte)
-        personnage << contexte.accueil()
+        personnage.contexte_actuel.migrer_contexte(contexte, detruire=False)

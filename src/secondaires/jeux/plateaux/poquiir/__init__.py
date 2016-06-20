@@ -2,10 +2,10 @@
 
 # Copyright (c) 2010-2016 LE GOFF Vincent
 # All rights reserved.
-# 
+#
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are met:
-# 
+#
 # * Redistributions of source code must retain the above copyright notice, this
 #   list of conditions and the following disclaimer.
 # * Redistributions in binary form must reproduce the above copyright notice,
@@ -14,7 +14,7 @@
 # * Neither the name of the copyright holder nor the names of its contributors
 #   may be used to endorse or promote products derived from this software
 #   without specific prior written permission.
-# 
+#
 # THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
 # AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
 # IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -34,17 +34,17 @@ from .. import BasePlateau
 from .piece import Piece
 
 class Plateau(BasePlateau):
-    
+
     """Plateau du poquiir.
-    
+
     Il est utilisé pour jouer au poquiir
     Il définit les différentes pièces.
-    
+
     """
-    
+
     jeux = ["poquiir"]
     nom = "poquiir"
-    
+
     def init(self):
         """Préparation des pièces."""
         self.pieces = []
@@ -70,7 +70,7 @@ class Plateau(BasePlateau):
                 piece = Piece(nom, couleur, points, fem=fem)
                 self.pieces.append(piece)
                 points += 1
-    
+
     def afficher(self, personnage, jeu, partie):
         """Affiche la partie en cours au personnage."""
         en_main = jeu.en_main.get(personnage)
@@ -81,7 +81,7 @@ class Plateau(BasePlateau):
                     en_main[1].nom_complet_indefini)
         else:
             msg = "Vous n'avez encore rien dans votre main."
-        
+
         if tableau:
             tableau = [piece.nom_complet_indefini for piece in tableau]
             aff_tableau = ", ".join(tableau[:-1]) + " et " + tableau[-1]
@@ -89,5 +89,11 @@ class Plateau(BasePlateau):
 
         if partie.tour is personnage:
             msg += "\nC'est votre tour."
-        
+
         return msg
+
+    def detruire(self):
+        """Destruction du plateau."""
+        BaseObj.detruire(self)
+        for piece in self.pieces:
+            piece.detruire()
