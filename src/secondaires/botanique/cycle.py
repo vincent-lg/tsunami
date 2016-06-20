@@ -54,6 +54,7 @@ class Cycle(BaseObj):
         self.duree = 1
         self.variation = 0
         self.visible = True
+        self._construire()
 
     def __getnewargs__(self):
         return ("", 1, None)
@@ -109,6 +110,7 @@ class Cycle(BaseObj):
 
         periode = Periode(nom.lower(), self)
         self.periodes.append(periode)
+        self._enregistrer()
         return periode
 
     def est_periode(self, nom):
@@ -149,6 +151,7 @@ class Cycle(BaseObj):
             if supprimer_accents(periode.nom) == nom:
                 self.periodes.remove(periode)
                 periode.detruire()
+                self._enregistrer()
                 return
 
         raise ValueError("période {} introuvable".format(nom))

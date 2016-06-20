@@ -56,7 +56,9 @@ class Plante(BaseObj):
             self.n_id = prototype.n_id
             prototype.n_id += 1
             prototype.plantes.append(self)
+            prototype._enregistrer()
             self.periode = prototype.cycles[0].periodes[0]
+        self._construire()
 
     def __getnewargs__(self):
         return (None, None)
@@ -108,6 +110,7 @@ class Plante(BaseObj):
 
         self.elements.clear()
         self.elements.update(n_elements)
+        self._enregistrer()
 
     def get_nom_pour(self, personnage):
         return self.nom
@@ -133,6 +136,7 @@ class Plante(BaseObj):
             self.elements[objet] = self.elements[objet] - nombre
             if self.elements[objet] <= 0:
                 del self.elements[objet]
+                self._enregistrer()
         else:
             raise ValueError("l'élément {} n'est pas défini dans {}".format(
                     objet.identifiant, self.identifiant))
@@ -161,4 +165,5 @@ class Plante(BaseObj):
         """Destruction de la plante."""
         if self in self.prototype.plantes:
             self.prototype.plantes.remove(self)
+            self.prototype._enregistrer()
         BaseObj.detruire(self)

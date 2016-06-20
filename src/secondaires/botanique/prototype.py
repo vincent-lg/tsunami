@@ -2,10 +2,10 @@
 
 # Copyright (c) 2010-2016 LE GOFF Vincent
 # All rights reserved.
-# 
+#
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are met:
-# 
+#
 # * Redistributions of source code must retain the above copyright notice, this
 #   list of conditions and the following disclaimer.
 # * Redistributions in binary form must reproduce the above copyright notice,
@@ -14,7 +14,7 @@
 # * Neither the name of the copyright holder nor the names of its contributors
 #   may be used to endorse or promote products derived from this software
 #   without specific prior written permission.
-# 
+#
 # THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
 # AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
 # IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -37,14 +37,14 @@ from primaires.format.fonctions import supprimer_accents
 from .cycle import Cycle
 
 class PrototypePlante(BaseObj):
-    
+
     """Classe décrivant le prototype d'un végétal.
-    
+
     Les informations contenues dans les objets de ce type sont communes
     à une espèce de plante. On y trouve :
     cle -- la clé identifiante unique de la plante
     croissance -- une liste des cycles de croissance de maturation
-    
+
     Beaucoup d'informations sont définies pour chaque cycle. Une
     cycle dur au minimum un an (souvent plusieurs) et détermine
     la croissance de la plante. Chaque cycle contient plusieurs périodes
@@ -57,13 +57,13 @@ class PrototypePlante(BaseObj):
             une période de floraison
         un cycle mature
         ...
-    
+
     Pour plus d'informations, consultez la classe Cycle (définie dans
     le fichier cycle.py) et la classe Periode (définie dans le fichier
     periode.py).
-    
+
     """
-    
+
     enregistrer = True
     def __init__(self, cle=""):
         """Constructeur du prototype."""
@@ -74,90 +74,93 @@ class PrototypePlante(BaseObj):
             self.cle = cle
         self.cycles = []
         self.plantes = []
-    
+        self._construire()
+
     def __getnewargs__(self):
         return ()
-    
+
     def __repr__(self):
         return "<prototype de plante {}>".format(repr(self.cle))
-    
+
     def __str__(self):
         return self.cle
-    
+
     @property
     def valide(self):
         """Retourne True si le prototype est valide, False sinon.
-        
+
         Un prototype est valide si il défini au moins un cycle et si chacun
         de ses cycles contient au moins une période.
-        
+
         """
         return len(self.cycles) > 0 and all(len(c.periodes) > 0 for c in \
                 self.cycles)
-    
+
     def ajouter_cycle(self, nom, age):
         """Ajoute un cycle et le retourne.
-        
+
         Si le cycle existe (le nom ou l'âge est déjà pris), lève une exception
         ValueError.
-        
+
         """
         if self.est_cycle(nom):
             raise ValueError("le cycle {} existe déjà".format(nom))
-        
+
         cycle = Cycle(nom.lower(), age, self)
         self.cycles.append(cycle)
+        self._enregistrer()
         return cycle
-    
+
     def est_cycle(self, nom):
         """Retourne True si le cycle est trouvé, False sinon.
-        
+
         La recherche ne tient pas compte des accents ou majuscules /
         minuscules.
-        
+
         """
         nom = supprimer_accents(nom).lower()
         for cycle in self.cycles:
             if supprimer_accents(cycle.nom) == nom:
                 return True
-        
+
         return False
-    
+
     def get_cycle(self, nom):
         """Retourne le cycle si existe.
-        
+
         Si il n'existe pas, lève l'exception ValueError.
-        
+
         """
         nom = supprimer_accents(nom).lower()
         for cycle in self.cycles:
             if supprimer_accents(cycle.nom) == nom:
                 return cycle
-        
+
         raise ValueError("cycle {} introuvable".format(nom))
-    
+
     def supprimer_cycle(self, nom):
         """Supprime le cycle donné.
-        
+
         Si le cycle n'est pas trouvé, lève l'exception ValueError.
-        
+
         """
         nom = supprimer_accents(nom).lower()
         for cycle in list(self.cycles):
             if supprimer_accents(cycle.nom) == nom:
                 self.cycles.remove(cycle)
                 cycle.detruire()
+                self._enregistrer()
                 return
-        
+
         raise ValueError("cycle {} introuvable".format(nom))
-        
+
     def detruire(self):
         """Destruction du prototype."""
         for plante in list(self.plantes):
             if plante.e_existe:
                 importeur.botanique.supprimer_plante(plante.identifiant)
-        
+
         for cycle in self.cycles:
             cycle.detruire()
-        
+
         BaseObj.detruire(self)
