@@ -54,6 +54,7 @@ class Recette(BaseObj):
         self.ustensiles = ["casserole"]
         self.ingredients = {}
         self.resultat = None
+        self._construire()
 
     def __getnewargs__(self):
         return ("", )

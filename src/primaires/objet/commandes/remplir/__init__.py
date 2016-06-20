@@ -2,10 +2,10 @@
 
 # Copyright (c) 2010-2016 LE GOFF Vincent
 # All rights reserved.
-# 
+#
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are met:
-# 
+#
 # * Redistributions of source code must retain the above copyright notice, this
 #   list of conditions and the following disclaimer.
 # * Redistributions in binary form must reproduce the above copyright notice,
@@ -14,7 +14,7 @@
 # * Neither the name of the copyright holder nor the names of its contributors
 #   may be used to endorse or promote products derived from this software
 #   without specific prior written permission.
-# 
+#
 # THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
 # AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
 # IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -33,9 +33,9 @@
 from primaires.interpreteur.commande.commande import Commande
 
 class CmdRemplir(Commande):
-    
+
     """Commande 'remplir'"""
-    
+
     def __init__(self):
         """Constructeur de la commande"""
         Commande.__init__(self, "remplir", "fill")
@@ -47,7 +47,7 @@ class CmdRemplir(Commande):
                 "bol voire poêlon, marmite) en y mettant des objets de type " \
                 "nourriture. Un repas pris de cette manière sera meilleur " \
                 "et plus nourrissant."
-    
+
     def ajouter(self):
         """Méthode appelée lors de l'ajout de la commande à l'interpréteur"""
         nom_objet = self.noeud.get_masque("nom_objet")
@@ -62,7 +62,7 @@ class CmdRemplir(Commande):
                 "(personnage.equipement.inventaire, " \
                 "personnage.salle.objets_sol)"
         plat.proprietes["types"] = "('conteneur de nourriture', )"
-    
+
     def interpreter(self, personnage, dic_masques):
         """Méthode d'interprétation de commande"""
         personnage.agir("poser")
@@ -71,7 +71,7 @@ class CmdRemplir(Commande):
             nombre = dic_masques["nombre"].nombre
         objets = list(dic_masques["nom_objet"].objets_qtt_conteneurs)[:nombre]
         dans = dic_masques["plat"].objet
-        
+
         pose = 0
         poids_total = dans.poids
         for objet, qtt, conteneur in objets:
@@ -79,11 +79,11 @@ class CmdRemplir(Commande):
                 personnage << "Vous ne pouvez pas prendre {} avec vos " \
                         "mains...".format(objet.get_nom())
                 return
-            
+
             if not objet.est_de_type("nourriture"):
                 personnage << "|err|Ceci n'est pas de la nourriture.|ff|"
                 return
-            
+
             poids_total += objet.poids
             if poids_total > dans.poids_max:
                 if pose == 0:
@@ -91,17 +91,18 @@ class CmdRemplir(Commande):
                     return
                 else:
                     break
-            
+
             pose += 1
             if qtt > nombre:
                 qtt = nombre
-            
+
             conteneur.retirer(objet, qtt)
             dans.nourriture.append(objet)
-        
+            dans._enregistrer()
+
         if pose < qtt:
             pose = qtt
-        
+
         personnage << "Vous déposez {} dans {}.".format(
                 objet.get_nom(pose), dans.nom_singulier)
         personnage.salle.envoyer("{{}} dépose {} dans {}.".format(
