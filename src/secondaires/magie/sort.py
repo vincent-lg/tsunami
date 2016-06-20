@@ -68,9 +68,7 @@ class Sort(BaseObj):
         self.distance = False
         self.points_tribut = 1
         self.script = ScriptSort(self)
-
-        # On passe le statut en CONSTRUIT
-        self._statut = CONSTRUIT
+        self._construire()
 
     def __getnewargs__(self):
         return ("", )
@@ -174,10 +172,8 @@ class Sort(BaseObj):
         try:
             self.executer_script(personnage, "concentration", **variables)
         except InterrompreCommande:
-            print("On apprend pas")
             return
         else:
-            print("On apprend")
             if apprendre:
                 personnage.pratiquer_sort(self.cle)
 
@@ -291,3 +287,9 @@ class Sort(BaseObj):
             return False
 
         return True
+
+    def detruire(self):
+        """Destruction du sort."""
+        BaseObj.detruire(self)
+        self.description.detruire()
+        self.script.detruire()

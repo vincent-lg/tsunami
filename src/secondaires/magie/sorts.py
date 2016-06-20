@@ -36,6 +36,7 @@ from .sort import Sort
 class Sorts(BaseObj):
 
     """Classe-conteneur des sorts.
+
     Cette classe contient tous les sortilèges et autres maléfices de
     l'univers, éditables et utilisables, et offre quelques méthodes de
     manipulation.
@@ -49,6 +50,7 @@ class Sorts(BaseObj):
         """Constructeur du conteneur"""
         BaseObj.__init__(self)
         self.__sorts = {}
+        self._construire()
 
     def __getnewargs__(self):
         return ()
@@ -66,10 +68,12 @@ class Sorts(BaseObj):
 
     def __setitem__(self, cle, sort):
         """Ajoute un sort à la liste"""
+        self._enregistrer()
         self.__sorts[cle] = sort
 
     def __delitem__(self, cle):
         """Détruit le sort spécifié"""
+        self._enregistrer()
         del self.__sorts[cle]
 
     def values(self):
@@ -82,6 +86,7 @@ class Sorts(BaseObj):
         else:
             sort = Sort(cle, self)
             self.__sorts[cle] = sort
+            self._enregistrer()
             return sort
 
     def get(self, cle, valeur=None):

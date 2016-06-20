@@ -73,6 +73,7 @@ class PrmApprendre(Parametre):
             personnage << "|err|Le sort '{}' est " \
                     "introuvable.|ff|".format(cle)
         else:
+            personnage._enregistrer()
             if niveau > 0:
                 personnage.sorts[cle] = niveau
                 personnage << "Vous avez bien appris le sort {} à " \
