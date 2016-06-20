@@ -312,6 +312,12 @@ class CommandeDynamique(BaseObj):
             etat.msg_visible = visible.lower().strip(" .?!")
             etat.act_autorisees = actions.split(" ")
 
+    def detruire(self):
+        """Destruction de la commande."""
+        BaseObj.detruire(self)
+        self.aide_longue.detruire()
+        self.script.detruire()
+
 
 class ScriptCommande(Script):
 

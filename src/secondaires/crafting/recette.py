@@ -231,6 +231,11 @@ class Recette(BaseObj):
 
         return objets
 
+    def detruire(self):
+        """Destruction de la recette."""
+        BaseObj.detruire(self)
+        self.script.detruire()
+
 class ScriptRecette(Script):
 
     """Script et évènements propres aux recettes."""

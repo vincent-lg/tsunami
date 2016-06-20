@@ -79,6 +79,7 @@ class Configuration(BaseObj):
     def __getitem__(self, objet):
         """Lecture d'une configuration."""
         if objet not in self.configuration:
+            self._enregistrer()
             self.configuration[objet] = Association()
 
         return self.configuration[objet]
