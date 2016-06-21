@@ -64,3 +64,8 @@ class Tag(BaseObj):
             parent = parent.creer_evenement(nom)
 
         parent.copier_depuis(depuis)
+
+    def detruire(self):
+        """Destruction du tag."""
+        BaseObj.detruire(self)
+        self.script.detruire()

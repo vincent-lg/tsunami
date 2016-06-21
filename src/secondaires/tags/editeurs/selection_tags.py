@@ -74,6 +74,7 @@ class SelectionTags(Selection):
                             evenement.nom)
 
             liste[:] = [e for e in liste if e]
+            self.objet._enregistrer()
             self.actualiser()
         else:
             self.pere << "|err|La clé {} est introuvable.|ff|".format(
