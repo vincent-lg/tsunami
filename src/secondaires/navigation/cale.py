@@ -274,6 +274,7 @@ class Cale(BaseObj):
                 nb += 1
                 conteneur[objet.prototype.cle] = nb
                 importeur.objet.supprimer_objet(objet.identifiant)
+                self._enregistrer()
             else:
                 # C'est un objet unique, on le conserve à part
                 objet.contenu.retirer(objet)
@@ -374,3 +375,8 @@ class Cale(BaseObj):
             self.vivres[prototype.cle] -= 1
             if self.vivres[prototype.cle] <= 0:
                 del self.vivres[prototype.cle]
+
+    def detruire(self):
+        """Destruction de la cale."""
+        BaseObj.detruire(self)
+        self.conteneur.detruire()

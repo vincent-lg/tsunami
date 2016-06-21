@@ -53,3 +53,4 @@ class SignalTermine(Signal):
             matelot.executer_generateur(generateur.parent, profondeur - 1)
         if profondeur == 0 and matelot.ordres:
             matelot.executer_ordres()
+        ordre.detruire()

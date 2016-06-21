@@ -72,6 +72,7 @@ class Ordre(BaseObj, metaclass=MetaOrdre):
     logger = type(importeur).man_logs.get_logger("ordres")
     etats_autorises = ("", )
     peut_deleguer = True
+
     def __init__(self, matelot, navire, *arguments):
         """Construit un ordre.
 
@@ -92,6 +93,7 @@ class Ordre(BaseObj, metaclass=MetaOrdre):
             matelots = navire.matelots
             self.matelot = self.choisir_matelot(matelots)
         self._arguments_suplementaires = arguments
+        self._construire()
 
     def __getnewargs__(self):
         return (None, None, )

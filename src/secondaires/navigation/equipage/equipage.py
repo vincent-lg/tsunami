@@ -168,6 +168,7 @@ class Equipage(BaseObj):
         matelot.nom = self.trouver_nom_matelot()
         self.matelots[supprimer_accents(matelot.nom.lower())] = matelot
         importeur.navigation.matelots[personnage.identifiant] = matelot
+        self._enregistrer()
 
         # Modifie le nombre de points
         self.points_max = self.points_actuels
@@ -196,6 +197,7 @@ class Equipage(BaseObj):
         del self.matelots[supprimer_accents(matelot.nom).lower()]
         matelot.nom = nouveau_nom
         self.matelots[supprimer_accents(matelot.nom.lower())] = matelot
+        self._enregistrer()
 
     def changer_poste(self, personnage, poste):
         """Change le poste du matelot désigné.
@@ -238,6 +240,7 @@ class Equipage(BaseObj):
             del importeur.navigation.matelots[identifiant]
         matelot.detruire()
         del self.matelots[nom]
+        self._enregistrer()
 
         if recalculer:
             # On recalcule le point max
@@ -269,6 +272,7 @@ class Equipage(BaseObj):
 
         if ennemi not in self.ennemis:
             self.ennemis.append(ennemi)
+            self._enregistrer()
 
     def demander(self, cle_volonte, *parametres, personnage=None,
             exception=None):
@@ -305,6 +309,7 @@ class Equipage(BaseObj):
         self.controles[cle] = controle
         Matelot.logger.debug("Création du contrôle {}".format(controle))
         controle.decomposer()
+        self._enregistrer()
         return controle
 
     def retirer_controle(self, cle):
@@ -315,6 +320,7 @@ class Equipage(BaseObj):
         """
         if cle in self.controles:
             del self.controles[cle]
+            self._enregistrer()
 
     def a_objectif(self, cle, *args):
         """Vérifie que l'équipage n'a pas déjà cet objectif."""
@@ -340,11 +346,13 @@ class Equipage(BaseObj):
         self.objectifs.insert(0, objectif)
         Matelot.logger.debug("Création de l'objectif {}".format(objectif))
         objectif.creer()
+        self._enregistrer()
         return objectif
 
     def retirer_objectif(self, indice):
         """Retire l'objectif d'indice spécifié."""
         del self.objectifs[indice]
+        self._enregistrer()
 
     def get_matelot(self, nom):
         """Retourne, si trouvé, le mâtelot recherché.
@@ -443,6 +451,7 @@ class Equipage(BaseObj):
     def ajouter_trajet(self, trajet):
         """Ajoute le trajet à la liste des caps."""
         self.caps.append(trajet.cle)
+        self._enregistrer()
         if len(self.caps) == 1:
             self.destination = list(trajet.points.values())[0]
         commandants = self.get_matelots_au_poste("commandant", False)
@@ -454,6 +463,7 @@ class Equipage(BaseObj):
         for cle, matelot in tuple(self.matelots.items()):
             if matelot.personnage is None or matelot.personnage.est_mort():
                 del self.matelots[cle]
+                self._enregistrer()
 
     def tick(self):
         """L'équipage se tick à chaque seconde.
@@ -635,9 +645,23 @@ class Equipage(BaseObj):
 
     def detruire(self):
         """Destruction de l'équipage et des matelots inclus."""
+        # Destruction des matelots
         for nom in list(self.matelots.keys()):
             self.supprimer_matelot(nom)
 
+        # Destruction des volontés
+        for volonte in self.volontes:
+            volonte.detruire()
+
+        # Destruction des contrôles
+        for controle in self.controlles.values():
+            controle.detruire()
+
+        # Destruction des objectifs
+        for objectif in self.objectifs:
+            objectif.detruire()
+
+        self.configuration.detruire()
         BaseObj.detruire(self)
 
     @staticmethod

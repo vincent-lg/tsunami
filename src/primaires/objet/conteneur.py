@@ -239,6 +239,15 @@ class ConteneurObjet(BaseObj):
             if hasattr(contenu, "supporter_poids_sup"):
                 contenu.supporter_poids_sup(poids, recursif)
 
+    def detruire(self):
+        """Destruction du conteneur d'objet."""
+        BaseObj.detruire(self)
+        for objet in self._objets:
+            try:
+                importeur.objet.supprimer_objet(objet.identifiant)
+            except Exception:
+                pass
+
 
 class SurPoids(ExceptionMUD):
 

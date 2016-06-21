@@ -68,6 +68,7 @@ class Navire(Vehicule):
 
     enregistrer = True
     obs_recif = ()
+
     def __init__(self, modele):
         """Constructeur du navire."""
         Vehicule.__init__(self)
@@ -87,6 +88,7 @@ class Navire(Vehicule):
 
         if modele:
             modele.vehicules.append(self)
+            modele._enregistrer()
             self.cle = importeur.navigation.dernier_ID(modele.cle)
             self.construire_depuis_modele()
 
@@ -730,7 +732,6 @@ class Navire(Vehicule):
             autre = etendue.croise_lien((origine.x, origine.y),
                     (n_position.x, n_position.y))
             if autre:
-                print(self, "change d'étendue:", autre)
                 if autre.profondeur < self.modele.tirant_eau:
                     self.envoyer("Un grincement sonore, la quille " \
                             "touche le fond.")
@@ -832,7 +833,6 @@ class Navire(Vehicule):
         """Méthode appelée lors d'une collision avec un point."""
         Vehicule.collision(self, salle)
         vitesse = self.vitesse_noeuds
-        print("Collision", contre)
         if contre in type(self).obs_recif:
             if vitesse < 0.05:
                 pass
@@ -1214,6 +1214,7 @@ class Navire(Vehicule):
 
         canot.etendue = None
         self.canots.append(canot)
+        self._enregistrer()
         importeur.navigation.nav_logger.info("{} remonte le canot {}".format(
                 self.cle, canot.cle))
 
@@ -1230,22 +1231,32 @@ class Navire(Vehicule):
         canot.position.y = p_y + y
         canot.position.z = p_z
         self.canots.remove(canot)
+        self._enregistrer()
         importeur.navigation.nav_logger.info("{} met à l'eau le canot " \
                 "{}".format(self.cle, canot.cle))
 
     def detruire(self):
-        """Destruction du self."""
+        """Destruction du navire."""
         # Replie la passerelle si il y a une passerelle
         elt_passerelle = self.elt_passerelle
         if elt_passerelle:
             elt_passerelle.replier()
 
+        # Supprime les salles de navire
         for salle in list(self.salles.values()):
-            importeur.salle.supprimer_salle(salle.ident)
+            importeur.salle.supprimer_salle(salle.ident, detruire=False)
+            salle.detruire(description=self.modele.descriptions_independantes)
+
+        self.propulsion.detruire()
+
+        # Destruction des canots
+        for canot in self.canots:
+            importeur.navigation.supprimer_navire(canot.cle)
 
         self.equipage.detruire()
         self.cale.detruire()
         self.modele.vehicules.remove(self)
+        self.modele._enregistrer()
         Vehicule.detruire(self)
 
 

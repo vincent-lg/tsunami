@@ -73,6 +73,7 @@ class BasePertu(BaseObj, metaclass=MetaPertu):
         """Constructeur d'une perturbation météo"""
         BaseObj.__init__(self)
         self.centre = pos
+        self.centre._construire()
         self.rayon = randint(ceil(self.rayon_max / 2), self.rayon_max)
         self.duree = randint(ceil(self.duree_max / 1.5), self.duree_max)
         self.age = 0
@@ -101,7 +102,6 @@ class BasePertu(BaseObj, metaclass=MetaPertu):
         # entre 1 et 100 ; la première perturbation de la liste telle que
         # nombre_tire < proba est choisie (voir nuages pour un exemple).
         self.fins_possibles = []
-        print("Création de", self, self.centre, getattr(self.centre, "e_existe", None))
         self._construire()
 
     def __getnewargs__(self):
@@ -371,3 +371,8 @@ class BasePertu(BaseObj, metaclass=MetaPertu):
 
         return sqrt((pertu.centre.x - n_x) ** 2 + (pertu.centre.y - n_y) ** 2) <= \
                 self.rayon + pertu.rayon
+
+    def detruire(self):
+        """Destruction de la perturbation."""
+        BaseObj.detruire(self)
+        self.centre.detruire()

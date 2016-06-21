@@ -98,9 +98,13 @@ class Vehicule(BaseObj):
         BaseObj.__init__(self)
         self.masse = 1
         self.position = Vecteur(0, 0, 0, self)
+        self.position._construire()
         self.vitesse = Vecteur(0, 0, 0, self)
+        self.vitesse._construire()
         self.acceleration = Vecteur(0, 0, 0, self)
+        self.acceleration._construire()
         self.direction = Direction(self, 1, 0, 0)
+        self.direction._construire()
 
         self.frottement = Frottement(self, 0.7)
 
@@ -193,9 +197,3 @@ class Vehicule(BaseObj):
         self.acceleration.detruire()
         self.direction.detruire()
         self.frottement.detruire()
-
-        for force in self.forces:
-            force.detruire()
-
-        for salle in self.salles.values():
-            salle.detruire()

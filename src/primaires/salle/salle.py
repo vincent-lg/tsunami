@@ -898,13 +898,16 @@ class Salle(BaseObj):
             elif cle == "z":
                 self.coords.z = int(valeur)
 
-    def detruire(self):
+    def detruire(self, description=True):
         """Destruction de la salle."""
         BaseObj.detruire(self)
         self.coords.detruire()
-        self.description.detruire()
+        if description:
+            self.description.detruire()
+            self.details.detruire()
+
         self.sorties.detruire()
-        self.details.detruire()
+
         for decor in self.decors:
             decor.detruire()
 

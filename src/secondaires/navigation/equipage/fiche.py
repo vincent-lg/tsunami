@@ -49,6 +49,7 @@ class FicheMatelot(BaseObj):
 
     enregistrer = True
     type_achat = "matelot"
+
     def __init__(self, prototype):
         """Constructeur du matelot."""
         BaseObj.__init__(self)
@@ -59,6 +60,7 @@ class FicheMatelot(BaseObj):
         self.description = Description(parent=self)
         self.aptitudes = {}
         self.m_valeur = 20
+        self._construire()
 
     def __getnewargs__(self):
         return (None, )
@@ -99,6 +101,7 @@ class FicheMatelot(BaseObj):
             raise KeyError("Niveau inconnu {}".format(repr(nom_niveau)))
 
         self.aptitudes[aptitude] = niveau
+        self._enregistrer()
 
     def creer_PNJ(self, salle=None, nb=1):
         """Crée le PNJ sur la fiche."""

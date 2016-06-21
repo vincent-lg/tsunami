@@ -230,12 +230,14 @@ class SalleNavire(Salle):
     def ajouter_element(self, element):
         """Ajoute un élément dans la salle."""
         self.mod_elements.append(element)
+        self._enregistrer()
 
     def retirer_element(self, cle):
         """Retire l'élément indiqué."""
         for i, elt in enumerate(self.mod_elements):
             if elt.nom_type == cle:
                 del self.mod_elements[i]
+                self._enregistrer()
                 return
 
         raise ValueError("l'élément {} n'a pas pu être trouvé".format(
@@ -397,3 +399,10 @@ class SalleNavire(Salle):
             return self.navire.a_le_droit(personnage, self.poste)
 
         return True
+
+    def detruire(self, description=True):
+        """Destruction de la salle de navire."""
+        Salle.detruire(self, description=description)
+
+        for element in self.elements:
+            element.detruire()

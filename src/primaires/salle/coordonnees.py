@@ -50,8 +50,6 @@ class Coordonnees(BaseObj):
         self.z = z
         self.valide = valide
         self.parent = parent
-        # On passe le statut en CONSTRUIT
-        self._construire()
 
     def __getnewargs__(self):
         return ()

@@ -43,6 +43,7 @@ class MatelotsVente(BaseObj):
     def __init__(self):
         """Constructeur de la classe"""
         BaseObj.__init__(self)
+        self._construire()
 
     def __getnewargs__(self):
         return ()

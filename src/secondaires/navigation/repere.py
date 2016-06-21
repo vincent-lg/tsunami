@@ -51,6 +51,7 @@ class Repere(BaseObj):
     """
 
     enregistrer = True
+
     def __init__(self, x, y):
         """Constructeur du repère."""
         BaseObj.__init__(self)
@@ -59,6 +60,7 @@ class Repere(BaseObj):
         self.nom = "un repère indéfini"
         self.description = Description(parent=self)
         self.amplificateur_portee = 1.5
+        self._construire()
 
     def __getnewargs__(self):
         return (0, 0)
@@ -91,6 +93,11 @@ class Repere(BaseObj):
         msg = "Vous regardez " + self.nom + " :\n\n"
         msg += self.description.regarder(personnage, self)
         personnage << msg
+
+    def detruire(self):
+        """Destruciton du repère."""
+        BaseObj.detruire(self)
+        self.description.detruire()
 
     @staticmethod
     def trouver_reperes(visible, personnage, portee, precision,

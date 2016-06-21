@@ -47,6 +47,7 @@ class ModeleNavire(BaseObj):
     """
 
     enregistrer = True
+
     def __init__(self, cle):
         """Constructeur du modèle."""
         BaseObj.__init__(self)
@@ -180,6 +181,7 @@ class ModeleNavire(BaseObj):
 
         salle = SalleNavire(self.cle, mnemonic, r_x, r_y, r_z, self)
         self.salles[r_coords] = salle
+        self._enregistrer()
         return salle
 
     def lier_salle(self, salle_1, salle_2, direction):
@@ -215,6 +217,7 @@ class ModeleNavire(BaseObj):
 
         # Supprime la salle
         self.salles.pop(c).detruire()
+        self._enregistrer()
 
     def generer_graph(self):
         """Génère le graph des sorties.
@@ -282,4 +285,9 @@ class ModeleNavire(BaseObj):
         for vehicule in list(self.vehicules):
             vehicule.detruire()
 
+        for salle in self.salles.values():
+            importeur.salle.supprimer_salle(salle.ident)
+
+        self.description.detruire()
+        self.description_vente.detruire()
         BaseObj.detruire(self)

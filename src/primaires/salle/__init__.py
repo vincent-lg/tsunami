@@ -501,7 +501,7 @@ class Module(BaseModule):
         self.ajouter_salle(salle)
         return salle
 
-    def supprimer_salle(self, cle):
+    def supprimer_salle(self, cle, detruire=True):
         """Supprime la salle.
         La clé est l'identifiant de la salle.
 
@@ -511,7 +511,9 @@ class Module(BaseModule):
         if coords.valide and coords.tuple() in self._coords.keys():
             del self._coords[coords.tuple()]
         del self._salles[cle]
-        salle.detruire()
+
+        if detruire:
+            salle.detruire()
 
     def creer_decor(self, cle):
         """Créée un nouveau prototype de décor."""
