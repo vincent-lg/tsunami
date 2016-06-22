@@ -69,3 +69,9 @@ class Variable(BaseObj):
         self.nom_type = type.__name__
     type = property(_get_type, _set_type)
 
+    def __getstate__(self):
+        attrs = self.__dict__.copy()
+        if "type" in attrs:
+            del attrs["type"]
+
+        return attrs

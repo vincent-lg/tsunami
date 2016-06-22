@@ -28,19 +28,10 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Ce fichier contient la classe Tous, détaillée plus bas."""
+"""Fichier contenant les convertisseurs de la classe Coordonnees."""
 
-from .alias import Alias
-
-class Tous(Alias):
-
-    """Alias : @tous.
-
-    """
-
-    nom_alias = "tous"
-
-    @classmethod
-    def retourner_joueurs(self):
-        """Retourne une liste de tous les joueurs."""
-        return list(importeur.connex.joueurs)
+class Convertisseur:
+    """Classe pour envelopper les convertisseurs."""
+    def depuis_version_0(objet, classe):
+        objet.set_version(classe, 1)
+        objet._construire()

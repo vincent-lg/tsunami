@@ -47,6 +47,7 @@ objets_par_type = {}
 ids = {}
 statut_gen = 0 # 0 => OK, 1 => en cours
 classes_base = {}
+tous_objets = {}
 
 class MetaBaseObj(type):
 
@@ -123,6 +124,9 @@ class BaseObj(metaclass=MetaBaseObj):
                 "__getnewargs__")
 
     def ajouter_enr(self):
+        if self.e_existe and statut_gen == 0 and id(self) not in tous_objets:
+            tous_objets[id(self)] = self
+
         if self.e_existe and type(self).enregistrer and statut_gen == 0 and \
                 id(self) not in objets:
             objets[id(self)] = self

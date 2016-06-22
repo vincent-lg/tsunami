@@ -41,6 +41,7 @@ from abstraits.obase import MetaBaseObj, BaseObj
 from primaires.format.fonctions import *
 
 contextes = {} # dictionnaire des différents contextes
+cls_contextes = {}
 
 class MetaContexte(MetaBaseObj):
 
@@ -54,6 +55,8 @@ class MetaContexte(MetaBaseObj):
     def __init__(cls, nom, bases, contenu):
         """Constructeur de la métaclasse"""
         MetaBaseObj.__init__(cls, nom, bases, contenu)
+        chemin = cls.__module__ + "." + cls.__name__
+        cls_contextes[chemin] = cls
         if cls.nom:
             contextes[cls.nom] = cls
 

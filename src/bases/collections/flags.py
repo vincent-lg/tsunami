@@ -30,7 +30,9 @@
 
 """Fichier contenant la classe Flags détaillée plus bas."""
 
-class Flags:
+from abstraits.obase import BaseObj
+
+class Flags(BaseObj):
 
     """Classe représentant des constantes de flags.
 
@@ -44,7 +46,11 @@ class Flags:
     """
 
     def __init__(self):
+        BaseObj.__init__(self)
         self.flags = {}
+
+    def __getnewargs__(self):
+        return ()
 
     def __contains__(self, nom):
         return nom in self.flags
@@ -71,7 +77,7 @@ class Flags:
         else:
             raise ValueError("le flag {} n'a pas de valeur binaire " \
                     "spécifiée, attend {}".format(nom, flag))
-        
+
         return binaire
 
     def keys(self):

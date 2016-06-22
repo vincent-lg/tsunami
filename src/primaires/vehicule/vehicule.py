@@ -97,14 +97,18 @@ class Vehicule(BaseObj):
         """
         BaseObj.__init__(self)
         self.masse = 1
-        self.position = Vecteur(0, 0, 0, self)
-        self.position._construire()
-        self.vitesse = Vecteur(0, 0, 0, self)
-        self.vitesse._construire()
-        self.acceleration = Vecteur(0, 0, 0, self)
-        self.acceleration._construire()
-        self.direction = Direction(self, 1, 0, 0)
-        self.direction._construire()
+        position = Vecteur(0, 0, 0, self)
+        position._construire()
+        self.position = position
+        vitesse = Vecteur(0, 0, 0, self)
+        vitesse._construire()
+        self.vitesse = vitesse
+        acceleration = Vecteur(0, 0, 0, self)
+        acceleration._construire()
+        self.acceleration = acceleration
+        direction = Direction(self, 1, 0, 0)
+        direction._construire()
+        self.direction = direction
 
         self.frottement = Frottement(self, 0.7)
 

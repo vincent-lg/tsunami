@@ -73,7 +73,9 @@ class BasePertu(BaseObj, metaclass=MetaPertu):
         """Constructeur d'une perturbation météo"""
         BaseObj.__init__(self)
         self.centre = pos
-        self.centre._construire()
+        if pos is not None:
+            pos._construire()
+
         self.rayon = randint(ceil(self.rayon_max / 2), self.rayon_max)
         self.duree = randint(ceil(self.duree_max / 1.5), self.duree_max)
         self.age = 0
@@ -375,4 +377,5 @@ class BasePertu(BaseObj, metaclass=MetaPertu):
     def detruire(self):
         """Destruction de la perturbation."""
         BaseObj.detruire(self)
-        self.centre.detruire()
+        if self.centre is not None:
+            self.centre.detruire()

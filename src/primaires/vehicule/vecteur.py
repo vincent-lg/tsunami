@@ -47,6 +47,9 @@ class Vecteur(BaseObj):
 
     """
 
+    _nom = "vecteur"
+    _version = 1
+
     def __init__(self, x=0, y=0, z=0, parent=None):
         """Constructeur du vecteur"""
         BaseObj.__init__(self)

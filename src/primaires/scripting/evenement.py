@@ -111,6 +111,13 @@ class Evenement(BaseObj):
 
     def __getstate__(self):
         """Ne sauvegarde pas les variables en fichier."""
+    def __getstate__(self):
+        """Enregistrement de l'objet."""
+        for evenement in list(self.evenements.values()):
+            if "." in evenement.nom:
+                self.supprimer_evenement(evenement.nom)
+                print("Supprime l'évènement", evenement.nom)
+
         dico_attr = self.__dict__.copy()
         del dico_attr["espaces"]
         return dico_attr

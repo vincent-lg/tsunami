@@ -28,19 +28,29 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Ce fichier contient la classe Tous, détaillée plus bas."""
+"""Ce fichier contient le convertisseur binaire->MongoDB.
 
-from .alias import Alias
+La configuration de 'supenr' doiit être réglée sur 'pickle'. Après
+le chargement de la sauvegarde, on force l'enregistrement en MongoDB de
+TOUS les objets de type BaseObj. Une connexion MongoDB sur une base vide
+doit être également ouverte.
 
-class Tous(Alias):
+"""
 
-    """Alias : @tous.
+from abstraits.obase import tous_objets
+from kassie import importeur
 
-    """
+# La préparation a eu lieu, on convertit
+importeur.supenr.mode = "mongo"
+importeur.supenr.config_mongo()
 
-    nom_alias = "tous"
+# On force l'enregistrement des objets en mode mongo
+importeur.supenr.logger.info("Enregistrement forcé de {} objets".format(
+        len(tous_objets)))
+for objet in tous_objets.values():
+    importeur.supenr.ajouter_objet(objet)
 
-    @classmethod
-    def retourner_joueurs(self):
-        """Retourne une liste de tous les joueurs."""
-        return list(importeur.connex.joueurs)
+# Enregistrement
+importeur.supenr.logger.info("Début de l'enregistrement...")
+importeur.supenr.mongo_enregistrer_file()
+importeur.supenr.logger.info("... fin de l'enregistrement.")

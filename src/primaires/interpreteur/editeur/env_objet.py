@@ -33,6 +33,7 @@
 from textwrap import dedent
 
 from abstraits.obase import BaseObj
+from primaires.interpreteur.contexte import cls_contextes
 
 class EnveloppeObjet(BaseObj):
 
@@ -69,6 +70,25 @@ class EnveloppeObjet(BaseObj):
 
     def __getnewargs__(self):
         return (None, None, None)
+
+    def __getstate__(self):
+        """Enregistrement de l'objet."""
+        attrs = BaseObj.__getstate__(self)
+        attrs["editeur"] = importeur.supenr.qualname(attrs["editeur"])
+
+        for sup in self.sup:
+            if hasattr(sup, "_construire"):
+                sup._construire()
+
+        return attrs
+
+    def __setstate__(self, attrs):
+        """Récupération de l'objet enregistré."""
+        if isinstance(attrs["editeur"], str):
+            editeur = cls_contextes[attrs["editeur"]]
+            attrs["editeur"] = editeur
+
+        BaseObj.__setstate__(self, attrs)
 
     def aider(self, aide):
         """Change l'aide courte.

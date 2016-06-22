@@ -114,6 +114,14 @@ class Equipage(BaseObj):
         navire = self.navire and self.navire.cle or "aucun"
         return "<Équipage du navire {}>".format(repr(navire))
 
+    def __getstate__(self):
+        """Enregistrement de l'objet."""
+        attrs = BaseObj.__getstate__(self)
+        attrs["vigie_terres"] = []
+        attrs["vigie_navires"] = []
+        attrs["vigie_tries"] = {}
+        return attrs
+
     @property
     def matelots_libres(self):
         """Retourne les matelots considérés comme libres."""
@@ -654,7 +662,7 @@ class Equipage(BaseObj):
             volonte.detruire()
 
         # Destruction des contrôles
-        for controle in self.controlles.values():
+        for controle in self.controles.values():
             controle.detruire()
 
         # Destruction des objectifs

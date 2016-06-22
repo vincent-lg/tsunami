@@ -422,11 +422,11 @@ class Module(BaseModule):
         # On retire les attributs directs référençant des objets
         # qui seront remplacés. Ce code évite les filtres de mémoire,
         # sans les empêcher complètement.
-        for cle, valeur in attributs.items():
+        for cle, valeur in tuple(attributs.items()):
             if isinstance(valeur, BaseObj) \
-                    and getattr(objet, cle, None) is not None:
-                self.logger.info("Destruction de {} : {}".format(nom, cle))
-                getattr(objet, cle).detruire()
+                    and isinstance(getattr(objet, cle, None), BaseObj):
+                break
+                #getattr(objet, cle).detruire()
 
         objet.__setstate__(attributs)
         objet._construire()
@@ -438,7 +438,11 @@ class Module(BaseModule):
     def mongo_charger_dictionnaire(self, dictionnaire):
         """Charge les informations d'un dictionnaire."""
         for cle, valeur in tuple(dictionnaire.items()):
-            if cle.startswith("ObjectId("):
+            if "*DLS*" in cle:
+                del dictionnaire[cle]
+                cle = cle.replace("*DLS*", "$")
+                dictionnaire[cle] = valeur
+            elif cle.startswith("ObjectId("):
                 del dictionnaire[cle]
                 cle = cle[9:-1]
                 nom, _id = cle.split(",")
@@ -523,22 +527,17 @@ class Module(BaseModule):
             importeur.diffact.ajouter_action("enregistrement", 5,
                     self.mongo_enregistrer_file)
 
-        logger.debug("Premier passage")
 
         t1 = time.time()
         reste = []
         for objet in self.mongo_file.values():
             second, attributs = self.extraire_attributs(objet)
-            logger.debug("  " + str(type(objet)) + repr(attributs))
             self.mongo_enregistrer_objet(objet, attributs)
             if second:
                 reste.append(objet)
 
-        logger.debug("Second passage")
-
         for objet in reste:
             second, attributs = self.extraire_attributs(objet)
-            logger.debug("  " + str(type(objet)) + repr(attributs))
             self.mongo_enregistrer_objet(objet, attributs)
 
         self.mongo_file.clear()
@@ -634,6 +633,10 @@ class Module(BaseModule):
                 del attributs[cle]
                 cle = "(" + str(cle) + ")"
                 attributs[cle] = valeur
+            elif isinstance(cle, str):
+                del attributs[cle]
+                cle = cle.replace("$", "*DLS*")
+                attributs[cle] = valeur
 
             if isinstance(valeur, BaseObj):
                 if "_id" in valeur.__dict__:
@@ -666,7 +669,7 @@ class Module(BaseModule):
                 else:
                     second = True
                     continue
-            elif isinstance(valeur, list):
+            elif isinstance(valeur, (list, tuple)):
                 valeur = list(valeur)
                 sous = self.extraire_liste(valeur)
                 if sous:

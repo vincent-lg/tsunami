@@ -98,7 +98,9 @@ class Salle(BaseObj):
         BaseObj.__init__(self)
         self._nom_zone = zone
         self._mnemonic = mnemonic
-        self.coords = Coordonnees(x, y, z, valide, self)
+        coords = Coordonnees(x, y, z, valide, self)
+        coords._construire()
+        self.coords = coords
         self.nom_terrain = "ville"
         self.titre = ""
         self.description = Description(parent=self)
@@ -901,7 +903,9 @@ class Salle(BaseObj):
     def detruire(self, description=True):
         """Destruction de la salle."""
         BaseObj.detruire(self)
-        self.coords.detruire()
+        if self.coords:
+            self.coords.detruire()
+
         if description:
             self.description.detruire()
             self.details.detruire()

@@ -42,6 +42,9 @@ class Coordonnees(BaseObj):
 
     """
 
+    _nom = "coordonnees"
+    _version = 1
+
     def __init__(self, x=0, y=0, z=0, valide=True, parent=None):
         """Constructeur des coordonnées"""
         BaseObj.__init__(self)

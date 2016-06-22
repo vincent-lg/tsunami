@@ -29,7 +29,7 @@
 
 """Ce fichier contient la classe Evenement, détaillée plus bas."""
 
-import datetime
+from datetime import datetime
 
 from abstraits.obase import BaseObj
 from primaires.format.description import Description
@@ -56,7 +56,7 @@ class Evenement(BaseObj):
         BaseObj.__init__(self)
         self.id = type(self).id_actuel
         type(self).id_actuel += 1
-        self.date = datetime.date.today()
+        self.date = datetime.today()
         self.responsables = [createur]
         self.titre = "Sans Titre"
         self.description = Description(parent = self)
@@ -71,6 +71,17 @@ class Evenement(BaseObj):
 
     def __str__(self):
         return str(self.id)
+
+    def __getstate__(self):
+        """Enregistrement de l'objet."""
+        from datetime import date
+        attrs = BaseObj.__getstate__(self)
+        if isinstance(attrs["date"], date):
+            date = attrs["date"]
+            attrs["date"] = datetime(year=date.year, month=date.month,
+                    day=date.day)
+
+        return attrs
 
     @property
     def str_detail(self):
