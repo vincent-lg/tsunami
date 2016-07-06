@@ -166,8 +166,6 @@ class Etendue(BaseObj):
 
             # On cherche tous les voisins
             # D'abord en variant X
-            print(coords)
-            c=input()
             x, y = coords
             while ((x + 1), y) in liens:
                 x += 1
