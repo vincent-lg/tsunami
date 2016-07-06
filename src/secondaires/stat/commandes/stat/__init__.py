@@ -65,17 +65,17 @@ class CmdStat(Commande):
         imp = type(self).importeur
         infos = []
 
-        ## Informations sur le système
+        ## Informations sur le serveur
         msg = "|tit|Informations sur le serveur :|ff|"
         if psutil is None:
             msg += "\n  |att|Impossible d'accéder à ces informations " \
-                    "car\nle module 'psutil' n'a pu être trouvé. Exécutez " \
+                    "car\n  le module 'psutil' n'a pu être trouvé. Exécutez " \
                     ": 'pip install psutil'"
         else:
-            msg += "  {} processeurs (CPU={}%)".format(psutil.cpu_count(),
+            msg += "\n  {} processeurs (CPU={}%)".format(psutil.cpu_count(),
                     str(psutil.cpu_percent()).replace(".", ","))
             mem = psutil.virtual_memory()
-            msg += "  RAM : {} GiB utilisé sur {} GiB ({}%)".format(
+            msg += "\n  RAM : {} GiB utilisé sur {} GiB ({}%)".format(
                     str(round(mem.used / 1000000000, 1)).replace(".", ","),
                     str(round(mem.total / 1000000000, 1)).replace(".", ","),
                     str(mem.percent).replace(".", ","))
