@@ -32,6 +32,11 @@
 
 """
 
+try:
+    import psutil
+except ImportError:
+    psutil = None
+
 import threading
 
 from primaires.interpreteur.commande.commande import Commande
@@ -60,7 +65,23 @@ class CmdStat(Commande):
         imp = type(self).importeur
         infos = []
 
-        ## Générales
+        ## Informations sur le système
+        msg = "|tit|Informations sur le serveur :|ff|"
+        if psutil is None:
+            msg += "\n  |att|Impossible d'accéder à ces informations " \
+                    "car\nle module 'psutil' n'a pu être trouvé. Exécutez " \
+                    ": 'pip install psutil'"
+        else:
+            msg += "  {} processeurs (CPU={}%)".format(psutil.cpu_count(),
+                    str(psutil.cpu_percent()).replace(".", ","))
+            mem = psutil.virtual_memory()
+            msg += "  RAM : {} GiB utilisé sur {} GiB ({}%)".format(
+                    str(round(mem.used / 1000000000, 1)).replace(".", ","),
+                    str(round(mem.total / 1000000000, 1)).replace(".", ","),
+                    str(mem.percent).replace(".", ","))
+        infos.append(msg)
+
+        ## Information s sur le MUD
         msg = "|tit|Informations générales :|ff|"
         # Depuis quand le serveur est-il lancé ?
         uptime = stats.uptime
@@ -69,13 +90,11 @@ class CmdStat(Commande):
 
         ## Commandes
         msg = "\n|tit|Commandes :|ff|"
-
         # Combien de commandes entrées ?
         msg += "\n  {} commandes entrées".format(stats.nb_commandes)
         # Temps moyen d'exécution
         msg += "\n  Temps moyen d'exécution : {:.3f}".format( \
                 stats.tps_moy_commandes)
-
         # Commandes les plus gourmandes
         msg += "\n  Temps d'exécution maximum :"
         for temps in sorted(tuple(stats.max_commandes), reverse=True):
@@ -85,7 +104,6 @@ class CmdStat(Commande):
                 commande = commande[:12] + "..."
 
             msg += "\n    {} {:02.3f}s".format(commande.ljust(15), temps)
-
         infos.append(msg)
 
         ## Watch dog
