@@ -294,6 +294,10 @@ class Module(BaseModule):
         importeur.diffact.ajouter_action(nom_action, temps,
                 self.suivre_chemin, pnj, temps, chemin, avant)
         sortie = salle.sorties.get(direction)
+        if sortie is None:
+            # ... c'est manifestement une erreur
+            return
+
         verrou = False
         if sortie.porte and sortie.porte.verrouillee:
             sortie.porte.verrouillee = False

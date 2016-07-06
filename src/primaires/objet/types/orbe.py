@@ -40,15 +40,13 @@ class Orbe(BaseType):
     """
 
     nom_type = "orbe"
+    _attributs = {
+        "nom_orbe": Attribut(str),
+    }
 
     def __init__(self, cle=""):
         """Constructeur de l'objet"""
         BaseType.__init__(self, cle)
-
-        # Attributs propres à l'objet (non au prototype)
-        self._attributs = {
-            "nom_orbe": Attribut(str),
-        }
 
     def get_nom(self, nombre=1, pluriels=True):
         """Retourne le nom complet en fonction du nombre.

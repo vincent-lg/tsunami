@@ -921,7 +921,7 @@ class Salle(BaseObj):
         if self.magasin:
             self.magasin.detruire()
 
-        if self.etendue:
+        if self.etendue and self.coords:
             self.etendue.supprimer_cote(self)
 
         for affection in self.affections.values():

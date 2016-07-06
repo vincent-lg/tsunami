@@ -53,6 +53,9 @@ class AffectionSalle(AffectionAbstraite):
 
     def programmer_destruction(self, affection):
         """Programme la destruction de l'affection de salle."""
+        if affection.affecte is None:
+            return
+
         try:
             affection.affecte.envoyer(self.message_detruire(affection),
                     prompt=False)

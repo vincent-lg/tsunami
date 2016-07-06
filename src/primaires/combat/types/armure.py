@@ -51,6 +51,9 @@ class Armure(BaseType):
     _nom = "prototype_armure"
     _version = 1
     empilable_sur = ["vêtement"]
+    _attributs = {
+        "au_fourreau": Attribut(None),
+    }
 
     def __init__(self, cle=""):
         """Constructeur de l'objet"""
@@ -61,9 +64,6 @@ class Armure(BaseType):
         self.fourreau_visible = True
         self.poids_max_fourreau = 1
         self.types_fourreau = []
-        self._attributs = {
-            "au_fourreau": Attribut(None),
-        }
 
         # Editeurs
         self.etendre_editeur("f", "encaissement fixe", Entier, self,

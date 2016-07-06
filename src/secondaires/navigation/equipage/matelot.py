@@ -116,7 +116,7 @@ class Matelot(BaseObj):
                 ordre.detruire()
                 continue
 
-            arg = (ordre.cle, ) + ordre.arguments_suplementaires
+            arg = (ordre.cle, ) + tuple(ordre.arguments_suplementaires)
             if arg not in args:
                 args.append(arg)
                 uniques.append(ordre)
@@ -149,6 +149,7 @@ class Matelot(BaseObj):
         """
         if self.ordres:
             ordre = self.ordres[0]
+            ordre.matelot = self
             generateur = ordre.creer_generateur()
             self.executer_generateur(generateur)
 

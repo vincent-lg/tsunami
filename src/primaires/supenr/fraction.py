@@ -91,7 +91,7 @@ class TransformFraction(SONManipulator):
         for value in liste:
             if isinstance(value, dict):
                 if value.get("_custom_type", "") == "Fraction":
-                    fraction = Fraction(value["numrator"],
+                    fraction = Fraction(value["numerator"],
                             value["denominator"])
                     value = fraction
                 else:

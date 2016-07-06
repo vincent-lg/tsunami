@@ -49,6 +49,11 @@ class Conteneur(BaseType):
     nettoyer = False
 
     empilable_sur = ["vêtement", "armure"]
+    _attributs = {
+        "conteneur": Attribut(
+            lambda obj: ConteneurObjet(obj),
+            ("", )),
+    }
 
     def __init__(self, cle=""):
         """Constructeur de l'objet"""
@@ -61,13 +66,6 @@ class Conteneur(BaseType):
                 "types_admis", type(self).importeur.objet.noms_types)
         self.etendre_editeur("m", "meuble support", Flag, self,
                 "meuble_support")
-
-        # Attributs propres à l'objet (non au prototype)
-        self._attributs = {
-            "conteneur": Attribut(
-                lambda obj: ConteneurObjet(obj),
-                ("", )),
-        }
 
     @property
     def str_types_admis(self):

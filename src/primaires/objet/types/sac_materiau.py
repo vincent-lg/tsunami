@@ -56,6 +56,10 @@ class SacMateriau(BaseType):
     """
 
     nom_type = "sac de matériau"
+    _attributs = {
+        "materiau": Attribut(),
+        "quantite": Attribut(),
+    }
 
     def __init__(self, cle=""):
         """Constructeur de l'objet"""
@@ -67,12 +71,6 @@ class SacMateriau(BaseType):
                 "materiaux_admis", importeur.objet.get_types_herites(
                 "matériau"))
         self.etendre_editeur("x", "poids max", Flottant, self, "poids_max")
-
-        # Attributs propres à l'objet (non au prototype)
-        self._attributs = {
-            "materiau": Attribut(),
-            "quantite": Attribut(),
-        }
 
     def get_nom(self, nombre=1, pluriels=True):
         """Retourne le nom complet en fonction du nombre.

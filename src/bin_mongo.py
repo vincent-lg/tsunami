@@ -48,6 +48,7 @@ importeur.supenr.config_mongo()
 importeur.supenr.logger.info("Enregistrement forcé de {} objets".format(
         len(tous_objets)))
 for objet in tous_objets.values():
+    objet._construire()
     importeur.supenr.ajouter_objet(objet)
 
 # Enregistrement

@@ -67,6 +67,7 @@ class BaseType(BaseObj, metaclass=MetaType):
     type_achat = "objet"
     _nom = "base_type_objet"
     _version = 3
+    _attributs = {}
 
     # Doit-t-on nettoyer l'objet en cas d'inactivité
     nettoyer = True
@@ -86,7 +87,6 @@ class BaseType(BaseObj, metaclass=MetaType):
         """Constructeur d'un type"""
         BaseObj.__init__(self)
         self.cle = cle
-        self._attributs = {}
         self.no = 0 # nombre d'objets créés sur ce prototype
         self.nom_singulier = "un objet indéfini"
         self.etat_singulier = "est posé là"

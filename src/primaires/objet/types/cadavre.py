@@ -44,6 +44,11 @@ class Cadavre(BaseType):
 
     nom_type = "cadavre"
     selectable = False
+    _attributs = {
+        "pnj": Attribut(),
+        "apparition": Attribut(datetime.now),
+    }
+
     def __init__(self, cle=""):
         """Constructeur de l'objet"""
         BaseType.__init__(self, cle)
@@ -51,12 +56,6 @@ class Cadavre(BaseType):
         self.nom_pluriel = "cadavres"
         self.etat_singulier = "repose ici"
         self.etat_pluriel = "reposent ici"
-
-        # Attributs propres à l'objet (non au prototype)
-        self._attributs = {
-            "pnj": Attribut(),
-            "apparition": Attribut(datetime.now),
-        }
 
     def get_nom(self, nombre=1, pluriels=True):
         """Retourne le nom complet en fonction du nombre.

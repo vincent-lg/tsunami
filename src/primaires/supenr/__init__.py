@@ -95,6 +95,9 @@ class Module(BaseModule):
         self.mongo_objets = {}
         self.mongo_table = []
         self.mongo_debug = False
+        self.mongo_differe = {}
+        self.mongo_complets = []
+        self.mongo_nb_requetes = 0
 
     def config(self):
         """Configuration du module.
@@ -180,6 +183,7 @@ class Module(BaseModule):
             importeur.diffact.ajouter_action("enregistrement", 60 * 60,
                     self.enregistrer_periodiquement)
         else: # Mongo
+            self.mongo_tout_charger()
             importeur.diffact.ajouter_action("enregistrement", 1,
                     self.mongo_premier_enregistrement)
         BaseModule.init(self)
@@ -315,8 +319,8 @@ class Module(BaseModule):
                 self.mongo_db[nom].remove(_id)
                 if nom in self.mongo_objets:
                     enr = self.mongo_objets[nom]
-                    if _id in enr:
-                        del enr[_id]
+                    if str(_id) in enr:
+                        del enr[str(_id)]
 
     def charger_groupe(self, groupe):
         """Cette fonction retourne les objets d'un groupe.
@@ -378,16 +382,38 @@ class Module(BaseModule):
         """
         nom = self.qualname(classe)
         objets = []
-        valeurs = self.mongo_db[nom].find()
+        valeurs = list(self.mongo_db[nom].find())
+        self.mongo_nb_requetes += 1
+        self.logger.debug("  o({}) r({}) col({}) l({})".format(
+                sum(len(objets) for objets in self.mongo_objets.values()),
+                self.mongo_nb_requetes, nom, len(valeurs)))
         for attributs in valeurs:
             _id = attributs["_id"]
-            objet = self.mongo_charger_objet(classe, _id)
+            objet = self.mongo_charger_objet(classe, _id, attributs=attributs)
             if objet is not None:
                 objets.append(objet)
 
         return objets
 
-    def mongo_charger_objet(self, classe, _id):
+    def finir_charger(self):
+        """Cette méthode finit de charger les objets différés.
+
+        À ce stade, tous les objets devraient avoir été récupérés, mais
+        pas nécessairement construits. Cette méthode permet de finir
+        l'enregistrement.
+
+        """
+        if self.mode == "mongo":
+            i = 1
+            while self.mongo_differe:
+                self.logger.info("Passage {}, {} / {} objets finis".format(
+                        len(self.mongo_differe), sum(len(objets) for \
+                        objets in self.mongo_objets.values())))
+                self.mongo_charger_differe()
+                i += 1
+
+    def mongo_charger_objet(self, classe, _id, differer=False,
+            attributs=None):
         """Récupère un objet individuel.
 
         Cette méthode va :
@@ -396,25 +422,34 @@ class Module(BaseModule):
 
         """
         nom = self.qualname(classe)
+        sid = str(_id)
         charges = self.mongo_objets.get(nom, {})
-        if _id in charges:
-            return charges[_id]
+        objet = charges.get(sid)
+        if objet is not None and objet._statut:
+            return objet
 
         collection = self.mongo_db[nom]
-        objet = classe(*classe.__getnewargs__(classe))
-        object.__setattr__(objet, "_statut", 0)
-        enr = self.mongo_objets.get(nom, {})
-        enr[_id] = objet
-        self.mongo_objets[nom] = enr
+        if objet is None:
+            objet = classe(*classe.__getnewargs__(classe))
+            object.__setattr__(objet, "_statut", 0)
+            enr = self.mongo_objets.get(nom, {})
+            enr[sid] = objet
+            self.mongo_objets[nom] = enr
 
         # Traitement des attributs
-        attributs = collection.find_one(_id)
+        if differer:
+            self.mongo_differe[sid] = objet
+            return objet
 
         if attributs is None:
-            del enr[_id]
+            attributs = collection.find_one(_id)
+            self.mongo_nb_requetes += 1
+
+        if attributs is None:
+            del enr[sid]
             return None
 
-        self.mongo_charger_dictionnaire(attributs)
+        self.mongo_charger_dictionnaire(attributs, nom, sid)
 
         for transform in transforms:
             transform.transform_outgoing(attributs, collection)
@@ -425,8 +460,7 @@ class Module(BaseModule):
         for cle, valeur in tuple(attributs.items()):
             if isinstance(valeur, BaseObj) \
                     and isinstance(getattr(objet, cle, None), BaseObj):
-                break
-                #getattr(objet, cle).detruire()
+                getattr(objet, cle).detruire()
 
         objet.__setstate__(attributs)
         objet._construire()
@@ -435,9 +469,33 @@ class Module(BaseModule):
 
         return objet
 
-    def mongo_charger_dictionnaire(self, dictionnaire):
+    def mongo_tout_charger(self):
+        """On charge toutes les collections."""
+        self.logger.info("MongoDB : récupération de tous les objets...")
+        i = 0
+        taille = len(classes_base)
+        pct = 0
+        for nom, classe in classes_base.items():
+            i += 1
+            t_pct = round(i * 100 / taille)
+            if t_pct != pct:
+                pct = t_pct
+                if pct % 5 == 0:
+                    self.logger.info("{:> 3}% des collections chargées".format(
+                            pct))
+
+            self.mongo_charger_collection(classe)
+
+        self.logger.info("MongoDB : ... fin de la récupération")
+
+    def mongo_charger_dictionnaire(self, dictionnaire, col, sid, attr=""):
         """Charge les informations d'un dictionnaire."""
         for cle, valeur in tuple(dictionnaire.items()):
+            tattr = attr
+            if tattr:
+                tattr += "."
+            tattr += cle
+
             if "*DLS*" in cle:
                 del dictionnaire[cle]
                 cle = cle.replace("*DLS*", "$")
@@ -447,7 +505,12 @@ class Module(BaseModule):
                 cle = cle[9:-1]
                 nom, _id = cle.split(",")
                 classe = classes_base[nom.replace("-", ".")]
-                cle = self.mongo_charger_objet(classe, ObjectId(_id))
+                cle = self.mongo_charger_objet(classe, ObjectId(_id),
+                        differer=True)
+                if cle is None:
+                    self.logger.warning("Erreur de linkage {}-{}.{}={}-" \
+                            "{}".format(col, sid, tattr, nom, str(_id)))
+
                 dictionnaire[cle] = valeur
             elif cle.startswith("(") or cle.startswith("["):
                 del dictionnaire[cle]
@@ -457,34 +520,57 @@ class Module(BaseModule):
             if isinstance(valeur, list) and len(valeur) == 2 and \
                     isinstance(valeur[0], str) and isinstance(valeur[1],
                     ObjectId):
+                nom, _id = valeur
                 classe = classes_base[valeur[0]]
-                objet = self.mongo_charger_objet(classe, valeur[1])
+                objet = self.mongo_charger_objet(classe, _id, differer=True)
                 dictionnaire[cle] = objet
-            elif isinstance(valeur, list):
-                self.mongo_charger_liste(valeur)
-            elif isinstance(valeur, dict):
-                self.mongo_charger_dictionnaire(valeur)
+                if valeur is None:
+                    self.logger.warning("Erreur de linkage {}-{}.{}={}-" \
+                            "{}".format(col, sid, tattr, nom, str(_id)))
 
-    def mongo_charger_liste(self, liste):
+            elif isinstance(valeur, list):
+                self.mongo_charger_liste(valeur, col, sid, tattr)
+            elif isinstance(valeur, dict):
+                self.mongo_charger_dictionnaire(valeur, col, sid, tattr)
+
+    def mongo_charger_liste(self, liste, col, sid, attr):
         """Charge la liste."""
         copie = []
         for valeur in liste:
             if isinstance(valeur, list) and len(valeur) == 2 and \
                     isinstance(valeur[0], str) and isinstance(valeur[1],
                     ObjectId):
+                nom, _id = valeur
                 classe = classes_base[valeur[0]]
-                objet = self.mongo_charger_objet(classe, valeur[1])
+                objet = self.mongo_charger_objet(classe, _id, differer=True)
+                if objet is None:
+                    self.logger.warning("Erreur de linkage {}-{}.{}={}-" \
+                            "{}".format(col, sid, attr, nom, str(_id)))
+
                 copie.append(objet)
             elif isinstance(valeur, list):
-                self.mongo_charger_liste(valeur)
+                self.mongo_charger_liste(valeur, col, sid, attr)
                 copie.append(valeur)
             elif isinstance(valeur, dict):
-                self.mongo_charger_dictionnaire(valeur)
+                self.mongo_charger_dictionnaire(valeur, col, sid, attr)
                 copie.append(valeur)
             else:
                 copie.append(valeur)
 
         liste[:] = copie
+
+    def mongo_charger_differe(self):
+        """Charge tous les objets différés."""
+        self.logger.debug("{} objets chargés contre {} différés".format(
+                sum(len(objets) for objets in self.mongo_objets.values()),
+                len(self.mongo_differe)))
+
+        for sid, objet in tuple(self.mongo_differe.items()):
+            _id = ObjectId(sid)
+            if not sid in self.mongo_complets:
+                classe = self.qualname(type(objet))
+                self.mongo_charger_objet(type(objet), _id)
+            del self.mongo_differe[sid]
 
     def mongo_premier_enregistrement(self):
         """Premier enregistrement des objets en MongoDB.
@@ -505,6 +591,11 @@ class Module(BaseModule):
             if objet.__dict__ == attributs:
                 if ident in self.mongo_file:
                     del self.mongo_file[ident]
+
+        # On retire les objets créés mais à détruire tout de suite
+        for ident, objet in tuple(self.mongo_file.items()):
+            if not objet._statut:
+                del self.mongo_file[ident]
 
         self.logger.debug("Enregistrement MongoDB initial : {} objets " \
                 "à enregistrer contre {} prévus".format(len(
@@ -531,6 +622,9 @@ class Module(BaseModule):
         t1 = time.time()
         reste = []
         for objet in self.mongo_file.values():
+            if not objet._statut:
+                continue
+
             second, attributs = self.extraire_attributs(objet)
             self.mongo_enregistrer_objet(objet, attributs)
             if second:
@@ -570,7 +664,7 @@ class Module(BaseModule):
                     print(err, objet, type(objet), attributs)
                     sys.exit(1)
                 else:
-                    self.mongo_table.append((time.time(), nom, _id))
+                    self.mongo_table.append((time.time(), nom, str(_id)))
         else:
             if not attributs.get("e_existe"):
                 return
@@ -581,16 +675,12 @@ class Module(BaseModule):
                 print(err, objet, type(objet), attributs)
                 sys.exit(1)
             else:
-                self.mongo_table.append((time.time(), nom, _id))
+                self.mongo_table.append((time.time(), nom, str(_id)))
 
             objet._id = _id
             enr = self.mongo_objets.get(nom, {})
-            enr[_id] = objet
+            enr[str(_id)] = objet
             self.mongo_objets[nom] = enr
-
-        if nom in ("primaires.information.sujet.SujetAide", ):
-            attrs = collection.find_one(_id)
-            self.logger.debug("Confirmation: " + repr(attributs) + " " + repr(attrs))
 
     def extraire_attributs(self, objet):
         """Méthode utilisée par MongoDB pour extraire les attributs d'un objet.

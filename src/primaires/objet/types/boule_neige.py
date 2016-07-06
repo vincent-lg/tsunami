@@ -43,6 +43,10 @@ class BouleNeige(BaseType):
 
     nom_type = "boule de neige"
     selectable = False
+    _attributs = {
+        "apparition": Attribut(datetime.now),
+    }
+
     def __init__(self, cle=""):
         """Constructeur de l'objet"""
         BaseType.__init__(self, cle)
@@ -50,11 +54,6 @@ class BouleNeige(BaseType):
         self.nom_pluriel = "boules de neige"
         self.etat_singulier = "se trouve ici"
         self.etat_pluriel = "se trouvent là"
-
-        # Attributs propres à l'objet (non au prototype)
-        self._attributs = {
-            "apparition": Attribut(datetime.now),
-        }
 
     def poser(self, objet, personnage, qtt=1):
         """On pose l'objet."""

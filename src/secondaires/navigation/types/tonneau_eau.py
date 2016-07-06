@@ -39,17 +39,16 @@ class TonneauEau(BaseType):
     """Type d'objet: tonneau d'eau."""
 
     nom_type = "tonneau d'eau"
+    _attributs = {
+        "gorgees_contenu": Attribut(lambda: self.gorgees_max_contenu),
+    }
+
     def __init__(self, cle=""):
         """Constructeur de l'objet"""
         BaseType.__init__(self, cle)
         self.gorgees_max_contenu = 50
         self.etendre_editeur("go", "nombre de gorgées au maximum", Entier,
                 self, "gorgees_max_contenu")
-
-        # Attributs propres à l'objet (non au prototype)
-        self._attributs = {
-            "gorgees_contenu": Attribut(lambda: self.gorgees_max_contenu),
-        }
 
     def travailler_enveloppes(self, enveloppes):
         """Travail sur les enveloppes"""

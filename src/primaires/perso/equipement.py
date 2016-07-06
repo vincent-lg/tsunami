@@ -306,6 +306,16 @@ class Equipes(BaseObj):
     def __getnewargs__(self):
         return (None, )
 
+    def __contains__(self, objet):
+        if self.equipement is None:
+            return {}
+
+        for membre in self.equipement.membres:
+            if objet in membre.equipe:
+                return True
+
+        return False
+
     def __iter__(self):
         """Retourne une chaîne des objets équipés."""
         objets = tuple(tuple(o.equipe) for o in self.equipement.membres)
@@ -355,6 +365,16 @@ class Tenus(BaseObj):
 
     def __getnewargs__(self):
         return (None, )
+
+    def __contains__(self, objet):
+        if self.equipement is None:
+            return {}
+
+        for membre in self.equipement.membres:
+            if objet is membre.tenu:
+                return True
+
+        return False
 
     def __iter__(self):
         return iter([membre.tenu for membre in self.equipement.membres \

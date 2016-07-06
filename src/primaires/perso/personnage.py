@@ -506,7 +506,9 @@ class Personnage(BaseObj):
         if self.equipement:
             self.equipement.detruire()
 
-        self.contextes.detruire()
+        if self.contextes:
+            self.contextes.detruire()
+
         self.stats.detruire()
         self.quetes.detruire()
         self.etats.detruire()

@@ -279,7 +279,7 @@ class Quete(BaseObj):
                 elif niveau[-1] != 1:
                     return False
             else:
-                dernier_niveau = max(niveaux)
+                dernier_niveau = tuple(max(niveaux))
                 niveau_suivant = dernier_niveau[:-1] + (dernier_niveau[-1] + \
                         1, )
                 niveau_parent = niveau

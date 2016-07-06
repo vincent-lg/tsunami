@@ -33,10 +33,6 @@
 
 from abstraits.obase import *
 
-# Constantes
-NOMS_RESERVES = ("id", "_id", "structure", "e_existe", "donnees", "_statut",
-        "_dict_version")
-
 class StructureSimple(BaseObj):
 
     """Classe contenant une simple structure non enregistrée.
@@ -54,6 +50,8 @@ class StructureSimple(BaseObj):
 
     """
 
+    interdits = ("_id", "_statut", "e_existe", "_dict_version", "donnees")
+
     def __init__(self):
         """Constructeur d'une variable"""
         BaseObj.__init__(self)
@@ -70,14 +68,14 @@ class StructureSimple(BaseObj):
 
     def __getattr__(self, nom):
         """Essaye de récupérer la valeur indiquée."""
-        if "_statut" not in self.__dict__ or not self.construit:
-            return object.__getattr__(self, nom)
+        if nom in type(self).interdits:
+            return object.__getattribute__(self, nom)
         else:
             return self.donnees.get(nom)
 
     def __setattr__(self, nom, valeur):
         """Modifie la donnée."""
-        if nom in NOMS_RESERVES:
+        if nom in type(self).interdits:
             BaseObj.__setattr__(self, nom, valeur)
         else:
             self.donnees[nom] = valeur

@@ -76,6 +76,9 @@ class ConteneurPotion(BaseType):
     """
 
     nom_type = "conteneur de potion"
+    _attributs = {
+        "onces": Attribut(lambda: self.onces_max),
+    }
 
     def __init__(self, cle=""):
         """Constructeur de l'objet"""
@@ -91,11 +94,6 @@ class ConteneurPotion(BaseType):
         self.etendre_editeur("on", "nombre d'onces au maximum", Entier,
                 self, "onces_max")
         self.etendre_editeur("ma", "genre masculin", Flag, self, "masculin")
-
-        # Attributs
-        self._attributs = {
-            "onces": Attribut(lambda: self.onces_max),
-        }
 
         # Erreur de validation du type
         self.err_type = "Laissez ce liquide à sa place, non mais."
