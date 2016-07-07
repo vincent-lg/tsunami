@@ -65,17 +65,18 @@ class Script(BaseObj):
 
     _nom = "script"
     _version = 1
-    def __init__(self, parent):
+    def __init__(self, parent, init=True):
         """Constructeur d'un script"""
         BaseObj.__init__(self)
         self.parent = parent
         self.__blocs = {}
         self.__evenements = {}
         self._construire()
-        self.init()
+        if init:
+            self.init()
 
     def __getnewargs__(self):
-        return (None, )
+        return (None, False)
 
     def __getitem__(self, evenement):
         """Retourne l'évènement correspondant.
@@ -191,9 +192,10 @@ class Script(BaseObj):
 
     def detruire(self):
         """Destruction du script."""
-        BaseObj.detruire(self)
         for bloc in self.__blocs.values():
             bloc.detruire()
 
         for evenement in self.__evenements.values():
             evenement.detruire()
+
+        BaseObj.detruire(self)

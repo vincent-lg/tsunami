@@ -370,7 +370,6 @@ class Evenement(BaseObj):
 
     def detruire(self):
         """Destruction de l'évènement."""
-        BaseObj.detruire(self)
         for variable in self.variables.values():
             variable.detruire()
 
@@ -382,3 +381,5 @@ class Evenement(BaseObj):
 
         if self.__sinon:
             self.__sinon.detruire()
+
+        BaseObj.detruire(self)

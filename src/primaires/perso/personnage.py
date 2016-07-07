@@ -495,7 +495,6 @@ class Personnage(BaseObj):
         -   On supprime le personnage de la salle
 
         """
-        BaseObj.detruire(self)
         if self.equipement and self.equipement.squelette and \
                 self in self.equipement.squelette.personnages:
             self.equipement.squelette.personnages.remove(self)
@@ -506,7 +505,7 @@ class Personnage(BaseObj):
         if self.equipement:
             self.equipement.detruire()
 
-        if self.contextes:
+        if self.contextes is not None:
             self.contextes.detruire()
 
         self.stats.detruire()
@@ -515,6 +514,8 @@ class Personnage(BaseObj):
 
         for affection in self.affections.values():
                 affection.detruire()
+
+        BaseObj.detruire(self)
 
     def get_nom_pour(self, personnage, retenu=True):
         """Retourne le nom pour le personnage passé en paramètre."""

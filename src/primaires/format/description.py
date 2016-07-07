@@ -268,6 +268,12 @@ class Description(BaseObj):
 
         return paragraphe, flottantes
 
+    def detruire(self):
+        """Destruction de la description."""
+        self.script.detruire()
+        BaseObj.detruire(self)
+
+
 # On importe ici pour éviter les boucles
 from primaires.scripting.script import Script
 

@@ -72,6 +72,14 @@ class Stats(BaseObj):
     def __getnewargs__(self):
         return (None, )
 
+    def reset_watch_dog(self):
+        """Remet le watdog à 0."""
+        self.moy_wd = 0
+        self.nb_wd = 0
+        self.dernier_wd = None
+        self.max_wd = 0
+        self.nb_max_wd = 0
+
     def surveiller_watch_dog(self, temps_actuel):
         """Ajoute le temps actuel comme statistique du Watch Dog.
 

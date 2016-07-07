@@ -46,7 +46,9 @@ try:
     from pymongo import MongoClient
     from pymongo.errors import ConnectionFailure
     from primaires.supenr.fraction import TransformFraction
+    from primaires.supenr.ordered import TransformOrderedDict
     transforms.append(TransformFraction())
+    transforms.append(TransformOrderedDict())
 except ImportError:
     MongoClient = None
 
@@ -78,7 +80,7 @@ class Module(BaseModule):
         """Constructeur du module"""
         BaseModule.__init__(self, importeur, "supenr", "primaire")
         self.cfg = None
-        self.mode = "pickle"
+        self.mode = ""
         self.logger = type(self.importeur).man_logs.creer_logger("supenr", \
                 "supenr")
         self.enregistre_actuellement = False
@@ -114,7 +116,9 @@ class Module(BaseModule):
         global REP_ENRS
         self.cfg = importeur.anaconf.get_config("supenr",
             "supenr/supenr.cfg", "module d'enregistrement", cfg_supenr)
-        self.mode = self.cfg.mode
+        if not self.mode:
+            self.mode = self.cfg.mode
+
         parser_cmd = type(self.importeur).parser_cmd
         config_globale = type(self.importeur).anaconf.get_config("globale")
 
@@ -537,7 +541,18 @@ class Module(BaseModule):
         """Charge la liste."""
         copie = []
         for valeur in liste:
-            if isinstance(valeur, list) and len(valeur) == 2 and \
+            if isinstance(valeur, str) and valeur.startswith("ObjectId("):
+                valeur = valeur[9:-1]
+                nom, _id = valeur.split(",")
+                classe = classes_base[nom.replace("-", ".")]
+                valeur = self.mongo_charger_objet(classe, ObjectId(_id),
+                        differer=True)
+                if valeur is None:
+                    self.logger.warning("Erreur de linkage {}-{}.{}={}-" \
+                            "{}".format(col, sid, tattr, nom, str(_id)))
+
+                copie.append(valeur)
+            elif isinstance(valeur, list) and len(valeur) == 2 and \
                     isinstance(valeur[0], str) and isinstance(valeur[1],
                     ObjectId):
                 nom, _id = valeur
@@ -594,14 +609,17 @@ class Module(BaseModule):
 
         # On retire les objets créés mais à détruire tout de suite
         for ident, objet in tuple(self.mongo_file.items()):
-            if not objet._statut:
+            if not objet._statut or not objet.e_existe:
                 del self.mongo_file[ident]
 
-        self.logger.debug("Enregistrement MongoDB initial : {} objets " \
+        self.logger.info("Enregistrement MongoDB initial : {} objets " \
                 "à enregistrer contre {} prévus".format(len(
                 self.mongo_file), avant))
 
         self.mongo_enregistrer_file()
+        self.logger.info("Fin de l'enregistrement initial.")
+        if hasattr(importeur, "stat"):
+            importeur.stat.stats.reset_watch_dog()
 
     def mongo_enregistrer_file(self, rappel=True, debug=False):
         """Enregistre la file des objets (mongo).
@@ -624,6 +642,10 @@ class Module(BaseModule):
         for objet in self.mongo_file.values():
             if not objet._statut:
                 continue
+
+            if debug:
+                nom = self.qualname(type(objet))
+                self.logger.debug("  Enregistrement de {}".format(nom))
 
             second, attributs = self.extraire_attributs(objet)
             self.mongo_enregistrer_objet(objet, attributs)
@@ -741,7 +763,7 @@ class Module(BaseModule):
                 if sous:
                     second = True
             elif isinstance(valeur, dict):
-                attributs[cle] = valeur = dict(valeur)
+                attributs[cle] = valeur = valeur.copy()
                 sous, r = self.extraire_attributs(valeur)
                 if sous:
                     second = True
