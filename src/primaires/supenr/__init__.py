@@ -434,7 +434,13 @@ class Module(BaseModule):
 
         collection = self.mongo_db[nom]
         if objet is None:
-            objet = classe(*classe.__getnewargs__(classe))
+            try:
+                objet = classe(*classe.__getnewargs__(classe))
+            except TypeError as err:
+                self.logger.fatal("Erreur lors du chargement de {} : " \
+                        "{}".format(nom, str(err)))
+                sys.exit(1)
+
             object.__setattr__(objet, "_statut", 0)
             enr = self.mongo_objets.get(nom, {})
             enr[sid] = objet
