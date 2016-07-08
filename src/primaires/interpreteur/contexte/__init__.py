@@ -389,7 +389,6 @@ class Contexte(BaseObj, metaclass=MetaContexte):
 
     def detruire(self, recursif=True):
         """Destruction du contexte."""
-        print("Détruit le contexte", self)
         # Destruction des contextes précédents
         parent = self.opts.rci_ctx_prec
         if recursif and parent and isinstance(parent, Contexte):

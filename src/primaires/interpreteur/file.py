@@ -157,10 +157,8 @@ class FileContexte(BaseObj):
         le contexte.
 
         """
-        print("Retire", contexte, self._file, conserver)
         if contexte:
             self._file.remove(contexte)
-            print("d1", conserver, recursif)
             if not conserver:
                 contexte.detruire(recursif=recursif)
             self.actualiser_position()
@@ -169,7 +167,6 @@ class FileContexte(BaseObj):
             if len(self._file) <= self._taille_min:
                 raise FileVide
             contexte = self.actuel
-            print("d2", conserver)
             contexte.detruire()
             del self._file[self._position]
             self.actualiser_position()
