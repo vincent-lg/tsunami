@@ -118,7 +118,7 @@ class Equipement(BaseObj):
         for membre in self.membres:
             for objet in membre.equipe:
                 if not objet.prototype:
-                    break
+                    continue
 
                 if objet.unique:
                     objets.append(objet)
