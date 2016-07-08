@@ -184,8 +184,6 @@ class Module(BaseModule):
             self.charger()
 
             # Création de l'action différée pour enregistrer périodiquement
-            importeur.diffact.ajouter_action("enregistrement", 60 * 60,
-                    self.enregistrer_periodiquement)
         else: # Mongo
             self.mongo_tout_charger()
             importeur.diffact.ajouter_action("enregistrement", 1,

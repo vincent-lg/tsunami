@@ -87,7 +87,7 @@ class Controle(BaseObj, metaclass=MetaControle):
         self._construire()
 
     def __getnewargs__(self):
-        arguments = (None, ) + getattr(self, "arguments", ())
+        arguments = (None, ) + tuple(getattr(self, "arguments", ()))
         return arguments
 
     def __repr__(self):
