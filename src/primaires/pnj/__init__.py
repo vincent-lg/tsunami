@@ -31,6 +31,7 @@
 """Fichier contenant le module primaire pnj."""
 
 from abstraits.module import *
+from abstraits.obase import BaseObj
 from primaires.perso.exceptions.action import ExceptionAction
 from primaires.pnj.chemin import CheminPNJ
 from .prototype import Prototype
@@ -106,7 +107,10 @@ class Module(BaseModule):
         pnjs = [p for p in pnjs if hasattr(p, "identifiant") and \
                 p.prototype]
         for pnj in pnjs:
-            self._PNJ[pnj.identifiant] = pnj
+            if pnj.stats is not None:
+                self._PNJ[pnj.identifiant] = pnj
+            else:
+                BaseObj.detruire(pnj)
 
         chemins = self.importeur.supenr.charger_groupe(CheminPNJ)
         chemins = self.importeur.supenr.charger_groupe(CheminPNJ)

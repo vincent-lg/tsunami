@@ -541,7 +541,6 @@ class Module(BaseModule):
                 for objet in cale.conteneur:
                     objets.append(objet)
 
-        print("sauve", objets)
         return objets
 
     def get_vents_etendue(self, cle):

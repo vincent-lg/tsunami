@@ -134,7 +134,7 @@ class Personnage(BaseObj):
         """Cherche l'attribut dans 'self.stats."""
         if nom_attr.startswith("_") or nom_attr == "stats":
             pass
-        elif hasattr(self, "stats") and hasattr(self.stats,
+        elif getattr(self, "stats", None) and hasattr(self.stats,
                     nom_attr):
             return getattr(self.stats, nom_attr)
 
@@ -143,7 +143,7 @@ class Personnage(BaseObj):
 
     def __setattr__(self, nom_attr, val_attr):
         """Si nom_attr est dans 'self.stats', modifie 'self.stats'"""
-        if not nom_attr.startswith("_") and hasattr(self, "stats") and \
+        if not nom_attr.startswith("_") and getattr(self, "stats", None) and \
                 nom_attr in self.stats.to_dict:
             setattr(self.stats, nom_attr, val_attr)
         else:
