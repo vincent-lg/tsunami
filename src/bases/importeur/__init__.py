@@ -221,6 +221,7 @@ class Importeur:
 
     def tout_configurer(self):
         """Méthode permettant de configurer tous les modules qui en ont besoin.
+
         Les modules qui doivent être configurés sont ceux instanciés.
 
         Attention: les modules non encore instanciés sont à l'état de classe.
@@ -233,20 +234,41 @@ class Importeur:
         Importeur.logger.debug("Configuration des modules :")
         # On configure d'abord les modules à configurer en priorité
         Importeur.logger.debug("Configuration des modules prioritaires :")
-        for nom_module in conf_glb.modules_a_configurer:
+        a_configurer = conf_glb.modules_a_configurer
+        for nom_module in a_configurer:
+            if nom_module == "*":
+                break
+
             if hasattr(self, nom_module): # le module est chargé
                 module = getattr(self, nom_module)
                 if module.statut == INSTANCIE:
                     module.config()
-                    Importeur.logger.debug("  Le module {0} a été " \
+                    Importeur.logger.debug("  Le module {} a été " \
                             "configuré".format(nom_module))
+
         # Configuration des modules restants
-        Importeur.logger.debug("Configuration des modules restants :")
+        if "*" in a_configurer:
+            indice = a_configurer.index("*")
+            a_configurer = a_configurer[indice:]
+        else:
+            a_configurer = []
+
+        Importeur.logger.debug("Configuration des modules non spécifiés :")
         for module in self.__dict__.values():
-            if module.statut == INSTANCIE:
+            if module.statut == INSTANCIE and module.nom not in a_configurer:
                 module.config()
-                Importeur.logger.debug("  Le module {0} a été " \
-                        "configuré".format(module.nom))
+                Importeur.logger.debug("  Le module {} a été " \
+                        "configuré".format(nom_module))
+
+        # On configure les modules restants
+        Importeur.logger.debug("Configuration des modules restants :")
+        for nom_module in a_configurer:
+            if hasattr(self, nom_module): # le module est chargé
+                module = getattr(self, nom_module)
+                if module.statut == INSTANCIE:
+                    module.config()
+                    Importeur.logger.debug("  Le module {} a été " \
+                            "configuré".format(nom_module))
 
     def tout_initialiser(self):
         """Méthode permettant d'initialiser tous les modules qui en ont besoin.
