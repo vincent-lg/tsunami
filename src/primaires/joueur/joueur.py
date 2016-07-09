@@ -251,6 +251,9 @@ class Joueur(Personnage):
         if not msg:
             return
 
+        if self.contexte_actuel is None:
+            return
+
         if not mort and self.est_mort():
             return
 
