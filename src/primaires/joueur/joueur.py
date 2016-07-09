@@ -153,8 +153,10 @@ class Joueur(Personnage):
             if joueur_connecte and \
                     connecte is not self.instance_connexion and \
                     joueur_connecte is self:
-                connecte.envoyer("|att|Un autre client demande à utiliser " \
-                    "ce personnage.\nVous allez être déconnecté.|ff|")
+                if connecte.contexte_actuel:
+                    connecte.envoyer("|att|Un autre client demande à " \
+                            "utiliser ce personnage.\nVous allez être " \
+                            "déconnecté.|ff|")
                 connecte.deconnecter("un autre client se connecte sur " \
                         "ce personnage")
 
