@@ -158,6 +158,8 @@ class ClasseFonction(Fonction):
         Cases propres aux joueurs :
 
           * nom : le nom du joueur (une chaîne) ;
+          * creation : date de création du joueur (temps variable) ;
+          * derniere_connexion : date de dernière connexion (temps variable).
 
         Exemples d'utilisation :
 
