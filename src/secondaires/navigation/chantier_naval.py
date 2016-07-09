@@ -52,6 +52,7 @@ class ChantierNaval(BaseObj):
         BaseObj.__init__(self)
         self.cle = cle
         self.salle_magasin = None
+        self.salle_questeur = None
         self.etendue = None
         self.points = []
         self.commandes = []

@@ -28,10 +28,35 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Package contenant les différents éditeurs"""
+"""Fichier contenant le paramètre 'créer' de la commande 'chantier'."""
 
-from . import autonavire
-from . import chantier
-from . import eltedit
-from . import matedit
-from . import shedit
+from primaires.interpreteur.masque.parametre import Parametre
+
+class PrmCreer(Parametre):
+
+    """Commande 'chantier créer'."""
+
+    def __init__(self):
+        """Constructeur du paramètre"""
+        Parametre.__init__(self, "créer", "create")
+        self.groupe = "administrateur"
+        self.schema = "<cle>"
+        self.aide_courte = "crée un chantier naval"
+        self.aide_longue = \
+                "Cette commande vous permet de créer un chantier naval. " \
+                "Vous devez préciser en paramètre la clé du chantier " \
+                "naval à créer."
+
+    def interpreter(self, personnage, dic_masques):
+        """Interprétation du paramètre"""
+        cle = dic_masques["cle"].cle
+        if cle in importeur.navigation.chantiers:
+            personnage << "|err|Le chantier naval {} existe déjà.|ff|".format(
+                    cle)
+            return
+
+        chantier = importeur.navigation.creer_chantier_naval(cle)
+        editeur = importeur.interpreteur.construire_editeur(
+                "chnaedit", personnage, chantier)
+        personnage.contextes.ajouter(editeur)
+        editeur.actualiser()

@@ -358,6 +358,8 @@ class Module(BaseModule):
         self.importeur.interpreteur.ajouter_editeur(
                 editeurs.autonavire.EdtNaedit)
         self.importeur.interpreteur.ajouter_editeur(
+                editeurs.chantier.EdtChantierNaval)
+        self.importeur.interpreteur.ajouter_editeur(
                 editeurs.matedit.EdtMatedit)
         self.importeur.interpreteur.ajouter_editeur(
                 editeurs.eltedit.EdtEltedit)

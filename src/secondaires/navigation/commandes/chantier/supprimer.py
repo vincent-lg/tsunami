@@ -28,10 +28,32 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Package contenant les différents éditeurs"""
+"""Fichier contenant le paramètre 'supprimer' de la commande 'chantier'."""
 
-from . import autonavire
-from . import chantier
-from . import eltedit
-from . import matedit
-from . import shedit
+from primaires.interpreteur.masque.parametre import Parametre
+
+class PrmSupprimer(Parametre):
+
+    """Commande 'chantier supprimer'."""
+
+    def __init__(self):
+        """Constructeur du paramètre"""
+        Parametre.__init__(self, "supprimer", "del")
+        self.groupe = "administrateur"
+        self.schema = "<cle>"
+        self.aide_courte = "supprime un chantier naval"
+        self.aide_longue = \
+                "Cette commande vous permet de supprimer un chantier naval. " \
+                "Vous devez préciser en paramètre la clé du chantier " \
+                "naval à supprimer."
+
+    def interpreter(self, personnage, dic_masques):
+        """Interprétation du paramètre"""
+        cle = dic_masques["cle"].cle
+        if cle not in importeur.navigation.chantiers:
+            personnage << "|err|Le chantier naval {} n'existe pas.|ff|".format(
+                    cle)
+            return
+
+        importeur.navigation.supprimer_chantier_naval(cle)
+        personnage << "Le chantier naval {} a bien été supprimé.".format(cle)
