@@ -77,7 +77,7 @@ class ConteneurPotion(BaseType):
 
     nom_type = "conteneur de potion"
     _attributs = {
-        "onces": Attribut(lambda: self.onces_max),
+        "onces": Attribut(lambda obj: obj.onces_max, ("", )),
     }
 
     def __init__(self, cle=""):
