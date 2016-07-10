@@ -40,7 +40,8 @@ class TonneauEau(BaseType):
 
     nom_type = "tonneau d'eau"
     _attributs = {
-        "gorgees_contenu": Attribut(lambda: self.gorgees_max_contenu),
+        "gorgees_contenu": Attribut(lambda obj: obj.gorgees_max_contenu,
+                ("", )),
     }
 
     def __init__(self, cle=""):

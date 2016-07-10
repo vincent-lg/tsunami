@@ -44,7 +44,7 @@ class Calfeutrage(BaseType):
     nom_type = "calfeutrage"
     nettoyer = False
     _attributs = {
-        "onces_contenu": Attribut(lambda: self.onces_max_contenu),
+        "onces_contenu": Attribut(lambda obj: obj.onces_max_contenu, ("", )),
     }
 
     def __init__(self, cle=""):
