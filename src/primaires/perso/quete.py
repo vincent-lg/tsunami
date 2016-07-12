@@ -263,6 +263,7 @@ class Quete(BaseObj):
         if not self.valide:
             return False
 
+        niveau = tuple(niveau)
         if niveau in self.__niveaux:
             return False
 
