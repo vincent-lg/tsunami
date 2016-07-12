@@ -71,6 +71,9 @@ class Quete(BaseObj):
 
     """
 
+    _nom = "quete"
+    _version = 1
+
     def __init__(self, cle_quete, niveau, parent=None):
         """Crée une nouvelle quête."""
         BaseObj.__init__(self)
