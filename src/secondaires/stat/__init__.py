@@ -30,10 +30,10 @@
 
 """Fichier contenant le module secondaire stat."""
 
-try:
-    import psutil
-except ImportError:
-    psutil = None
+#try:
+#    import psutil
+#except ImportError:
+psutil = None
 
 import time
 

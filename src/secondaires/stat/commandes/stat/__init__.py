@@ -32,10 +32,10 @@
 
 """
 
-try:
-    import psutil
-except ImportError:
-    psutil = None
+#try:
+#    import psutil
+#except ImportError:
+psutil = None
 
 import threading
 
