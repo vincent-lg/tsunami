@@ -172,7 +172,7 @@ class Quete(BaseObj):
         if pos == len(niveaux) - 1:
             return ()
 
-        return niveaux[etapes[pos + 1]].niveau
+        return niveaux[tuple(etapes[pos + 1])].niveau
 
     @property
     def etapes_accomplies(self):
@@ -186,6 +186,7 @@ class Quete(BaseObj):
             return etapes
 
         for niveau in sorted(self.__niveaux):
+            niveau = tuple(niveau)
             if len(niveau) == 0:
                 continue
 
@@ -223,6 +224,7 @@ class Quete(BaseObj):
             return etapes
 
         for niveau in sorted(self.__niveaux):
+            niveau = tuple(niveau)
             if len(niveau) == 0:
                 continue
 
@@ -302,6 +304,7 @@ class Quete(BaseObj):
         sont validées, valide l'étape parent.
 
         """
+        niveau = tuple(niveau)
         self._enregistrer()
         if () in self.__niveaux:
             self.__niveaux.remove(())

@@ -118,6 +118,8 @@ class Quetes(BaseObj):
         self._enregistrer()
         if isinstance(valeur, tuple):
             pass
+        elif isinstance(valeur, list):
+            valeur = tuple(valeur)
         elif isinstance(valeur, int):
             valeur = tuple(valeur)
         elif isinstance(valeur, str):
