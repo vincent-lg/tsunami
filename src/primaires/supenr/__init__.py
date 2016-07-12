@@ -193,6 +193,7 @@ class Module(BaseModule):
     def ajouter_commandes(self):
         """Ajoute les commandes à l'interpréteur."""
         self.commandes = [
+            commandes.enregistrer.CmdEnregistrer(),
             commandes.mongo.CmdMongo(),
         ]
 

@@ -28,7 +28,47 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Package contenant les commandes du module supenr."""
+"""Package contenant la commande 'enregistrer'"""
 
-import primaires.supenr.commandes.enregistrer
-import primaires.supenr.commandes.mongo
+import traceback
+
+from primaires.interpreteur.commande.commande import Commande
+
+## Constantes
+AIDE = """
+Cette commande force l'enregistrement si la sauvegarde est en mode
+binaire (pickle). L'enregistrement initié peut prendre un certain
+temps (ceci dépend de la taille de la sauvegarde).
+""".strip("\n")
+
+class CmdEnregistrer(Commande):
+
+    """Commande 'enregistrer'."""
+
+    def __init__(self):
+        """Constructeur de la commande"""
+        Commande.__init__(self, "enregistrer", "save")
+        self.groupe = "administrateur"
+        self.aide_courte = "force l'enregistrement"
+        self.aide_longue = AIDE
+
+    def peut_executer(self, personnage):
+        """Ne peut exécuter si le mode n'es tpas enregistrer."""
+        return importeur.supenr.mode == "pickle"
+
+    def interpreter(self, personnage, dic_masques):
+        """Méthode d'interprétation de commande"""
+        for joueur in importeur.connex.joueurs_connectes:
+            joueur.sans_prompt()
+            joueur << "Sauvegarde en cours, veuillez patienter..."
+            joueur.instance_connexion.envoyer_file_attente()
+
+        try:
+            importeur.supenr.enregistrer()
+        except Exception as err:
+            trace = traceback.forat_exc()
+            personnage << "|err|L'enregistrement a rencontré une " \
+                    "erreur :|ff|\n" + trace
+        else:
+            for joueur in importeur.connex.joueurs_connectes:
+                joueur << "... Sauvegarde effectuée, merci !"
