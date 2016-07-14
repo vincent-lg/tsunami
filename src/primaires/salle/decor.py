@@ -143,8 +143,3 @@ class PrototypeDecor(BaseObj):
             return self.get_nom(1) + " " + self.etat_singulier
         else:
             return self.get_nom(nombre) + " " + self.etat_pluriel
-
-    def detruire(self):
-        """Destruction du décor."""
-        BaseObj.detruire(self)
-        self.description.detruire()

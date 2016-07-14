@@ -36,7 +36,6 @@ from .attitude import Attitude
 class Attitudes(BaseObj):
 
     """Classe conteneur des attitudes sociales.
-
     Cette classe liste tous les items Attitude utilisables dans l'univers
     à un instant donné.
 
@@ -71,12 +70,10 @@ class Attitudes(BaseObj):
     def __setitem__(self, cle, valeur):
         """Ajoute une attitude à la liste"""
         self._attitudes[cle] = valeur
-        self._enregistrer()
 
     def __delitem__(self, cle):
         """Détruit l'attitude spécifiée"""
-        self._attitudes.pop(cle).detruire()
-        self._enregistrer()
+        del self._attitudes[cle]
 
     def keys(self):
         """Renvoie une liste des attitudes par clés"""
@@ -93,5 +90,4 @@ class Attitudes(BaseObj):
         else:
             attitude = Attitude(cle, self)
             self._attitudes[cle] = attitude
-            self._enregistrer()
             return attitude

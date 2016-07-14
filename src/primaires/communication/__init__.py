@@ -221,13 +221,11 @@ class Module(BaseModule):
 
         """
         self._canaux[nom] = Canal(nom, auteur, self._canaux)
-        self._canaux._enregistrer()
         return self._canaux[nom]
 
     def supprimer_canal(self, nom):
         """Supprime le canal de la liste des canaux"""
         del self._canaux[nom]
-        self._canaux._enregistrer()
 
     def rejoindre_ou_creer(self, personnage, arguments):
         """Connecte le joueur au canal passé en argument, ou le crée s'il

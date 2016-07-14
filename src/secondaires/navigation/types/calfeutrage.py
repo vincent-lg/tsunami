@@ -43,16 +43,17 @@ class Calfeutrage(BaseType):
 
     nom_type = "calfeutrage"
     nettoyer = False
-    _attributs = {
-        "onces_contenu": Attribut(lambda obj: obj.onces_max_contenu, ("", )),
-    }
-
     def __init__(self, cle=""):
         """Constructeur de l'objet"""
         BaseType.__init__(self, cle)
         self.onces_max_contenu = 50
         self.etendre_editeur("on", "nombre d'onces au maximum", Entier,
                 self, "onces_max_contenu")
+
+        # Attributs propres à l'objet (non au prototype)
+        self._attributs = {
+            "onces_contenu": Attribut(lambda: self.onces_max_contenu),
+        }
 
     def travailler_enveloppes(self, enveloppes):
         """Travail sur les enveloppes"""

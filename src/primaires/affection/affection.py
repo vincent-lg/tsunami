@@ -36,9 +36,7 @@ class Affection(BaseObj):
 
     """Affection concrète, affectant un subissant (personnage, salle...).
 
-    Quand un subissant est affecté (la neige tombe dans une salle, par
-    exemple), si l'affection n'est pas encore présente, un objet de cette
-    classe est créé. Il contient :
+    Quand un subissant est affecté (la neige tombe dans une salle, par exemple), si l'affection n'est pas présente un objet de cette classe est créé. Il contient :
         L'objet indirectement hérité de AffectionAbstraite (Neige ici)
         Des valeurs propres à cette affection (sa durée restante, sa forcce)
 
@@ -82,8 +80,6 @@ class Affection(BaseObj):
 
     def prevoir_tick(self):
         """Ajoute l'action à exécuter dans diffact."""
-        nom = "aff_" + str(id(self))
-        if self.affection and self.affection.tick_actif:
-            if nom not in importeur.diffact.actions:
-                importeur.diffact.ajouter_action(nom,
-                        self.affection.duree_tick, self.affection.tick, self)
+        if self.affection.tick_actif:
+            importeur.diffact.ajouter_action("aff_" + str(id(self)),
+                    self.affection.duree_tick, self.affection.tick, self)

@@ -68,13 +68,11 @@ class Volonte(BaseObj, metaclass=MetaVolonte):
     logger = type(importeur).man_logs.get_logger("ordres")
     ordre_court = None
     ordre_long = None
-
     def __init__(self, navire):
         """Construit une volonté."""
         BaseObj.__init__(self)
         self.navire = navire
         self.initiateur = None
-        self._construire()
 
     def __getnewargs__(self):
         return (None, )
@@ -121,7 +119,6 @@ class Volonte(BaseObj, metaclass=MetaVolonte):
         equipage = self.equipage
         if self in equipage.volontes:
             equipage.volontes.remove(self)
-        self.detruire()
 
     def ajouter_ordres(self, matelot, ordres):
         """Ajoute les ordres au matelot précisé."""

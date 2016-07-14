@@ -74,7 +74,6 @@ class Module(BaseModule):
                 self.donner_meteo)
         self.perturbations_actuelles = self.importeur.supenr.charger_groupe(
                 BasePertu)
-
         BaseModule.init(self)
 
     def ajouter_commandes(self):
@@ -90,10 +89,6 @@ class Module(BaseModule):
         """Préparation du module"""
         # Renseigne le cache des salles
         for perturbation in self.perturbations_actuelles:
-            pos = object.__getattribute__(perturbation, "centre")
-            pos.e_existe = True
-            pos._construire()
-
             for salle in perturbation.liste_salles_sous:
                 self.salles[salle] = perturbation
 
@@ -101,7 +96,7 @@ class Module(BaseModule):
             min, max = self.cfg.temperatures[importeur.temps.temps.mois]
             self.temperature = randint(min, max)
 
-        #self.cycle_meteo()
+        self.cycle_meteo()
 
     @property
     def perturbations(self):

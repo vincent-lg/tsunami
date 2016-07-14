@@ -64,9 +64,6 @@ class AffectionPersonnage(AffectionAbstraite):
 
     def programmer_destruction(self, affection):
         """Programme la destruction de l'affection de personnage."""
-        if affection.affecte is None:
-            return
-
         try:
             self.message_detruire(affection)
         except NotImplementedError:
@@ -109,8 +106,3 @@ class AffectionPersonnage(AffectionAbstraite):
                 return False
 
         AffectionAbstraite.tick(self, affection)
-
-    def detruire(self):
-        """Destruction de l'affection."""
-        AffectionAbstraite.detruire(self)
-        self.script.detruire()

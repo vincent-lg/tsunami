@@ -2,10 +2,10 @@
 
 # Copyright (c) 2010-2016 LE GOFF Vincent
 # All rights reserved.
-#
+# 
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are met:
-#
+# 
 # * Redistributions of source code must retain the above copyright notice, this
 #   list of conditions and the following disclaimer.
 # * Redistributions in binary form must reproduce the above copyright notice,
@@ -14,7 +14,7 @@
 # * Neither the name of the copyright holder nor the names of its contributors
 #   may be used to endorse or promote products derived from this software
 #   without specific prior written permission.
-#
+# 
 # THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
 # AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
 # IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -35,15 +35,15 @@ from .case import *
 from .pion import Pion
 
 class Plateau(BasePlateau):
-
+    
     """Plateau du jeu de l'oie.
-
+    
     Il est utilisé pour jouer au jeu de l'oie.
     Il définit les cases du jeu, les messages des différentes cases et
     les différents pièges.
-
+    
     """
-
+    
     jeux = ["jeu de l'oie"]
     nom = "jeu de l'oie"
     def init(self):
@@ -101,7 +101,7 @@ class Plateau(BasePlateau):
             Case("le voilier", "v", "|bc|"),
             CaseOie(),
             Case("l'oasis", "s", "|jn|", "dans"),
-            CasePrison(),
+            CasePrison(),            
             Case("la roseraie", "r", "|mr|", "dans"),
             CaseOie(),
             Case("le rocher", "h", "|gr|"),
@@ -141,7 +141,7 @@ class Plateau(BasePlateau):
             "  | |-----------| |\n" \
             "  |{13} {14} {15} {16} {17} {18} {19} {20}|\n" \
             "  \\---------------/"
-
+    
     def afficher(self, personnage, jeu, partie):
         """Affiche la partie en cours au personnage."""
         cases = list(self.cases)
@@ -150,14 +150,5 @@ class Plateau(BasePlateau):
             pion = jeu.pions.get(joueur)
             if pion:
                 cases[pos] = str(pion.numero)
-
+        
         return self.ordre.format(*cases)
-
-    def detruire(self):
-        """Destruction du plateau."""
-        BaseObj.detruire(self)
-        for case in self.cases:
-            case.detruire()
-
-        for pion in self.pions.values():
-            pion.detruire()

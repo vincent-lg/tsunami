@@ -76,7 +76,7 @@ class Module(BaseModule):
     def __init__(self, importeur):
         """Constructeur du module"""
         BaseModule.__init__(self, importeur, "diffact", "primaire")
-        self.actions = {} # {nom_action: action_differee}
+        self.actions = {} # {nom_action:action_differee}
         self.ordre_actions = [] # [nom_action]
         self.logger = type(self.importeur).man_logs.creer_logger("diffact", \
                 "diffact")
@@ -91,9 +91,7 @@ class Module(BaseModule):
         self.mettre_a_jour_actions()
 
     def ajouter_action(self, nom_action, tps, ref_fonc, *args, **kwargs):
-        """Ajoute une action différée.
-
-        Cette méthode permet d'ajouter une action différée à la liste
+        """Cette méthode permet d'ajouter une action différée à la liste
         de celles en attente. On précise :
         -   le nom de l'action (nom unique, servant d'identifiant)
         -   le temps d'attente avant exécution en secondes

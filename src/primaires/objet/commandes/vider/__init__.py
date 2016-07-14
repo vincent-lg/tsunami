@@ -2,10 +2,10 @@
 
 # Copyright (c) 2010-2016 LE GOFF Vincent
 # All rights reserved.
-#
+# 
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are met:
-#
+# 
 # * Redistributions of source code must retain the above copyright notice, this
 #   list of conditions and the following disclaimer.
 # * Redistributions in binary form must reproduce the above copyright notice,
@@ -14,7 +14,7 @@
 # * Neither the name of the copyright holder nor the names of its contributors
 #   may be used to endorse or promote products derived from this software
 #   without specific prior written permission.
-#
+# 
 # THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
 # AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
 # IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -34,9 +34,9 @@ from primaires.interpreteur.commande.commande import Commande
 from primaires.objet.conteneur import SurPoids
 
 class CmdVider(Commande):
-
+    
     """Commande 'vider'"""
-
+    
     def __init__(self):
         """Constructeur de la commande"""
         Commande.__init__(self, "vider", "empty")
@@ -48,7 +48,7 @@ class CmdVider(Commande):
                 "d'un plat, du moins si l'opération est faisable (difficile " \
                 "par exemple de retirer une soupe d'un bol autrement qu'en " \
                 "la mangeant)."
-
+    
     def ajouter(self):
         """Méthode appelée lors de l'ajout de la commande à l'interpréteur"""
         nom_objet = self.noeud.get_masque("nom_objet")
@@ -60,7 +60,7 @@ class CmdVider(Commande):
                 "(personnage.equipement.inventaire, " \
                 "personnage.salle.objets_sol)"
         plat.proprietes["types"] = "('conteneur de nourriture', )"
-
+    
     def interpreter(self, personnage, dic_masques):
         """Méthode d'interprétation de commande"""
         personnage.agir("prendre")
@@ -70,7 +70,7 @@ class CmdVider(Commande):
         objets = list(dic_masques["nom_objet"].objets)
         objets = objets[:nombre]
         plat = dic_masques["plat"].objet
-
+        
         pris = 0
         for objet in objets:
             if not objet.peut_prendre:
@@ -85,13 +85,12 @@ class CmdVider(Commande):
             if dans is None:
                 break
             plat.nourriture.remove(objet)
-            plat._enregistrer()
             pris += 1
-
+            
         if pris == 0:
             personnage << "|err|Vous n'avez aucune main de libre.|ff|"
             return
-
+        
         personnage << "Vous prenez {} depuis {}.".format(
                 objet.get_nom(pris), plat.nom_singulier)
         personnage.salle.envoyer("{{}} prend {} depuis {}.".format(

@@ -123,9 +123,3 @@ class Stats(BaseObj):
         for stat in self:
             if stat.max:
                 stat.courante = stat.max
-    def detruire(self):
-        """Destruction des stats."""
-        for stat in self.__stats:
-            stat.detruire()
-
-        BaseObj.detruire(self)

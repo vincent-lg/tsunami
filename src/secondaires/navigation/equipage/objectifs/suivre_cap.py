@@ -81,7 +81,7 @@ class SuivreCap(Rejoindre):
                 # On cherche le point suivant sur la carte
                 cle = equipage.caps[0]
                 trajet = importeur.navigation.trajets[cle]
-                suivant = trajet.points.get(tuple(equipage.destination))
+                suivant = trajet.points.get(equipage.destination)
                 if suivant is None and len(equipage.caps) > 1:
                     del equipage.caps[0]
                     cle = equipage.caps[0]

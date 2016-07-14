@@ -33,8 +33,6 @@
 import datetime
 
 from abstraits.obase import *
-from primaires.communication.aliases import aliases
-from primaires.communication.aliases.alias import Alias
 from primaires.communication.constantes import bas_page
 from primaires.format.date import get_date
 from primaires.format.description import Description
@@ -88,37 +86,6 @@ class MUDmail(BaseObj):
 
     def __getnewargs__(self):
         return ()
-
-    def __getstate__(self):
-        """Enregistrement de l'objet.
-
-        On ne peut pas enregistrer les salles telles qu'elles car
-        MongoDB n'aime pas les dictionnaires contenant des tuples en
-        clés.
-
-        """
-        def retirer_aliases(liste):
-            for i, e in enumerate(liste):
-                if isinstance(e, type) and issubclass(e, Alias):
-                    liste[i] = e.nom_alias
-
-        attrs = BaseObj.__getstate__(self)
-        retirer_aliases(attrs["liste_dest"])
-        retirer_aliases(attrs["aliases"])
-        retirer_aliases(attrs["copies_a"])
-        return attrs
-
-    def __setstate__(self, attrs):
-        """Récupération de l'objet enregistré."""
-        def remettre_aliases(liste):
-            for i, e in enumerate(liste):
-                if isinstance(e, str):
-                    liste[i] = aliases[e]
-
-        remettre_aliases(attrs["liste_dest"])
-        remettre_aliases(attrs["aliases"])
-        remettre_aliases(attrs["copies_a"])
-        BaseObj.__setstate__(self, attrs)
 
     @property
     def etat(self):

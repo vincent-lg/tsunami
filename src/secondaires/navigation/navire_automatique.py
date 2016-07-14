@@ -54,7 +54,6 @@ class NavireAutomatique(BaseObj):
     """
 
     enregistrer = True
-
     def __init__(self, cle):
         BaseObj.__init__(self)
         self.cle = cle

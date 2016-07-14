@@ -78,7 +78,6 @@ class Module(BaseModule):
                 self.actualiser_periodes)
         # On récupère les prototypes
         prototypes = importeur.supenr.charger_groupe(PrototypePlante)
-        importeur.supenr.charger_groupe(Plante)
         for prototype in prototypes:
             self.ajouter_prototype(prototype)
             if prototype.plantes:

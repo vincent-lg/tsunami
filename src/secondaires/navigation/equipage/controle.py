@@ -79,15 +79,13 @@ class Controle(BaseObj, metaclass=MetaControle):
 
     cle = None
     logger = type(importeur).man_logs.get_logger("ordres")
-
     def __init__(self, equipage, *args):
         BaseObj.__init__(self)
         self.equipage = equipage
         self.arguments = args
-        self._construire()
 
     def __getnewargs__(self):
-        arguments = (None, ) + tuple(getattr(self, "arguments", ()))
+        arguments = (None, ) + getattr(self, "arguments", ())
         return arguments
 
     def __repr__(self):

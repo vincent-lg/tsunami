@@ -2,10 +2,10 @@
 
 # Copyright (c) 2010-2016 LE GOFF Vincent
 # All rights reserved.
-#
+# 
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are met:
-#
+# 
 # * Redistributions of source code must retain the above copyright notice, this
 #   list of conditions and the following disclaimer.
 # * Redistributions in binary form must reproduce the above copyright notice,
@@ -14,7 +14,7 @@
 # * Neither the name of the copyright holder nor the names of its contributors
 #   may be used to endorse or promote products derived from this software
 #   without specific prior written permission.
-#
+# 
 # THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
 # AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
 # IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -38,9 +38,9 @@ définissant chacune une case spéciale (comme un piège).
 from abstraits.obase import BaseObj
 
 class Case(BaseObj):
-
+    
     """Classe définissant une case simple.
-
+    
     Par défaut, une case simple possède :
         un titre
         un symbole
@@ -48,12 +48,12 @@ class Case(BaseObj):
         un article ("sur" par défaut)
         un verbe ("arrivez" par défaut)
         un verbe pour les autres ("arrive" par défaut)
-
+    
     Les méthodes définies dans une case sont :
         arrive -- un pion arrive sur cette case
-
+    
     """
-
+    
     numero = 1
     def __init__(self, titre, symbole, couleur, article="sur",
             verbe="arrivez", a_verbe="arrive", ponctuation="."):
@@ -71,14 +71,13 @@ class Case(BaseObj):
         self.ponctuation = ponctuation
         self.numero = Case.numero
         Case.numero += 1
-        self._construire()
-
+    
     def __getnewargs__(self):
         return ("", "", "")
-
+    
     def __str__(self):
         return self.couleur + self.symbole + "|ff|"
-
+    
     def arrive(self, jeu, plateau, partie, personnage, coup):
         """Le pion du personnage arrive sur la case."""
         pion = jeu.pions[personnage]
@@ -91,48 +90,48 @@ class Case(BaseObj):
                 personnage)
 
 class CaseOie(Case):
-
+    
     """Classe représentant une case oie."""
-
+    
     def __init__(self):
         """Constructeur de la case."""
         Case.__init__(self, "l'oie", "o", "|rg|")
-
+    
     def __getnewargs__(self):
         return ()
-
+    
     def arrive(self, jeu, plateau, partie, personnage, coup):
         """Le pion du personnage arrive sur la case."""
         Case.arrive(self, jeu, plateau, partie, personnage, coup)
         jeu.avancer(personnage, coup)
 
 class CasePont(Case):
-
+    
     """Classe représentant la case du pont."""
-
+    
     def __init__(self):
         """Constructeur de la case."""
         Case.__init__(self, "le pont", "t", "|rg|")
-
+    
     def __getnewargs__(self):
         return ()
-
+    
     def arrive(self, jeu, plateau, partie, personnage, coup):
         """Le pion du personnage arrive sur la case."""
         Case.arrive(self, jeu, plateau, partie, personnage, coup)
         jeu.avancer(personnage, 6)
 
 class CaseHotellerie(Case):
-
+    
     """Classe représentant l'hôtellerie."""
-
+    
     def __init__(self):
         """Constructeur de la case."""
         Case.__init__(self, "l'auberge", "x", "|rg|")
-
+    
     def __getnewargs__(self):
         return ()
-
+    
     def arrive(self, jeu, plateau, partie, personnage, coup):
         """Le pion du personnage arrive sur la case."""
         Case.arrive(self, jeu, plateau, partie, personnage, coup)
@@ -144,17 +143,17 @@ class CaseHotellerie(Case):
         jeu.hotellerie[personnage] = 2
 
 class CasePuits(Case):
-
+    
     """Classe représentant le puits."""
-
+    
     def __init__(self):
         """Constructeur de la case."""
         Case.__init__(self, "le puits", "O", "|rg|", "dans", "tombez",
                 "tombe", " !")
-
+    
     def __getnewargs__(self):
         return ()
-
+    
     def arrive(self, jeu, plateau, partie, personnage, coup):
         """Le pion du personnage arrive sur la case."""
         Case.arrive(self, jeu, plateau, partie, personnage, coup)
@@ -169,17 +168,17 @@ class CasePuits(Case):
         jeu.puits = personnage
 
 class CasePrison(Case):
-
+    
     """Classe représentant la prison."""
-
+    
     def __init__(self):
         """Constructeur de la case."""
         Case.__init__(self, "la prison", "*", "|rg|", "dans", "entrez",
                 "entre", " !")
-
+    
     def __getnewargs__(self):
         return ()
-
+    
     def arrive(self, jeu, plateau, partie, personnage, coup):
         """Le pion du personnage arrive sur la case."""
         Case.arrive(self, jeu, plateau, partie, personnage, coup)
@@ -194,17 +193,17 @@ class CasePrison(Case):
         jeu.prison = personnage
 
 class CaseLabyrinthe(Case):
-
+    
     """Classe représentant le labyrinthe."""
-
+    
     def __init__(self):
         """Constructeur de la case."""
         Case.__init__(self, "le labyrinthe", "h", "|rg|", "sur", "arrivez",
                 "arrive", " !")
-
+    
     def __getnewargs__(self):
         return ()
-
+    
     def arrive(self, jeu, plateau, partie, personnage, coup):
         """Le pion du personnage arrive sur la case."""
         Case.arrive(self, jeu, plateau, partie, personnage, coup)
@@ -215,17 +214,17 @@ class CaseLabyrinthe(Case):
         jeu.placer(personnage, 29)
 
 class CaseMort(Case):
-
+    
     """Classe représentant la tête de mort."""
-
+    
     def __init__(self):
         """Constructeur de la case."""
         Case.__init__(self, "la tête de mort", "x", "|rg|", "sur", "tombez",
                 "tombe", " !")
-
+    
     def __getnewargs__(self):
         return ()
-
+    
     def arrive(self, jeu, plateau, partie, personnage, coup):
         """Le pion du personnage arrive sur la case."""
         Case.arrive(self, jeu, plateau, partie, personnage, coup)
@@ -236,16 +235,16 @@ class CaseMort(Case):
         jeu.placer(personnage, 0)
 
 class CaseJardin(Case):
-
+    
     """Classe représentant le jardin, fin de la partie."""
-
+    
     def __init__(self):
         """Constructeur de la case."""
         Case.__init__(self, "le jardin", "+", "|rg|")
-
+    
     def __getnewargs__(self):
         return ()
-
+    
     def arrive(self, jeu, plateau, partie, personnage, coup):
         """Le pion du personnage arrive sur la case."""
         Case.arrive(self, jeu, plateau, partie, personnage, coup)

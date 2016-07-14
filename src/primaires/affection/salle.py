@@ -44,7 +44,6 @@ class AffectionSalle(AffectionAbstraite):
     def_flags = {
         "humide": 1,
     }
-
     def __init__(self, cle):
         AffectionAbstraite.__init__(self, cle)
         self.script = ScriptAffectionSalle(self)
@@ -53,9 +52,6 @@ class AffectionSalle(AffectionAbstraite):
 
     def programmer_destruction(self, affection):
         """Programme la destruction de l'affection de salle."""
-        if affection.affecte is None:
-            return
-
         try:
             affection.affecte.envoyer(self.message_detruire(affection),
                     prompt=False)
@@ -79,8 +75,3 @@ class AffectionSalle(AffectionAbstraite):
         self.script[evenement].executer(salle=affection.affecte,
                 force=Fraction(affection.force),
                 duree=Fraction(affection.duree), **variables)
-
-    def detruire(self):
-        """Destruction de l'affection."""
-        AffectionAbstraite.detruire(self)
-        self.script.detruire()

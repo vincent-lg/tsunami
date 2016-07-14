@@ -109,7 +109,7 @@ class Sorties(BaseObj):
         self._sorties = OrderedDict(NOMS_SORTIES)
 
         # On passe le statut en CONSTRUIT
-        self._construire()
+        self._statut = CONSTRUIT
 
     def __getnewargs__(self):
         return ()
@@ -127,7 +127,6 @@ class Sorties(BaseObj):
             raise ValueError("le nom {} n'est pas accepté en identifiant " \
                     "de sortie".format(repr(nom)))
 
-        self._enregistrer()
         self._sorties[nom] = sortie
 
     def __iter__(self):
@@ -260,11 +259,3 @@ class Sorties(BaseObj):
     def get_nom_oppose(self, nom):
         """Retourne le nom de la sortie opposée à 'nom'"""
         return NOMS_OPPOSES[nom]
-
-    def detruire(self):
-        """Destruction des sorties."""
-        for sortie in self._sorties.values():
-            if sortie:
-                sortie.detruire()
-
-        BaseObj.detruire(self)

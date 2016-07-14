@@ -1,5 +1,4 @@
 # -*-coding:Utf-8 -*
-# -*-coding:Utf-8 -*
 
 # Copyright (c) 2010-2016 LE GOFF Vincent
 # All rights reserved.
@@ -41,7 +40,6 @@ from abstraits.obase import MetaBaseObj, BaseObj
 from primaires.format.fonctions import *
 
 contextes = {} # dictionnaire des différents contextes
-cls_contextes = {}
 
 class MetaContexte(MetaBaseObj):
 
@@ -55,8 +53,6 @@ class MetaContexte(MetaBaseObj):
     def __init__(cls, nom, bases, contenu):
         """Constructeur de la métaclasse"""
         MetaBaseObj.__init__(cls, nom, bases, contenu)
-        chemin = cls.__module__ + "." + cls.__name__
-        cls_contextes[chemin] = cls
         if cls.nom:
             contextes[cls.nom] = cls
 
@@ -112,8 +108,6 @@ class OptionsContexte(BaseObj):
 
         # Options de navigation
         self.rci_ctx_prec = ""
-
-        self._construire()
 
     def __getnewargs__(self):
         return ()
@@ -238,23 +232,18 @@ class Contexte(BaseObj, metaclass=MetaContexte):
         else:
             self.migrer_contexte(self)
 
-    def migrer_contexte(self, contexte, afficher_accueil=True, detruire=True):
+    def migrer_contexte(self, contexte, afficher_accueil=True):
         """Cas de transfert de contexte.
 
         Le contexte peut être sous la forme d'un nom (str)
         ou d'un contexte.
 
         """
-        if isinstance(contexte, str):
+        if type(contexte) is str:
             nouveau_contexte = self._get_contexte(contexte)(self.pere)
         else:
             nouveau_contexte = contexte
-
         self.pere.contexte_actuel.sortir()
-        if self.pere.contexte_actuel is not contexte:
-            if detruire and not self.pere.contexte_actuel.opts.rci_ctx_prec:
-                self.pere.contexte_actuel.detruire(recursif=False)
-
         self.pere.migrer_contexte(nouveau_contexte)
         self.pere.contexte_actuel.entrer()
         if nouveau_contexte is self.pere.contexte_actuel and afficher_accueil:
@@ -294,7 +283,7 @@ class Contexte(BaseObj, metaclass=MetaContexte):
         # Si un contexte précédent est défini et que le client a entré
         # RCI_PREC, on retourne au contexte précédent
         if self.opts.rci_ctx_prec and msg == RCI_PREC:
-            self.migrer_contexte(self.opts.rci_ctx_prec, detruire=True)
+            self.migrer_contexte(self.opts.rci_ctx_prec)
         else:
             self.interpreter(msg)
 
@@ -378,22 +367,6 @@ class Contexte(BaseObj, metaclass=MetaContexte):
 
         return True
 
-    def fermer(self, conserver=False):
-        """Fermeture du contexte.
-
-        Si le paramètre 'conserver' est à True, ne supprime pas le
-        contexte.
-
-        """
-        self.pere.joueur.contextes.retirer(self, conserver=conserver)
-
-    def detruire(self, recursif=True):
-        """Destruction du contexte."""
-        # Destruction des contextes précédents
-        parent = self.opts.rci_ctx_prec
-        if recursif and parent and isinstance(parent, Contexte):
-            parent.detruire()
-
-        # Destruction des options du contexte
-        self.opts.detruire()
-        BaseObj.detruire(self)
+    def fermer(self):
+        """Fermeture du contexte."""
+        self.pere.joueur.contextes.retirer(self)

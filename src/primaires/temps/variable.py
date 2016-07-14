@@ -70,6 +70,7 @@ class TempsVariable(BaseObj):
             self.minute = temps.minute
 
         self.timestamp = time()
+        self._construire()
 
     def __getnewargs__(self):
         return (False, )

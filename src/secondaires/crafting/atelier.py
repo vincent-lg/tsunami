@@ -76,7 +76,6 @@ class Atelier(BaseObj):
             self.matieres[cle] = 0
 
         self.matieres[cle] += quantite
-        self._enregistrer()
 
     def retirer_matiere(self, cle, quantite=1):
         """Retire la matière dans la quantité indiquée."""
@@ -85,7 +84,6 @@ class Atelier(BaseObj):
                     "l'atelier".format(repr(cle)))
 
         self.matieres[cle] -= quantite
-        self._enregistrer()
         if self.matieres[cle] <= 0:
             del self.matieres[cle]
 

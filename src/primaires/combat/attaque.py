@@ -2,10 +2,10 @@
 
 # Copyright (c) 2010-2016 LE GOFF Vincent
 # All rights reserved.
-#
+# 
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are met:
-#
+# 
 # * Redistributions of source code must retain the above copyright notice, this
 #   list of conditions and the following disclaimer.
 # * Redistributions in binary form must reproduce the above copyright notice,
@@ -14,7 +14,7 @@
 # * Neither the name of the copyright holder nor the names of its contributors
 #   may be used to endorse or promote products derived from this software
 #   without specific prior written permission.
-#
+# 
 # THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
 # AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
 # IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -38,15 +38,16 @@ Il contient également les autres classes héritées d'Attaque :
 
 from random import randint
 
-#from abstraits.obase import BaseObj
+from abstraits.obase import BaseObj
 from corps.aleatoire import *
 
-class Attaque:
-
+class Attaque(BaseObj):
+    
     """Classe représentant une attaque."""
-
+    
     def __init__(self, personnage, cle):
         """Constructeur de l'attaque."""
+        BaseObj.__init__(self)
         self.personnage = personnage
         self.cle = cle
         self.probabilite = 100
@@ -63,14 +64,15 @@ class Attaque:
             "autres": "",
         }
         self.viser_membre = False
-
+        self._construire()
+    
     def __getnewargs__(self):
         return (None, "")
-
+    
     def essayer(self, moi, contre, arme=None):
         """Retourne True si l'attaque a réussit, False sinon."""
         return True
-
+    
     def get_membre(self, moi, contre, arme=None):
         """Retourne un membre visé ou None."""
         if self.viser_membre:
@@ -78,13 +80,13 @@ class Attaque:
             membre = choix_probable(membres, attribut="probabilite_atteint")
         else:
             membre = None
-
+        
         return membre
-
+    
     def calculer_degats(self, moi, contre, membre, arme=None):
         """Retourne les dégâts infligés."""
         return randint(self.degats_min, self.degats_max)
-
+    
     def envoyer_msg_tentative(self, moi, contre, membre, arme=None):
         """Envoie les messages en cas de tentative."""
         salle = moi.salle
@@ -97,7 +99,7 @@ class Attaque:
         salle.envoyer_lisser(self.msg_tentative["autres"].format(moi="{moi}",
                 contre="{contre}", membre=membre.nom_complet, arme=arme),
                 moi=moi, contre=contre)
-
+    
     def envoyer_msg_reussite(self, moi, contre, membre, degats, arme=None):
         """Envoie les messages en cas de réussite."""
         salle = moi.salle
@@ -113,9 +115,9 @@ class Attaque:
                 degats=degats, s=s), moi=moi, contre=contre)
 
 class Coup(Attaque):
-
+    
     """Classe représentant un coup."""
-
+    
     def __init__(self, personnage):
         """Constructeur du coup."""
         Attaque.__init__(self, personnage, "coup")
@@ -133,10 +135,10 @@ class Coup(Attaque):
         self.msg_reussite["autres"] = \
                 "{moi} atteint {contre} à {membre}."
         self.viser_membre = True
-
+    
     def __getnewargs__(self):
         return (None, )
-
+    
     def essayer(self, moi, contre, arme=None):
         """Retourne True si l'attaque réussit, False sinon."""
         fact_m = moi.stats.agilite
@@ -151,10 +153,10 @@ class Coup(Attaque):
             connaissance = moi.pratiquer_talent(talent)
         else:
             connaissance = moi.pratiquer_talent("combat_mains_nues")
-
+        
         connaissance = int(fact_m * varier(connaissance, 30))
         return connaissance > resistance
-
+    
     def calculer_degats(self, moi, contre, membre, arme=None):
         """Retourne les dégâts infligés par l'arme."""
         if arme:
@@ -162,15 +164,15 @@ class Coup(Attaque):
             connaissance = moi.get_talent(talent)
         else:
             connaissance = moi.get_talent("combat_mains_nues")
-
+        
         facteur = 0.8 + moi.force / 300 + connaissance / 300
-
+        
         if arme:
             degats_min = facteur * arme.degats_fixes
             degats_max = facteur * (arme.degats_fixes + arme.degats_variables)
         else:
             degats_min = facteur * moi.force * 0.9
             degats_max = facteur * moi.force * 1.3
-
+        
         degats = randint(int(degats_min), int(degats_max))
         return degats if degats > 0 else 1

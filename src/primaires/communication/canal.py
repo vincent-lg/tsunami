@@ -130,22 +130,19 @@ class Canal(BaseObj):
                         "que sur invitation.|ff|"
             else:
                 self.connectes.append(joueur)
-                self._enregistrer()
                 if aff:
                     joueur << "|att|Vous êtes à présent connecté au canal " \
                             "{}.|ff|".format(self.nom)
         else:
             self.connectes.remove(joueur)
-            self._enregistrer()
 
     def immerger_ou_sortir(self, joueur, aff=True):
         """Immerge un joueur et le signale aux immergés"""
         if not joueur in self.immerges:
             self.immerges.append(joueur)
-            self._enregistrer()
             contexte = Immersion(joueur.instance_connexion)
             contexte.canal = type(self).importeur.communication.canaux[self.nom]
-            joueur.contexte_actuel.migrer_contexte(contexte, detruire=False)
+            joueur.contexte_actuel.migrer_contexte(contexte)
             for immerge in self.immerges:
                 if immerge in type(self).importeur.connex.joueurs_connectes:
                     if immerge is not joueur:
@@ -153,7 +150,6 @@ class Canal(BaseObj):
                         immerge << res
         else:
             self.immerges.remove(joueur)
-            self._enregistrer()
             joueur.contextes[Immersion].fermer()
             joueur.envoyer("Vous sortez d'immersion.")
             if aff is True:
@@ -170,14 +166,13 @@ class Canal(BaseObj):
                 self.immerger_ou_sortir(joueur, False)
             self.rejoindre_ou_quitter(joueur, False)
             joueur << "|err|Le canal {} a été dissous.|ff|".format(self.nom)
-        importeur.communication.canaux.pop(self.nom).detruire()
+        del type(self).importeur.communication.canaux[self.nom]
 
     def ejecter(self, joueur):
         """Ejecte un joueur du canal (méthode de modération)"""
         if joueur in self.immerges:
             self.immerger_ou_sortir(joueur, False)
         self.rejoindre_ou_quitter(joueur, False)
-        self._enregistrer()
         for connecte in self.connectes:
             if connecte in type(self).importeur.connex.joueurs_connectes:
                 if connecte in self.immerges:
@@ -191,7 +186,6 @@ class Canal(BaseObj):
 
     def bannir(self, joueur):
         """Bannit un joueur du canal (méthode de modération)"""
-        self._enregistrer()
         if not joueur in self.liste_noire:
             if joueur in self.immerges:
                 self.immerger_ou_sortir(joueur, False)
@@ -216,7 +210,6 @@ class Canal(BaseObj):
 
     def promouvoir_ou_dechoir(self, joueur):
         """Promeut ou déchoit un joueur du statut de modérateur"""
-        self._enregistrer()
         if not joueur in self.moderateurs:
             for connecte in self.connectes:
                 if (connecte in self.moderateurs or connecte is self.auteur) and \
@@ -228,7 +221,6 @@ class Canal(BaseObj):
                         connecte << self.clr + "[" + self.nom + "] {} a été " \
                                 "promu modérateur.|ff|".format(joueur.nom)
             self.moderateurs.append(joueur)
-            self._enregistrer()
             if joueur in type(self).importeur.connex.joueurs_connectes:
                 if joueur in self.immerges:
                     joueur << self.clr + "<Vous avez été promu modérateur.>|ff|"
@@ -237,7 +229,6 @@ class Canal(BaseObj):
                             "été promu modérateur.|ff|"
         else:
             self.moderateurs.remove(joueur)
-            self._enregistrer()
             if joueur in type(self).importeur.connex.joueurs_connectes:
                 if joueur in self.immerges:
                     res = self.clr + "<Vous avez été déchu du rang de " \

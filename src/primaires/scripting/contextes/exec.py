@@ -169,8 +169,6 @@ class Exec(Contexte):
 
     def opt_q(self, arguments):
         """Quitte le contexte."""
-        self.evenement.detruire()
-        self.test.detruire()
         self.fermer()
         self.pere << "Fermeture de la console scripting."
 

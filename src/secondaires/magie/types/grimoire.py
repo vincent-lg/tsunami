@@ -45,15 +45,17 @@ class Grimoire(BaseType):
     """
 
     nom_type = "grimoire"
-    _attributs = {
-        "proprietaire": Attribut(None),
-    }
 
     def __init__(self, cle=""):
         """Constructeur de l'objet"""
         BaseType.__init__(self, cle)
         self._cle_sort = ""
         self.etendre_editeur("s", "sort", Uniligne, self, "cle_sort")
+
+        # Attributs propres à l'objet (non au prototype)
+        self._attributs = {
+            "proprietaire": Attribut(None),
+        }
 
     def _get_cle_sort(self):
         return self._cle_sort

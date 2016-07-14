@@ -87,14 +87,13 @@ class Objet(BaseObj):
                     prototype.no)
             prototype.no += 1
             prototype.objets.append(self)
-            prototype._enregistrer()
 
             # On copie les attributs propres à l'objet
             # Ils sont disponibles dans le prototype, dans la variable
             # _attributs
             # C'est un dictionnaire contenant en clé le nom de l'attribut
             # et en valeur le constructeur de l'objet
-            for nom, val in type(prototype)._attributs.items():
+            for nom, val in prototype._attributs.items():
                 setattr(self, nom, val.construire(self))
 
     def __getnewargs__(self):
@@ -249,7 +248,6 @@ class Objet(BaseObj):
         """Destruction de l'objet"""
         if self in self.prototype.objets:
             self.prototype.objets.remove(self)
-            self.prototype._enregistrer()
 
         if self.contenu and self in self.contenu:
             self.contenu.retirer(self)

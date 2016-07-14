@@ -47,7 +47,6 @@ objets_par_type = {}
 ids = {}
 statut_gen = 0 # 0 => OK, 1 => en cours
 classes_base = {}
-tous_objets = {}
 
 class MetaBaseObj(type):
 
@@ -124,9 +123,6 @@ class BaseObj(metaclass=MetaBaseObj):
                 "__getnewargs__")
 
     def ajouter_enr(self):
-        if self.e_existe and statut_gen == 0 and id(self) not in tous_objets:
-            tous_objets[id(self)] = self
-
         if self.e_existe and type(self).enregistrer and statut_gen == 0 and \
                 id(self) not in objets:
             objets[id(self)] = self
@@ -173,17 +169,15 @@ class BaseObj(metaclass=MetaBaseObj):
         # On récupère la classe
         classe = type(self)
         # On appel son constructeur
-        if importeur.supenr.mode == "pickle":
-            try:
-                classe.__init__(self, *self.__getnewargs__())
-            except NotImplementedError:
-                print("Méthode __getnewargs__ non définie pour", classe)
-                sys.exit(1)
-            except TypeError as err:
-                print("Erreur lors de l'appel au constructeur de", classe, err)
-                print(traceback.format_exc())
-                sys.exit(1)
-
+        try:
+            classe.__init__(self, *self.__getnewargs__())
+        except NotImplementedError:
+            print("Méthode __getnewargs__ non définie pour", classe)
+            sys.exit(1)
+        except TypeError as err:
+            print("Erreur lors de l'appel au constructeur de", classe, err)
+            print(traceback.format_exc())
+            sys.exit(1)
         self.__dict__.update(dico_attrs)
 
         # On vérifie s'il a besoin d'une vraie mis à jour

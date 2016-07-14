@@ -196,13 +196,11 @@ class CmdAddroom(Commande):
                 "|err|Cette direction a déjà été définie dans la salle.|ff|")
 
         nv_coords = getattr(salle.coords, direction.replace("-", ""))
-        nv_coords._construire()
         if nv_coords.valide and nv_coords in type(self).importeur.salle:
             raise ErreurInterpretation(
                 "|err|Ces coordonnées sont déjà utilisées.|ff|")
 
         x, y, z, valide = nv_coords.tuple_complet()
-        nv_coords.detruire()
 
         try:
             nv_salle = importeur.salle.creer_salle(zone, mnemonic,

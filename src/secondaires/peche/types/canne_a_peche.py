@@ -42,9 +42,6 @@ class CanneAPeche(BaseType):
 
     nom_type = "canne à pêche"
     empilable_sur = ["vêtement"]
-    _attributs = {
-        "appat": Attribut(),
-    }
 
     def __init__(self, cle=""):
         """Constructeur de l'objet"""
@@ -54,6 +51,10 @@ class CanneAPeche(BaseType):
         self.tension_max = 10
         self.etendre_editeur("te", "tension maximum", Entier, self,
                 "tension_max", 1)
+
+        self._attributs = {
+            "appat": Attribut(),
+        }
 
     def travailler_enveloppes(self, enveloppes):
         """Travail sur les enveloppes"""
@@ -72,7 +73,7 @@ class CanneAPeche(BaseType):
     def objets_contenus(self, conteneur):
         """Retourne les objets contenus."""
         objets = []
-        if getattr(conteneur, "appat", None):
+        if conteneur.appat:
             objet = conteneur.appat
             objets.append(objet)
             if objet.unique:

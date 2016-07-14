@@ -70,7 +70,6 @@ class Familier(BaseObj):
         self.nom = "Médor"
         self.chevauche_par = None
         self.doit_chasser = False
-        self._construire()
 
     def __getnewargs__(self):
         return ("", )

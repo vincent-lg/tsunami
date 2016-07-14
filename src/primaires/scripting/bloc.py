@@ -80,12 +80,6 @@ class Bloc(BaseObj):
     def __str__(self):
         return "bloc {}".format(self.nom)
 
-    def __getstate__(self):
-        """Ne sauvegarde pas les variables en fichier."""
-        dico_attr = self.__dict__.copy()
-        del dico_attr["espaces"]
-        return dico_attr
-
     @property
     def nom_complet(self):
         return self.nom
@@ -130,7 +124,6 @@ class Bloc(BaseObj):
         else:
             variable.aide = aide
             self.variables.append(variable)
-            self._enregistrer()
             return variable
 
     def supprimer_variable(self, nom):
@@ -141,9 +134,7 @@ class Bloc(BaseObj):
             raise ValueError("la variable {} n'existe pas".format(repr(nom)))
 
         variable = variables[nom]
-        variable.detruire()
         self.variables.remove(variable)
-        self._enregistrer()
 
     def executer(self, *args):
         """Execute le bloc d'instructions.
@@ -153,8 +144,7 @@ class Bloc(BaseObj):
         variable 'retour', si il y en a une, que l'on retourne au cas où.
 
         """
-        # On empêche l'enregistrement systématique du bloc
-        object.__setattr__(self, "espaces", Espaces(self))
+        self.espaces = Espaces(self)
         variables = {}
         jeton = Jeton()
         jeton.complet = True
@@ -183,12 +173,3 @@ class Bloc(BaseObj):
             return self.espaces.variables["retour"]
 
         return jeton
-
-    def detruire(self):
-        """Destruction du bloc."""
-        BaseObj.detruire(self)
-        if self.__test:
-            self.__test.detruire()
-
-        for variable in self.variables:
-            variable.detruire()

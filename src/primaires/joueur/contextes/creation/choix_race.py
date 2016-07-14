@@ -96,7 +96,6 @@ class ChoixRace(Contexte):
                         self.pere.compte.ajouter_joueur(self.pere.joueur)
 
                     self.pere.joueur.pre_connecter()
-                    self.detruire()
             else:
                 # On crée une barre de titre ajustée
                 nb_tirets = int((36 - (len(race.nom) + 10)) / 2) - 1

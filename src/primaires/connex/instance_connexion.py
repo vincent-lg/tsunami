@@ -106,8 +106,7 @@ class InstanceConnexion(BaseObj):
         -   sinon, on retourne le contexte de l'isntance
 
         """
-        if self.joueur and len(self.joueur.contextes) > 0 and \
-                self.joueur.est_connecte():
+        if self.joueur and len(self.joueur.contextes) > 0:
             contexte = self.joueur.contexte_actuel
         else:
             contexte = self.contexte
@@ -121,8 +120,7 @@ class InstanceConnexion(BaseObj):
         celui de l'instance de connexion, soit celui du joueur).
 
         """
-        if self.joueur and len(self.joueur.contextes) > 0 and \
-                self.joueur.est_connecte():
+        if self.joueur and len(self.joueur.contextes) > 0:
             self.joueur.contexte_actuel = nouveau_contexte
         else:
             self.contexte = nouveau_contexte
@@ -348,11 +346,10 @@ class InstanceConnexion(BaseObj):
         Dans ce cas, on le cherche dans l'interpréteur.
 
         """
-        if isinstance(nouveau_contexte, str):
+        if type(nouveau_contexte) is str:
             nouveau_contexte = type(self).importeur.interpreteur. \
                 contextes[nouveau_contexte]
             self.envoyer(nouveau_contexte.accueil())
-
         self.contexte_actuel = nouveau_contexte
 
     def write(self, message):

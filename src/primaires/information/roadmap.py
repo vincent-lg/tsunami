@@ -84,4 +84,3 @@ class Roadmap(BaseObj):
 
         self.derniere_modification = datetime.now()
         self.joueurs_ayant_lu[:] = []
-        self._enregistrer()

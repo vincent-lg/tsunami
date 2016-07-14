@@ -50,7 +50,6 @@ class NavireVente(BaseObj):
         """Constructeur de la classe"""
         BaseObj.__init__(self)
         self.modele = modele
-        self._construire()
 
     def __getnewargs__(self):
         return (None, )

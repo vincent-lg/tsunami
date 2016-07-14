@@ -57,8 +57,6 @@ class TransformFraction(SONManipulator):
             elif isinstance(elt, dict):
                 self.transform_incoming(elt, collection)
 
-            copie.append(elt)
-
         liste[:] = copie
 
     def transform_incoming(self, bson, collection):
@@ -91,7 +89,7 @@ class TransformFraction(SONManipulator):
         for value in liste:
             if isinstance(value, dict):
                 if value.get("_custom_type", "") == "Fraction":
-                    fraction = Fraction(value["numerator"],
+                    fraction = Fraction(value["numrator"],
                             value["denominator"])
                     value = fraction
                 else:

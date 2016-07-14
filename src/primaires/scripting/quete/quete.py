@@ -142,7 +142,6 @@ class Quete(BaseObj):
         etape.titre = titre
         etape.niveau = self.sous_niveau
         self.__etapes.append(etape)
-        self._enregistrer()
 
     def ajouter_sous_quete(self, titre):
         """Ajoute une sous-quête à la quête."""
@@ -150,7 +149,6 @@ class Quete(BaseObj):
         etape.titre = titre
         etape.niveau = self.sous_niveau
         self.__etapes.append(etape)
-        self._enregistrer()
 
     def supprimer_etape(self, num):
         indice = len(self.niveau) - 1
@@ -162,8 +160,7 @@ class Quete(BaseObj):
                 etape.niveau = tuple(niveau)
             elif etape.niveau[indice] != num:
                 a_effacer = strniveau
-        self.get_dictionnaire_etapes().pop(a_effacer).detruire()
-        self._enregistrer()
+        del self.get_dictionnaire_etapes()[a_effacer]
 
     def afficher_etapes(self, quete=None):
         """Affiche les étapes qui peuvent être aussi des sous-quêtes."""
@@ -201,7 +198,6 @@ class Quete(BaseObj):
         niveau = etape.niveau
         etape.detruire()
         del self.__etapes[numero]
-        self._enregistrer()
         for etape in self.__etapes[numero:]:
             t_niveau = etape.niveau
             etape.mettre_a_jour_niveau(niveau)
@@ -218,7 +214,6 @@ class Quete(BaseObj):
 
     def detruire(self):
         """Destruction de l'objet."""
-        self.description.detruire()
         for etape in self.__etapes:
             etape.detruire()
 

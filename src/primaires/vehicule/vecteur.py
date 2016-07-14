@@ -47,9 +47,6 @@ class Vecteur(BaseObj):
 
     """
 
-    _nom = "vecteur"
-    _version = 1
-
     def __init__(self, x=0, y=0, z=0, parent=None):
         """Constructeur du vecteur"""
         BaseObj.__init__(self)
@@ -57,6 +54,7 @@ class Vecteur(BaseObj):
         self._x = x
         self._y = y
         self._z = z
+        self._construire()
 
     def __getnewargs__(self):
         return ()

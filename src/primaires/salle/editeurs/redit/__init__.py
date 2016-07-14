@@ -187,7 +187,6 @@ class EdtRedit(Presentation):
         description = self.ajouter_choix("description", "d", Description, \
                 salle)
         description.parent = self
-        print("parent1", description.parent)
         description.apercu = "{objet.description.paragraphes_indentes}"
         description.aide_courte = \
             "| |tit|" + "Description de la salle {}".format(salle).ljust(76) + \
@@ -276,8 +275,8 @@ class EdtRedit(Presentation):
         sup.aide_courte = "Souhaitez-vous réellement supprimer " \
                 "la salle {} ?".format(salle.ident)
 
-    def fermer(self, conserver=True, recursif=True):
+    def fermer(self):
         """On ferme l'éditeur."""
-        Presentation.fermer(self, conserver, recursif)
+        Presentation.fermer(self)
         if self.objet:
             importeur.salle.inscrire_salle(self.objet)

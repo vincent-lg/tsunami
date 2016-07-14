@@ -53,7 +53,7 @@ class Action(Editeur):
 
     def entrer(self):
         """Quand on entre dans le contexte"""
-        self.fermer(conserver=False)
+        self.fermer()
         callback = self.callback
         methode = self.methode
         arguments = self.arguments

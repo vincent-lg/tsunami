@@ -147,17 +147,17 @@ class Rapport(BaseObj):
     def bug(self):
         """Retourne True si le rapport est un bug."""
         return self._type == "bug"
-
+    
     @property
     def evolution(self):
         """Retourne True si le rapport est une évolution."""
         return self._type == "évolution"
-
+    
     @property
     def suggestion(self):
         """Retourne True si le rapport est une suggestion."""
         return self._type == "suggestion"
-
+    
     def copier(self, autre):
         """Copie les attributs d'un autre rapport."""
         self.source = autre
@@ -255,12 +255,4 @@ class Rapport(BaseObj):
         """Commente un rapport."""
         commentaire = Commentaire(self, auteur, texte)
         self.commentaires.append(commentaire)
-        self._enregistrer()
         return commentaire
-
-    def detruire(self):
-        """Destruction du rapport."""
-        BaseObj.detruire(self)
-        self.description.detruire()
-        for commentaire in self.commentaires:
-            commentaire.detruire()

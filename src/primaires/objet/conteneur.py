@@ -140,7 +140,6 @@ class ConteneurObjet(BaseObj):
 
         """
         prototype = hasattr(objet, "prototype") and objet.prototype or objet
-        self._enregistrer()
         if prototype.unique:
             self.supporter_poids_sup(objet.poids)
             objet.contenu = self
@@ -170,7 +169,6 @@ class ConteneurObjet(BaseObj):
     def retirer(self, objet, nombre=1, accepte_non_trouve = False):
         """On retire l'objet du conteneur"""
         prototype = hasattr(objet, "prototype") and objet.prototype or objet
-        self._enregistrer()
         if prototype.unique:
             if objet in self._objets:
                 self._objets.remove(objet)
@@ -238,15 +236,6 @@ class ConteneurObjet(BaseObj):
             contenu = hasattr(parent, "contenu") and parent.contenu or parent
             if hasattr(contenu, "supporter_poids_sup"):
                 contenu.supporter_poids_sup(poids, recursif)
-
-    def detruire(self):
-        """Destruction du conteneur d'objet."""
-        BaseObj.detruire(self)
-        for objet in self._objets:
-            try:
-                importeur.objet.supprimer_objet(objet.identifiant)
-            except Exception:
-                pass
 
 
 class SurPoids(ExceptionMUD):

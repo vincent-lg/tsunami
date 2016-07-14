@@ -203,7 +203,6 @@ class Guilde(BaseObj):
         malus = ceil(points * 5 / 100)
         malus += importeur.crafting.membres.malus.get(personnage, 0)
         importeur.crafting.membres.malus[personnage] = malus
-        importeur.crafting.membres._enregistrer()
 
     def changer_rang(self, personnage, rang):
         """Change le rang du personnage précisé.
@@ -218,8 +217,6 @@ class Guilde(BaseObj):
         progressions = [p for p in progressions if p.rang.guilde is not self]
         progressions.append(progression)
         importeur.crafting.membres.membres[personnage] = progressions
-        importeur.crafting.membres._enregistrer()
-        self._enregistrer()
 
     def get_rang(self, cle, exception=True):
         """Retourne le rang indiqué, si trouvé.
@@ -246,7 +243,6 @@ class Guilde(BaseObj):
 
         rang = Rang(self, cle)
         self.rangs.append(rang)
-        self._enregistrer()
         return rang
 
     def supprimer_rang(self, cle):
@@ -268,7 +264,6 @@ class Guilde(BaseObj):
 
                 self.rangs.remove(rang)
                 rang.detruire()
-                self._enregistrer()
                 return
 
         raise ValueError("Rang {} introuvable".format(repr(cle)))
@@ -297,7 +292,6 @@ class Guilde(BaseObj):
         talent.nom = nom
         talent.ouvert_a_tous = ouvert_a_tous
         self.talents[cle] = talent
-        self._enregistrer()
         return talent
 
     def get_type(self, nom_type):
@@ -343,7 +337,6 @@ class Guilde(BaseObj):
         importeur.crafting.enregistrer_YML()
         classe = type.creer()
         setattr(def_type, classe.__name__, classe)
-        self._enregistrer()
         return type
 
     def get_extension(self, nom, exception=True):
@@ -370,7 +363,6 @@ class Guilde(BaseObj):
         extension = Extension(self, editeur, nom)
         extension.type = nom_type
         self.extensions.append(extension)
-        self._enregistrer()
         return extension
 
     def supprimer_extension(self, nom):
@@ -378,7 +370,6 @@ class Guilde(BaseObj):
         extension = self.get_extension(nom)
         self.extensions.remove(extension)
         extension.detruire()
-        self._enregistrer()
 
     def get_atelier(self, cle):
         """Retourne, si trouvé, l'atelier.
@@ -400,7 +391,6 @@ class Guilde(BaseObj):
 
         atelier = Atelier(self, cle)
         self.ateliers.append(atelier)
-        self._enregistrer()
         return atelier
 
     def supprimer_atelier(self, cle):
@@ -408,7 +398,6 @@ class Guilde(BaseObj):
         atelier = self.get_atelier(cle)
         self.ateliers.remove(atelier)
         atelier.detruire()
-        self._enregistrer()
 
     def get_commande(self, nom, exception=True):
         """Cherche la commande indiquée."""
@@ -449,7 +438,6 @@ class Guilde(BaseObj):
         nom_anglais = nom_anglais.strip()
         commande = CommandeDynamique(self, parent, nom_francais, nom_anglais)
         self.commandes.append(commande)
-        self._enregistrer()
         return commande
 
     def supprimer_commande(self, nom):
@@ -457,37 +445,10 @@ class Guilde(BaseObj):
         commande = self.get_commande(nom)
         self.commandes.remove(commande)
         if commande.commande:
+            print("Destruction de", commande.commande)
             commande.commande.detruire()
 
         commande.detruire()
-        self._enregistrer()
-
-    def detruire(self):
-        """Destruction d'une guilde."""
-        BaseObj.detruire(self)
-        for atelier in self.ateliers:
-            atelier.detruire()
-
-        for commande in self.commandes:
-            commande.detruire()
-
-        for type in self.types:
-            type.detruire()
-
-        for progression in self.membres.values():
-            progression.detruire()
-
-        for rang in self.rangs:
-            rang.detruire()
-
-        for talent in self.talents.values():
-            talent.detruire()
-
-        for extension in self.extensions:
-            extension.detruire()
-
-        self.script.detruire()
-
 
 class GuildeSansRang(ExceptionCrafting):
 

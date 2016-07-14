@@ -47,7 +47,6 @@ class ModeleNavire(BaseObj):
     """
 
     enregistrer = True
-
     def __init__(self, cle):
         """Constructeur du modèle."""
         BaseObj.__init__(self)
@@ -63,6 +62,7 @@ class ModeleNavire(BaseObj):
         self.duree_construction = 60
         self.description = Description(parent=self)
         self.description_vente = Description(parent=self)
+        self.canot = False
         self.masculin = True
         self.peut_conquerir = True
         self.niveau = 5
@@ -77,38 +77,9 @@ class ModeleNavire(BaseObj):
                 "vent arrière": 0.7,
         }
         self.descriptions_independantes = False
-        self._construire()
 
     def __getnewargs__(self):
         return ("", )
-
-    def __getstate__(self):
-        """Enregistrement de l'objet.
-
-        On ne peut pas enregistrer les salles telles qu'elles car
-        MongoDB n'aime pas les dictionnaires contenant des tuples en
-        clés.
-
-        """
-        attrs = BaseObj.__getstate__(self)
-        salles = {}
-        for cle, salle in attrs["salles"].items():
-            salles["|".join([str(c) for c in cle])] = salle
-
-        attrs["salles"] = salles
-        return attrs
-
-    def __setstate__(self, attrs):
-        """Récupération de l'objet enregistré."""
-        salles = {}
-        for cle, salle in attrs["salles"].items():
-            if isinstance(cle, str):
-                x, y, z = cle.split("|")
-                cle = int(x), int(y), int(z)
-            salles[cle] = salle
-
-        attrs["salles"] = salles
-        BaseObj.__setstate__(self, attrs)
 
     def __repr__(self):
         return self.cle
@@ -122,21 +93,6 @@ class ModeleNavire(BaseObj):
     def mnemonics_salles(self):
         """Retourne un tuple des mnémoniques des salles."""
         return tuple(s.mnemonic for s in self.salles.values())
-
-    @property
-    def a_canot(self):
-        """Le modèle de navire a-t-il un canot ?
-
-        Le modèle de navire a un canot si il existe un objet de
-        même clé que le modèle.
-
-        """
-        return self.cle in importeur.objet.prototypes
-
-    @property
-    def prototype_canot(self):
-        """Retourne le prototype d'objet du canot ou None."""
-        return importeur.objet.prototypes.get(self.cle)
 
     def get_max_distance_au_centre(self):
         """Retourne la distance maximum par rapport au centre du navire."""
@@ -181,7 +137,6 @@ class ModeleNavire(BaseObj):
 
         salle = SalleNavire(self.cle, mnemonic, r_x, r_y, r_z, self)
         self.salles[r_coords] = salle
-        self._enregistrer()
         return salle
 
     def lier_salle(self, salle_1, salle_2, direction):
@@ -217,7 +172,6 @@ class ModeleNavire(BaseObj):
 
         # Supprime la salle
         self.salles.pop(c).detruire()
-        self._enregistrer()
 
     def generer_graph(self):
         """Génère le graph des sorties.
@@ -285,9 +239,4 @@ class ModeleNavire(BaseObj):
         for vehicule in list(self.vehicules):
             vehicule.detruire()
 
-        for salle in self.salles.values():
-            importeur.salle.supprimer_salle(salle.ident)
-
-        self.description.detruire()
-        self.description_vente.detruire()
         BaseObj.detruire(self)

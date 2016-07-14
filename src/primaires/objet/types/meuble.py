@@ -46,11 +46,6 @@ class Meuble(BaseType):
 
     nom_type = "meuble"
     nettoyer = False
-    _attributs = {
-        "conteneur": Attribut(
-            lambda obj: ConteneurObjet(obj),
-            ("", )),
-    }
 
     def __init__(self, cle=""):
         """Constructeur de l'objet"""
@@ -95,6 +90,13 @@ class Meuble(BaseType):
                 "oallongé", "eassis", "eallongé", "contenu", "vide",
                 "pose", "prend", "opose", "oprend"]),
                 ("Message", "chaîne")))
+
+        # Attributs propres à l'objet (non au prototype)
+        self._attributs = {
+            "conteneur": Attribut(
+                lambda obj: ConteneurObjet(obj),
+                ("", )),
+        }
 
     @property
     def peut_asseoir(self):

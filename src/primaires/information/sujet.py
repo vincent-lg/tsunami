@@ -148,15 +148,11 @@ class SujetAide(BaseObj):
 
     def ajouter_lie(self, sujet):
         """Lie un sujet au courant."""
-        self._enregistrer()
-        sujet._enregistrer()
         self.__sujets_lies.append(sujet)
         sujet.__sujets_lies.append(self)
 
     def supprimer_lie(self, sujet):
         """Supprime un sujet de la liste des sujets liés."""
-        self._enregistrer()
-        sujet._enregistrer()
         self.__sujets_lies.remove(sujet)
         sujet.__sujets_lies.remove(self)
 
@@ -166,19 +162,16 @@ class SujetAide(BaseObj):
 
     def ajouter_fils(self, sujet):
         """Ajoute le sujet aux fils."""
-        self._enregistrer()
         self.__sujets_fils.append(sujet)
         sujet.pere = self
 
     def supprimer_fils(self, sujet):
         """Supprime le sujet des fils."""
-        self._enregistrer()
         self.__sujets_fils.remove(sujet)
         sujet.pere = None
 
     def echanger_fils(self, sujet, bas=False):
         """Change un fils de place vers le haut ou le bas de la liste."""
-        self._enregistrer()
         i = self.sujets_fils.index(sujet)
         if i == 0 and not bas:
             raise ValueError("le sujet est déjà en haut de la liste")
@@ -192,7 +185,6 @@ class SujetAide(BaseObj):
 
     def vider(self):
         """Prépare la destruction du sujet."""
-        self._enregistrer()
         for s in self.sujets_fils:
             s.pere = self.pere
             if self.pere:

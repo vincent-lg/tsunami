@@ -105,7 +105,6 @@ class CheminPNJ(BaseObj):
 
         self.salles[salle] = ""
         self.salles_retour[salle] = ""
-        self._enregistrer()
 
     def ajouter_salle(self, direction):
         """Ajoute une nouvelle salle à la fin du chemin."""
@@ -129,9 +128,6 @@ class CheminPNJ(BaseObj):
             for t_salle in list(self.salles_retour.keys()):
                 if t_salle is not sortie.salle_dest:
                     self.salles_retour.move_to_end(t_salle)
-
-        # Sauvegarde du chemin
-        self._enregistrer()
 
     def supprimer_salle(self, salle):
         """Supprime la salle spécifiée et les suivantes."""
@@ -158,6 +154,3 @@ class CheminPNJ(BaseObj):
 
             if t_salle is salle:
                 trouve = True
-
-        # Sauvegarde du chemin
-        self._enregistrer()

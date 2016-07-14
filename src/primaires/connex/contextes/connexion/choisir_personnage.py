@@ -149,10 +149,9 @@ class ChoisirPersonnage(Contexte):
 
                 # on se connecte sur le joueur
                 joueur = self.pere.compte.joueurs[choix]
+                self.pere.joueur = joueur
                 joueur.compte = self.pere.compte
                 joueur.instance_connexion = self.pere
-                self.pere.joueur = joueur
-                joueur.connecte = False
 
                 # On log la connexion
                 importeur.connex.table_logger.info(
@@ -167,7 +166,6 @@ class ChoisirPersonnage(Contexte):
                     self.migrer_contexte("personnage:creation:choix_genre")
                 else:
                     joueur.pre_connecter()
-                    self.detruire()
         elif msg == cmd_creer:
             if len(self.pere.compte.joueurs) >= nb_perso_max and nb_perso_max != -1:
                 self.pere.envoyer("|err|Vous ne pouvez avoir plus de {0} " \

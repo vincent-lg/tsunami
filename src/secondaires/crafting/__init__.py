@@ -158,29 +158,31 @@ class Module(BaseModule):
         for cmd in self.commandes:
             self.importeur.interpreteur.ajouter_commande(cmd)
 
-        # Ajout des commandes dynamiques
+        # Ajout des éditeurs
+        self.importeur.interpreteur.ajouter_editeur(
+                editeurs.gldedit.GldEdit)
+
+    def preparer(self):
+        """On ajoute les guildes déjà ouvertes."""
         guildes = self.guildes_ouvertes
         self.logger.info(format_nb(len(guildes),
                 "{nb} guilde{s} ouverte{s}", fem=True))
 
         # Ajout des commandes dynamiques
-        cmds = []
+        commandes = []
         nb_cmd = 0
         for guilde in self.guildes.values():
             for commande in guilde.commandes:
                 self.commandes_dynamiques[commande.nom_francais_complet] = \
                         commande
-                cmds.append(commande)
+                commandes.append(commande)
 
             for talent in guilde.talents.values():
                 if talent.ouvert:
                     talent.ajouter()
 
-        cmds.sort(key=lambda c: str(c))
-        for commande in cmds:
-            if not commande._utilisable:
-                continue
-
+        commandes.sort(key=lambda c: str(c))
+        for commande in commandes:
             try:
                 commande.ajouter()
             except Exception as err:
@@ -193,10 +195,6 @@ class Module(BaseModule):
 
         self.logger.info(format_nb(nb_cmd,
                 "{nb} commande{s} dynamique{s} créée{s}", fem=True))
-
-        # Ajout des éditeurs
-        self.importeur.interpreteur.ajouter_editeur(
-                editeurs.gldedit.GldEdit)
 
     @property
     def guildes_ouvertes(self):

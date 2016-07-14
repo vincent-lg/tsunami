@@ -45,11 +45,6 @@ class Machine(BaseType):
 
     nom_type = "machine"
     nettoyer = False
-    _attributs = {
-        "conteneur": Attribut(
-            lambda obj: ConteneurObjet(obj),
-            ("", )),
-    }
 
     def __init__(self, cle=""):
         """Constructeur de l'objet"""
@@ -67,6 +62,13 @@ class Machine(BaseType):
                 "message_contenu")
         self.etendre_editeur("vi", "message vide", Uniligne, self,
                 "message_vide")
+
+        # Attributs propres à l'objet (non au prototype)
+        self._attributs = {
+            "conteneur": Attribut(
+                lambda obj: ConteneurObjet(obj),
+                ("", )),
+        }
 
     def peut_contenir(self, objet, qtt=1):
         """Retourne True si le conteneur peut prendre l'objet."""

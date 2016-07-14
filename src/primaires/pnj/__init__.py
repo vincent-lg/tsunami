@@ -31,7 +31,6 @@
 """Fichier contenant le module primaire pnj."""
 
 from abstraits.module import *
-from abstraits.obase import BaseObj
 from primaires.perso.exceptions.action import ExceptionAction
 from primaires.pnj.chemin import CheminPNJ
 from .prototype import Prototype
@@ -107,10 +106,7 @@ class Module(BaseModule):
         pnjs = [p for p in pnjs if hasattr(p, "identifiant") and \
                 p.prototype]
         for pnj in pnjs:
-            if pnj.stats is not None:
-                self._PNJ[pnj.identifiant] = pnj
-            else:
-                BaseObj.detruire(pnj)
+            self._PNJ[pnj.identifiant] = pnj
 
         chemins = self.importeur.supenr.charger_groupe(CheminPNJ)
         chemins = self.importeur.supenr.charger_groupe(CheminPNJ)
@@ -298,10 +294,6 @@ class Module(BaseModule):
         importeur.diffact.ajouter_action(nom_action, temps,
                 self.suivre_chemin, pnj, temps, chemin, avant)
         sortie = salle.sorties.get(direction)
-        if sortie is None:
-            # ... c'est manifestement une erreur
-            return
-
         verrou = False
         if sortie.porte and sortie.porte.verrouillee:
             sortie.porte.verrouillee = False

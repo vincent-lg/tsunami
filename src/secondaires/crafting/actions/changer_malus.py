@@ -66,4 +66,3 @@ class ClasseAction(Action):
             raise ErreurExecution("Le malus précisé {} est négatif.".format(malus))
 
         importeur.crafting.membres.malus[personnage] = malus
-        importeur.crafting.membres._enregistrer()

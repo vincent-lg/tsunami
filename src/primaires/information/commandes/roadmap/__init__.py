@@ -77,7 +77,6 @@ class CmdRoadmap(Commande):
                 else:
                     msg += " |rg|*|ff| "
                     roadmap.joueurs_ayant_lu.append(personnage)
-                    roadmap._enregistrer()
 
                 msg += " " + roadmap.titre.capitalize()
                 if roadmap.texte:

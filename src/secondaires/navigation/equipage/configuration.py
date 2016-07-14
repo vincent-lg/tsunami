@@ -82,7 +82,6 @@ class Configuration(BaseObj):
     def ecrire_donnee(self, donnee):
         """Écrit la donnée de configuration précisée."""
         self.donnees[donnee.cle] = donnee
-        self._enregistrer()
 
     def ecrire_chaine(self, chaine):
         """Essaye d'écrire la chaîne en configuration."""
@@ -99,4 +98,3 @@ class Configuration(BaseObj):
     def supprimer_configuration(self, cle):
         """Supprime la configuration."""
         del self.donnees[cle]
-        self._enregistrer()

@@ -104,7 +104,6 @@ class Progression(BaseObj):
         nb = self.recettes.get(recette, 0)
         if nb < nb_max:
             self.recettes[recette] = nb + 1
-            self._enregistrer()
             return True
 
         return False

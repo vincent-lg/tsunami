@@ -98,9 +98,7 @@ class Salle(BaseObj):
         BaseObj.__init__(self)
         self._nom_zone = zone
         self._mnemonic = mnemonic
-        coords = Coordonnees(x, y, z, valide, self)
-        coords._construire()
-        self.coords = coords
+        self.coords = Coordonnees(x, y, z, valide, self)
         self.nom_terrain = "ville"
         self.titre = ""
         self.description = Description(parent=self)
@@ -373,13 +371,11 @@ class Salle(BaseObj):
         """Ajoute le personnage dans la salle"""
         if personnage not in self._personnages:
             self._personnages.append(personnage)
-            self._enregistrer()
 
     def retirer_personnage(self, personnage):
         """Retire le personnage des personnages présents"""
         if personnage in self.personnages:
             self._personnages.remove(personnage)
-            self._enregistrer()
 
     def salles_autour(self, rayon=5):
         """Retourne les chemins autour de self dans le rayon précisé.
@@ -738,14 +734,12 @@ class Salle(BaseObj):
         pro = pnj.prototype
         if pro in self.pnj_repop:
             self.pnj_repop[pro] = self.pnj_repop[pro] - 1
-            self._enregistrer()
 
     def det_pnj(self, pnj):
         """Méthode appelée quand un PNJ disparaît.."""
         pro = pnj.prototype
         if pro in self.pnj_repop:
             self.pnj_repop[pro] = self.pnj_repop[pro] + 1
-            self._enregistrer()
 
     def repop(self):
         """Méthode appelée à chaque repop."""
@@ -769,7 +763,6 @@ class Salle(BaseObj):
         else:
             concrete = Affection(affection, self, duree, force)
             self.affections[cle] = concrete
-            self._enregistrer()
             concrete.affection.executer_script("cree", concrete)
             concrete.prevoir_tick()
 
@@ -795,7 +788,6 @@ class Salle(BaseObj):
         for cle, affection in list(self.affections.items()):
             if not affection.e_existe or affection.duree <= 0:
                 del self.affections[cle]
-                self._enregistrer()
 
         self.script["tick"].executer(salle=self)
 
@@ -826,7 +818,6 @@ class Salle(BaseObj):
             decor = Decor(prototype, self)
 
         self.decors.append(decor)
-        self._enregistrer()
         return decor
 
     def get_decors(self, cle):
@@ -838,17 +829,14 @@ class Salle(BaseObj):
         """Supprime les décors indiqués."""
         self.decors.remove(decor)
         decor.detruire()
-        self._enregistrer()
 
     def supprimer_decors(self, cle):
         """Supprime les décors de clé indiquée."""
-        self._enregistrer()
         for decor in self.get_decors(cle):
             self.supprimer_decor(decor)
 
     def supprimer_bonhommes_neige(self):
         """Supprime les bonhommes de neige présents."""
-        self._enregistrer()
         for decor in list(self.decors):
             if isinstance(decor, BonhommeNeige):
                 self.supprimer_decor(decor)
@@ -899,30 +887,3 @@ class Salle(BaseObj):
                 self.coords.y = int(valeur)
             elif cle == "z":
                 self.coords.z = int(valeur)
-
-    def detruire(self, description=True):
-        """Destruction de la salle."""
-        BaseObj.detruire(self)
-        if self.coords:
-            self.coords.detruire()
-
-        if description:
-            self.description.detruire()
-            self.details.detruire()
-
-        self.sorties.detruire()
-
-        for decor in self.decors:
-            decor.detruire()
-
-        self.objets_sol.detruire()
-        self.script.detruire()
-
-        if self.magasin:
-            self.magasin.detruire()
-
-        if self.etendue and self.coords:
-            self.etendue.supprimer_cote(self)
-
-        for affection in self.affections.values():
-            affection.detruire()

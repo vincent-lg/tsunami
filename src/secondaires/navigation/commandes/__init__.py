@@ -36,7 +36,6 @@ from . import amarre
 from . import cale
 from . import calfeutrer
 from . import canon
-from . import canot
 from . import cap
 from . import chantier
 from . import debarquer

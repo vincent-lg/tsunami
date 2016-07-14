@@ -115,11 +115,8 @@ class Quetes(BaseObj):
         sous-niveau 1.
 
         """
-        self._enregistrer()
         if isinstance(valeur, tuple):
             pass
-        elif isinstance(valeur, list):
-            valeur = tuple(valeur)
         elif isinstance(valeur, int):
             valeur = tuple(valeur)
         elif isinstance(valeur, str):
@@ -180,13 +177,11 @@ class Quetes(BaseObj):
 
     def valider(self, quete, niveau):
         """Valide la quête."""
-        self._enregistrer()
         self[quete.cle] = niveau
         self.__quetes[quete.cle].valider(quete, niveau)
 
     def vider(self, cle_quete):
         """Remet à zéro la quête spécifiée."""
-        self._enregistrer()
         if cle_quete in self.__quetes.keys():
             self.__quetes[cle_quete].detruire()
             del self.__quetes[cle_quete]

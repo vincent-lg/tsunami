@@ -328,7 +328,6 @@ class Module(BaseModule):
             commandes.cale.CmdCale(),
             commandes.calfeutrer.CmdCalfeutrer(),
             commandes.canon.CmdCanon(),
-            commandes.canot.CmdCanot(),
             commandes.cap.CmdCap(),
             commandes.chantier.CmdChantier(),
             commandes.debarquer.CmdDebarquer(),
@@ -357,8 +356,6 @@ class Module(BaseModule):
         # Ajout des éditeurs
         self.importeur.interpreteur.ajouter_editeur(
                 editeurs.autonavire.EdtNaedit)
-        self.importeur.interpreteur.ajouter_editeur(
-                editeurs.chantier.EdtChantierNaval)
         self.importeur.interpreteur.ajouter_editeur(
                 editeurs.matedit.EdtMatedit)
         self.importeur.interpreteur.ajouter_editeur(
@@ -543,6 +540,7 @@ class Module(BaseModule):
                 for objet in cale.conteneur:
                     objets.append(objet)
 
+        print("sauve", objets)
         return objets
 
     def get_vents_etendue(self, cle):

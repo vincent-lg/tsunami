@@ -118,65 +118,6 @@ class Etendue(BaseObj):
         """
         coordonnees = self.convertir_coordonnees(item)
         return self.points[coordonnees]
-    def __getstate__(self):
-        """Enregistrement de l'objet.
-
-        On ne peut pas enregistrer les points tel quel car
-        MongoDB n'aime pas les dictionnaires contenant des tuples en
-        clés.
-
-        """
-        attrs = BaseObj.__getstate__(self)
-        obstacles = {}
-        for cle, point in attrs["obstacles"].items():
-            obstacles["|".join([str(c) for c in cle])] = point
-
-        attrs["obstacles"] = obstacles
-
-        cotes = {}
-        for cle, point in attrs["cotes"].items():
-            cotes["|".join([str(c) for c in cle])] = point
-
-        attrs["cotes"] = cotes
-
-        liens = {}
-        for cle, point in attrs["liens"].items():
-            liens["|".join([str(c) for c in cle])] = point
-
-        attrs["liens"] = liens
-
-        return attrs
-
-    def __setstate__(self, attrs):
-        """Récupération de l'objet enregistré."""
-        obstacles = {}
-        for cle, point in attrs["obstacles"].items():
-            if isinstance(cle, str):
-                x, y = cle.split("|")
-                cle = int(x), int(y)
-            obstacles[cle] = point
-
-        attrs["obstacles"] = obstacles
-
-        cotes = {}
-        for cle, point in attrs["cotes"].items():
-            if isinstance(cle, str):
-                x, y = cle.split("|")
-                cle = int(x), int(y)
-            cotes[cle] = point
-
-        attrs["cotes"] = cotes
-
-        liens = {}
-        for cle, point in attrs["liens"].items():
-            if isinstance(cle, str):
-                x, y = cle.split("|")
-                cle = int(x), int(y)
-            liens[cle] = point
-
-        attrs["liens"] = liens
-
-        BaseObj.__setstate__(self, attrs)
 
     @property
     def points(self):
@@ -294,7 +235,6 @@ class Etendue(BaseObj):
                     coordonnees))
 
         self.obstacles[coordonnees] = obstacle
-        self._enregistrer()
 
     def est_obstacle(self, coordonnees):
         """Retourne True si les coordonnées sont un obstacle."""
@@ -321,7 +261,6 @@ class Etendue(BaseObj):
 
         self.cotes[coordonnees] = salle
         salle.etendue = self
-        self._enregistrer()
 
     def ajouter_lien(self, coordonnees, etendue):
         """Ajoute le lien vers une autre étendue.
@@ -339,8 +278,6 @@ class Etendue(BaseObj):
 
         self.liens[coordonnees] = etendue
         etendue.liens[coordonnees] = self
-        self._enregistrer()
-        etendue._enregistrer()
 
         # On détermine les segments de liens
         self.determiner_segments_liens()
@@ -350,7 +287,6 @@ class Etendue(BaseObj):
         """Supprime un obstacle."""
         coordonnees = self.convertir_coordonnees(coordonnees)
         del self.obstacles[coordonnees]
-        self._enregistrer()
 
     def supprimer_cote(self, salle):
         """Supprime la salle des côtes."""
@@ -358,7 +294,6 @@ class Etendue(BaseObj):
         salle = self.cotes[coordonnees]
         salle.etendue = None
         del self.cotes[coordonnees]
-        self._enregistrer()
 
     def supprimer_lien(self, coordonnees):
         """Supprime un lien."""
@@ -370,8 +305,6 @@ class Etendue(BaseObj):
         # On détermine les segments de liens
         self.determiner_segments_liens()
         etendue.determiner_segments_liens()
-        self._enregistrer()
-        etendue._enregistrer()
 
     def trouver_contour(self):
         """Recherche les contours de l'étendue."""

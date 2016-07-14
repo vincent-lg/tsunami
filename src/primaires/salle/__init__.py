@@ -374,8 +374,6 @@ class Module(BaseModule):
         for salle in self.salles.values():
             if salle.magasin:
                 magasin = salle.magasin
-                magasin.ouverture = tuple(magasin.ouverture)
-                magasin.fermeture = tuple(magasin.fermeture)
                 if magasin.renouveler_ouverture:
                     liste = self.a_renouveler.get(magasin.ouverture, [])
                     liste.append(magasin)
@@ -501,7 +499,7 @@ class Module(BaseModule):
         self.ajouter_salle(salle)
         return salle
 
-    def supprimer_salle(self, cle, detruire=True):
+    def supprimer_salle(self, cle):
         """Supprime la salle.
         La clé est l'identifiant de la salle.
 
@@ -511,9 +509,7 @@ class Module(BaseModule):
         if coords.valide and coords.tuple() in self._coords.keys():
             del self._coords[coords.tuple()]
         del self._salles[cle]
-
-        if detruire:
-            salle.detruire()
+        salle.detruire()
 
     def creer_decor(self, cle):
         """Créée un nouveau prototype de décor."""

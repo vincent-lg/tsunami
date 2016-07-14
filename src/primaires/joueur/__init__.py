@@ -281,6 +281,7 @@ class Module(BaseModule):
             if "personnage:creation:choix_genre" in ordre:
                 ordre.remove("personnage:creation:choix_genre")
 
+        print(ordre)
         if contexte.nom in ordre:
             # Déplace au prochain contexte valide
             actuel = ordre.index(contexte.nom)
@@ -292,7 +293,6 @@ class Module(BaseModule):
                     contexte.pere.compte.ajouter_joueur(contexte.pere.joueur)
                 contexte.pere.joueur.contextes.vider()
                 contexte.pere.joueur.pre_connecter()
-                contexte.detruire()
         else:
             nouv_joueur = Joueur()
             nouv_joueur.instance_connexion = contexte.pere

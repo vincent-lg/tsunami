@@ -90,13 +90,11 @@ class Zone(BaseObj):
         """Ajoute une salle à la zone."""
         if salle not in self.salles:
             self.salles.append(salle)
-            self._enregistrer()
 
     def retirer(self, salle):
         """Retire la salle de la zone."""
         if salle in self.salles:
             self.salles.remove(salle)
-            self._enregistrer()
 
     def chercher_mnemonic_libre(self, mnemonic):
         """Cherche le mnémonique libre suivant.

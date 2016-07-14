@@ -119,15 +119,12 @@ class EditeurPersonnalise(BaseObj):
 
         extension = classe(self.structure, attribut)
         self.editeurs.append(extension)
-        self._enregistrer()
         return extension
 
     def supprimer_editeur(self, nom):
         """Supprime un sous-éditeur."""
         extension = self.get_editeur(nom)
-        extension.detruire()
         self.editeurs.remove(extension)
-        self._enregistrer()
 
     def editer(self, personnage, structure, lecture_seule=None):
         """Fait éditer le personnage."""
@@ -135,9 +132,3 @@ class EditeurPersonnalise(BaseObj):
                 lecture_seule=lecture_seule)
         personnage.contextes.ajouter(editeur)
         editeur.actualiser()
-
-    def detruire(self):
-        """Destruction de l'éditeur personnalisé."""
-        BaseObj.detruire(self)
-        for extension in self.editeurs:
-            extension.detruire()

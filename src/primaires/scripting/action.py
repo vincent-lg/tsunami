@@ -261,9 +261,3 @@ class Action(Instruction):
             ancien_diff = module.exc_actions.get(cls.nom, -1)
             if ancien_diff < diff:
                 module.exc_actions[cls.nom] = diff
-
-    def detruire(self):
-        """Destruction de l'instruction."""
-        super(Action, self).detruire()
-        for parametre in self.parametres:
-            parametre.detruire()

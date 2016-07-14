@@ -53,7 +53,6 @@ class Auberge(BaseObj):
         self.titre = "Une auberge"
         self.cle_aubergiste = ""
         self.chambres = {}
-        self._construire()
 
     def __getnewargs__(self):
         return ("", )
@@ -169,14 +168,12 @@ class Auberge(BaseObj):
 
         chambre = Chambre(self, numero, salle)
         self.chambres[salle.ident] = chambre
-        self._enregistrer()
         return chambre
 
     def supprimer_chambre(self, ident):
         """Supprime une chambre."""
         chambre = self.chambres.pop(ident)
         chambre.detruire()
-        self._enregistrer()
 
     def detruire(self):
         """Destruction de l'auberge, on détruit ses chambres."""

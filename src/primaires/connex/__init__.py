@@ -122,8 +122,8 @@ class Module(BaseModule):
                     comptes_a_pas_effacer.append(nouv_instance.compte.nom)
 
         for compte in comptes:
-            if not compte.valide and not compte.nom in comptes_a_pas_effacer:
-                self.supprimer_compte(compte, erreur=False)
+            if (not compte.valide) and (not compte.nom in comptes_a_pas_effacer):
+                self.supprimer_compte(compte)
 
         nb_comptes = len(self.comptes)
         self.cpt_logger.info(
@@ -260,14 +260,14 @@ class Module(BaseModule):
         self.comptes[nouv_compte.nom] = nouv_compte
         return nouv_compte
 
-    def supprimer_compte(self, compte, erreur=True):
+    def supprimer_compte(self, compte):
         """Supprime le compte 'compte'"""
         if compte.nom in self.comptes.keys():
             self.cpt_logger.info("Suppression du compte {0}: {1}".format( \
                     compte.nom, compte))
             del self.comptes[compte.nom]
             compte.detruire()
-        elif erreur:
+        else:
             raise KeyError("Le compte n'est pas dans la liste " \
                     "des comptes existants".format(compte))
 

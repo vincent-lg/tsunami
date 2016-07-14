@@ -259,8 +259,3 @@ class Extension(BaseObj):
                     if objet.est_de_type(n_type.nom):
                         for extension in n_type.extensions:
                             extension.creer(presentation, objet)
-
-    def detruire(self):
-        """Destruction de l'extension."""
-        BaseObj.detruire(self)
-        self.description.detruire()

@@ -136,7 +136,6 @@ class Rang(BaseObj):
         recette = Recette(self)
         recette.resultat = resultat
         self.recettes.append(recette)
-        self._enregistrer()
         return recette
 
     def supprimer_recette(self, cle):
@@ -146,16 +145,9 @@ class Rang(BaseObj):
             if recette.resultat == cle:
                 self.recettes.remove(recette)
                 recette.detruire()
-                self._enregistrer()
                 return
 
         raise ValueError("Recette {} introuvable".format(repr(cle)))
-
-    def detruire(self):
-        """Destruction du rang."""
-        BaseObj.detruire(self)
-        for recette in self.recettes:
-            recette.detruire()
 
 
 

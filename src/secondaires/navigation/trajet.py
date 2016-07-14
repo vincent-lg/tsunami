@@ -55,7 +55,6 @@ class Trajet(BaseObj):
         self.etendue = None
         self.point_depart = None
         self.points = OrderedDict()
-        self._construire()
 
     def __getnewargs__(self):
         return ("inconnu", )
@@ -81,4 +80,3 @@ class Trajet(BaseObj):
             raise ValueError("Ce trajet n'a aucun point de départ défini")
 
         self.points[depuis] = vers
-        self._enregistrer()

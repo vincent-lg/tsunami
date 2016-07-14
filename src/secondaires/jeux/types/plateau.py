@@ -42,9 +42,6 @@ class Plateau(BaseType):
 
     nom_type = "plateau de jeu"
     nettoyer = False
-    attributs = {
-        "partie": Attribut(),
-    }
 
     def __init__(self, cle=""):
         """Constructeur du type jeu"""
@@ -53,6 +50,11 @@ class Plateau(BaseType):
         plateaux = list(sorted(type(self).importeur.jeux.plateaux.keys()))
         self.plateau = ""
         self.etendre_editeur("l", "plateau", Choix, self, "plateau", plateaux)
+        # Attributs propres à l'objet (non au prototype)
+        self._attributs = {
+            "partie": Attribut(),
+        }
+
     def travailler_enveloppes(self, enveloppes):
         """Travail sur les enveloppes.
 

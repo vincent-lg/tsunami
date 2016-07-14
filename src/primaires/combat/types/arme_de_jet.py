@@ -43,10 +43,6 @@ class ArmeDeJet(Arme):
     cle_talent = "maniement_arc"
     nom_talent = "maniement des armes de jet"
     difficulte_talent = 0.34
-    _attributs = {
-        "projectile": Attribut(),
-    }
-
     def __init__(self, cle=""):
         """Constructeur de l'objet"""
         Arme.__init__(self, cle)
@@ -60,6 +56,10 @@ class ArmeDeJet(Arme):
                 "projectile")]
         self.etendre_editeur("pr", "projectiles autorisés", Selection,
                 self, "projectiles_autorises", cles_projectiles)
+
+        self._attributs = {
+            "projectile": Attribut(),
+        }
 
     @property
     def str_projectiles_autorises(self):

@@ -50,12 +50,11 @@ class StructureSimple(BaseObj):
 
     """
 
-    interdits = ("_id", "_statut", "e_existe", "_dict_version", "donnees")
-
     def __init__(self):
         """Constructeur d'une variable"""
         BaseObj.__init__(self)
         self.donnees = {}
+        self._construire()
 
     def __getnewargs__(self):
         return ()
@@ -68,32 +67,21 @@ class StructureSimple(BaseObj):
 
     def __getattr__(self, nom):
         """Essaye de récupérer la valeur indiquée."""
-        if nom in type(self).interdits:
-            return object.__getattribute__(self, nom)
+        if "_statut" not in self.__dict__ or not self.construit:
+            return object.__getattr__(self, nom)
         else:
             return self.donnees.get(nom)
 
     def __setattr__(self, nom, valeur):
         """Modifie la donnée."""
-        if nom in type(self).interdits:
-            BaseObj.__setattr__(self, nom, valeur)
+        if not self.construit:
+            object.__setattr__(self, nom, valeur)
         else:
             self.donnees[nom] = valeur
-            if isinstance(valeur, BaseObj):
-                valeur._construire()
-            self._enregistrer()
 
     def get_nom_pour(self, personnage):
         """Affichage d'une structure."""
         return str(self)
-
-    def detruire(self):
-        """Destruction de la structure."""
-        BaseObj.detruire(self)
-        from primaires.temps.variable import TempsVariable
-        for valeur in self.donnees.values():
-            if isinstance(valeur, (TempsVariable, StructureSimple)):
-                valeur.detruire()
 
 
 class StructureComplete(StructureSimple):
@@ -108,7 +96,6 @@ class StructureComplete(StructureSimple):
                 "structure": structure,
                 "id": 0,
         })
-        self._construire()
 
     def __getnewargs__(self):
         return ("inconnu", )

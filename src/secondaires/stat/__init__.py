@@ -30,11 +30,6 @@
 
 """Fichier contenant le module secondaire stat."""
 
-#try:
-#    import psutil
-#except ImportError:
-psutil = None
-
 import time
 
 from abstraits.module import *
@@ -90,16 +85,13 @@ class Module(BaseModule):
             self.stats = Stats(type(self.importeur).serveur.uptime)
 
         # On ajoute les commandes du module
+        # On ajoute les commandes du module
         self.commandes = [
             commandes.stat.CmdStat(),
         ]
 
         for cmd in self.commandes:
             self.importeur.interpreteur.ajouter_commande(cmd)
-
-        # On initialise le compteur CPU
-        if psutil:
-            psutil.cpu_percent()
 
         BaseModule.init(self)
 

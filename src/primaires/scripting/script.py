@@ -65,18 +65,17 @@ class Script(BaseObj):
 
     _nom = "script"
     _version = 1
-    def __init__(self, parent, init=True):
+    def __init__(self, parent):
         """Constructeur d'un script"""
         BaseObj.__init__(self)
         self.parent = parent
         self.__blocs = {}
         self.__evenements = {}
         self._construire()
-        if init:
-            self.init()
+        self.init()
 
     def __getnewargs__(self):
-        return (None, False)
+        return (None, )
 
     def __getitem__(self, evenement):
         """Retourne l'évènement correspondant.
@@ -118,9 +117,9 @@ class Script(BaseObj):
                 evt = self.__evenements[sa_evenement]
             else:
                 evt = self.creer_evenement_dynamique(evenement.nom)
-
+            
             evt.copier_depuis(evenement)
-
+    
     def creer_evenement(self, evenement):
         """Crée et ajoute l'évènement dont le nom est précisé en paramètre.
 
@@ -134,7 +133,6 @@ class Script(BaseObj):
 
         sa_evenement = supprimer_accents(evenement).lower()
 
-        self._enregistrer()
         if sa_evenement in self.__evenements.keys():
             evt = self.evenements[sa_evenement]
             evt.nom = evenement
@@ -167,7 +165,6 @@ class Script(BaseObj):
 
     def supprimer_evenement(self, evenement):
         """Supprime l'évènement en le retirant du script."""
-        self._enregistrer()
         evenement = supprimer_accents(evenement).lower()
         del self.__evenements[evenement]
 
@@ -176,7 +173,6 @@ class Script(BaseObj):
         if nom in self.__blocs:
             raise ValueError("le bloc '{}' existe déjà".format(nom))
 
-        self._enregistrer()
         bloc = Bloc(self, nom)
         self.__blocs[nom] = bloc
         return bloc
@@ -186,16 +182,5 @@ class Script(BaseObj):
         if nom not in self.__blocs:
             raise ValueError("le bloc '{}' n'existe pas".format(nom))
 
-        self._enregistrer()
         self.__blocs[nom].detruire()
         del self.__blocs[nom]
-
-    def detruire(self):
-        """Destruction du script."""
-        for bloc in self.__blocs.values():
-            bloc.detruire()
-
-        for evenement in self.__evenements.values():
-            evenement.detruire()
-
-        BaseObj.detruire(self)

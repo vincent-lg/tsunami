@@ -47,12 +47,10 @@ class ChantierNaval(BaseObj):
     """
 
     enregistrer = True
-
     def __init__(self, cle):
         BaseObj.__init__(self)
         self.cle = cle
         self.salle_magasin = None
-        self.salle_questeur = None
         self.etendue = None
         self.points = []
         self.commandes = []
@@ -82,7 +80,6 @@ class ChantierNaval(BaseObj):
         commande = CommandeChantierNaval(self, instigateur, navire, nom_type,
                 duree, *args)
         self.commandes.append(commande)
-        self._enregistrer()
 
     def get_navires_possedes(self, personnage):
         """Retourne les navires dans le chantier naval."""
@@ -104,10 +101,3 @@ class ChantierNaval(BaseObj):
                     pass
                 else:
                     self.commandes.remove(commande)
-                    self._enregistrer()
-
-    def detruire(self):
-        """Destruction du chantier navale."""
-        BaseObj.detruire(self)
-        for commande in self.commandes:
-            commande.detruire()

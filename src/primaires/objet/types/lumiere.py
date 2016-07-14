@@ -50,10 +50,6 @@ class Lumiere(BaseType):
     """Type d'objet: lumière."""
 
     nom_type = "lumière"
-    _attributs = {
-        "duree": Attribut(None),
-        "allumee_depuis": Attribut(None),
-    }
 
     def __init__(self, cle=""):
         """Constructeur de l'objet"""
@@ -68,6 +64,12 @@ class Lumiere(BaseType):
         self.etendre_editeur("ty", "types de combustibles", Selection,
                 self, "types_combustibles", TYPES_COMBUSTIBLES)
         self.etendre_editeur("ma", "genre masculin", Flag, self, "masculin")
+
+        # Attributs propres à l'objet (non au prototype)
+        self._attributs = {
+            "duree": Attribut(None),
+            "allumee_depuis": Attribut(None),
+        }
 
     @property
     def str_types_combustibles(self):

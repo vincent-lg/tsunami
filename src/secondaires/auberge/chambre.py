@@ -60,7 +60,6 @@ class Chambre(BaseObj):
         self.proprietaire = None
         self.expire_a = None
         self.dependances = []
-        self._construire()
 
     def __getnewargs__(self):
         return (None, "", None)

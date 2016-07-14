@@ -69,6 +69,5 @@ class PrmChoisir(Parametre):
             return
 
         importeur.communication.orbes.defauts[personnage] = orbe
-        importeur.communication.orbes._enregistrer()
         personnage << "Votre orbe par défaut est désormais {}.".format(
                 orbe.get_nom())

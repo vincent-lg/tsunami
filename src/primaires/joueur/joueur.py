@@ -31,7 +31,6 @@
 """Fichier contenant la classe Joueur, détaillée plus bas."""
 
 from datetime import datetime
-from textwrap import dedent
 
 from abstraits.obase import BaseObj
 from corps.fonctions import lisser as fn_lisser
@@ -153,10 +152,8 @@ class Joueur(Personnage):
             if joueur_connecte and \
                     connecte is not self.instance_connexion and \
                     joueur_connecte is self:
-                if connecte.contexte_actuel:
-                    connecte.envoyer("|att|Un autre client demande à " \
-                            "utiliser ce personnage.\nVous allez être " \
-                            "déconnecté.|ff|")
+                connecte.envoyer("|att|Un autre client demande à utiliser " \
+                    "ce personnage.\nVous allez être déconnecté.|ff|")
                 connecte.deconnecter("un autre client se connecte sur " \
                         "ce personnage")
 
@@ -249,9 +246,6 @@ class Joueur(Personnage):
             **kw_formatter):
         """On redirige sur l'envoie de l'instance de connexion."""
         if not msg:
-            return
-
-        if self.contexte_actuel is None:
             return
 
         if not mort and self.est_mort():
@@ -371,28 +365,10 @@ class Joueur(Personnage):
         Personnage.mourir(self, adversaire, recompenser)
         self.cpt_mort = 0
 
-    def detruire(self):
-        """Destruction du joueur."""
-        BaseObj.detruire(self)
-        self.description = Description(parent=self, scriptable=False)
-        self.description_a_valider = Description(parent=self, scriptable=False)
-
     def get_structure(self):
         """Retourne la structure simple du personnage."""
-        d = self.creation
-        creation = importeur.temps.variable
-        creation.changer_IRL(d.year, d.month, d.day, d.hour, d.minute)
-        d = self.derniere_connexion
-        if d is not None:
-            connexion = importeur.temps.variable
-            connexion.changer_IRL(d.year, d.month, d.day, d.hour, d.minute)
-        else:
-            connexion = None
-
         structure = Personnage.get_structure(self)
         structure.nom = self.nom
-        structure.creation = creation
-        structure.derniere_connexion = connexion
         return structure
 
     def appliquer_structure(self, structure):

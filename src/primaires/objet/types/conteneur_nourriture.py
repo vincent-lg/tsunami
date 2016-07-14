@@ -49,9 +49,6 @@ class ConteneurNourriture(BaseType):
 
     nom_type = "conteneur de nourriture"
     nettoyer = False
-    _attributs = {
-        "nourriture": Attribut(list),
-    }
 
     def __init__(self, cle=""):
         """Constructeur de l'objet"""
@@ -63,6 +60,11 @@ class ConteneurNourriture(BaseType):
         self.poids_max = 0.5
         self.etendre_editeur("m", "poids maximum", Flottant, self, "poids_max")
         self.etendre_editeur("s", "statuts", EdtStatuts, self, "statuts")
+
+        # Attributs propres à l'objet (non au prototype)
+        self._attributs = {
+            "nourriture": Attribut(list),
+        }
 
     def travailler_enveloppes(self, enveloppes):
         """Travail sur les enveloppes."""

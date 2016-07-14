@@ -77,7 +77,6 @@ class Periode(BaseObj):
         self.elements = []
         self.poids_max = 0
         self.visible = True
-        self._construire()
 
     def __getnewargs__(self):
         return ("", None)
@@ -157,7 +156,6 @@ class Periode(BaseObj):
 
         elt = Element(self.plante, self, nom.lower(), objet, quantite)
         self.elements.append(elt)
-        self._enregistrer()
         return elt
 
     def get_element(self, nom):
@@ -197,7 +195,6 @@ class Periode(BaseObj):
             if elt.nom == nom:
                 self.elements.remove(elt)
                 elt.detruire()
-                self._enregistrer()
                 return
 
         raise ValueError("aucun élément ne porte le nom {}".format(nom))
@@ -207,5 +204,4 @@ class Periode(BaseObj):
         for elt in self.elements:
             elt.detruire()
 
-        self.description.detruire()
         BaseObj.detruire(self)

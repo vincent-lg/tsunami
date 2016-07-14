@@ -174,7 +174,6 @@ class Route(BaseObj):
 
         self.sorties.append(direction)
         self.salles.append(salle)
-        self._enregistrer()
         return direction
 
     def completer(self, reciproque=True):
@@ -197,7 +196,6 @@ class Route(BaseObj):
         derniere = self.salles[-1]
         self.destination = derniere
         importeur.route.ajouter_route(self)
-        self._enregistrer()
 
         if reciproque:
             route = importeur.route.creer_route(derniere)

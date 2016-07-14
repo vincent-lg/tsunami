@@ -206,14 +206,6 @@ class Module(BaseModule):
             if not joueur.alias_anglais:
                 joueur.alias_anglais.update(self.alias_anglais)
 
-        # Tritement des options d'édition
-        for nom, valeur in tuple(self.options.options.items()):
-            if isinstance(nom, str):
-                del self.options.options[nom]
-                joueur = importeur.joueur.joueurs.get(nom)
-                if joueur:
-                    self.options.options[joueur] = valeur
-
     def ajouter_commande(self, commande):
         """Ajoute une commande à l'embranchement"""
         noeud_cmd = NoeudCommande(commande)

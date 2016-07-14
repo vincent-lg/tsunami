@@ -68,7 +68,6 @@ class Matelot(BaseObj):
         self.confiance = 0
         self.affectation = None
         self.ordres = []
-        self._construire()
 
     def __getnewargs__(self):
         return (None, None)
@@ -113,15 +112,12 @@ class Matelot(BaseObj):
         args = []
         for ordre in self.ordres:
             if ordre.volonte and ordre.volonte not in volontes:
-                ordre.detruire()
                 continue
 
-            arg = (ordre.cle, ) + tuple(ordre.arguments_suplementaires)
+            arg = (ordre.cle, ) + ordre.arguments_suplementaires
             if arg not in args:
                 args.append(arg)
                 uniques.append(ordre)
-            else:
-                ordre.detruire()
 
         self.ordres[:] = uniques
 
@@ -149,7 +145,6 @@ class Matelot(BaseObj):
         """
         if self.ordres:
             ordre = self.ordres[0]
-            ordre.matelot = self
             generateur = ordre.creer_generateur()
             self.executer_generateur(generateur)
 
@@ -207,7 +202,6 @@ class Matelot(BaseObj):
     def ordonner(self, ordre):
         """Ajoute l'ordre."""
         self.ordres.append(ordre)
-        self._enregistrer()
 
     def relayer_ordres(self):
         """Relaye les ordres (demande à être relevé).
@@ -235,13 +229,6 @@ class Matelot(BaseObj):
             if ordre.cle == cle:
                 self.ordres.remove(ordre)
                 ordre.invalide = True
-                ordre.detruire()
-
-    def detruire(self):
-        """Destruction du matelot."""
-        BaseObj.detruire(self)
-        for ordre in self.ordres:
-            ordre.detruire()
 
     # Gestion de l'équipement
     def jeter_ou_entreposer(self, exception=""):

@@ -2,10 +2,10 @@
 
 # Copyright (c) 2010-2016 LE GOFF Vincent
 # All rights reserved.
-#
+# 
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are met:
-#
+# 
 # * Redistributions of source code must retain the above copyright notice, this
 #   list of conditions and the following disclaimer.
 # * Redistributions in binary form must reproduce the above copyright notice,
@@ -14,7 +14,7 @@
 # * Neither the name of the copyright holder nor the names of its contributors
 #   may be used to endorse or promote products derived from this software
 #   without specific prior written permission.
-#
+# 
 # THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
 # AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
 # IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -33,11 +33,11 @@
 from primaires.interpreteur.masque.parametre import Parametre
 
 class PrmAjouter(Parametre):
-
+    
     """Commande 'alias ajouter'.
-
+    
     """
-
+    
     def __init__(self):
         """Constructeur du paramètre"""
         Parametre.__init__(self, "ajouter", "add")
@@ -50,7 +50,7 @@ class PrmAjouter(Parametre):
             "sa signification. Par exemple |cmd|%alias% %alias:ajouter%|ff| " \
             "|cmd|l look|ff| ajoutera l'alias |cmd|l|ff| qui vaudra " \
             "|cmd|look|ff|. Si l'alias existe déjà, il sera remplacé."
-
+    
     def interpreter(self, personnage, dic_masques):
         """Interprétation du paramètre"""
         message = dic_masques["message"].message
@@ -58,10 +58,9 @@ class PrmAjouter(Parametre):
         if len(message) < 2:
             personnage << "|err|Syntaxe invalide. Référez-vous à l'aide.|ff|"
             return
-
+        
         comm = message[0].lower()
         signification = " ".join(message[1:])
         personnage.alias[comm] = signification
-        personnage._enregistrer()
         personnage << "L'alias |cmd|{}|ff| vaut à présent |cmd|{}|ff|.".format(
                 comm, signification)

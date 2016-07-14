@@ -78,12 +78,10 @@ class Objectif(BaseObj, metaclass=MetaObjectif):
 
     cle = None
     logger = type(importeur).man_logs.get_logger("ordres")
-
     def __init__(self, equipage, *args):
         BaseObj.__init__(self)
         self.equipage = equipage
         self.arguments = args
-        self._construire()
 
     def __getnewargs__(self):
         return (None, )

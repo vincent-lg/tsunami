@@ -78,7 +78,6 @@ class Association(BaseObj):
 
         """
         nom = supprimer_accents(nom).lower()
-        self._enregistrer()
         if not self.construit:
             object.__setattr__(self, nom, valeur)
         else:

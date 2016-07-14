@@ -31,7 +31,6 @@
 """Package contenant les différents éditeurs"""
 
 from . import autonavire
-from . import chantier
 from . import eltedit
 from . import matedit
 from . import shedit

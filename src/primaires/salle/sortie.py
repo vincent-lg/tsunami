@@ -93,7 +93,7 @@ class Sortie(BaseObj):
         self.longueur = 1
 
         # On passe le statut en CONSTRUIT
-        self._construire()
+        self._statut = CONSTRUIT
 
     def __getnewargs__(self):
         return ("", "")
@@ -191,13 +191,6 @@ class Sortie(BaseObj):
             raise AttributeError("la sortie {} ne possède pas de porte".format(
                     self))
 
-        self.porte.detruire()
         self.porte = None
         if self.sortie_opposee:
             self.sortie_opposee.porte = None
-
-    def detruire(self):
-        """Destruction de la sortie."""
-        BaseObj.detruire(self)
-        if self.porte:
-            self.porte.detruire()

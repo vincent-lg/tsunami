@@ -2,10 +2,10 @@
 
 # Copyright (c) 2010-2016 LE GOFF Vincent
 # All rights reserved.
-#
+# 
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are met:
-#
+# 
 # * Redistributions of source code must retain the above copyright notice, this
 #   list of conditions and the following disclaimer.
 # * Redistributions in binary form must reproduce the above copyright notice,
@@ -14,7 +14,7 @@
 # * Neither the name of the copyright holder nor the names of its contributors
 #   may be used to endorse or promote products derived from this software
 #   without specific prior written permission.
-#
+# 
 # THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
 # AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
 # IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -35,20 +35,20 @@ from . import expressions
 from .variable import RE_VARIABLE
 
 class Fonction(Expression):
-
+    
     """Expression fonction."""
-
+    
     nom = "fonction"
     def __init__(self):
         """Constructeur de l'expression."""
         Expression.__init__(self)
         self.nom = None
         self.parametres = ()
-
+    
     def __repr__(self):
         params = [str(p) for p in self.parametres]
         return self.nom + "(" + ", ".join(params) + ")"
-
+    
     @classmethod
     def parsable(cls, chaine):
         """Retourne True si la chaîne est parsable, False sinon."""
@@ -57,20 +57,20 @@ class Fonction(Expression):
         nom = chaine[:fin_nom]
         chaine = chaine[:fin_nom + 1]
         return fin_nom >= 0 and RE_VARIABLE.search(nom)
-
+    
     @classmethod
     def parser(cls, fonction):
         """Parse la chaîne.
-
+        
         Retourne l'objet créé et la partie non interprétée de la chaîne.
-
+        
         """
         objet = cls()
         fin_nom = fonction.find("(")
         nom = fonction[:fin_nom]
         chaine = fonction[fin_nom + 1:].lstrip(" ")
         objet.nom = nom
-
+        
         # Parsage des paramètres
         types = ("variable", "nombre", "chaine", "fonction", "calcul")
         parametres = []
@@ -79,10 +79,10 @@ class Fonction(Expression):
             if chaine.startswith(")"):
                 chaine = chaine[1:]
                 break
-
+            
             arg, chaine = cls.choisir(types, chaine)
             parametres.append(arg)
-
+            
             chaine = chaine.lstrip(" ")
             if chaine.startswith(","):
                 chaine = chaine[1:]
@@ -92,21 +92,21 @@ class Fonction(Expression):
             else:
                 raise ValueError("erreur de syntaxe dans la fonction " \
                         "{} ({})".format(fonction, chaine))
-
+        
         objet.parametres = tuple(parametres)
-
+        
         return objet, chaine
-
+    
     def get_valeur(self, evt):
         """Retourne la valeur de retour de la fonction."""
         fonctions = type(self).importeur.scripting.fonctions
         if self.nom not in fonctions:
             raise ValueError("la fonction {} est introuvable".format(self.nom))
-
+        
         fonction = fonctions[self.nom](self)
-
+        
         return fonction(evt)
-
+    
     @property
     def code_python(self):
         """Retourne le code Python associé à la fonction."""
@@ -114,9 +114,3 @@ class Fonction(Expression):
         py_args = ["evt"] + [a.code_python for a in self.parametres]
         py_code += ".executer(" + ", ".join(py_args) + ")"
         return py_code
-
-    def detruire(self):
-        """Destruction de l' expression."""
-        super(Fonction, self).detruire()
-        for parametre in self.parametres:
-            parametre.detruire()

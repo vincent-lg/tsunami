@@ -97,18 +97,10 @@ class Vehicule(BaseObj):
         """
         BaseObj.__init__(self)
         self.masse = 1
-        position = Vecteur(0, 0, 0, self)
-        position._construire()
-        self.position = position
-        vitesse = Vecteur(0, 0, 0, self)
-        vitesse._construire()
-        self.vitesse = vitesse
-        acceleration = Vecteur(0, 0, 0, self)
-        acceleration._construire()
-        self.acceleration = acceleration
-        direction = Direction(self, 1, 0, 0)
-        direction._construire()
-        self.direction = direction
+        self.position = Vecteur(0, 0, 0, self)
+        self.vitesse = Vecteur(0, 0, 0, self)
+        self.acceleration = Vecteur(0, 0, 0, self)
+        self.direction = Direction(self, 1, 0, 0)
 
         self.frottement = Frottement(self, 0.7)
 
@@ -192,12 +184,3 @@ class Vehicule(BaseObj):
             resultat += operation(vec).coordonnees.entier()
 
         return resultat
-
-    def detruire(self):
-        """Destruction du véhicule."""
-        BaseObj.detruire(self)
-        self.position.detruire()
-        self.vitesse.detruire()
-        self.acceleration.detruire()
-        self.direction.detruire()
-        self.frottement.detruire()

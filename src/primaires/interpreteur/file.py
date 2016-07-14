@@ -73,10 +73,12 @@ class FileContexte(BaseObj):
             try:
                 return self._file.__getitem__(index)
             except IndexError as err:
+                print(self._file, index)
                 raise err
         else:
             for contexte in self._file:
                 if isinstance(contexte, index):
+                    print(contexte)
                     return contexte
 
             raise ValueError("contexte de type inconnu".format(index))
@@ -144,45 +146,31 @@ class FileContexte(BaseObj):
         """Ajoute l'objet à ajouter en index self._position."""
         self._file.insert(self._position, objet)
         self.actualiser_position()
-        self._enregistrer()
 
-    def retirer(self, contexte=None, conserver=False, recursif=True):
+    def retirer(self, contexte=None):
         """Retire le contexte précisé ou actuel et le retourne.
 
         Si la taille de la liste est trop faible (self._taille_min), une
         exception est levée.
 
         Si le contexte est précisé, retire le contexte précis.
-        Si le paramètre 'conserver' est à True, ne supprime pas
-        le contexte.
 
         """
         if contexte:
             self._file.remove(contexte)
-            if not conserver:
-                contexte.detruire(recursif=recursif)
             self.actualiser_position()
-            self._enregistrer()
         else:
             if len(self._file) <= self._taille_min:
                 raise FileVide
             contexte = self.actuel
-            contexte.detruire()
             del self._file[self._position]
             self.actualiser_position()
-            self._enregistrer()
 
         return contexte
 
     def vider(self):
         """Vide la file des contextes"""
-        for contexte in list(self._file):
-            if contexte.nom == "personnage:connexion:mode_connecte":
-                continue
-
-            contexte.detruire()
-            self._file.remove(contexte)
-
+        self._file[:] = []
         self.actualiser_position()
 
     @property

@@ -34,7 +34,6 @@ from . import boulet
 from . import boussole
 from . import ecope
 from . import calfeutrage
-from . import canot
 from . import pavillon
 from . import sac_poudre
 from . import sextant

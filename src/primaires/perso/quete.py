@@ -71,9 +71,6 @@ class Quete(BaseObj):
 
     """
 
-    _nom = "quete"
-    _version = 1
-
     def __init__(self, cle_quete, niveau, parent=None):
         """Crée une nouvelle quête."""
         BaseObj.__init__(self)
@@ -130,7 +127,6 @@ class Quete(BaseObj):
         Le niveau doit être un tuple.
 
         """
-        self._enregistrer()
         if niveau not in self.__niveaux:
             self.__niveaux.append(niveau)
 
@@ -142,7 +138,6 @@ class Quete(BaseObj):
             sinon l'ajoute.
 
         """
-        self._enregistrer()
         if () in self.__niveaux:
             self.__niveaux.remove(())
 
@@ -175,7 +170,7 @@ class Quete(BaseObj):
         if pos == len(niveaux) - 1:
             return ()
 
-        return niveaux[tuple(etapes[pos + 1])].niveau
+        return niveaux[etapes[pos + 1]].niveau
 
     @property
     def etapes_accomplies(self):
@@ -189,7 +184,6 @@ class Quete(BaseObj):
             return etapes
 
         for niveau in sorted(self.__niveaux):
-            niveau = tuple(niveau)
             if len(niveau) == 0:
                 continue
 
@@ -227,7 +221,6 @@ class Quete(BaseObj):
             return etapes
 
         for niveau in sorted(self.__niveaux):
-            niveau = tuple(niveau)
             if len(niveau) == 0:
                 continue
 
@@ -266,7 +259,6 @@ class Quete(BaseObj):
         if not self.valide:
             return False
 
-        niveau = tuple(niveau)
         if niveau in self.__niveaux:
             return False
 
@@ -285,7 +277,7 @@ class Quete(BaseObj):
                 elif niveau[-1] != 1:
                     return False
             else:
-                dernier_niveau = tuple(max(niveaux))
+                dernier_niveau = max(niveaux)
                 niveau_suivant = dernier_niveau[:-1] + (dernier_niveau[-1] + \
                         1, )
                 niveau_parent = niveau
@@ -308,8 +300,6 @@ class Quete(BaseObj):
         sont validées, valide l'étape parent.
 
         """
-        niveau = tuple(niveau)
-        self._enregistrer()
         if () in self.__niveaux:
             self.__niveaux.remove(())
 

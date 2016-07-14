@@ -76,7 +76,6 @@ class FicheFamilier(BaseObj):
         self.peut_manger = []
         self.aptitudes = {}
         self.script = ScriptFiche(self)
-        self._construire()
 
     def __getnewargs__(self):
         return ("", )
@@ -161,8 +160,3 @@ class FicheFamilier(BaseObj):
         desc = self.prototype.description.regarder(personnage,
                 elt=self.prototype)
         return desc
-
-    def detruire(self):
-        """Destruction de la fiche de familier."""
-        BaseObj.detruire(self)
-        self.script.detruire()

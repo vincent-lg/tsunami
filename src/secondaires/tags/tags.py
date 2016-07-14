@@ -55,16 +55,8 @@ class Tags(BaseObj):
         """Lecture d'un tag."""
         if objet not in self.tags:
             self.tags[objet] = Liste(objet)
-            self._enregistrer()
 
         return self.tags[objet]
-
-    def detruire(self):
-        """Destruction de tous les tags."""
-        BaseObj.detruire(self)
-        for liste in self.tags.values():
-            for tag in liste.tags:
-                tag.detruire()
 
 
 class Liste(BaseObj):

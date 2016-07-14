@@ -46,7 +46,6 @@ class BaseElement(BaseObj, metaclass=MetaElt):
 
     enregistrer = True
     nom_type = "" # à redéfinir
-
     def __init__(self, cle=""):
         """Constructeur d'un type"""
         if cle:
@@ -59,7 +58,8 @@ class BaseElement(BaseObj, metaclass=MetaElt):
         self.nom = "un élément inconnu"
         self.description = Description(parent=self)
 
-        self._construire()
+        # Editeur
+        self._extensions_editeur = []
 
     def __getnewargs__(self):
         return ()
@@ -102,8 +102,3 @@ class BaseElement(BaseObj, metaclass=MetaElt):
         msg = "Vous regardez {} :".format(self.nom) + "\n\n"
         msg += self.description.regarder(personnage, self)
         return msg
-
-    def detruire(self):
-        """Destruction du prototype d'élément."""
-        BaseObj.detruire(self)
-        self.description.detruire()

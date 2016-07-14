@@ -28,43 +28,22 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Fichier contenant le type orbe."""
+"""Fichier contenant la classe Bossoir, détaillée plus bas."""
 
-from bases.objet.attribut import Attribut
-from .base import BaseType
+from secondaires.navigation.constantes import *
+from .base import BaseElement
 
-class Orbe(BaseType):
+class Bossoir(BaseElement):
 
-    """Type d'objet: orbe.
+    """Classe représentant un bossoir pour gérer les canots.
+
+    Le bossoir est utilisée avec des élingues ou cordages pour
+    descendre ou remonter un canot.
 
     """
 
-    nom_type = "orbe"
+    nom_type = "bossoir"
 
     def __init__(self, cle=""):
-        """Constructeur de l'objet"""
-        BaseType.__init__(self, cle)
-
-        # Attributs propres à l'objet (non au prototype)
-        self._attributs = {
-            "nom_orbe": Attribut(str),
-        }
-
-    def get_nom(self, nombre=1, pluriels=True):
-        """Retourne le nom complet en fonction du nombre.
-
-        Par exemple :
-        Si nombre == 1 : retourne le nom singulier
-        Sinon : retourne le nombre et le nom pluriel
-
-        """
-        ajout = ""
-        if nombre <= 0:
-            raise ValueError("la fonction get_nom a été appelée " \
-                    "avec un nombre négatif ou nul.")
-        elif nombre == 1:
-            nom = getattr(self, "nom_orbe", "")
-            ajout = nom and " (nommé " + nom + ")" or "(sans nom)"
-            return self.nom_singulier + ajout
-        else:
-            return BaseType.get_nom(self, nombre, pluriels)
+        """Constructeur d'un type"""
+        BaseElement.__init__(self, cle)

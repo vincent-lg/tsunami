@@ -63,7 +63,6 @@ class Type(BaseObj):
         importeur.crafting.enregistrer_YML()
         classe = importeur.objet.get_type(self.nom)
         classe.attributs_crafting = list(self.attributs)
-        self._enregistrer()
 
     def supprimer_attribut(self, attribut):
         """Supprime l'attribut précisé."""
@@ -73,7 +72,6 @@ class Type(BaseObj):
         importeur.crafting.enregistrer_YML()
         classe = importeur.objet.get_type(self.nom)
         classe.attributs_crafting = list(self.attributs)
-        self._enregistrer()
 
     def get_extension(self, nom, exception=True):
         """Retourne l'extension précisée."""
@@ -94,7 +92,6 @@ class Type(BaseObj):
         extension = Extension(self, None, nom)
         extension.type = nom_type
         self.extensions.append(extension)
-        self._enregistrer()
         return extension
 
     def supprimer_extension(self, nom):
@@ -102,7 +99,6 @@ class Type(BaseObj):
         extension = self.get_extension(nom)
         self.extensions.remove(extension)
         extension.detruire()
-        self._enregistrer()
 
     def creer(self):
         """Création du type."""

@@ -68,7 +68,6 @@ class Navire(Vehicule):
 
     enregistrer = True
     obs_recif = ()
-
     def __init__(self, modele):
         """Constructeur du navire."""
         Vehicule.__init__(self)
@@ -88,7 +87,6 @@ class Navire(Vehicule):
 
         if modele:
             modele.vehicules.append(self)
-            modele._enregistrer()
             self.cle = importeur.navigation.dernier_ID(modele.cle)
             self.construire_depuis_modele()
 
@@ -99,34 +97,6 @@ class Navire(Vehicule):
 
     def __repr__(self):
         return "<Navire {}>".format(self.cle)
-
-    def __getstate__(self):
-        """Enregistrement de l'objet.
-
-        On ne peut pas enregistrer les salles telles qu'elles car
-        MongoDB n'aime pas les dictionnaires contenant des tuples en
-        clés.
-
-        """
-        attrs = Vehicule.__getstate__(self)
-        salles = {}
-        for cle, salle in attrs["salles"].items():
-            salles["|".join([str(c) for c in cle])] = salle
-
-        attrs["salles"] = salles
-        return attrs
-
-    def __setstate__(self, attrs):
-        """Récupération de l'objet enregistré."""
-        salles = {}
-        for cle, salle in attrs["salles"].items():
-            if isinstance(cle, str):
-                x, y, z = cle.split("|")
-                cle = int(x), int(y), int(z)
-            salles[cle] = salle
-
-        attrs["salles"] = salles
-        Vehicule.__setstate__(self, attrs)
 
     @property
     def taille(self):
@@ -732,6 +702,7 @@ class Navire(Vehicule):
             autre = etendue.croise_lien((origine.x, origine.y),
                     (n_position.x, n_position.y))
             if autre:
+                print(self, "change d'étendue:", autre)
                 if autre.profondeur < self.modele.tirant_eau:
                     self.envoyer("Un grincement sonore, la quille " \
                             "touche le fond.")
@@ -833,6 +804,7 @@ class Navire(Vehicule):
         """Méthode appelée lors d'une collision avec un point."""
         Vehicule.collision(self, salle)
         vitesse = self.vitesse_noeuds
+        print("Collision", contre)
         if contre in type(self).obs_recif:
             if vitesse < 0.05:
                 pass
@@ -1198,14 +1170,14 @@ class Navire(Vehicule):
 
         importeur.navigation.supprimer_navire(self.cle)
 
-    def remonter_canot(self, canot):
+    def enlever_canot(self, canot):
         """Cette méthode enlève le canot et le met à bord.
 
         Le canot est un autre navire (supposément un petit). Il
         est placé dans les canots du bord et pourra être descendu ailleurs.
 
         """
-        if not canot.modele.a_canot:
+        if not canot.modele.canot:
             raise ValueError("{} n'est pas un canot".format(canot))
 
         for salle in canot.salles.values():
@@ -1213,50 +1185,24 @@ class Navire(Vehicule):
                 raise ValueError("{} a des personnages".format(salle))
 
         canot.etendue = None
-        self.canots.append(canot)
-        self._enregistrer()
-        importeur.navigation.nav_logger.info("{} remonte le canot {}".format(
-                self.cle, canot.cle))
+        for salle in canot.salles.values():
+            salle.coords.valide = False
 
-    def descendre_canot(self, canot):
-        """Descend un canot qui se trouve dans self.canots."""
-        # On positionne le canot juste devant la proue
-        y = 0
-        while (0, y, 0) in self.modele.salles:
-            y += 1
-
-        p_x, p_y, p_z = self.position.tuple
-        canot.etendue = self.etendue
-        canot.position.x = p_x
-        canot.position.y = p_y + y
-        canot.position.z = p_z
-        self.canots.remove(canot)
-        self._enregistrer()
-        importeur.navigation.nav_logger.info("{} met à l'eau le canot " \
-                "{}".format(self.cle, canot.cle))
+        self.canots.append(canot.cle)
 
     def detruire(self):
-        """Destruction du navire."""
+        """Destruction du self."""
         # Replie la passerelle si il y a une passerelle
         elt_passerelle = self.elt_passerelle
         if elt_passerelle:
             elt_passerelle.replier()
 
-        # Supprime les salles de navire
         for salle in list(self.salles.values()):
-            importeur.salle.supprimer_salle(salle.ident, detruire=False)
-            salle.detruire(description=self.modele.descriptions_independantes)
-
-        self.propulsion.detruire()
-
-        # Destruction des canots
-        for canot in self.canots:
-            importeur.navigation.supprimer_navire(canot.cle)
+            importeur.salle.supprimer_salle(salle.ident)
 
         self.equipage.detruire()
         self.cale.detruire()
         self.modele.vehicules.remove(self)
-        self.modele._enregistrer()
         Vehicule.detruire(self)
 
 
