@@ -158,6 +158,12 @@ class ClasseFonction(Fonction):
         Cases propres aux joueurs :
 
           * nom : le nom du joueur (une chaîne) ;
+          * creation (ls) : date de création du joueur en temps variable [1] ;
+          * derniere_connexion (ls) : dernière connexion en temps variable [1].
+
+        [1] Le temps variable précisé peut être converti en temps
+            réel ou IG, modifié et affiché à l'aide des actions/fonctions
+            habituelles.
 
         Exemples d'utilisation :
 

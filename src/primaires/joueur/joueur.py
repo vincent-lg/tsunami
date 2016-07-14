@@ -367,8 +367,20 @@ class Joueur(Personnage):
 
     def get_structure(self):
         """Retourne la structure simple du personnage."""
+        d = self.creation
+        creation = importeur.temps.variable
+        creation.changer_IRL(d.year, d.month, d.day, d.hour, d.minute)
+        d = self.derniere_connexion
+        if d is not None:
+            connexion = importeur.temps.variable
+            connexion.changer_IRL(d.year, d.month, d.day, d.hour, d.minute)
+        else:
+            connexion = None
+
         structure = Personnage.get_structure(self)
         structure.nom = self.nom
+        structure.creation = creation
+        structure.derniere_connexion = connexion
         return structure
 
     def appliquer_structure(self, structure):
