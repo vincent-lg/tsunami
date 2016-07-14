@@ -98,6 +98,34 @@ class Navire(Vehicule):
     def __repr__(self):
         return "<Navire {}>".format(self.cle)
 
+    def __getstate__(self):
+        """Enregistrement de l'objet.
+
+        On ne peut pas enregistrer les salles telles qu'elles car
+        MongoDB n'aime pas les dictionnaires contenant des tuples en
+        clés.
+
+        """
+        attrs = Vehicule.__getstate__(self)
+        salles = {}
+        for cle, salle in attrs["salles"].items():
+            salles["|".join([str(c) for c in cle])] = salle
+
+        attrs["salles"] = salles
+        return attrs
+
+    def __setstate__(self, attrs):
+        """Récupération de l'objet enregistré."""
+        salles = {}
+        for cle, salle in attrs["salles"].items():
+            if isinstance(cle, str):
+                x, y, z = cle.split("|")
+                cle = int(x), int(y), int(z)
+            salles[cle] = salle
+
+        attrs["salles"] = salles
+        Vehicule.__setstate__(self, attrs)
+
     @property
     def taille(self):
         """Retourne la taille du navire déduit de son nombre de salles."""

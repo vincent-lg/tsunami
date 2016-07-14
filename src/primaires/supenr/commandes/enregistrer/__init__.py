@@ -66,7 +66,7 @@ class CmdEnregistrer(Commande):
         try:
             importeur.supenr.enregistrer()
         except Exception as err:
-            trace = traceback.forat_exc()
+            trace = traceback.format_exc()
             personnage << "|err|L'enregistrement a rencontré une " \
                     "erreur :|ff|\n" + trace
         else:

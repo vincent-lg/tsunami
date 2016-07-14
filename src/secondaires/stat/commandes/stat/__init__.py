@@ -34,6 +34,11 @@
 
 import threading
 
+try:
+    import psutil
+except ImportError:
+    psutil = None
+
 from primaires.interpreteur.commande.commande import Commande
 from primaires.format.date import *
 
@@ -59,6 +64,22 @@ class CmdStat(Commande):
         stats = type(self).importeur.stat.stats
         imp = type(self).importeur
         infos = []
+
+        ## Informations système
+        msg = "|tit|Informations système :|ff|"
+        if psutil is None:
+            msg += "\n  Impossible d'accéder à ces informations " \
+                    "car\n  le module 'psutil' n'a pu être trouvé. Exécutez " \
+                    ": 'pip install psutil'"
+        else:
+            msg += "\n  {} processeurs (CPU={}%)".format(psutil.cpu_count(),
+                    str(psutil.cpu_percent()).replace(".", ","))
+            mem = psutil.virtual_memory()
+            msg += "\n  RAM : {} GiB utilisé sur {} GiB ({}%)".format(
+                    str(round(mem.used / 1000000000, 1)).replace(".", ","),
+                    str(round(mem.total / 1000000000, 1)).replace(".", ","),
+                    str(mem.percent).replace(".", ","))
+        infos.append(msg)
 
         ## Générales
         msg = "|tit|Informations générales :|ff|"

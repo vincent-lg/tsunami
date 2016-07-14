@@ -73,7 +73,7 @@ class CanneAPeche(BaseType):
     def objets_contenus(self, conteneur):
         """Retourne les objets contenus."""
         objets = []
-        if conteneur.appat:
+        if getattr(conteneur, "appat", None):
             objet = conteneur.appat
             objets.append(objet)
             if objet.unique:

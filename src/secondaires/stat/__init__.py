@@ -32,6 +32,11 @@
 
 import time
 
+try:
+    import psutil
+except ImportError:
+    psutil = None
+
 from abstraits.module import *
 from bases.fonction import *
 from .stats import Stats
@@ -92,6 +97,9 @@ class Module(BaseModule):
 
         for cmd in self.commandes:
             self.importeur.interpreteur.ajouter_commande(cmd)
+
+        if psutil:
+            psutil.cpu_percent()
 
         BaseModule.init(self)
 

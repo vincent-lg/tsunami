@@ -51,6 +51,7 @@ except ImportError:
 
 from abstraits.module import *
 from abstraits.obase import *
+from primaires.supenr import commandes
 from primaires.supenr.config import cfg_supenr
 
 # Dossier d'enregistrement des fichiers-données
@@ -171,14 +172,20 @@ class Module(BaseModule):
         """Chargement de tous les objets (pickle)."""
         if self.mode == "pickle":
             self.charger()
-
-            # Création de l'action différée pour enregistrer périodiquement
-            importeur.diffact.ajouter_action("enregistrement", 60 * 60,
-                    self.enregistrer_periodiquement)
         else: # Mongo
             importeur.diffact.ajouter_action("enregistrement", 1,
                     self.mongo_enregistrer_file)
         BaseModule.init(self)
+
+    def ajouter_commandes(self):
+        """Ajoute les commandes à l'interpréteur."""
+        self.commandes = [
+            commandes.enregistrer.CmdEnregistrer(),
+            commandes.mongo.CmdMongo(),
+        ]
+
+        for cmd in self.commandes:
+            importeur.interpreteur.ajouter_commande(cmd)
 
     def preparer(self):
         """Appel des méthodes différées."""
