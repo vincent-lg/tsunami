@@ -115,8 +115,8 @@ class Quetes(BaseObj):
         sous-niveau 1.
 
         """
-        if isinstance(valeur, tuple):
-            pass
+        if isinstance(valeur, (tuple, list)):
+            valeur = tuple(valeur)
         elif isinstance(valeur, int):
             valeur = tuple(valeur)
         elif isinstance(valeur, str):

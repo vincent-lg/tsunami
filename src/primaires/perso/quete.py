@@ -256,6 +256,7 @@ class Quete(BaseObj):
         Le niveau est le niveau demandé.
 
         """
+        niveau = tuple(niveau)
         if not self.valide:
             return False
 
@@ -270,7 +271,8 @@ class Quete(BaseObj):
 
         if quete.ordonnee:
             # On récupère le dernier niveau validé
-            niveaux = [n for n in self.__niveaux if len(n) == len(niveau)]
+            niveaux = [tuple(n) for n in self.__niveaux if len(n) == len(
+                    niveau)]
             if len(niveaux) == 0:
                 if niveau == (1, ):
                     return True
@@ -300,6 +302,7 @@ class Quete(BaseObj):
         sont validées, valide l'étape parent.
 
         """
+        niveau = tuple(niveau)
         if () in self.__niveaux:
             self.__niveaux.remove(())
 
@@ -308,4 +311,4 @@ class Quete(BaseObj):
 
         if quete.parent and all(e.niveau in self.__niveaux for e in \
                 quete.get_dictionnaire_etapes(True).values()):
-            self.__niveaux.append(quete.niveau)
+            self.__niveaux.append(tuple(quete.niveau))
