@@ -91,7 +91,43 @@ class Configuration(BaseObj):
 
         return self.configuration[objet]
 
-    def exporter_YML(self, chemin):
+    def importer_YML(self):
+        """Importe la configuration YML depuis un fichier existant."""
+        configuration = importeur.supenr.fichiers.get("configuration")
+        for objet, associations in configuration.items():
+            objet = self.importer_valeur(objet)
+            valeurs = {}
+            for cle, valeur in associations.items():
+                cle = self.importer_valeur(cle)
+                valeur = self.importer_valeur(valeur)
+                if cle is not None and valeur is not None:
+                    valeurs[cle] = valeur
+
+            if valeurs:
+                association = importeur.crafting.configuration[objet]
+                for cle, valeur in valeurs.items():
+                    setattr(association, cle, valeur)
+
+    def importer_valeur(self, valeur):
+        """Convertit la valeur à importer."""
+        if isinstance(valeur, list):
+            copie = []
+            for element in valeur:
+                element = self.importer_valeur(element)
+                if element is not None:
+                    copie.append(element)
+
+            valeur = copie
+        elif isinstance(valeur, tuple):
+            scriptable = valeur[0]
+            cle = valeur[1]
+            valeur = importeur.scripting.valeurs[scriptable].get(cle)
+        elif isinstance(valeur, (int, float)):
+            valeur = Fraction(valeur)
+
+        return valeur
+
+    def exporter_YML(self):
         """Exporte la configuration au format YML."""
         # On constitue le dictionnaire représentant la configuration
         configuration = {}
