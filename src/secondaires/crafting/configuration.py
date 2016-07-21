@@ -30,7 +30,15 @@
 
 """Fichier contenant la classe Configuration, détaillée plus bas."""
 
+from fractions import Fraction
+
 from abstraits.obase import BaseObj
+from primaires.objet.types.base import BaseType as PrototypeObjet
+from primaires.objet.objet import Objet
+from primaires.pnj.pnj import PNJ
+from primaires.pnj.prototype import Prototype as PrototypePNJ
+from primaires.salle.salle import Salle
+from primaires.salle.zone import Zone
 from secondaires.crafting.association import Association
 
 class Configuration(BaseObj):
@@ -56,7 +64,7 @@ class Configuration(BaseObj):
     l'attribut tel que recherché avec la valeur associée.
 
     Si vous avez une variable 'salle' contenant une salle,
-    vous pouvez donc utiliser l'assocation crafting comme suit :
+    vous pouvez donc utiliser l'association crafting comme suit :
         configuration = importeur.crafting.configuration[salle]
         # Pour accéder à une valeur
         configuration.valeur
@@ -82,3 +90,49 @@ class Configuration(BaseObj):
             self.configuration[objet] = Association()
 
         return self.configuration[objet]
+
+    def exporter_YML(self, chemin):
+        """Exporte la configuration au format YML."""
+        # On constitue le dictionnaire représentant la configuration
+        configuration = {}
+        for objet, association in \
+                importeur.crafting.configuration.configuration.items():
+            objet = self.exporter_valeur(objet)
+            valeurs = {}
+            for cle, valeur in association.associations.items():
+                cle = self.exporter_valeur(cle)
+                valeur = self.exporter_valeur(valeur)
+                if cle is not None and valeur is not None:
+                    valeurs[cle] = valeur
+
+            if valeurs:
+                configuration[objet] = valeurs
+
+        importeur.supenr.sauver_fichier("configuration", configuration)
+
+    def exporter_valeur(self, valeur):
+        """Convertit la valeur pour l'exporter en format adéquat."""
+        if isinstance(valeur, list):
+            copie = []
+            for element in valeur:
+                element = self.exporter_valeur(element)
+                if element is not None:
+                    copie.append(element)
+
+            valeur = copie
+        elif isinstance(valeur, Fraction):
+            valeur = float(valeur)
+        elif isinstance(valeur, Zone):
+            valeur = ("zone", valeur.cle)
+        elif isinstance(valeur, Salle):
+            valeur = ("salle", valeur.ident)
+        elif isinstance(valeur, Objet):
+            valeur = ("objet", valeur.identifiant)
+        elif isinstance(valeur, PrototypeObjet):
+            valeur = ("prototype d'objet", valeur.cle)
+        elif isinstance(valeur, PNJ):
+            valeur = ("pnj", valeur.identifiant)
+        elif isinstance(valeur, PrototypePNJ):
+            valeur = ("prototype de pnj", valeur.cle)
+
+        return valeur
