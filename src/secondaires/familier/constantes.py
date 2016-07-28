@@ -53,4 +53,5 @@ NOMS = (
 TYPES_HARNACHEMENT = [
         "bride",
         "laisse",
+        "selle",
 ]
