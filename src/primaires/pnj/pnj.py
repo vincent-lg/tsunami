@@ -34,6 +34,7 @@ import sys
 
 from abstraits.obase import BaseObj
 from primaires.perso.personnage import Personnage
+from primaires.scripting.exceptions import InterrompreCommande
 
 class PNJ(Personnage):
 
@@ -211,15 +212,20 @@ class PNJ(Personnage):
 
     def mourir(self, adversaire=None, recompenser=True):
         """La mort d'un PNJ signifie sa destruction."""
-        self.script["meurt"]["avant"].executer(pnj=self, salle=self.salle,
-                adversaire=adversaire)
-        Personnage.mourir(self, adversaire=adversaire, recompenser=recompenser)
-        self.script["meurt"]["apres"].executer(pnj=self, salle=self.salle,
-                adversaire=adversaire)
-        cadavre = importeur.objet.creer_objet(importeur.objet.prototypes[
-                "cadavre"])
-        cadavre.pnj = self.prototype
-        self.salle.objets_sol.ajouter(cadavre)
+        try:
+            self.script["meurt"]["avant"].executer(pnj=self, salle=self.salle,
+                    adversaire=adversaire)
+        except InterrompreCommande:
+            Personnage.mourir(self, adversaire=adversaire, recompenser=recompenser)
+        else:
+            Personnage.mourir(self, adversaire=adversaire, recompenser=recompenser)
+            self.script["meurt"]["apres"].executer(pnj=self, salle=self.salle,
+                    adversaire=adversaire)
+            cadavre = importeur.objet.creer_objet(importeur.objet.prototypes[
+                    "cadavre"])
+            cadavre.pnj = self.prototype
+            self.salle.objets_sol.ajouter(cadavre)
+
         importeur.hook["pnj:meurt"].executer(self, adversaire)
 
         # Gain d'XP

@@ -348,7 +348,9 @@ class ScriptPNJ(Script):
         evt_meurt_avant.aide_longue = \
             "Cet évènement est appelé avant la mort du PNJ. Le PNJ n'est " \
             "pas encore réellement mort, cependant le message a déjà été " \
-            "envoyé aux autres joueurs présents dans la salle."
+            "envoyé aux autres joueurs présents dans la salle. Si " \
+            "le script est interrompu avec 'interrompre', le cadavre " \
+            "du PNJ n'est pas créé."
         evt_meurt_apres.aide_longue = \
             "Cet évènement est appelé quand le PNJ est déjà mort et que " \
             "son cadavre a été créé sur le sol."
