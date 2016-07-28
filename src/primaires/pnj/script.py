@@ -455,6 +455,22 @@ class ScriptPNJ(Script):
         var_salle = evt_attitude.ajouter_variable("salle", "Salle")
         var_salle.aide = "la salle dans laquelle se produit l'attitude"
 
+        # Événement apparait
+        evt_apparait = self.creer_evenement("apparaît")
+        evt_apparait.aide_courte = "le PNJ apparaît dans une salle"
+        evt_apparait.aide_longue = \
+            "Cet évènement est appelé quand le PNJ est créé dans une " \
+            "salle, c'est-à-dire quand le PNJ se crée au repop. Notez que " \
+            "si le PNJ est pspawn, ou si il est crée grâce à la " \
+            "fonction creer_PNJ(), le PNJ n'ayant pas de " \
+            "salle, cet évènement n'est pas appelé. À la différence de " \
+            "l'évènement repop, l'évènement apparaît n'est appelé qu'une " \
+            "fois par PNJ qui apparaît dans une salle."
+
+        # Configuration des variables de l'évènement apparait
+        var_salle = evt_apparait.ajouter_variable("salle", "Salle")
+        var_salle.aide = "la salle dans laquelle le PNJ apparaît"
+
         # On ajoute à tous les évènements la variable 'pnj'
         for evt in self.evenements.values():
             if evt.nom in ("dépece", "effacer_memoire"):

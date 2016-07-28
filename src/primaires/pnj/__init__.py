@@ -197,10 +197,15 @@ class Module(BaseModule):
         """Crée un PNJ depuis le prototype prototype.
 
         Le PNJ est ensuite ajouté à la liste des PNJ existants.
+        Si la salle est précisée, le script 'apparaît' du PNJ est appelé.
 
         """
         pnj = PNJ(prototype, salle)
         self.ajouter_PNJ(pnj)
+
+        if salle:
+            pnj.script["apparaît"].executer(pnj=pnj, salle=salle)
+
         return pnj
 
     def ajouter_PNJ(self, pnj):
