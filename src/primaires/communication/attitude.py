@@ -179,3 +179,8 @@ class Attitude(BaseObj):
                     else:
                         personnage.envoyer(formater(self.dependant["odf"]),
                                 acteur=acteur, cible=cible)
+
+            if getattr(cible, "script", None):
+                cible.script["attitude"].executer(cle=self.cle,
+                        personnage=acteur, pnj=cible,
+                        salle=personnage.salle)

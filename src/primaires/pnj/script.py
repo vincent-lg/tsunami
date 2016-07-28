@@ -438,6 +438,23 @@ class ScriptPNJ(Script):
         var_valeur = evt_effacer_memoire.ajouter_variable("valeur", "Object")
         var_valeur.aide = "la valeur de la mémoire qu'on va effacer"
 
+        # Événement attitude
+        evt_attitude = self.creer_evenement("attitude")
+        evt_attitude.aide_courte = "on fait une attitud4e sur le PNJ"
+        evt_attitude.aide_longue = \
+            "Cet évènement est appelé quand un personnage fait une " \
+            "attitude en prenant le PNJ pour cible, comme lui sourit, " \
+            "ou se fait tout petit devant lui, par exemple. La clé " \
+            "de l'attitude est conservée dans la variable 'cle'."
+
+        # Configuration des variables de l'évènement attitude
+        var_cle = evt_attitude.ajouter_variable("cle", "str")
+        var_cle.aide = "la clé de l'attitude utilisée"
+        var_perso = evt_attitude.ajouter_variable("personnage", "Personnage")
+        var_perso.aide = "le personnage faisant l'attitude"
+        var_salle = evt_attitude.ajouter_variable("salle", "Salle")
+        var_salle.aide = "la salle dans laquelle se produit l'attitude"
+
         # On ajoute à tous les évènements la variable 'pnj'
         for evt in self.evenements.values():
             if evt.nom in ("dépece", "effacer_memoire"):
