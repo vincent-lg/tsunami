@@ -72,6 +72,7 @@ class Description(Editeur):
         self.ajouter_option("d", self.opt_supprimer)
         self.ajouter_option("r", self.opt_remplacer)
         self.ajouter_option("e", self.opt_editer_evt)
+        self.ajouter_option("t", self.opt_tabulations)
         self.ajouter_option("de", self.opt_supprimer_evt)
         self.ajouter_option("re", self.opt_renommer_evt)
         self.ajouter_option("o", self.opt_editer_options)
@@ -118,7 +119,6 @@ class Description(Editeur):
         attribut = getattr(self.objet, self.nom_attribut)
         if isinstance(attribut, str):
             contenu = self.description_complete.affichage_simple("|nl|")
-            print("Contenu", contenu)
             setattr(self.objet, self.nom_attribut, contenu)
 
     def accueil(self):
@@ -171,7 +171,8 @@ class Description(Editeur):
             " - |ent|/j <numéro du paragraphe> <texte>|ff| pour insérer " \
             "le\n   paragraphe avant celui spécifié\n" \
             " - |/r <texte 1> / <texte 2>|ff| pour remplacer " \
-            "|ent|texte 1|ff| par |ent|texte 2|ff|"
+            "|ent|texte 1|ff| par |ent|texte 2|ff|\n" \
+            " - |ent|/t|ff| pour ajouter ou retirer les tabulations"
 
         if self.description.scriptable:
             msg += \
@@ -279,11 +280,13 @@ class Description(Editeur):
 
     def opt_remplacer(self, arguments):
         """Fonction appelé pour remplacer du texte dans la description.
+
         La syntaxe de remplacement est :
         <texte 1> / <texte à remplacer>
 
         """
         description = self.description
+
         # On commence par split au niveau du pipe
         try:
             recherche, remplacer_par = arguments.split(" / ")
@@ -293,6 +296,26 @@ class Description(Editeur):
             description.remplacer(recherche, remplacer_par)
             self.mettre_a_jour()
             self.actualiser()
+
+    def opt_tabulations(self, arguments):
+        """Ajoute ou retire les tabulations d'une description.
+
+        Syntaxe :
+            /t
+
+        """
+        description = self.description
+
+        # On parcourt tous les paragraphes
+        for i, paragraphe in enumerate(description.paragraphes):
+            if paragraphe.startswith("|tab|"):
+                paragraphe = paragraphe[5:]
+            else:
+                paragraphe = "|tab|" + paragraphe
+            description.paragraphes[i] = paragraphe
+
+        self.mettre_a_jour()
+        self.actualiser()
 
     def opt_editer_evt(self, arguments):
         """Edite ou affiche les éléments de la description."""
