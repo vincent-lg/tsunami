@@ -289,7 +289,10 @@ class EdtInstructions(Editeur):
     def opt_coller(self, arguments):
         """Colle le texte contenu dans le presse-papier.
 
-        Syntaxe : /p ou /p <indice de la ligne ou insérer le code>
+        Syntaxe :
+            /v
+            /v 0
+            /v <indice de la ligne ou insérer le code>
 
         """
         presse_papier = importeur.scripting.presse_papier.get(
@@ -316,6 +319,18 @@ class EdtInstructions(Editeur):
             return
 
         test = self.objet
+        if arguments.strip() == "0":
+            # On insert le presse-papier à la fin
+            for ligne in presse_papier[1:]:
+                try:
+                    test.ajouter_instruction(ligne)
+                except ValueError as err:
+                    self.pere << "|err|" + str(err).capitalize() + "|ff|"
+                    return
+
+            self.actualiser()
+            return
+
         instructions = test.instructions
         no = arguments
         try:
