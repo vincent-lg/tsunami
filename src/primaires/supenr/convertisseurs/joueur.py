@@ -40,3 +40,12 @@ class Convertisseur:
 
         objet.set_version(classe, 1)
         importeur.supenr.met_preparer.append((mise_a_jour, objet))
+
+    def depuis_version_1(objet, classe):
+        """Active l'option d'éditeur de description 'saut de ligne'."""
+        def mise_a_jour(joueur):
+            if not importeur.interpreteur.options.a_option(joueur, 2):
+                importeur.interpreteur.options.changer_option(joueur, 2)
+
+        objet.set_version(classe, 2)
+        importeur.supenr.met_preparer.append((mise_a_jour, objet))

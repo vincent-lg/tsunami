@@ -50,7 +50,7 @@ class Joueur(Personnage):
 
     enregistrer = True
     _nom = "joueur"
-    _version = 1
+    _version = 2
 
     def __init__(self):
         """Constructeur du joueur"""
