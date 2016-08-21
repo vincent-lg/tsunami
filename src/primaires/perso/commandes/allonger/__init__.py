@@ -87,7 +87,8 @@ class CmdAllonger(Commande):
                         elt.connecteur, elt.titre)
                 personnage.salle.envoyer("{{}} s'allonge {} {}.".format(
                         elt.connecteur, elt.titre), personnage)
-                elt.script["allonge"].executer(personnage=personnage)
+                elt.script["allonge"].executer(personnage=personnage,
+                        salle=salle)
         else:
             personnage.etats.retirer("assis")
             personnage.etats.ajouter("allonge", None)

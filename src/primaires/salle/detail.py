@@ -155,6 +155,8 @@ class ScriptDetail(Script):
         # Configuration des variables de l'évènement asseoit
         var_perso = evt_asseoit.ajouter_variable("personnage", "Personnage")
         var_perso.aide = "le personnage s'asseyant"
+        var_salle = evt_asseoit.ajouter_variable("salle", "Salle")
+        var_salle.aide = "la salle dans laquelle se trouve le détail"
 
         # Événement allonge
         evt_allonge = self.creer_evenement("allonge")
@@ -168,6 +170,8 @@ class ScriptDetail(Script):
         # Configuration des variables de l'évènement allonge
         var_perso = evt_allonge.ajouter_variable("personnage", "Personnage")
         var_perso.aide = "le personnage s'allongeant"
+        var_salle = evt_allonge.ajouter_variable("salle", "Salle")
+        var_salle.aide = "la salle dans laquelle se trouve le détail"
 
         # Événement regarde
         evt_regarde = self.creer_evenement("regarde")
