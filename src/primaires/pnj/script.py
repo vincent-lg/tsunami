@@ -473,6 +473,76 @@ class ScriptPNJ(Script):
         var_salle = evt_apparait.ajouter_variable("salle", "Salle")
         var_salle.aide = "la salle dans laquelle le PNJ apparaît"
 
+        # Évènement changer
+        evt_changer = self.creer_evenement("changer")
+        evt_changer.aide_courte = "le temps (minute heure jour...) change"
+        evt_changer.aide_longue = \
+            "Cet évènement est appelé quand le temps se modifie. Des " \
+            "sous-évènements spécifiques sont utilisés toutes les " \
+            "minutes, les heures, les jours, les mois ou les années. " \
+            "Notez que, pour utiliser cet évènement, vous devez créer " \
+            "des tests pré-conditonnels (si vous écrivez des lignes " \
+            "d'instructions dans le test 'sinon', elles ne seront jamais " \
+            "exécutées)."
+        evt_changer_minute = evt_changer.creer_evenement("minute")
+        evt_changer_minute.aide_courte = "au changement de minute"
+        evt_changer_minute.aide_longue = \
+            "Cet évènement est appelé au changement de minute. Utilisez " \
+            "une ou plusieurs des variables proposées pour vérifier " \
+            "l'heure. Par exemple, entrez le test " \
+            "|cmd|heure = 18 et minute = 25|ff| pour lancer un " \
+            "test à 18:25 précise.\n" \
+            "Dans tous les cas, ne mettez pas d'instructions dans le " \
+            "test 'sinon', elles seront ignorées : créez toujours un " \
+            "ou plusieurs tests."
+        evt_changer_heure = evt_changer.creer_evenement("heure")
+        evt_changer_heure.aide_courte = "au changement d'heure"
+        evt_changer_heure.aide_longue = \
+            "Cet évènement est appelé au changement d'heure. Utilisez " \
+            "une ou plusieurs des variables proposées pour vérifier " \
+            "l'heure. Par exemple, entrez le test " \
+            "|cmd|heure = 18|ff| pour lancer un test tous les jours à " \
+            "18:00. Dans tous les cas, ne mettez pas d'instructions dans le " \
+            "test 'sinon', elles seront ignorées : créez toujours un " \
+            "ou plusieurs tests."
+        evt_changer_jour = evt_changer.creer_evenement("jour")
+        evt_changer_jour.aide_courte = "au changement de jour"
+        evt_changer_jour.aide_longue = \
+            "Cet évènement est appelé au changement de jour. Utilisez " \
+            "une ou plusieurs des variables proposées pour vérifier " \
+            "la date. Par exemple, entrez le test " \
+            "|cmd|jour = 15 et mois = 3|ff| pour lancer un " \
+            "test le 15ème jour du 3ème mois.\n" \
+            "Dans tous les cas, ne mettez pas d'instructions dans le " \
+            "test 'sinon', elles seront ignorées : créez toujours un " \
+            "ou plusieurs tests."
+        evt_changer_mois = evt_changer.creer_evenement("mois")
+        evt_changer_mois.aide_courte = "au changement de mois"
+        evt_changer_mois.aide_longue = \
+            "Cet évènement est appelé au changement de mois. Utilisez " \
+            "une ou plusieurs des variables proposées pour vérifier " \
+            "le mois. Par exemple, entrez le test " \
+            "|cmd|mois = 8|ff| pour lancer un test tous les ans au " \
+            "début du 8ème mois. Dans tous les cas, ne mettez pas " \
+            "d'instructions dans le test 'sinon', elles seront ignorées : " \
+            "créez toujours un ou plusieurs tests."
+        evt_changer_annee = evt_changer.creer_evenement("année")
+        evt_changer_annee.aide_courte = "au changement d'années"
+        evt_changer_annee.aide_longue = \
+            "Cet évènement est appelé au changement d'année."
+
+        # Configuration des variables de l'événement.
+        var_minute = evt_changer.ajouter_variable("minute", "Fraction")
+        var_minute.aide = "le nombre de minutes (entre 0 et 59)"
+        var_heure = evt_changer.ajouter_variable("heure", "Fraction")
+        var_heure.aide = "le nombre d'heures (entre 0 et 23)"
+        var_jour = evt_changer.ajouter_variable("jour", "Fraction")
+        var_jour.aide = "le nombre de jours (entre 1 et 30)"
+        var_mois = evt_changer.ajouter_variable("mois", "Fraction")
+        var_mois.aide = "le nombre de mois (entre 1 et 12)"
+        var_annee = evt_changer.ajouter_variable("annee", "Fraction")
+        var_annee.aide = "le nombre d'années"
+
         # On ajoute à tous les évènements la variable 'pnj'
         for evt in self.evenements.values():
             if evt.nom in ("dépece", "effacer_memoire"):

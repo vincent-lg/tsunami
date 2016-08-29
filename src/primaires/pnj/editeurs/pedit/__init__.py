@@ -238,3 +238,10 @@ class EdtPedit(Presentation):
         suppression.action = "pnj.supprimer_prototype"
         suppression.confirme = "Le prototype de PNJ {} a bien été " \
                 "supprimé.".format(prototype.cle)
+
+    def fermer(self):
+        """On ferme l'éditeur."""
+        Presentation.fermer(self)
+        if self.objet:
+            for pnj in self.objet.pnj:
+                importeur.pnj.inscrire_PNJ(pnj)

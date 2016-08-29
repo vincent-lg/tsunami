@@ -30,6 +30,8 @@
 
 """Fichier contenant le module primaire pnj."""
 
+from fractions import Fraction
+
 from abstraits.module import *
 from primaires.perso.exceptions.action import ExceptionAction
 from primaires.pnj.chemin import CheminPNJ
@@ -71,6 +73,13 @@ class Module(BaseModule):
         type(importeur).espace["prototypes_pnj"] = self._prototypes
         type(importeur).espace["PNJ"] = self._PNJ
 
+        # Évènements de changement de temps
+        self.ch_minute = []
+        self.ch_heure = []
+        self.ch_jour = []
+        self.ch_mois = []
+        self.ch_annee = []
+
     def config(self):
         """Méthode de configuration du module"""
         importeur.hook.ajouter_hook("pnj:arrive",
@@ -101,12 +110,16 @@ class Module(BaseModule):
         prototypes = self.importeur.supenr.charger_groupe(Prototype)
         for prototype in prototypes:
             self._prototypes[prototype.cle] = prototype
+            prototype.script.init()
 
         pnjs = self.importeur.supenr.charger_groupe(PNJ)
         pnjs = [p for p in pnjs if hasattr(p, "identifiant") and \
                 p.prototype]
         for pnj in pnjs:
             self._PNJ[pnj.identifiant] = pnj
+
+            # On ajoute les PNJs au renouvellement automatique
+            self.inscrire_PNJ(pnj)
 
         chemins = self.importeur.supenr.charger_groupe(CheminPNJ)
         chemins = self.importeur.supenr.charger_groupe(CheminPNJ)
@@ -124,6 +137,18 @@ class Module(BaseModule):
         # On relie l'hook pnj:attaque
         self.importeur.hook["pnj:attaque"].ajouter_evenement(
                 self.repondre_attaque)
+
+        # Ajout des hooks de changement de temps
+        self.importeur.hook["temps:minute"].ajouter_evenement(
+                self.changer_minute)
+        self.importeur.hook["temps:heure"].ajouter_evenement(
+                self.changer_heure)
+        self.importeur.hook["temps:jour"].ajouter_evenement(
+                self.changer_jour)
+        self.importeur.hook["temps:mois"].ajouter_evenement(
+                self.changer_mois)
+        self.importeur.hook["temps:annee"].ajouter_evenement(
+                self.changer_annee)
 
         BaseModule.init(self)
 
@@ -201,6 +226,10 @@ class Module(BaseModule):
 
         """
         pnj = PNJ(prototype, salle)
+
+        # On ajoute le PNJ au renouvellement automatique
+        self.inscrire_PNJ(pnj)
+
         self.ajouter_PNJ(pnj)
 
         if salle:
@@ -219,6 +248,20 @@ class Module(BaseModule):
     def supprimer_PNJ(self, identifiant):
         """Supprime le PNJ de la liste des PNJ."""
         pnj = self._PNJ[identifiant]
+
+        # On le retire des changements de temps
+        if pnj in self.ch_minute:
+            self.ch_minute.remove(pnj)
+        if pnj in self.ch_heure:
+            self.ch_heure.remove(pnj)
+        if pnj in self.ch_jour:
+            self.ch_jour.remove(pnj)
+        if pnj in self.ch_mois:
+            self.ch_mois.remove(pnj)
+        if pnj in self.ch_annee:
+            self.ch_annee.remove(pnj)
+
+        # Appel de l'hook correspondant
         self.importeur.hook["pnj:détruit"].executer(pnj)
         del self._PNJ[identifiant]
         pnj.detruire()
@@ -317,3 +360,106 @@ class Module(BaseModule):
                 return
             else:
                 pnj.attaquer(personnage)
+
+    def inscrire_PNJ(self, pnj):
+        """Inscrit le PNJ dans le changement de temps."""
+        print("on inscrit", pnj.identifiant)
+        if pnj.script["changer"]["minute"].tests:
+            if pnj not in self.ch_minute:
+                self.ch_minute.append(pnj)
+        elif pnj in self.ch_minute:
+            self.ch_minute.remove(pnj)
+
+        if pnj.script["changer"]["heure"].tests:
+            if pnj not in self.ch_heure:
+                self.ch_heure.append(pnj)
+        elif pnj in self.ch_heure:
+            self.ch_heure.remove(pnj)
+
+        if pnj.script["changer"]["jour"].tests:
+            if pnj not in self.ch_jour:
+                self.ch_jour.append(pnj)
+        elif pnj in self.ch_jour:
+            self.ch_jour.remove(pnj)
+
+        if pnj.script["changer"]["mois"].tests:
+            if pnj not in self.ch_mois:
+                self.ch_mois.append(pnj)
+        elif pnj in self.ch_mois:
+            self.ch_mois.remove(pnj)
+
+        if pnj.script["changer"]["année"].tests:
+            if pnj not in self.ch_annee:
+                self.ch_annee.append(pnj)
+        elif pnj in self.ch_annee:
+            self.ch_annee.remove(pnj)
+
+    def changer_minute(self, temps):
+        """Hook appelé à chaque changement de minute."""
+        minute, heure, jour, mois, annee = temps.minute, temps.heure, \
+                temps.jour + 1, temps.mois + 1, temps.annee
+        minute = Fraction(minute)
+        heure = Fraction(heure)
+        jour = Fraction(jour)
+        mois = Fraction(mois)
+        annee = Fraction(annee)
+        for pnj in self.ch_minute:
+            pnj.script["changer"]["minute"].executer(pnj=pnj,
+                    minute=minute, heure=heure, jour=jour, mois=mois,
+                    annee=annee)
+
+    def changer_heure(self, temps):
+        """Hook appelé à chaque changement d'heure."""
+        minute, heure, jour, mois, annee = temps.minute, temps.heure, \
+                temps.jour + 1, temps.mois + 1, temps.annee
+        minute = Fraction(minute)
+        heure = Fraction(heure)
+        jour = Fraction(jour)
+        mois = Fraction(mois)
+        annee = Fraction(annee)
+        for pnj in self.ch_heure:
+            pnj.script["changer"]["heure"].executer(pnj=pnj,
+                    minute=minute, heure=heure, jour=jour, mois=mois,
+                    annee=annee)
+
+    def changer_jour(self, temps):
+        """Hook appelé à chaque changement de jour."""
+        minute, heure, jour, mois, annee = temps.minute, temps.heure, \
+                temps.jour + 1, temps.mois + 1, temps.annee
+        minute = Fraction(minute)
+        heure = Fraction(heure)
+        jour = Fraction(jour)
+        mois = Fraction(mois)
+        annee = Fraction(annee)
+        for pnj in self.ch_jour:
+            pnj.script["changer"]["jour"].executer(pnj=pnj,
+                    minute=minute, heure=heure, jour=jour, mois=mois,
+                    annee=annee)
+
+    def changer_mois(self, temps):
+        """Hook appelé à chaque changement de mois."""
+        minute, heure, jour, mois, annee = temps.minute, temps.heure, \
+                temps.jour + 1, temps.mois + 1, temps.annee
+        minute = Fraction(minute)
+        heure = Fraction(heure)
+        jour = Fraction(jour)
+        mois = Fraction(mois)
+        annee = Fraction(annee)
+        for pnj in self.ch_mois:
+            pnj.script["changer"]["mois"].executer(pnj=pnj,
+                    minute=minute, heure=heure, jour=jour, mois=mois,
+                    annee=annee)
+
+    def changer_annee(self, temps):
+        """Hook appelé à chaque changement d'année."""
+        minute, heure, jour, mois, annee = temps.minute, temps.heure, \
+                temps.jour + 1, temps.mois + 1, temps.annee
+        minute = Fraction(minute)
+        heure = Fraction(heure)
+        jour = Fraction(jour)
+        mois = Fraction(mois)
+        annee = Fraction(annee)
+        for pnj in self.ch_annee:
+            pnj.script["changer"]["annee"].executer(pnj=pnj,
+                    minute=minute, heure=heure, jour=jour, mois=mois,
+                    annee=annee)
