@@ -68,11 +68,19 @@ class ClasseAction(Action):
     def deplacer_alea_personnage(personnage):
         """Déplace aléatoirement le personnage sans aucun critères.
 
+        Paramètres à préciser :
+
+          * personnage : le personnage qui doit se déplacer aléatoirement.
+
         Le personnage va choisir une direction aléatoirement autour de lui.
         Il retire cependant du calcul :
 
           * Les portes verrouillées
           * Les sorties cachées
+
+        Exemple d'utilisation :
+
+          deplacer_alea personnage
 
         """
         if not ClasseAction.peut_deplacer_personnage(personnage):
@@ -99,6 +107,11 @@ class ClasseAction(Action):
     def deplacer_alea_personnage_terrains(personnage, terrains):
         """Déplace aléatoirement le personnage en fonction de terrains.
 
+        Paramètres à préciser :
+
+          * personnage : le personnage devant se déplacer aléatoirement
+          * terrains : les terrains ou flags, séparés par un |.
+
         On doit préciser, sous la forme d'une chaîne, le (ou les terrains,
         séparés par le signe |) qui sont autorisés pour ce personnage.
 
@@ -110,6 +123,24 @@ class ClasseAction(Action):
 
           * Les sorties cachées
           * Les portes verrouillées.
+
+        Ce comportement peut être modifiés par des flags. Ils doivent
+        être précisés comme des terrains (voir les exemples ci-dessous).
+
+        Flags possibles :
+
+          * "portes" : les portes fermées sont ignorées.
+
+        Exemples d'utilisation :
+
+          # Déplace aléatoirement le personnage dans le terrain route
+          deplacer_alea personnage "route"
+          # Déplace dans les salles forêt ou plaine
+          deplacer_alea personnage "forêt|plaine"
+          # Déplace en ignorant les sorties à portes fermées
+          deplacer_alea personnage "portes"
+          # Déplace sur la route en ignorant les portes fermées
+          deplacer_alea personnage "route|portes"
 
         """
         if not ClasseAction.peut_deplacer_personnage(personnage):
@@ -126,7 +157,13 @@ class ClasseAction(Action):
         # Choix de la direction
         sorties = []
         for sortie in personnage.salle.sorties:
-            if sortie and not sortie.cachee and (not sortie.porte or \
+            if sortie is None:
+                continue
+
+            if sortie.porte and sortie.porte.fermee and "portes" in terrains:
+                continue
+
+            if not sortie.cachee and (not sortie.porte or \
                     not sortie.porte.verrouillee) and sortie.salle_dest and \
                     supprimer_accents(sortie.salle_dest.nom_terrain) in \
                     terrains:
