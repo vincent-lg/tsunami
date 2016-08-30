@@ -395,9 +395,14 @@ class Module(BaseModule):
             for matelot in navire.equipage.matelots.values():
                 if matelot.personnage:
                     self.matelots[matelot.personnage.identifiant] = matelot
+                else:
+                    matelot.detruire()
+                    continue
+
                 if matelot.ordres:
                     matelot.nettoyer_ordres()
                     matelot.executer_ordres()
+
             navire.equipage.points_max = navire.equipage.points_actuels
         self.nav_logger.info("Mise à jour des matelots terminée.")
 
