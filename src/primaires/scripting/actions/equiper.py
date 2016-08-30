@@ -40,6 +40,7 @@ class ClasseAction(Action):
     @classmethod
     def init_types(cls):
         cls.ajouter_types(cls.equiper_prototype, "Personnage", "str")
+        cls.ajouter_types(cls.equiper_objet, "Personnage", "Objet")
 
     @staticmethod
     def equiper_prototype(personnage, cle_prototype):
@@ -74,3 +75,54 @@ class ClasseAction(Action):
 
         raise ErreurExecution("le personnage {} ne peut équiper {}".format(
                 repr(personnage), repr(objet.cle)))
+
+    @staticmethod
+    def equiper_objet(personnage, objet):
+        """Force un personnage à équiper l'objet précisé.
+
+        Cette syntaxe de l'action se rapproche davantage de la commande
+        **porter/wear**. Elle demande à un personnage d'équiper un
+        objet qu'il possède (dans ses mains, ou dans un sac qu'il équipe).
+
+        Paramètres à préciser :
+
+          * personnage : le personnage que l'on souhaite équiper
+          * objet : l'objet que l'on souhaite équiper.
+
+        Cette action est susceptible de faire des erreurs, par exemple,
+        si l'objet n'est pas possédé par le personnage ou si il ne
+        peut être équipé par le personnage. Il est de bonne politique
+        de tester avant d'équiper le personnage, sauf si on est dans
+        une situation extrêmement limitée en aléatoire.
+
+        Exemple d'utilisation :
+
+          # On cherche à faire équiper un sabre de bois au personnage
+          # Le personnage possède le sabre de bois dans son inventaire
+          sabre = possede(personnage, "sabre_bois")
+          si sabre:
+              # On vérifié qu'il n'a rien dans la main gauche
+              si !equipe(personnage, "*main gauche"):
+                  equiper personnage sabre
+              finsi
+          finsi
+
+        """
+        if not any(o for o in personnage.equipement.inventaire if o is objet):
+            raise ErreurExecution("{} ne possède visiblement pas {}".format(
+                    personnage.nom_unique, objet.identifiant))
+        # Si 'objet' est déjà équipé, ne fait rien
+        if objet.contenu is personnage.equipement.equipes:
+            return
+
+        # Essaye d'équiper l'objet sur un membre
+        for membre in personnage.equipement.membres:
+            if membre.peut_equiper(objet):
+                objet.contenu.retirer(objet)
+                membre.equiper(objet)
+                objet.script["porte"].executer(objet=objet,
+                        personnage=personnage)
+                return
+
+        raise ErreurExecution("{} ne peut équiper {}, aucun emplacement " \
+                "libre".format(personnage.nom_unique, objet.identifiant))
