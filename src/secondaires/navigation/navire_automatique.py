@@ -95,6 +95,7 @@ class NavireAutomatique(BaseObj):
 
         # Création de l'équipage
         for nom_poste, (cle, coords, nb_min, nb_max) in self.equipage.items():
+            coords = tuple(coords)
             fiche = importeur.navigation.fiches.get(cle)
             if fiche is None:
                 raise ValueError("Impossible de trouver le prototype " \
