@@ -363,7 +363,6 @@ class Module(BaseModule):
 
     def inscrire_PNJ(self, pnj):
         """Inscrit le PNJ dans le changement de temps."""
-        print("on inscrit", pnj.identifiant)
         if pnj.script["changer"]["minute"].tests:
             if pnj not in self.ch_minute:
                 self.ch_minute.append(pnj)

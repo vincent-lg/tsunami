@@ -66,6 +66,7 @@ class Prototype(BaseObj):
         self.etat_pluriel = "se tiennent ici"
         self.noms_sup = []
         self.description = Description(parent=self)
+        self.background = Description(parent=self, scriptable=False)
         self._race = None
         self.genre = "aucun"
         self.stats = Stats(self)

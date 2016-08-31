@@ -91,6 +91,18 @@ class EdtPedit(Presentation):
             "| |tit|" + "Description du PNJ {}".format(prototype).ljust(
             76) + "|ff||\n" + self.opts.separateur
 
+        # Description
+        background = self.ajouter_choix("background", "ba", Description, \
+                prototype, "background")
+        background.parent = self
+        background.apercu = "{objet.background.paragraphes_indentes}"
+        background.aide_courte = \
+            "| |tit|" + "Background du PNJ {}".format(prototype).ljust(
+            76) + "|ff||\n" + self.opts.separateur + "\n" \
+            "Le background donne des informations générales sur le " \
+            "PNJ pour la cohérence\n(nom, âge, style de vie, contexte, " \
+            "...), tout ce qui peut aider à\nson animation par d'autres."
+
         # Flags
         flags = self.ajouter_choix("flags", "fl", Flags, prototype, "flags",
                 FLAGS)
