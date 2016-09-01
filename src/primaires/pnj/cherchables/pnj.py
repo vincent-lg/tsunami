@@ -51,6 +51,7 @@ class CherchablePNJ(Cherchable):
 
         """
         self.ajouter_filtre("l", "cle", "cle", "regex")
+        self.ajouter_filtre("n", "nom", "nom_singulier", "regex")
 
     @property
     def items(self):
