@@ -62,7 +62,6 @@ class Module(BaseModule):
         self.salles = {}
         self.logger = importeur.man_logs.creer_logger(
                 "botanique", "botanique")
-        self.terrains_recoltables = ["forêt", "plaine", "rive", "désert"]
 
     def config(self):
         """Configuration du module."""

@@ -149,9 +149,6 @@ class PrmPlanter(Parametre):
                 else:
                     age = nombre
 
-        print("salles =", salles, "nb_plantes =", nb_plantes, "terrains =",
-                terrains, "zone =", zone, "mnémo =", mnemo, "age =", age)
-
         # Convertion des terrains
         nom_terrains = terrains
         terrains = []
@@ -161,11 +158,6 @@ class PrmPlanter(Parametre):
             except KeyError:
                 personnage << "|err|Terrain {} introuvable.|ff|".format(
                         terrain)
-                return
-
-            if terrain.nom not in importeur.botanique.terrains_recoltables:
-                personnage << "|err|Vous ne pouvez rien planter en " \
-                        "terrain {}.|ff|".format(terrain.nom)
                 return
 
             terrains.append(terrain)
