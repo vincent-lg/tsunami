@@ -88,7 +88,7 @@ class Memoires(BaseObj):
         Paramètres :
             cle -- la clé de la mémoire (souvent un objet, une salle, un PNJ...)
             valeur -- la valeur de la mémoire (c'est-à-dire le nom mémorisé)
-            temps -- le temps en minutes
+            temps -- le temps en secondes
 
         """
         if cle not in self or valeur not in self[cle]:
@@ -96,5 +96,11 @@ class Memoires(BaseObj):
                     valeur, cle))
 
         a_detruire = self._a_detruire.get(cle, {})
-        a_detruire[valeur] = datetime.now() + timedelta(seconds=temps * 60)
+        a_detruire[valeur] = datetime.now() + timedelta(seconds=temps)
         self._a_detruire[cle] = a_detruire
+
+        if temps < 60:
+            importeur.scripting.no += 1
+            importeur.diffact.ajouter_action("programmer_{}".format(
+                    importeur.scripting.no), temps,
+                    importeur.scripting.detruire_memoire, cle, valeur)

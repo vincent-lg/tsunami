@@ -93,6 +93,7 @@ class Module(BaseModule):
         self.alarmes = {}
         self.structures = {}
         self.editeurs = {}
+        self.no = 0
 
         # Statistiques
         self.tps_actions = 0.003
@@ -613,20 +614,37 @@ class Module(BaseModule):
                     script else None
 
             for valeur, moment in list(entrees.items()):
+                temps = int((moment - mtn).total_seconds())
                 if moment <= mtn:
-                    del self.memoires._a_detruire[cle][valeur]
-                    if cle in self.memoires and valeur in self.memoires[cle]:
-                        valeur_memoire = self.memoires[cle][valeur]
-                        del self.memoires[cle][valeur]
-                        if cle.e_existe and evenement:
-                            variables = evenement.deduire_variables(
-                                    cle, nom=valeur, valeur=valeur_memoire)
-                            evenement.executer(**variables)
+                    self.detruire_memoire(cle, valeur, evenement)
+                elif temps < 60:
+                    self.no += 1
+                    importeur.diffact.ajouter_action("programmer_{}".format(
+                    self.no), temps, self.detruire_memoire, cle, valeur,
+                            evenement)
 
             if not self.memoires._a_detruire[cle]:
                 del self.memoires._a_detruire[cle]
             if not self.memoires[cle]:
                 del self.memoires[cle]
+
+    def detruire_memoire(self, cle, valeur, evenement=None):
+        """Destruction immédiate de la mémoire."""
+        if evenement is None:
+            script = getattr(cle, "script", None)
+            evenement = script.evenements.get("effacer_memoire") if \
+                    script else None
+
+        if cle in self.memoires._a_detruire and valeur in \
+                self.memoires._a_detruire[cle]:
+            del self.memoires._a_detruire[cle][valeur]
+            if cle in self.memoires and valeur in self.memoires[cle]:
+                valeur_memoire = self.memoires[cle][valeur]
+                del self.memoires[cle][valeur]
+                if cle.e_existe and evenement:
+                    variables = evenement.deduire_variables(
+                            cle, nom=valeur, valeur=valeur_memoire)
+                    evenement.executer(**variables)
 
     # Méthodes statistiques
     def cb_joueurs(self):
