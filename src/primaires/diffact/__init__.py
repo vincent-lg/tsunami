@@ -30,6 +30,7 @@
 
 """Fichier contenant le module primaire diffact."""
 
+import time
 import traceback
 
 from abstraits.module import *
@@ -78,8 +79,17 @@ class Module(BaseModule):
         BaseModule.__init__(self, importeur, "diffact", "primaire")
         self.actions = {} # {nom_action:action_differee}
         self.ordre_actions = [] # [nom_action]
+        self.longues = []
         self.logger = type(self.importeur).man_logs.creer_logger("diffact", \
                 "diffact")
+
+    def init(self):
+        """Initialisation du module."""
+        # Hooks
+        self.importeur.hook["stats:infos"].ajouter_evenement(
+                self.stats_diffact)
+
+        BaseModule.init(self)
 
     def boucle(self):
         """Redéfinition de la méthode boucle du Module.
@@ -145,6 +155,7 @@ class Module(BaseModule):
                 if action is None:
                     continue
 
+                t1 = time.time()
                 try:
                     action.executer()
                 except InterrompreCommande:
@@ -154,5 +165,41 @@ class Module(BaseModule):
                             "de l'exécution de l'action {}.".format(
                             action.nom))
                     self.logger.fatal(traceback.format_exc())
+                finally:
+                    t2 = time.time()
+                    tps = round(t2 - t1, 3)
+                    if tps > 0.3:
+                        self.longues.append((nom, tps))
             else:
                 break
+
+    def stats_diffact(self, infos):
+        """Ajoute les stats concernant les actions différées."""
+        nb_longues = len(self.longues)
+        longues = {}
+        for nom, temps in self.longues:
+            a_temps = longues.get(nom, 0)
+            temps += a_temps
+            longues[nom] = temps
+
+        # Récupère les actions les plus longues
+        longues = sorted(tuple(longues.items()), key=lambda c: c[1])
+
+        # Messages des stats
+        msg = "|tit|Actions différées :|ff|"
+        msg += "\n  Actions longues (>0,3s) : {}".format(nb_longues)
+        msg += "\n  Actions les plus gourmandes :\n"
+
+        # Parcourt des actions gourmandes
+        i = 1
+        for nom, total in longues:
+            s_nb = len([n for n, t in self.longues if n == nom])
+            s_moy = sum(t for n, t in self.longues if n == nom) / s_nb
+            msg += "\n    {:<20} : max={}s, nb={}, moyenne={}s".format(
+                    nom.capitalize(), str(round(total, 3)).replace(".", ","),
+                    s_nb, str(round(s_moy, 3)).replace(".", ","))
+            i += 1
+            if i >= 5:
+                break
+
+        infos.append(msg)
