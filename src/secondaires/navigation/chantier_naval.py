@@ -47,6 +47,9 @@ class ChantierNaval(BaseObj):
     """
 
     enregistrer = True
+    _nom = "chantier_navale"
+    _version = 1
+
     def __init__(self, cle):
         BaseObj.__init__(self)
         self.cle = cle
