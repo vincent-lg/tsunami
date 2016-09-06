@@ -35,5 +35,3 @@ class Convertisseur:
     def depuis_version_0(objet, classe):
         objet.set_version(classe, 1)
         objet.points = [tuple(coords) for coords in objet.points]
-        print("Convertisseur du chantier navale.")
-        c=input()
