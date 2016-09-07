@@ -548,5 +548,9 @@ class ScriptPNJ(Script):
             if evt.nom in ("dépece", "effacer_memoire"):
                 continue
 
+            if evt.nom in importeur.scripting.commandes_dynamiques:
+                evt.supprimer_variable("pnj")
+                continue
+
             var_pnj = evt.ajouter_variable("pnj", "PNJ")
             var_pnj.aide = "le PNJ scripté"

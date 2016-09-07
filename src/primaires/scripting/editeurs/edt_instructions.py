@@ -70,11 +70,18 @@ class EdtInstructions(Editeur):
         """Affiche ou réactualiser le cache.
 
         Syntaxe :
-            /h (reset)
+            /h
+            /h reset
+            /h -<variable>
 
         """
         test = self.objet
-        if arguments.lower() == "reset":
+        if arguments.startswith("-"):
+            variable = arguments[1:]
+            test.evenement.supprimer_variable(variable)
+            self.pere << "La variable '{}' a bien été supprimée.".format(
+                    variable)
+        elif arguments.lower() == "reset":
             self.pere << "|att|Le cache a été réinitialisé.|ff|"
             test.calculer_cache()
 

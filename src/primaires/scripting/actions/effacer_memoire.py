@@ -266,8 +266,8 @@ def temps_en_secondes(temps):
             temps *= 60 * 60
         elif mul == "j":
             temps *= 60 * 60 * 24
-        elif mul == "s":
-            pass
+        elif mul == "m":
+            temps *= 60
 
         return temps
     else:
