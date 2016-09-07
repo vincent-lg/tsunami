@@ -360,13 +360,25 @@ class EdtInstructions(Editeur):
     def opt_relier_quete(self, argument):
         """Relie à une quête.
 
+        Syntaxe :
+            /q 0
+            /q <quête>
+
         La quête doit être au format :
             nom_quete:niveau
 
         """
         test = self.objet
         if not argument.strip():
-            self.pere << "|err|Précisez <quete:niveau>.|ff|"
+            self.pere << "|err|Précisez |cmd|0|err| ou <quete:niveau>.|ff|"
+            return
+
+        if argument.strip() == "0":
+            if test.etape:
+                if test.etape is test:
+                    test.etape.test = None
+                test.etape = None
+            self.actualiser()
             return
 
         try:
