@@ -57,8 +57,8 @@ class Reboot:
                 180: "Reboot dans trois minutes.",
                 300: "Reboot dans cinq minutes.",
                 600: "Reboot dans dix minutes.",
-                3000: "Reboot dans une demie heure.",
-                6000: "Reboot dans une heure.",
+                1800: "Reboot dans une demie heure.",
+                3600: "Reboot dans une heure.",
         }
 
         for secondes, message in sorted(messages.items(), reverse=True):
