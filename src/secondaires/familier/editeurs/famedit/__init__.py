@@ -45,7 +45,7 @@ from primaires.interpreteur.editeur.selection import Selection
 from primaires.interpreteur.editeur.tableau import Tableau
 from primaires.interpreteur.editeur.uniligne import Uniligne
 from primaires.scripting.editeurs.edt_script import EdtScript
-from secondaires.familier.aptitudes import APTITUDES
+from secondaires.familier.savoirs import APTITUDES
 from secondaires.familier.constantes import *
 
 class EdtFamedit(Presentation):

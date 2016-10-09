@@ -31,6 +31,7 @@
 """Fichier contenant le module primaire perso."""
 
 from collections import namedtuple
+import os
 
 from abstraits.module import *
 from primaires.format.fonctions import supprimer_accents
@@ -54,6 +55,8 @@ from .templates.allonge import Allonge
 from .templates.assis import Assis
 from .prompt import prompts
 from .prompt.defaut import PromptDefaut
+from .aptitude import Aptitude
+from .technique import Technique
 
 class Module(BaseModule):
 
@@ -83,6 +86,8 @@ class Module(BaseModule):
         self.etats = {}
         self.positions = {}
         self.prompts = prompts
+        self.aptitudes = {}
+        self.techniques = {}
 
     def config(self):
         """Méthode de configuration.
@@ -193,6 +198,19 @@ class Module(BaseModule):
         self.ajouter_talent("escalade", "escalade", "survie", 0.31)
         self.ajouter_talent("nage", "nage", "survie", 0.25)
 
+        # On récupère les techniques
+        techniques = self.importeur.supenr.charger_groupe(Technique)
+        for technique in techniques:
+            self.ajouter_technique(technique)
+
+        # On récupère les aptitudes
+        aptitudes = self.importeur.supenr.charger_groupe(Aptitude)
+        for aptitude in aptitudes:
+            if aptitude not in techniques:
+                self.ajouter_aptitude(aptitude)
+
+        self.ajouter_aptitudes()
+        self.ajouter_techniques()
         BaseModule.init(self)
 
     def ajouter_commandes(self):
@@ -391,3 +409,112 @@ class Module(BaseModule):
 
         """
         self.prompts[prompt.nom] = prompt
+
+    def creer_aptitude(self, cle):
+        """Crée une aptitude."""
+        if cle in self.aptitudes:
+            raise ValueError("l'aptitude de clé {} existe déjà.".format(cle))
+
+        aptitude = Aptitude(cle)
+        self.ajouter_aptitude(aptitude)
+        return aptitude
+
+    def ajouter_aptitude(self, aptitude):
+        """Ajoute l'aptitude passée en argument."""
+        cle = aptitude.cle
+        if cle in self.aptitudes:
+            raise ValueError("l'aptitude de clé {} existe déjà.".format(cle))
+
+        self.aptitudes[cle] = aptitude
+
+    def ajouter_aptitudes(self):
+        """Ajoute les aptitudes créées par le système."""
+        for nom, module in self.importeur.__dict__.items():
+            chemin = module.chemin
+            chemin_py = module.chemin_py
+            chemin_aptitudes = os.path.join(chemin, "aptitudes")
+            if os.path.exists(chemin_aptitudes):
+                print("{} a des aptitudes".format(nom))
+                for nom_fichier in os.listdir(chemin_aptitudes):
+                    chemin_fichier = os.path.join(chemin_aptitudes,
+                            nom_fichier)
+                    if os.path.isfile(chemin_fichier) and \
+                            chemin_fichier.endswith(".py") and not \
+                            nom_fichier.startswith("_"):
+                        if nom_fichier[:-3] in self.aptitudes:
+                            continue
+
+                        print("  Charge le module", chemin_fichier)
+                        importe = __import__(chemin_py + ".aptitudes." + \
+                                nom_fichier[:-3])
+                        for morceau in chemin_py.split(".")[1:]:
+                            importe = getattr(importe, morceau)
+
+                        importe = getattr(importe, "aptitudes")
+                        importe = getattr(importe, nom_fichier[:-3])
+                        nom_classe = nom_fichier[:-3]
+                        nom_classe = nom_classe.title().replace("_", "")
+                        print("  Charge la classe", nom_classe)
+                        classe = getattr(importe, nom_classe)
+                        aptitude = classe()
+                        self.ajouter_aptitude(aptitude)
+
+    def supprimer_aptitude(self, cle):
+        """Supprime l'aptitude."""
+        self.aptitudes.pop(cle).detruire()
+
+    def creer_technique(self, cle):
+        """Crée une technique."""
+        if cle in self.techniques:
+            raise ValueError("la technique de clé {} existe déjà.".format(cle))
+
+        technique = Technique(cle)
+        self.ajouter_technique(technique)
+        return technique
+
+    def ajouter_technique(self, technique):
+        """Ajoute la technique passée en argument."""
+        cle = technique.cle
+        if cle in self.techniques:
+            raise ValueError("la technique de clé {} existe déjà.".format(cle))
+
+        self.techniques[cle] = technique
+
+    def ajouter_techniques(self):
+        """Ajoute les techniques créées par le système."""
+        for nom, module in self.importeur.__dict__.items():
+            chemin = module.chemin
+            chemin_py = module.chemin_py
+            chemin_techniques = os.path.join(chemin, "techniques")
+            if os.path.exists(chemin_techniques):
+                print("{} a des techniques".format(nom))
+                for nom_fichier in os.listdir(chemin_techniques):
+                    chemin_fichier = os.path.join(chemin_techniques,
+                            nom_fichier)
+                    if os.path.isfile(chemin_fichier) and \
+                            chemin_fichier.endswith(".py") and not \
+                            nom_fichier.startswith("_"):
+                        if nom_fichier[:-3] in self.techniques:
+                            continue
+
+                        print("  Charge le module", chemin_fichier)
+                        importe = __import__(chemin_py + ".techniques." + \
+                                nom_fichier[:-3])
+                        print("module", importe)
+                        for morceau in chemin_py.split(".")[1:]:
+                            print(morceau)
+                            importe = getattr(importe, morceau)
+
+                        importe = getattr(importe, "techniques")
+                        importe = getattr(importe, nom_fichier[:-3])
+                        nom_classe = nom_fichier[:-3]
+                        nom_classe = nom_classe.title().replace("_", "")
+                        print("  Charge la classe", nom_classe)
+                        c=input()
+                        classe = getattr(importe, nom_classe)
+                        technique = classe()
+                        self.ajouter_technique(technique)
+
+    def supprimer_technique(self, cle):
+        """Supprime la technique."""
+        self.techniques.pop(cle).detruire()

@@ -28,20 +28,12 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Fichier contenant la classe SuivreMaitre détaillée plus bas."""
+"""Fichier contenant les aptitudes des familiers."""
 
-from secondaires.familier.aptitudes.aptitude import Aptitude
+from secondaires.familier.savoirs.proteger_maitre import ProtegerMaitre
+from secondaires.familier.savoirs.suivre_maitre import SuivreMaitre
 
-class SuivreMaitre(Aptitude):
-
-    """Aptitude demandant à un familier de suivre son maître.
-
-    La méthode de classe 'agir' est ainsi appelée au moment du déplacement
-    du maître, si le familier se trouve dans la même salle.
-
-    """
-
-    @classmethod
-    def agir(self, familier, personnage, sortie):
-        """Fait agir le familier selon son aptitude."""
-        familier.pnj.deplacer_sortie(sortie)
+APTITUDES = {
+        "proteger_maitre": ProtegerMaitre,
+        "suivre_maitre": SuivreMaitre,
+}

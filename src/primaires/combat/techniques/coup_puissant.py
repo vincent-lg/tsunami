@@ -28,21 +28,16 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Fichier contenant la classe ProtegerMaitre détaillée plus bas."""
+"""Fichier contenant la classe de la technique CoupPuissant."""
 
-from secondaires.familier.aptitudes.aptitude import Aptitude
+from primaires.perso.technique import Technique
 
-class ProtegerMaitre(Aptitude):
+class CoupPuissant(Technique):
 
-    """Aptitude demandant à un familier de protéger son maître en combat.
+    """Coup puissant."""
 
-    Si un personnage attaque le maître, le familier va essayer de
-    s'interposer. Cette aptitude n'est pas appelée quand le maître
-    attaque un personnage.
+    def __init__(self):
+        Technique.__init__(self, "coup_puissant")
 
-    """
-
-    @classmethod
-    def agir(self, familier, maitre, adversaire, combat):
-        """Fait agir le familier selon son aptitude."""
-        pass
+    def __getnewargs__(self):
+        return ()
