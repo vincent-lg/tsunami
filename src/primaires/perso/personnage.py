@@ -747,8 +747,13 @@ class Personnage(BaseObj):
         if retours:
             verbe = retours[0]
 
+        depuis = sortie_opp.nom_complet
+        if sortie_opp.cachee:
+            depuis = "... vous ne voyez pas très bien depuis où.."
+
         self.envoyer(self.salle.regarder(self))
-        salle_dest.envoyer("{{}} {verbe}.".format(verbe=verbe), self)
+        salle_dest.envoyer("{{}} {verbe} depuis {depuis}.".format(
+                verbe=verbe, depuis=depuis), self)
 
         # Envoi de tips
         if salle_dest.magasin:

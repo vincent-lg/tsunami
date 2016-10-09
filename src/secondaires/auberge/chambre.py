@@ -127,14 +127,10 @@ class Chambre(BaseObj):
 
         """
         absolu = self.prix_par_jour * nb_jours
-        if nb_jours > MAX_NB_JOURS:
-            raise ValueError("Le nombre de jours {} est supérieur au " \
-                    "nombre de jours maximum {}".format(nb_jours, MAX_NB_JOURS))
-
         if nb_jours == 1:
             facteur = 1
         else:
-            facteur = FCT_MIN + (MAX_NB_JOURS - nb_jours) / MAX_NB_JOURS * \
+            facteur = FCT_MIN + (30 - nb_jours) / 30 * \
                     (1 - FCT_MIN)
 
         prix = int(facteur * absolu)

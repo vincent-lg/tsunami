@@ -30,6 +30,8 @@
 
 """Fichier contenant la classe Auberge, détaillée plus bas."""
 
+from datetime import datetime
+
 from abstraits.obase import BaseObj
 from primaires.format.fonctions import supprimer_accents
 from secondaires.auberge.chambre import Chambre
@@ -45,6 +47,7 @@ class Auberge(BaseObj):
     """
 
     enregistrer = True
+
     def __init__(self, cle):
         """Constructeur du navire."""
         BaseObj.__init__(self)
@@ -53,6 +56,7 @@ class Auberge(BaseObj):
         self.titre = "Une auberge"
         self.cle_aubergiste = ""
         self.chambres = {}
+        self.vacances = []
 
     def __getnewargs__(self):
         return ("", )

@@ -79,7 +79,12 @@ class PrmRenouveler(Parametre):
 
         delta = chambre.expire_a - datetime.now()
         n_delta = delta + timedelta(days=nombre)
-        if n_delta.days > MAX_NB_JOURS:
+        if n_delta.days > 30:
+            personnage << "|err|Vous ne pouvez réserver autant de jours.|ff|"
+            return
+        elif personnage not in importeur.auberge.vacances:
+            pass
+        elif n_delta.days > MAX_NB_JOURS:
             personnage << "|err|Vous ne pouvez réserver autant de jours.|ff|"
             return
 
@@ -94,6 +99,9 @@ class PrmRenouveler(Parametre):
 
         # On prélève l'argent
         transaction.payer()
+
+        if nombre > MAX_NB_JOURS:
+            auberge.vacances.append(personnage)
 
         # On rend le personnage propriétaire
         chambre.expire_a = datetime.now() + n_delta

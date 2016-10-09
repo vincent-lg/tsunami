@@ -31,7 +31,7 @@
 """Fichier contenant le module secondaire auberge."""
 
 from abstraits.module import *
-from primaires.format.fonctions import format_nb
+from primaires.format.fonctions import format_nb, supprimer_accents
 from primaires.pnj.prototype import FLAGS as FLAGS_PNJ
 from primaires.salle.salle import Salle
 from secondaires.auberge.auberge import Auberge
@@ -100,6 +100,19 @@ class Module(BaseModule):
     def preparer(self):
         """Préparation du module."""
         self.verifier_auberges()
+
+    @property
+    def vacances(self):
+        """Retourne la liste des joueurs en mode vacance."""
+        joueurs = []
+        for auberge in self.auberges.values():
+            for joueur in auberge.vacances:
+                if joueur:
+                    joueurs.append(joueur)
+
+        joueurs = sorted(joueurs,
+                key=lambda joueur: supprimer_accents(joueur.nom))
+        return joueurs
 
     def verifier_auberges(self):
         """Vérification cyclique des auberges et expirations."""

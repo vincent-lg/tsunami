@@ -63,7 +63,12 @@ class PrmValeur(Parametre):
                     "ou nul.|ff|"
             return
 
-        if nombre > MAX_NB_JOURS:
+        if nombre > 30:
+            personnage << "|err|Vous ne pouvez réserver autant de jours.|ff|"
+            return
+        elif personnage not in importeur.auberge.vacances:
+            pass
+        elif nombre > MAX_NB_JOURS:
             personnage << "|err|Vous ne pouvez réserver autant de jours.|ff|"
             return
 

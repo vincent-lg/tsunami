@@ -28,39 +28,47 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Package contenant la commande 'auberge'."""
+"""Fichier contenant le paramètre 'vacances' de la commande 'auberge'."""
 
-from primaires.interpreteur.commande.commande import Commande
-from .ajouter import PrmAjouter
-from .creer import PrmCreer
-from .editer import PrmEditer
-from .liste import PrmListe
-from .supprimer import PrmSupprimer
-from .vacances import PrmVacances
-from .voir import PrmVoir
+from primaires.format.tableau import Tableau, DROITE
+from primaires.interpreteur.masque.parametre import Parametre
 
-class CmdAuberge(Commande):
+class PrmVacances(Parametre):
 
-    """Commande 'auberge'"""
+    """Commande 'auberge vacances'."""
 
     def __init__(self):
-        """Constructeur de la commande"""
-        Commande.__init__(self, "auberge", "inn")
-        self.groupe = "administrateur"
-        self.nom_categorie = "batisseur"
-        self.aide_courte = "manipule les auberges"
+        """Constructeur du paramètre"""
+        Parametre.__init__(self, "vacances", "vacations")
+        self.schema = "(<cle>)"
+        self.aide_courte = "affiche les joueurs en vacances"
         self.aide_longue = \
-            "Cette commande permet de créer, éditer, lister " \
-            "et supprimer les auberges. Pour paramétrer le détail " \
-            "d'une auberge (ses chambres à louer, leur prix et d'autres " \
-            "informations), il faut l'éditer."
+                "Cette commande permet de voir les joueurs actuellent " \
+                "en vacances. Sans paramètre, elle affiche la liste " \
+                "des joueurs en vacances. Vous pouvez préciser en " \
+                "paramètre |ent|clear|ff| pour effacer la liste des " \
+                "joueurs actuellement en vacances."
 
-    def ajouter_parametres(self):
-        """Ajout des paramètres."""
-        self.ajouter_parametre(PrmAjouter())
-        self.ajouter_parametre(PrmCreer())
-        self.ajouter_parametre(PrmEditer())
-        self.ajouter_parametre(PrmListe())
-        self.ajouter_parametre(PrmSupprimer())
-        self.ajouter_parametre(PrmVacances())
-        self.ajouter_parametre(PrmVoir())
+    def interpreter(self, personnage, dic_masques):
+        """Interprétation du paramètre"""
+        cle = ""
+        if dic_masques["cle"]:
+            cle = dic_masques["cle"].cle
+
+        if cle.lower() == "clear":
+            for auberge in importeur.auberge.auberges.values():
+                auberge.vacances[:] = []
+
+            personnage << "Suppression de la liste des joueurs en vacances."
+            return
+
+        # Créqation du tableau
+        msg = "Liste des joueurs en mode vacances :"
+        vacances = importeur.auberge.vacances
+        if vacances:
+            for joueur in vacances:
+                msg += "\n* " + joueur.nom
+        else:
+            msg += "\n  Aucun joueur n'est enregistré dans le mode vacances."
+
+        personnage << msg

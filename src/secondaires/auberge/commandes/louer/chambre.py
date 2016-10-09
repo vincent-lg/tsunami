@@ -57,7 +57,14 @@ class PrmChambre(Parametre):
             "un jour minimum et dix jours au maximum : vous avez " \
             "cependant la possibilité de renouveler une location qui " \
             "n'a pas encore expirée à l'aide de la commande %louer% " \
-            "%louer:renouveler%."
+            "%louer:renouveler%. Vous disposez également du mode vacance, " \
+            "qui vous permet de louer pendant 30 jours réels au maximum. " \
+            "Ce privilège est disponible automatiquement, mais vous " \
+            "ne pouvez louer qu'une seule chambre pour plus de 10 jours. " \
+            "Chaque année réelle, le mode vacance est effacé, vous " \
+            "pouvez donc réserver une chambre pour 30 jours par an, " \
+            "pour vos vacances. Pour les cas particuliers, contactez " \
+            "les immortels."
 
     def interpreter(self, personnage, dic_masques):
         """Méthode d'interprétation de commande"""
@@ -77,7 +84,11 @@ class PrmChambre(Parametre):
             personnage << "|err|Cette chambre est déjà louée.|ff|"
             return
 
-        if nombre > MAX_NB_JOURS:
+        if nombre > 30:
+            personnage << "|err|Vous ne pouvez réserver autant de jours.|ff|"
+        elif personnage not in importeur.auberge.vacances:
+            pass
+        elif nombre > MAX_NB_JOURS:
             personnage << "|err|Vous ne pouvez réserver autant de jours.|ff|"
             return
 
@@ -97,6 +108,9 @@ class PrmChambre(Parametre):
         chambre.proprietaire = personnage
         duree = timedelta(days=nombre)
         chambre.expire_a = datetime.now() + duree
+        if nombre > MAX_NB_JOURS:
+            auberge.vacances.append(personnage)
+
         s = "s" if nombre > 1 else ""
         personnage << "Vous louez la chambre '{}' pour {} jour{s}.".format(
                 chambre.numero, nombre, s=s)
