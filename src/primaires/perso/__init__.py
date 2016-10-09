@@ -509,8 +509,6 @@ class Module(BaseModule):
                         importe = getattr(importe, nom_fichier[:-3])
                         nom_classe = nom_fichier[:-3]
                         nom_classe = nom_classe.title().replace("_", "")
-                        print("  Charge la classe", nom_classe)
-                        c=input()
                         classe = getattr(importe, nom_classe)
                         technique = classe()
                         self.ajouter_technique(technique)
