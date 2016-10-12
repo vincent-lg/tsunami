@@ -118,8 +118,10 @@ class CmdCuisiner(Commande):
                                 importeur.objet.creer_objet(recette.resultat))
                     personnage << "Vous achevez de cuisiner {}.".format(
                             recette.resultat.get_nom(qtt))
+                    # On donne l'expérience relative à la recette au personnage
+                    personnage.gagner_xp("survie", recette.xp)
                     return
-        personnage << "Votre préparation crame et se mue en un résidu " \
+        personnage << "Votre préparation brûle et se mue en un résidu " \
                 "noirâtre que vous préférez jeter immédiatement au feu."
         for item in ustensile.nourriture:
             importeur.objet.supprimer_objet(item.identifiant)

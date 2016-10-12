@@ -38,7 +38,7 @@ class Recette(BaseObj):
 
     Une recette est définie par sa difficulté, la liste des ingrédients qui
     la composent ainsi que leurs quantités relatives, et un prototype d'objet
-    obtenu à son terme.
+    obtenu à son terme, plus une quantité d'expérience gagnée par le personnage si celui-ci réussit la recette.
 
     """
 
@@ -54,6 +54,7 @@ class Recette(BaseObj):
         self.ustensiles = ["casserole"]
         self.ingredients = {}
         self.resultat = None
+        self.xp = 0
 
     def __getnewargs__(self):
         return ("", )
@@ -101,3 +102,8 @@ class Recette(BaseObj):
         """Affichage du résultat"""
         return "{} ({})".format(self.resultat.nom_singulier,
                 self.resultat.cle) if self.resultat else "rien"
+
+    @property
+    def aff_xp(self):
+        """Affichage de l'expérience gagnée"""
+        return str(self.xp)

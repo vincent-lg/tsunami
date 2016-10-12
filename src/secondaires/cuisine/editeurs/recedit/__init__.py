@@ -136,3 +136,15 @@ class EdtRecedit(Presentation):
             "Entrez le |ent|résultat|ff| de la recette (prototype d'objet) " \
             "ou |cmd|/|ff| pour revenir à\nla fenêtre parente.\n\n" \
             "Résultat actuel : |bc|{objet.aff_resultat}|ff|"
+
+# Expérience
+        xp = self.ajouter_choix("expérience", "x",
+                Entier, recette, "xp", 0)
+        xp.parent = self
+        xp.prompt = "Expérience gagnée par le personnage en réussissant la recette : "
+        xp.apercu = "{objet.xp}"
+        xp.aide_courte = \
+            "Entrez l'|ent|expérience|ff| gagnée par le personnage qui réussit la recette. Le calcul de base conseillé est la difficulté de la recette multipliée par 500, le tout multiplié par le nombre d'ingrédients nécessaires et/ou le nombre de types d'ingrédients nécessaires, ou |cmd|/|ff| pour revenir à\nla fenêtre " \
+            "parente.\n\nExpérience gagnée actuelle : |bc|{objet.xp}|ff|"
+        
+        
