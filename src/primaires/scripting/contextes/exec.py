@@ -31,6 +31,7 @@
 """Fichier contenant le contexte 'exec'"""
 
 from code import InteractiveConsole
+from fractions import Fraction
 import sys
 import re
 from textwrap import dedent
@@ -38,6 +39,7 @@ import traceback
 
 from primaires.interpreteur.contexte import Contexte
 from primaires.scripting.evenement import Evenement
+from primaires.scripting.structure import StructureSimple
 from primaires.scripting.test import Test
 
 class Exec(Contexte):
@@ -187,15 +189,7 @@ class Exec(Contexte):
                 self.pere << "|err|Variable {} introuvable.|ff|".format(
                         repr(arguments))
                 return
-            if variable is None:
-                self.pere << "Valeur nulle."
-            elif variable is True:
-                self.pere << "VRAI"
-            elif variable is False:
-                self.pere << "FAUX"
-            else:
-                self.pere << str(variable)
-
+            self.pere << self.afficher_variable(variable)
             return
 
         # On affiche toutes les variables
@@ -225,3 +219,39 @@ class Exec(Contexte):
         """
         self.pere << importeur.scripting.aide_action(arguments)
 
+    def afficher_variable(self, variable):
+        """Retourne la variable affichée plus proprement."""
+        if variable is None:
+            description = "Valeur nulle."
+        elif variable is True:
+            description = "VRAI"
+        elif variable is False:
+            description = "FAUX"
+        elif isinstance(variable, Fraction):
+            if int(variable) == float(variable):
+                description = int(variable)
+            else:
+                description = round(float(variable), 3)
+        elif isinstance(variable, StructureSimple):
+            description = object.__getattribute__(variable, "donnees").copy()
+            for nom, valeur in description.items():
+                description[nom] = self.afficher_variable(valeur)
+
+            description = str(description)
+        elif isinstance(variable, dict):
+            description = variable.copy()
+            for nom, valeur in description.items():
+                description[nom] = self.afficher_variable(valeur)
+
+            description = str(description)
+        elif isinstance(variable, list):
+            variable = list(variable)
+            description = []
+            for valeur in variable:
+                description.append(self.afficher_variable(valeur))
+
+            description = str(description)
+        else:
+            description = str(variable)
+
+        return description
