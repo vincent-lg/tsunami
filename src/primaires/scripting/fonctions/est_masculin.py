@@ -48,6 +48,9 @@ class ClasseFonction(Fonction):
 
           * personnage : le personnage à tester
 
+        Un personnage (joueur ou PNJ) est masculin si il a le genre
+        masculin ou aucun genre (utile pour certains PNJ).
+
         Exemple d'utilisation :
 
           si est_masculin(personnage):

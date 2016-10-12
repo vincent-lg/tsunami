@@ -48,6 +48,12 @@ class ClasseFonction(Fonction):
 
           * personnage : le personnage à tester
 
+        Un personnage (joueur ou PNJ) est féminin si il n'est pas
+        masculin. Notez que si des races utilisent d'autres genres,
+        est_feminin() risque de retourner vrai, alors que le genre
+        du personnage ne sera pas "féminin". Pour ce genre de cas, il
+        vaut mieux utiliser la fonction scripting genre().
+
         Exemple d'utilisation :
 
           si est_feminin(personnage):
