@@ -1,6 +1,6 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2010-2016 NOEL-BARON Léo
+# Copyright (c) 2010-2016 LE GOFF Vincent
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -28,33 +28,11 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Package contenant le paramètre 'lister' de la commande 'recettes'."""
+"""Ce package contient les objets cherchables du module.
 
-from primaires.interpreteur.masque.parametre import Parametre
+Modules :
+    recette : cherchable recette de cuisine
 
-class PrmLister(Parametre):
+"""
 
-    """Commande 'recettes lister'"""
-
-    def __init__(self):
-        """Constructeur du paramètre."""
-        Parametre.__init__(self, "lister", "list")
-        self.schema = "(<texte_libre>)"
-        self.aide_courte = "liste les recette"
-        self.aide_longue = \
-            "Cette commande permet de rechercher dans les recettes " \
-            "actuelles. Sans argument, retourne un tableau ordonné des " \
-            "recettes. Vous pouvez spécifier un argument pour le moteur " \
-            "de recherche (entrez %recette% %recette:lister%|cmd| " \
-            "-a|ff| pour voir la liste des options possibles)."
-
-    def interpreter(self, personnage, dic_masques):
-        """Méthode d'interprétation de commande"""
-        cherchable = importeur.recherche.cherchables["recette"]
-        if dic_masques["texte_libre"]:
-            chaine = dic_masques["texte_libre"].texte
-        else:
-            chaine = ""
-
-        message = cherchable.trouver_depuis_chaine(chaine)
-        personnage << message
+from secondaires.cuisine.cherchables import recette
