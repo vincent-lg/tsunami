@@ -67,7 +67,7 @@ class CherchableRecette(Cherchable):
     @property
     def attributs_tri(self):
         """Renvoie la liste des attributs par lesquels on peut trier"""
-        return ["cle", "resultat", "temps", "ustensiles", "xp"]
+        return ["cle", "difficulte", "resultat", "temps", "ustensiles", "xp"]
 
     @property
     def colonnes(self):
