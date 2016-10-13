@@ -1023,6 +1023,44 @@ class Personnage(BaseObj):
         if xp > 0:
             self.gagner_xp(niv_secondaire, xp)
 
+    def perdre_xp(self, niveau=None, xp=0, retour=True):
+        """Le personnage perd de l'expérience dans un niveau.
+
+        Les paramètres à renseigner sont :
+
+            Niveau : la clé du niveau secondaire (ou None pour principal) ;
+            xp : le nombre de points d'expérience à retirer.
+
+        Note : ne retire pas l'XP au-delà de celle possédée (ne fait
+        pas perdre de niveau, ramène simplement l'XP à 0 si nécessaire).
+
+        """
+        xp = int(xp)
+        if niveau is not None:
+            try:
+                niveau = importeur.perso.niveaux[niveau]
+            except KeyError:
+                raise ValueError("le niveau de clé {} est introuvable".format(
+                        repr(niveau)))
+
+            cle = niveau.cle
+            valeur_xp = self.xps.get(cle, 0)
+            valeur_xp -= xp
+            if valeur_xp < 0:
+                valeur_xp = 0
+
+            self.xps[cle] = valeur_xp
+            self << "Vous perdez {} XP dans le niveau {}.".format(
+                    xp, niveau.nom)
+        else:
+            valeur_xp = self.xp
+            valeur_xp -= xp
+            if valeur_xp < 0:
+                valeur_xp = 0
+
+            self.xp = valeur_xp
+            self << "Vous perdez {} XP dans le niveau principal.".format(xp)
+
     def gagner_stat(self, nom_stat):
         """Gagne un point dans une statistique.
 
