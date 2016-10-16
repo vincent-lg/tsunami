@@ -105,7 +105,9 @@ from .veste import Veste
 from .bague import Bague
 from .boucle_oreille import BoucleOreille
 from .bracelet import Bracelet
+from .chevillere import Chevillere
 from .collier import Collier
+from .diademe import Diademe
 
 # Cadavre
 from .cadavre import Cadavre
