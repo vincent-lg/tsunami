@@ -65,6 +65,11 @@ class Module(BaseModule):
         self.cles = {}
         self.logger = self.importeur.man_logs.creer_logger("tags", "tags")
 
+    def config(self):
+        """Configuration du module."""
+        self.importeur.scripting.a_charger.append(self)
+        BaseModule.config(self)
+
     def init(self):
         """Chargement des objets du module."""
         # Abonnement aux hooks

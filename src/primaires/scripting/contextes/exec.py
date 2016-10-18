@@ -229,9 +229,9 @@ class Exec(Contexte):
             description = "FAUX"
         elif isinstance(variable, Fraction):
             if int(variable) == float(variable):
-                description = int(variable)
+                description = str(int(variable))
             else:
-                description = round(float(variable), 3)
+                description = str(round(float(variable), 3))
         elif isinstance(variable, StructureSimple):
             description = object.__getattribute__(variable, "donnees").copy()
             for nom, valeur in description.items():
