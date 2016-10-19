@@ -54,7 +54,7 @@ class Familier(BaseObj):
     est créé sur ce PNJ. Si le PNJ est détruit (il meurt par exemple),
     le familier est détruit. Mais le familier peut être détruit sans
     que le PNJ soit affecté, si par exemple le maître actuel du
-    familier libère le libère.
+    familier libère celui-ci.
 
     """
 

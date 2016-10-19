@@ -88,7 +88,6 @@ from .bol import Bol
 
 # Vêtements
 from .cape import Cape
-from .ceinture import Ceinture
 from .chapeau import Chapeau
 from .chaussette import Chaussette
 from .chaussure import Chaussure
@@ -100,6 +99,7 @@ from .pantalon import Pantalon
 from .robe import Robe
 from .tunique import Tunique
 from .veste import Veste
+from .echarpe import Echarpe
 
 # Bijoux
 from .bague import Bague
