@@ -2,10 +2,10 @@
 
 # Copyright (c) 2010-2016 LE GOFF Vincent
 # All rights reserved.
-# 
+#
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are met:
-# 
+#
 # * Redistributions of source code must retain the above copyright notice, this
 #   list of conditions and the following disclaimer.
 # * Redistributions in binary form must reproduce the above copyright notice,
@@ -14,7 +14,7 @@
 # * Neither the name of the copyright holder nor the names of its contributors
 #   may be used to endorse or promote products derived from this software
 #   without specific prior written permission.
-# 
+#
 # THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
 # AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
 # IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -36,42 +36,66 @@ from primaires.format.fonctions import supprimer_accents
 from .edt_membre import EdtMembre
 
 class EdtMembres(Editeur):
-    
+
     """Contexte-éditeur d'édition des membres.
-    
+
     """
-    
+
     def __init__(self, pere, objet=None, attribut=None):
         """Constructeur de l'éditeur"""
         Editeur.__init__(self, pere, objet, attribut)
+        self.ajouter_option("b", self.opt_descendre_membre)
         self.ajouter_option("d", self.opt_suppr_membre)
-    
+        self.ajouter_option("h", self.opt_remonter_membre)
+
     def accueil(self):
         """Message d'accueil du contexte"""
         squelette = self.objet
         msg = "| |tit|" + "Edition des membres de {}".format(
                 squelette.cle).ljust(76)
         msg += "|ff||\n" + self.opts.separateur + "\n"
+        msg += "\nOptions supportées :"
+        msg += "\n |cmd|/b <membre>|ff| pour descendre le membre"
+        msg += "\n |cmd|/d <membre>|ff| pour supprimer le membre"
+        msg += "\n |cmd|/h <membre>|ff| pour remonter le membre\n"
         msg += self.aide_courte
         msg += "Membres courants :\n"
-        
+
         # Parcours des membres
         membres = squelette.membres
         liste_membres = ""
         for membre in membres:
             ligne = "\n |ent|" + membre.nom.ljust(10) + "|ff|"
             liste_membres += ligne
-        
+
         if not liste_membres:
             liste_membres += "\n |att|Aucun membre pour l'instant.|ff|"
         msg += liste_membres
-        
+
         return msg
-    
+
+    def opt_descendre_membre(self, arguments):
+        """Descend un membre dans la liste.
+
+        Syntaxe :
+            /b <membre>
+
+        """
+        squelette = self.objet
+        try:
+            membre = squelette.get_membre(arguments)
+        except KeyError:
+            self.pere << "|err|Ce membre est introuvable.|ff|"
+        else:
+            squelette.descendre_membre(membre.nom)
+            self.actualiser()
+
     def opt_suppr_membre(self, arguments):
         """Supprime un membre
-        Syntaxe : /d nom
-        
+
+        Syntaxe :
+            /d <membre>
+
         """
         squelette = self.objet
         try:
@@ -81,14 +105,30 @@ class EdtMembres(Editeur):
         else:
             squelette.supprimer_membre(membre.nom)
             self.actualiser()
-    
+
+    def opt_remonter_membre(self, arguments):
+        """Remonte un membre dans la liste.
+
+        Syntaxe :
+            /h <membre>
+
+        """
+        squelette = self.objet
+        try:
+            membre = squelette.get_membre(arguments)
+        except KeyError:
+            self.pere << "|err|Ce membre est introuvable.|ff|"
+        else:
+            squelette.remonter_membre(membre.nom)
+            self.actualiser()
+
     def interpreter(self, msg):
         """Interprétation de la présentation"""
         squelette = self.objet
         membres = squelette.membres
         nom = supprimer_accents(msg).lower()
-       
-        try: 
+
+        try:
             membre = squelette.get_membre(nom)
         except KeyError:
             try:
@@ -96,7 +136,7 @@ class EdtMembres(Editeur):
             except ValueError:
                 self.pere << "|err|Ce nom de membre est invalide.|ff|"
                 return
-        
+
         enveloppe = EnveloppeObjet(EdtMembre, membre, None)
         enveloppe.parent = self
         enveloppe.aide_courte = \

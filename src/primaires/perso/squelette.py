@@ -169,6 +169,7 @@ class Squelette(BaseObj):
 
     def changer_flag_membre(self, nom, flags):
         """Change les flags du membre nom.
+
         Répercute ces modifications dans les autres membres dérivés.
 
         """
