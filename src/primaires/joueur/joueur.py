@@ -169,6 +169,9 @@ class Joueur(Personnage):
         # On appelle l'évènement connecte de la salle
         salle.script["connecte"].executer(personnage=self, salle=salle)
 
+        # On appelle l'évènement connecte de la zone
+        salle.zone.script["connecte"].executer(joueur=self, salle=salle)
+
         # On place le joueur dans un tick
         type(self).importeur.joueur.ajouter_joueur_tick(self)
 

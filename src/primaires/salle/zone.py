@@ -134,6 +134,20 @@ class ScriptZone(Script):
     def init(self):
         """Initialisation du script"""
         # Evénement entre
+        evt_connecte = self.creer_evenement("connecte")
+        evt_connecte.aide_courte = "un joueur se connecte dans la zone"
+        evt_connecte.aide_longue = \
+            "Cet évènement est appelé quand un joueur se connecte " \
+            "dans la zone (les PNJ ne se connectant jamais, ou étant " \
+            "toujours connectés, selon la vision des choses)."
+
+        # Configuration des variables de l'évènement connecte
+        var_salle = evt_connecte.ajouter_variable("salle", "Salle")
+        var_salle.aide = "la salle où le joueur se trouve"
+        var_perso = evt_connecte.ajouter_variable("joueur", "Personnage")
+        var_perso.aide = "le joueur se connectant"
+
+        # Evénement entre
         evt_entre = self.creer_evenement("entre")
         evt_entre.aide_courte = "un personnage entre dans la zone"
         evt_entre.aide_longue = \
