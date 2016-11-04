@@ -77,6 +77,7 @@ class CmdCuisiner(Commande):
                 return
 
         # On commence réellement à cuisiner
+        etat = ""
         personnage.agir("cuisiner")
         personnage << "Vous posez délicatement {} sur le feu.".format(
                 ustensile.get_nom())
@@ -106,7 +107,8 @@ class CmdCuisiner(Commande):
                                 "mixture ne cuit plus."
                         del ustensile.etat_singulier
                         return
-                    elif feu.puissance > recette.feu_maxi:
+                    elif feu.puissance > recette.feu_maxi: # la préparation a brûlé
+                        etat = "brule"
                         break
                 if i + 1 == recette.temps_cuisson: # Si on a cuit jusqu'au bout
                     for item in ustensile.nourriture:
@@ -121,8 +123,18 @@ class CmdCuisiner(Commande):
                     # On donne l'expérience relative à la recette au personnage
                     personnage.gagner_xp("survie", recette.xp)
                     return
-        personnage << "Votre préparation brûle et se mue en un résidu " \
-                "noirâtre que vous préférez jeter immédiatement au feu."
+            else:
+                etat = "rate"
+        if not ustensile.nom_type in recette.ustensiles:
+            etat = "ustensile"
+        if etat == "brule":
+            personnage << "Le feu était trop fort et votre préparation se mue en un résidu noirâtre que vous préférez jeter immédiatement."
+        elif etat == "rate":
+            personnage << "Tout semblait prêt, néanmoins votre préparation se transforme rapidement en quelque chose de peu ragoûtant que vous préférez jeter. Vous n'avez de toute évidence pas encore le coup de main."
+        elif etat == "ustensile":
+            personnage << "Votre ustensile n'était pas adéquat pour ce que vous tentiez de cuisiner, vous préférez jeter votre préparation au feu."
+        else:
+            personnage << "Visiblement, votre préparation n'aurait rien donné de comestible. Peut-être vous faudrait-il tester un autre mélange."
         for item in ustensile.nourriture:
             importeur.objet.supprimer_objet(item.identifiant)
         ustensile.nourriture = []
