@@ -58,10 +58,29 @@ class ClasseFonction(Fonction):
 
     @staticmethod
     def cb_dans_proto(conteneur, prototype):
-        """Renvoie la quantité d'objets du prototype dans le conteneur."""
+        """Renvoie la quantité d'objets du prototype dans le conteneur.
+
+        Paramètres à préciser :
+
+          * conteneur : l'objet conteneur [1] ;
+          * prototype : la clé du prototype (chaîne de caractères).
+
+        [1] Le conteneur passé en argument doit être de type conteneur de potion, conteneur de nourriture ou conteneur.
+
+        Exemple d'utilisation :
+
+          nb = contenus_dans(sac, "chausson_toile")
+          # Vous pouvez tester avec des pièces aussi
+          argent = contenus_dans(bourse, "piece_bronze")
+          # Pour garder la compatibilité si plusieurs types de
+          # monnaies existent, utilisez la fonction somme() à la place.
+
+        """
         if not prototype in importeur.objet.prototypes:
             raise ErreurExecution("prototype {} introuvable".format(prototype))
+
         prototype = importeur.objet.prototypes[prototype]
+
         if conteneur.est_de_type("conteneur de potion"):
             if conteneur.potion and conteneur.potion.prototype is prototype:
                 return Fraction(1)
@@ -71,7 +90,12 @@ class ClasseFonction(Fonction):
             return Fraction(len([o for o in conteneur.nourriture if \
                     o.prototype is prototype]))
         if conteneur.est_de_type("conteneur"):
-            return Fraction(
-                    sum(nb for o, nb in conteneur.conteneur.iter_nombres() \
-                    if o.prototype is prototype))
+            qtt = 0
+            for o, nb in conteneur.conteneur.iter_nombres():
+                o_prototype = getattr(o, "prototype", o)
+                if prototype is o_prototype:
+                    qtt += nb
+
+            return Fraction(qtt)
+
         raise ErreurExecution("{} n'est pas un conteneur".format(conteneur))
