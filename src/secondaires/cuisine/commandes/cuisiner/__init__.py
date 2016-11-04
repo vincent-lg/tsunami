@@ -32,6 +32,7 @@
 
 from math import sqrt
 from random import random
+from textwrap import dedent
 
 from primaires.interpreteur.commande.commande import Commande
 
@@ -59,6 +60,7 @@ class CmdCuisiner(Commande):
                 ustensile = objet
                 conteneur = t_conteneur
                 break
+
         if ustensile is None:
             personnage << "|err|Vous ne tenez rien susceptible de cuire ou " \
                     "d'être cuit.|ff|"
@@ -70,6 +72,7 @@ class CmdCuisiner(Commande):
         except (KeyError, AssertionError):
             personnage << "|err|Il n'y a pas de feu adéquat par ici.|ff|"
             return
+
         for objet in personnage.salle.objets_sol:
             if objet.est_de_type("ustensile") \
                     and objet.etat_singulier == objet.etat_cuisson:
@@ -92,50 +95,78 @@ class CmdCuisiner(Commande):
         if ustensile.contenu is not personnage.salle.objets_sol:
             return
 
-        if recette is not None and ustensile.nom_type in recette.ustensiles:
-            talent = personnage.pratiquer_talent("cuisine") / 100
-            difficulte = sqrt(recette.difficulte / 100)
-            if random() > difficulte - talent:
-                # Réussi, on commence à cuire
+        if recette:
+            if ustensile.nom_type not in recette.ustensiles:
+                etat = "ustensile"
+                del ustensile.etat_singulier
+            else:
+                talent = personnage.pratiquer_talent("cuisine") / 100
+                difficulte = sqrt(recette.difficulte / 100)
+                reussite = random() > difficulte - talent
+                # À ce stade, on cuit dans tous les cas
                 for i in range(recette.temps_cuisson):
                     yield 1
-                    if ustensile.contenu is not personnage.salle.objets_sol:
+                    if ustensile.contenu is not \
+                            personnage.salle.objets_sol:
                         return
 
-                    if feu.puissance < recette.feu_mini: # On stoppe la cuisson
+                    # On stoppe la cuisson si le feu est trop faible
+                    if feu.puissance < recette.feu_mini:
                         personnage << "Le feu devient trop faible, votre " \
                                 "mixture ne cuit plus."
                         del ustensile.etat_singulier
                         return
-                    elif feu.puissance > recette.feu_maxi: # la préparation a brûlé
+
+                    # Si la préparation a brûlée
+                    if feu.puissance > recette.feu_maxi:
                         etat = "brule"
+                        reussite = False
                         break
-                if i + 1 == recette.temps_cuisson: # Si on a cuit jusqu'au bout
-                    for item in ustensile.nourriture:
-                        importeur.objet.supprimer_objet(item.identifiant)
-                    ustensile.nourriture = []
-                    del ustensile.etat_singulier
+
+                # Retire les ingrédients en train de cuir
+                for item in ustensile.nourriture:
+                    importeur.objet.supprimer_objet(item.identifiant)
+                ustensile.nourriture = []
+                del ustensile.etat_singulier
+
+                # Si on a réussi la recette
+                if reussite:
+                    # Ajoute le plat cuisiné
                     for i in range(qtt):
                         ustensile.nourriture.append(
                                 importeur.objet.creer_objet(recette.resultat))
                     personnage << "Vous achevez de cuisiner {}.".format(
                             recette.resultat.get_nom(qtt))
+
                     # On donne l'expérience relative à la recette au personnage
                     personnage.gagner_xp("survie", recette.xp)
                     return
-            else:
-                etat = "rate"
-        if not ustensile.nom_type in recette.ustensiles:
-            etat = "ustensile"
-        if etat == "brule":
-            personnage << "Le feu était trop fort et votre préparation se mue en un résidu noirâtre que vous préférez jeter immédiatement."
-        elif etat == "rate":
-            personnage << "Tout semblait prêt, néanmoins votre préparation se transforme rapidement en quelque chose de peu ragoûtant que vous préférez jeter. Vous n'avez de toute évidence pas encore le coup de main."
-        elif etat == "ustensile":
-            personnage << "Votre ustensile n'était pas adéquat pour ce que vous tentiez de cuisiner, vous préférez jeter votre préparation au feu."
+                else:
+                    etat = "rate"
         else:
-            personnage << "Visiblement, votre préparation n'aurait rien donné de comestible. Peut-être vous faudrait-il tester un autre mélange."
-        for item in ustensile.nourriture:
-            importeur.objet.supprimer_objet(item.identifiant)
-        ustensile.nourriture = []
-        del ustensile.etat_singulier
+            del ustensile.etat_singulier
+            etat = "ingredients"
+
+        if etat == "brule":
+            personnage << dedent("""
+                |err|Le feu était trop fort|ff| et votre préparation se mue
+                en un résidu noirâtre que vous préférez jeter immédiatement.
+            """.strip("\n"))
+        elif etat == "rate":
+            personnage << dedent("""
+                |err|Tout semblait prêt|ff|, néanmoins votre préparation se
+                transforme rapidement en quelque chose de peu ragoûtant que
+                vous préférez jeter. Vous n'avez de toute évidence pas encore
+                le coup de main.
+            """.strip("\n"))
+        elif etat == "ustensile":
+            personnage << dedent("""
+                |err|Votre ustensile n'était pas adéquat|ff| pour ce que
+                vous tentiez de cuisiner.
+            """.strip("\n"))
+        elif etat == "ingredients":
+            personnage << dedent("""
+                |err|Visiblement, votre préparation n'aurait rien donné|ff|
+                de comestible. Peut-être vous faudrait-il essayer un
+                autre mélange.
+            """.strip("\n"))
