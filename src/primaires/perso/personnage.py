@@ -824,6 +824,9 @@ class Personnage(BaseObj):
                         personnage=self, salle=salle)
                 importeur.hook["pnj:arrive"].executer(perso,
                         self)
+        # On appelle l'hook 'personnage:apres_deplace'
+        importeur.hook["personnage:apres_deplacement"].executer(
+                self, sortie, escalade, nage, fuite)
 
     def noyable(self):
         """Retourne True si le personnage est noyable, False sinon."""

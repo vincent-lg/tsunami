@@ -142,12 +142,14 @@ class Module(BaseModule):
         recherche.act_autorisees = ["parler"]
 
         # Ajout des hooks
-        importeur.hook.ajouter_hook("personnage:peut_deplacer",
-                "Hook appelé quand un personnage veut se déplacer.")
+        importeur.hook.ajouter_hook("personnage:apres_deplacement",
+                "Hook appelé quand un personnage a fini de se déplacer.")
         importeur.hook.ajouter_hook("personnage:calculer_endurance",
                 "Hook appelé pour calculer l'endurance de déplacement.")
         importeur.hook.ajouter_hook("personnage:deplacer",
                 "Hook appelé quand un personnage se déplace.")
+        importeur.hook.ajouter_hook("personnage:peut_deplacer",
+                "Hook appelé quand un personnage veut se déplacer.")
         importeur.hook.ajouter_hook("personnage:verbe_deplacer",
                 "Hook appelé pour retourner le verbe de déplacement.")
         importeur.hook.ajouter_hook("personnage:verbe_arriver",
@@ -194,6 +196,9 @@ class Module(BaseModule):
         self.ajouter_talent("escalade", "escalade", "survie", 0.31)
         self.ajouter_talent("nage", "nage", "survie", 0.25)
 
+        # Connexion des hooks
+        self.importeur.hook["personnage:apres_deplacement"].ajouter_evenement(
+                self.suivre_personnage)
         BaseModule.init(self)
 
     def ajouter_commandes(self):
@@ -215,6 +220,7 @@ class Module(BaseModule):
             commandes.score.CmdScore(),
             commandes.skedit.CmdSkedit(),
             commandes.sklist.CmdSklist(),
+            commandes.suivre.CmdSuivre(),
             commandes.talents.CmdTalents(),
             commandes.v.CmdV(),
         ]
@@ -392,3 +398,22 @@ class Module(BaseModule):
 
         """
         self.prompts[prompt.nom] = prompt
+
+    def suivre_personnage(self, personnage, sortie, escalade, nage, fuite):
+        """Le personnage 'personnage' vient de se déplacer.
+
+        Cette méthode fait suivre les autres personnages dans la
+        salle d'origine qui suivent le personnage.
+
+        """
+        origine = sortie.parent
+        destination = sortie.salle_dest
+        personnages = origine.personnages
+        for autre in personnages:
+            if autre is not personnage:
+                if self.suivre.get(autre) is personnage:
+                    if not destination.voit_ici(autre):
+                        continue
+
+                    autre.deplacer_vers(sortie.nom, escalade, nage, fuite,
+                            silence=True)
