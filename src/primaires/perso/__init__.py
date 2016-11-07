@@ -83,6 +83,7 @@ class Module(BaseModule):
         self.etats = {}
         self.positions = {}
         self.prompts = prompts
+        self.suivre = {}
 
     def config(self):
         """Méthode de configuration.

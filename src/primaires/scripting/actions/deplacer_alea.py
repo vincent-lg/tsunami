@@ -99,6 +99,7 @@ class ClasseAction(Action):
 
         sortie = choice(sorties)
         flags = ClasseAction.flags_deplacement(personnage)
+        flags["silence"] = True
         try:
             personnage.deplacer_vers(sortie, **flags)
         except ExceptionAction:
@@ -175,6 +176,7 @@ class ClasseAction(Action):
 
         sortie = choice(sorties)
         flags = ClasseAction.flags_deplacement(personnage)
+        flags["silence"] = True
         try:
             personnage.deplacer_vers(sortie, **flags)
         except ExceptionAction:

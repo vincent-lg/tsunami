@@ -525,8 +525,25 @@ class Personnage(BaseObj):
         """Méthode redirigeant vers envoyer mais lissant la chaîne."""
         self.envoyer(lisser(chaine), *personnages, **kw_personnages)
 
-    def deplacer_vers(self, sortie, escalade=False, nage=False, fuite=True):
-        """Déplacement vers la sortie 'sortie'"""
+    def deplacer_vers(self, sortie, escalade=False, nage=False, fuite=True,
+            silence=False):
+        """Déplacement vers la sortie 'sortie'.
+
+        Paramètres à préciser :
+
+          * sortie : le nom de la sortie vers laquelle se déplacer ;
+          * escalade : escalade-t-on pour se déplacer ;
+          * nage : nage-t-on pour se déplacer ;
+          * fuite : veut-on fuir un combat ;
+          * silence : doit-on ne pas envoyer de message au personnage.
+
+        Si 'silence' est à True, la description de la salle et les
+        messages de déplacement ne seront pas envoyés au personnage qui
+        se déplace, ce qui permet d'optimiser un petit peu en général.
+        Les messages envoyés aux autres personnages, ainsi que les
+        scripts, seront malgré tout appelés.
+
+        """
         salle = self.salle
         o_sortie = self.salle.sorties.get_sortie_par_nom(sortie)
         salle_dest = salle.sorties.get_sortie_par_nom(sortie).salle_dest
@@ -679,7 +696,9 @@ class Personnage(BaseObj):
         # Si la porte est fermée (pas verrouillée), on l'ouvre
         if not self.est_immortel() and sortie.porte and \
                 sortie.porte.fermee and not sortie.porte.verrouillee:
-            self << "Vous ouvrez {}.".format(sortie.nom_complet)
+            if not silence:
+                self << "Vous ouvrez {}.".format(sortie.nom_complet)
+
             self.salle.envoyer("{{}} ouvre {}.".format(sortie.nom_complet),
                     self)
             sortie.porte.ouvrir()
@@ -753,7 +772,9 @@ class Personnage(BaseObj):
             if sortie_opp.cachee:
                 depuis = "... vous ne voyez pas très bien depuis où.."
 
-        self.envoyer(self.salle.regarder(self))
+        if not silence:
+            self.envoyer(self.salle.regarder(self))
+
         if depuis:
             salle_dest.envoyer("{{}} {verbe} depuis {depuis}.".format(
                     verbe=verbe, depuis=depuis), self)
@@ -762,13 +783,13 @@ class Personnage(BaseObj):
                     verbe=verbe), self)
 
         # Envoi de tips
-        if salle_dest.magasin:
+        if not silence and salle_dest.magasin:
             self.envoyer_tip("Entrez %lister%|vr| pour voir les produits " \
                     "en vente dans ce magasin.")
-        if salle_dest in importeur.commerce.questeurs:
+        if not silence and salle_dest in importeur.commerce.questeurs:
             self.envoyer_tip("Entrez %questeur%|vr| pour interagir avec " \
                     "le questeur présent.")
-        if salle.nom_terrain != "subaquatique" and \
+        if not silence and salle.nom_terrain != "subaquatique" and \
                 salle_dest.nom_terrain == "subaquatique":
             self.envoyer_tip("Vous êtes sous l'eau. " \
                     "Attention au manque d'air !")
