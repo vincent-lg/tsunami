@@ -219,6 +219,9 @@ class Machine(BaseType):
     def objets_contenus(self, conteneur):
         """Retourne les objets contenus."""
         objets = []
+        if conteneur is None or getattr(conteneur, "conteneur", None) is None:
+            return objets
+
         for objet in list(conteneur.conteneur._objets):
             objets.append(objet)
             objets.extend(objet.prototype.objets_contenus(objet))
