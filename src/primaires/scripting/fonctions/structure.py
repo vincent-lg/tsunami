@@ -195,7 +195,18 @@ class ClasseFonction(Fonction):
 
         Cases de la structure :
 
+            * type : le type de l'objet [1] ;
+            * flags : une liste des flags actifs sur l'objet ;
+            * peut_prendre : flag peut prendre de l'objet (0 ou 1) ;
             * visible : l'objet est-il visible (0 ou 1).
+
+        [1] Le type de l'objet peut être modifié par structure.
+            **ATTENTION** cependant, cette tâche devrait toujours se
+            faire prototype par prototype et jamais automatiquement,
+            car la modification peut altérer drastiquement le comportement
+            des objets créés. Dans la mesure du possible, changer le
+            type de l'objet ne devrait pas se faire si des objets ont
+            été créés sur ce prorotype, sauf cas exceptionnel.
 
         Exemples d'utilisation :
 

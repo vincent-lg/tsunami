@@ -265,6 +265,7 @@ class Objet(BaseObj):
 
     def appliquer_structure(self, structure):
         """Applique la structure passée en paramètre."""
+        self.prototype.appliquer_structure(structure)
         for cle, valeur in structure.donnees.items():
             if cle == "visible":
                 self.visible = bool(valeur)

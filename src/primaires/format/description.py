@@ -203,11 +203,7 @@ class Description(BaseObj):
             description += paragraphe + "\n"
 
         description = description.rstrip("\n ")
-        if self.scriptable:
-            evts = re.findall(r"(\$[a-z0-9]+)([\n ,.]|$)", description)
-        else:
-            evts = []
-
+        evts = re.findall(r"(\$[A-Za-z0-9]+)([\n ,.]|$)", description)
         evts = [e[0] for e in evts]
         desc_flottantes.insert(0, self)
         for nom_complet in evts:
@@ -218,19 +214,21 @@ class Description(BaseObj):
                 description = description.replace(nom_complet, retour)
                 trouve = True
 
-            for desc in desc_flottantes:
-                if trouve:
-                    break
+            if self.scriptable:
+                for desc in desc_flottantes:
+                    if trouve:
+                        break
 
-                evt = desc.script["regarde"]
-                if nom in evt.evenements:
-                    evt = evt.evenements[nom]
-                    evt.executer(True, regarde=elt, personnage=personnage)
-                    retour = evt.espaces.variables["retour"]
-                    retour = retour.replace("_b_nl_b_", "\n")
-                    description = description.replace(nom_complet, retour)
-                    trouve = True
-                    break
+                    evt = desc.script["regarde"]
+                    if nom in evt.evenements:
+                        evt = evt.evenements[nom]
+                        evt.executer(True, regarde=elt,
+                                personnage=personnage)
+                        retour = evt.espaces.variables["retour"]
+                        retour = retour.replace("_b_nl_b_", "\n")
+                        description = description.replace(nom_complet, retour)
+                        trouve = True
+                        break
 
             if not trouve:
                 raise ValueError("impossible de trouver la description " \
@@ -240,7 +238,6 @@ class Description(BaseObj):
         for paragraphe in description.split("\n"):
             paragraphes.append("\n".join(wrap(lisser(paragraphe),
                     TAILLE_LIGNE)))
-
 
         return "\n".join(paragraphes)
 

@@ -37,6 +37,7 @@ CLE = 1
 
 # Flags de modification
 CAPITALIZE = 1
+LOWER = 2
 
 class Uniligne(Editeur):
 
@@ -104,6 +105,8 @@ class Uniligne(Editeur):
             modification = self.modification
             if modification & CAPITALIZE:
                 msg = msg[0].upper() + msg[1:]
+            elif modification & LOWER:
+                msg = msg.lower()
 
             setattr(self.objet, self.attribut, msg)
             self.actualiser()

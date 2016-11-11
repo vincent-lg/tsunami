@@ -208,6 +208,28 @@ class BaseType(BaseObj, metaclass=MetaType):
         """
         pass
 
+    def changer_type(self, nouveau_type):
+        """Cette méthode force le changement de type du prototype.
+
+        ATTENTION : cette méthode change le type en changeant '__class__'
+        et performent certaines opérations automatiques. Il y a des
+        conséquences à changer une instance de classe comme cela, et
+        cela ne devrait pas se produire fréquemment ni automatiquement.
+
+        """
+        classe = importeur.objet.get_type(nouveau_type)
+        self.__class__ = classe
+
+        # On force le prototype d'objet à réinitialiser ses attributs manquants
+        del self._extensions_editeur
+        self.__setstate__(self.__dict__.copy())
+
+        # Réinitialise les attributs
+        for objet in self.objets:
+            for nom, val in self._attributs.items():
+                if not hasattr(objet, nom):
+                    setattr(objet, nom, val.construire(self))
+
     def get_nom(self, nombre=1, pluriels=True):
         """Retourne le nom complet en fonction du nombre.
 
@@ -394,9 +416,17 @@ class BaseType(BaseObj, metaclass=MetaType):
         d'avoir besoin d'appeler cette méthode direction.
 
         """
+        structure.type = self.nom_type
         flags = []
         for nom, valeur in FLAGS.items():
             if self.flags & valeur != 0:
                 flags.append(nom)
 
         structure.flags = flags
+
+    def appliquer_structure(self, structure):
+        """Applique la structure passée en apramètre."""
+        for cle, valeur in structure.donnees.items():
+            if cle == "type":
+                if valeur != self.nom_type:
+                    self.changer_type(valeur)
