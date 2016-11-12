@@ -234,6 +234,9 @@ class Machine(BaseType):
         On va détruire tout ce qu'il contient.
 
         """
+        if conteneur is None or getattr(conteneur, "conteneur", None) is None:
+            return
+
         for objet in list(conteneur.conteneur._objets):
             if conteneur is not objet and objet.unique and objet.e_existe:
                 importeur.objet.supprimer_objet(objet.identifiant)
