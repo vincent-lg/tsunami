@@ -45,7 +45,7 @@ from primaires.interpreteur.editeur.selection import Selection
 from primaires.interpreteur.editeur.tableau import Tableau
 from primaires.interpreteur.editeur.uniligne import Uniligne
 from primaires.scripting.editeurs.edt_script import EdtScript
-from secondaires.familier.aptitudes import APTITUDES
+from secondaires.familier.tours import TOURS
 from secondaires.familier.constantes import *
 
 class EdtFamedit(Presentation):
@@ -82,32 +82,35 @@ class EdtFamedit(Presentation):
             "Régime actuel : |bc|{{objet.regime}}|ff|".format(
             ", ".join(REGIMES))
 
-        # Aptitudes
-        noms = ", ".join(list(APTITUDES.keys()))
-        aptitudes = self.ajouter_choix("aptitudes", "a", Tableau,
+        # Tours
+        noms = ", ".join(list(TOURS.keys()))
+        tours = self.ajouter_choix("tours", "t", Tableau,
                 fiche, "aptitudes",
-                (("Aptitude", list(APTITUDES.keys())), ("Niveau", "entier")))
-        aptitudes.parent = self
-        aptitudes.apercu = "{valeur}"
-        aptitudes.aide_courte = dedent("""\
+                (("Tour", list(TOURS.keys())), ("Niveau", "entier")))
+        tours.parent = self
+        tours.apercu = "{valeur}"
+        tours.aide_courte = dedent("""
             Entrez |cmd|/|ff| pour revenir à la fenêtre parente.
 
-            Vous pouvez configurer ici les aptitudes du familier. Le
-            tableau ci-dessous représente les aptitudes du familier
-            et le niveau à partir duquel cette aptitude est active.
-            Si vous voulez qu'un familier ait l'aptitude dès son apparition,
+            Vous pouvez configurer ici les tours du familier. Le
+            tableau ci-dessous représente les tours du familier
+            et le niveau à partir duquel ce tour est active.
+            Notez qu'un familier peut posséder un tour avant d'atteindre
+            le niveau spécifié, si le maître a suffisamment de charisme.
+            Si vous voulez qu'un familier ait l'tour dès son apparition,
             précisez un niveau de 1 (les PNJ ne peuvent pas avoir un niveau
             inférieur). Un niveau au-delà de 100 n'aura aucun effet.
-            Aptitudes existantes : {noms}.
-            Pour ajouter une ligne dans le tableau, entrez le nom de
-            l'aptitude, un signe |cmd|/|ff| et le niveau d'activation
-            de l'aptitude. Par exemple :
+            Tours existantes : {noms}.
+            Pour ajouter une ligne dans le tableau, entrez le nom du
+            tour, un signe |cmd|/|ff| et le niveau d'activation
+            du tour. Par exemple :
              |ent|suivre_maitre / 30|ff|
-            Utilisez l'option |ent|/s|ff| suivi du nom de l'aptitude
+            Utilisez l'option |ent|/s|ff| suivi du nom du tour
             pour l'effacer de ce tableau. Par exemple :
              |cmd|/s suivre_maitre|ff|
-            Apttitudes configurées pour ce familier :
-            {{valeur}}""".format(noms=noms))
+            Tours configurées pour ce familier :
+            {{valeur}}
+        """.strip("\n").format(noms=noms))
 
         # Harnachements supportés
         harnachements = self.ajouter_choix("harnachement supportés", "h",

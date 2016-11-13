@@ -35,6 +35,7 @@ from random import choice
 from abstraits.obase import BaseObj
 from primaires.perso.exceptions.action import ExceptionAction
 from secondaires.familier.constantes import NOMS
+from secondaires.familier.tours import TOURS
 
 class Familier(BaseObj):
 
@@ -70,6 +71,7 @@ class Familier(BaseObj):
         self.nom = "Médor"
         self.chevauche_par = None
         self.doit_chasser = False
+        self.tours = []
 
     def __getnewargs__(self):
         return ("", )
@@ -231,3 +233,26 @@ class Familier(BaseObj):
         personnage.etats.retirer("chevauche")
         self.chevauche_par = None
         personnage.deselectionner_prompt("monture")
+
+    def gagner_tours(self, niveau):
+        """Cherche si le familier a de nouveaux tours actifs."""
+        maitre = self.maitre
+        tours = self.tours
+        fiche = self.fiche
+
+        # Si le maître est défini, réduit le niveau en fonction
+        # de son charisme
+        if maitre:
+            niveau += maitre.stats.charisme // 3
+
+        print("gagner_tours, niveau =", niveau, fiche.aptitudes)
+        for cle, valeur in fiche.aptitudes.items():
+            if cle in tours:
+                continue
+
+            if niveau >= valeur:
+                tours.append(cle)
+                tour = TOURS[cle]
+                if maitre:
+                    maitre.envoyer("|rg|Votre familier {} {}|ff|.".format(
+                            self.nom, tour.msg_gagne))

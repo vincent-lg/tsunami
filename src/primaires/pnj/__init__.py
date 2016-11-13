@@ -96,6 +96,8 @@ class Module(BaseModule):
                 "Hook appelé quand le PNJ se tick")
         importeur.hook.ajouter_hook("pnj:gagner_xp",
                 "Hook appelé quand un PNJ gagne de l'XP")
+        importeur.hook.ajouter_hook("pnj:gagner_niveau",
+                "Hook appelé quand un PNJ gagne de l'XP")
 
         # Ajout des états
         depece = importeur.perso.ajouter_etat("depece")

@@ -28,12 +28,23 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Fichier contenant les aptitudes des familiers."""
+"""Fichier contenant la classe ProtegerMaitre détaillée plus bas."""
 
-from secondaires.familier.aptitudes.proteger_maitre import ProtegerMaitre
-from secondaires.familier.aptitudes.suivre_maitre import SuivreMaitre
+from secondaires.familier.tours.tour import Tour
 
-APTITUDES = {
-        "proteger_maitre": ProtegerMaitre,
-        "suivre_maitre": SuivreMaitre,
-}
+class ProtegerMaitre(Tour):
+
+    """Tour demandant à un familier de protéger son maître en combat.
+
+    Si un personnage attaque le maître, le familier va essayer de
+    s'interposer. Ce tour n'est pas appelée quand le maître
+    attaque un personnage.
+
+    """
+
+    msg_gagne = "essayera à présent de vous protéger si vous êtes attaqué"
+
+    @classmethod
+    def agir(self, familier, maitre, adversaire, combat):
+        """Fait agir le familier selon son tour."""
+        pass

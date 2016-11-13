@@ -206,8 +206,12 @@ class PNJ(Personnage):
 
     def gagner_xp(self, niveau=None, xp=0, retour=True):
         """Fait gagner de l'XP au personnage."""
+        ancien_niveau = self.niveau
         res = Personnage.gagner_xp(self, niveau, xp, retour)
         importeur.hook["pnj:gagner_xp"].executer(self, niveau, xp, retour)
+        if self.niveau > ancien_niveau:
+            importeur.hook["pnj:gagner_niveau"].executer(self, self.niveau)
+
         return res
 
     def mourir(self, adversaire=None, recompenser=True):

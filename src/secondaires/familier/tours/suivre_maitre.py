@@ -28,24 +28,22 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Fichier contenant la classe Aptitude détaillée plus bas."""
+"""Fichier contenant la classe SuivreMaitre détaillée plus bas."""
 
-class Aptitude:
+from secondaires.familier.tours.tour import Tour
 
-    """Classe abstraite parente des aptitudes.
+class SuivreMaitre(Tour):
 
-    Les aptitudes des families représentent des savoirs faire propres
-    à certains et dépendant généralement du niveau principal du
-    familier. Si bien qu'un familier gagne souvent en aptitudes au
-    fur et à mesure qu'il est entraîné.
+    """Tour demandant à un familier de suivre son maître.
 
-    Cette classe définit la méthode de classe 'agir' qui prend un
-    nombre variable de paramètres, dépendant de l'aptitude (le contexte
-    d'appel de cette méthode est spécifique à un évènement).
+    La méthode de classe 'agir' est ainsi appelée au moment du déplacement
+    du maître, si le familier se trouve dans la même salle.
 
     """
 
+    msg_gagne = "peut maintenant vous suivre sans laisse ou bride"
+
     @classmethod
-    def agir(self, familier):
-        """Fait agir le familier selon son aptitude."""
-        raise NotImplementedError
+    def agir(self, familier, personnage, sortie):
+        """Fait agir le familier selon son tour."""
+        familier.pnj.deplacer_sortie(sortie)

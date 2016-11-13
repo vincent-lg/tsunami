@@ -174,6 +174,8 @@ class Module(BaseModule):
                 self.tick_PNJ)
         self.importeur.hook["pnj:gagner_xp"].ajouter_evenement(
                 self.gagner_xp_PNJ)
+        self.importeur.hook["pnj:gagner_niveau"].ajouter_evenement(
+                self.gagner_niveau_PNJ)
         importeur.hook["scripting:deplacer_alea_personnage"].ajouter_evenement(
                 self.peut_deplacer_alea_personnage)
 
@@ -200,6 +202,12 @@ class Module(BaseModule):
         """
         for familier in self.familiers.values():
             familier.chevauche_par = None
+            pnj = familier.pnj
+            if pnj is None:
+                familier.detruire()
+
+            niveau = pnj.niveau
+            familier.gagner_tours(niveau)
 
         for joueur in importeur.joueur.joueurs.values():
             if "chevauche" in joueur.etats:
@@ -630,3 +638,11 @@ class Module(BaseModule):
                 self.logger.info("{} gagne en {}.".format(pnj.identifiant,
                         stat))
                 pnj.gagner_stat(stat)
+
+    def gagner_niveau_PNJ(self, pnj, niveau):
+        """Le PNJ gagne un niveau principal."""
+        identifiant = getattr(pnj, "identifiant", "")
+        if identifiant in self.familiers:
+            familier = self.familiers[identifiant]
+            print(4)
+            familier.gagner_tours(niveau)
