@@ -415,5 +415,6 @@ class Module(BaseModule):
                     if not destination.voit_ici(autre):
                         continue
 
-                    autre.deplacer_vers(sortie.nom, escalade, nage, fuite,
-                            silence=True)
+                    importeur.diffact.ajouter_action("u", 0,
+                            autre.deplacer_vers, sortie.nom, escalade,
+                            nage, fuite, silence=True)

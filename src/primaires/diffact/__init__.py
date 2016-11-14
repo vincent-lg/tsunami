@@ -77,6 +77,7 @@ class Module(BaseModule):
     def __init__(self, importeur):
         """Constructeur du module"""
         BaseModule.__init__(self, importeur, "diffact", "primaire")
+        self.id_unique = 1
         self.actions = {} # {nom_action:action_differee}
         self.ordre_actions = [] # [nom_action]
         self.longues = []
@@ -110,6 +111,10 @@ class Module(BaseModule):
         -   les paramètres nommés organisés dans un dictionnaire
 
         """
+        if nom_action == "u":
+            nom_action = str(self.id_unique)
+            self.id_unique += 1
+
         if nom_action in self.ordre_actions:
             self.logger.warning("L'action différée {} existe déjà. " \
                     "L'ancienne sera écrasée.".format(nom_action))
