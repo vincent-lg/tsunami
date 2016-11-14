@@ -245,7 +245,6 @@ class Familier(BaseObj):
         if maitre:
             niveau += maitre.stats.charisme // 3
 
-        print("gagner_tours, niveau =", niveau, fiche.aptitudes)
         for cle, valeur in fiche.aptitudes.items():
             if cle in tours:
                 continue

@@ -644,5 +644,4 @@ class Module(BaseModule):
         identifiant = getattr(pnj, "identifiant", "")
         if identifiant in self.familiers:
             familier = self.familiers[identifiant]
-            print(4)
             familier.gagner_tours(niveau)
