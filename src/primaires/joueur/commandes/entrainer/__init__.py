@@ -77,10 +77,20 @@ class CmdEntrainer(Commande):
                     max[stat] = niveau
                 if stat not in xps:
                     base = personnage.stats[stat].base
-                    if base < 100 and base < niveau:
-                        xp = int(importeur.perso.gen_niveaux.grille_xp[ \
-                                base - 1][1] / 2)
-                        xps[stat] = xp
+                    if base < 100:
+                        xp = importeur.perso.gen_niveaux.grille_xp[ \
+                                base - 1][1] / 2
+
+                        if base <= 8:
+                            xp = xp / 6
+                        elif base < 14:
+                            xp = xp / 5
+                        elif base < 18:
+                            xp = xp / 3
+                        elif base < 23:
+                            xp = xp / 2
+
+                        xps[stat] = int(xp)
                     else:
                         xps[stat] = None
                 liste = prototypes.get(pnj, [])
@@ -103,8 +113,7 @@ class CmdEntrainer(Commande):
                 return
 
             niveau = dic_masques["niveau_secondaire"].cle_niveau
-            if xp is None or personnage.niveaux.get(niveau, 0) < \
-                    personnage.stats[stat].base:
+            if xp is None:
                 personnage << "|err|Vous n'êtes pas assez expérimenté dans ce niveau.|ff|"
                 return
 
