@@ -57,7 +57,8 @@ class CmdMeteo(Commande):
 
     def erreur_validation(self, personnage, dic_masques):
         """Définit la réaction de la commande lors d'une erreur."""
-        zone = personnage.salle.zone
+        salle = personnage.salle
+        zone = salle.zone
         msg = "Informations actuelles sur la météo :"
         msg += "\n  Température dynamique : " + oui_ou_non(
                 importeur.meteo.temperature_dynamique)
@@ -67,9 +68,10 @@ class CmdMeteo(Commande):
                 importeur.meteo.temperature)
         msg += "\n  Température dans la zone {} : {}°".format(
                 zone.cle, zone.temperature)
+        msg += "\n  Température de la salle {} : {}°".format(
+                salle.ident, salle.temperature)
 
         # Affichage des perturbations les plus proches
-        salle = personnage.salle
         if len(importeur.meteo.perturbations_actuelles) == 0:
             msg += "  \nIl n'y a pas de perturbations en jeu."
         elif salle.coords.valide:

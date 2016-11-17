@@ -111,6 +111,7 @@ class Salle(BaseObj):
         self.illuminee = False
         self.magasin = None
         self.flags = 0
+        self.mod_temperature = 0
 
         # Repop
         self.pnj_repop = {}
@@ -268,6 +269,12 @@ class Salle(BaseObj):
     def proprietaires(self):
         """Retourne les propriétaires."""
         return self._proprietaires
+
+    @property
+    def temperature(self):
+        """Retourne la température de la salle."""
+        zone = self.zone
+        return zone.temperature + self.mod_temperature
 
     def changer_terrain(self, nouveau_terrain):
         """Change le terrain de la salle."""

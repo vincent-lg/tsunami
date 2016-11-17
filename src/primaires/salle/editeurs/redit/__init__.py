@@ -38,8 +38,11 @@ les extensions n'apparaîtront pas ici.
 
 """
 
+from textwrap import dedent
+
 from primaires.interpreteur.editeur.choix import Choix
 from primaires.interpreteur.editeur.description import Description
+from primaires.interpreteur.editeur.entier import Entier
 from primaires.interpreteur.editeur.flag import Flag
 from primaires.interpreteur.editeur.flags import Flags
 from primaires.interpreteur.editeur.presentation import Presentation
@@ -208,6 +211,27 @@ class EdtRedit(Presentation):
         illuminee = self.ajouter_choix("illuminée", "l", Flag, salle,
                 "illuminee")
         illuminee.parent = self
+
+        # Modificateur de température
+        mod_temperature = self.ajouter_choix("modificateur de température",
+                None, Entier, salle, "mod_temperature", None)
+        mod_temperature.parent = self
+        mod_temperature.prompt = "Modificateur de température : "
+        mod_temperature.apercu = "{valeur}°"
+        mod_temperature.aide_courte = dedent("""
+            Entrez |cmd|/|ff| pour revenir à la fenêtre parente.
+
+            Vous pouvez ici changer le modificateur de température de la
+            salle courante. La température de la salle peut être plus
+            élevée ou plus basse que celle du reste de la zone, qui est
+            elle-même plus élevée ou plus basse que la température globale
+            de l'univers. Vous pouvez ici changer le modificateur de
+            température, pour avoir une température supérieure à celle
+            de la zone (un nombre positif) ou inférieure à la zone (un
+            nombre négatif).
+
+            Modificateur actuel : {valeur}
+        """.strip("\n"))
 
         # PNJ disponibles au repop
         pnj = self.ajouter_choix("pNJ disponibles au repop", "p", EdtPnjRepop,
