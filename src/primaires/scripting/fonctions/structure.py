@@ -98,12 +98,22 @@ class ClasseFonction(Fonction):
 
         Cases de la structure :
 
-            * titre : le titre de la salle ;
-            * zone : le nom de zone de la salle ;
-            * mnemonique : le mnémonique de la salle ;
-            * terrain : le nom du terrain de la salle ;
-            * interieur : 0 pour extérieur, 1 pour intérieur ;
-            * illuminee : 0 pour obscure, 1 pour illuminée.
+          * titre : le titre de la salle ;
+          * zone : le nom de zone de la salle ;
+          * mnemonique : le mnémonique de la salle ;
+          * terrain : le nom du terrain de la salle ;
+          * interieur : 0 pour extérieur, 1 pour intérieur ;
+          * illuminee : 0 pour obscure, 1 pour illuminée ;
+          * coordonnees : 0 pour coordonnées invalides, 1 sinon ;
+          * x : coordonnée X ;
+          * y : coordonnée Y ;
+          * z : coordonnée Z ;
+          * temperature (ls) : la température dans la salle ;
+          * mod_temperature : le modificateur de la salle ;
+          * bonus_temporaire (ls) : le bonus de température de la salle.
+
+        (ls) signifie lecture seule. Vous pouvez consulter ces champs
+        mais pas les modifier.
 
         Exemples d'utilisation :
 

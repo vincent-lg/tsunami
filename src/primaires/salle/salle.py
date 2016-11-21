@@ -890,6 +890,10 @@ class Salle(BaseObj):
         structure.x = Fraction(self.coords.x)
         structure.y = Fraction(self.coords.y)
         structure.z = Fraction(self.coords.z)
+        structure.temperature = Fraction(self.temperature)
+        structure.mod_temperature = Fraction(self.mod_temperature)
+        structure.bonus_temperature = Fraction(importeur.bonus.get(
+                self, "temperature", precision=1))
         return structure
 
     def appliquer_structure(self, structure):
@@ -918,3 +922,5 @@ class Salle(BaseObj):
                 self.coords.y = int(valeur)
             elif cle == "z":
                 self.coords.z = int(valeur)
+            elif cle == "mod_temperature":
+                self.mod_temperature = int(valeur)
