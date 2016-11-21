@@ -69,7 +69,7 @@ class Bonus(BaseObj):
     def __getnewargs__(self):
         return ()
 
-    def get(self, *args):
+    def get(self, *args, precision=0):
         """Retourne la liste de bonus actifs.
 
         Les paramètres sont les cases des modificateurs, dans l'ordre. Par exemple :
@@ -91,7 +91,12 @@ class Bonus(BaseObj):
             if duree_de_vie >= mtn:
                 bonus += modification
 
-        return bonus
+        if precision == None:
+            return bonus
+        elif precision == 0:
+            return int(round(bonus))
+        else:
+            return round(bonus, precision)
 
     def ajouter(self, informations, valeur, duree):
         """Ajoute un bonus/malus temporaire.

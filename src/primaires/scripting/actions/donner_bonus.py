@@ -39,7 +39,7 @@ class ClasseAction(Action):
     """Donne ou retire des bonus temporaires à un personnage.
 
     Cette action permet de donner ou retirer des bonus à un personnage
-    dans une stat précise (par exemple, augmenter son agilité pendant
+    dans un domaine précis (par exemple, augmenter son agilité pendant
     10 minutes).
 
     """
@@ -48,6 +48,8 @@ class ClasseAction(Action):
     def init_types(cls):
         cls.ajouter_types(cls.donner_bonus, "Personnage", "str",
                 "Fraction")
+        cls.ajouter_types(cls.donner_bonus_salle, "Salle", "str",
+                "Fraction", "Fraction")
 
     @staticmethod
     def donner_bonus(personnage, nom_stat, points):
@@ -80,3 +82,41 @@ class ClasseAction(Action):
         points = int(points)
         variable = personnage.stats[nom_stat].variable
         personnage.stats[nom_stat].variable = variable + points
+
+    @staticmethod
+    def donner_bonus_salle(salle, adresse, secondes, valeur):
+        """Donne un bonus temporaire à la salle indiquée.
+
+        Cette action permet de créer un bonus temporaire dans la salle
+        indiquée. La valeur du bonus (un nombre) et la durée du bonus
+        (un nombre en secondes) doivent être précisées. L'expiration
+        est géré automatiquement.
+
+        Paramètres à préciser :
+
+          * salle : la salle à modifier ;
+          * adresse : l'adresse de la modification (une chaîne) ;
+          * secondes : le nombre de secondes du bonus (un nombre) ;
+          * valeur : la valeur du bonus/malus (un nombre).
+
+        Cette action permet de créer des bonus/malus temporaires pour
+        plusieurs choses. Il faut donc préciser la nature de la modification.
+
+        Adresses supportées :
+
+          "temperature" : la température de la salle.
+
+        Exemple d'utilisation :
+
+          # Fait un bonus de 10° dans la salle, durant 5 minutes
+          donner_bonus salle "temperature" 300 10
+
+        """
+        adresse = supprimer_accents(adresse).lower()
+        if adresse == "temperature":
+            secondes = int(secondes)
+            valeur = round(float(valeur), 1)
+            importeur.bonus.ajouter((salle, "temperature"), valeur, secondes)
+        else:
+            raise ErreurExecution("adresse '{}' introuvable.".format(
+                    adresse))

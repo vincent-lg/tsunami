@@ -62,14 +62,14 @@ class Module(BaseModule):
         """Préparation du module."""
         self.nettoyer()
 
-    def get(self, *args):
+    def get(self, *args, precision=0):
         """Récupère la valeur d'un bonus.
 
         Cette méthode a la même signature que Bonus.get (elle redirige
         dessus d'ailleurs).
 
         """
-        return self.bonus.get(*args)
+        return self.bonus.get(*args, precision=precision)
 
     def ajouter(self, informations, valeur, duree):
         """Ajoute un bonus/malus temporaire.
