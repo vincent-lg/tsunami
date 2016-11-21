@@ -68,8 +68,9 @@ class CmdMeteo(Commande):
                 importeur.meteo.temperature)
         msg += "\n  Température dans la zone {} : {}°".format(
                 zone.cle, zone.temperature)
-        msg += "\n  Température de la salle {} : {}°".format(
-                salle.ident, salle.temperature)
+        msg += "\n  Température de la salle {} : {}° (bonus={}°)".format(
+                salle.ident, salle.temperature, importeur.bonus.get(
+                salle, "temperature"))
 
         # Affichage des perturbations les plus proches
         if len(importeur.meteo.perturbations_actuelles) == 0:

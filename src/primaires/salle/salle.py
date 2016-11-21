@@ -274,7 +274,31 @@ class Salle(BaseObj):
     def temperature(self):
         """Retourne la température de la salle."""
         zone = self.zone
-        return zone.temperature + self.mod_temperature
+        if self.interieur:
+            temperature = 18
+        else:
+            temperature = zone.temperature
+
+        feu = importeur.salle.feux.get(self.ident)
+        if feu:
+            if feu.puissance < 8:
+                temperature += feu.puissance
+            elif feu.puissance < 15:
+                temperature = 20
+            elif feu.puissance < 40:
+                temperature = 25
+            elif feu.puissance < 55:
+                temperature = 30
+            else:
+                temperature = 50
+
+        # Modification singulière de la salle
+        temperature += self.mod_temperature
+
+        # Bonus temporaires
+        temperature += importeur.bonus.get(self, "temperature")
+
+        return temperature
 
     def changer_terrain(self, nouveau_terrain):
         """Change le terrain de la salle."""
