@@ -54,6 +54,7 @@ identiques, susceptibles d'entrer en conflit.
 Voici un résumé des modules primaires existants :
 -   autoquetes      Module définissant les quêtes automatiques
 -   affection       Module gérant les affections temporaires de l'univers
+-   bonus           Module gérant les bonus/malus temporaires
 -   combat          Module gérant le combat rapproché
 -   commerce        Module gérant les magasins et transactions
 -   communication   Module gérant la communication dans l'univers
