@@ -163,7 +163,8 @@ class ClasseFonction(Fonction):
           * estomac : le poids de l'estomac (0 = vide, 3 = poids maximum) ;
           * niveau : le niveau principal du personnage (entre 1 et 100) ;
           * xp : l'XP principale du personnage ;
-          * pk : le flag PK du personnage (0 = off, 1 = on).
+          * pk : le flag PK du personnage (0 = off, 1 = on)
+          * temperature (ls) : la température du personnage.
 
         Cases propres aux joueurs :
 

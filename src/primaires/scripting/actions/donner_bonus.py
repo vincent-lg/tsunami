@@ -48,6 +48,8 @@ class ClasseAction(Action):
     def init_types(cls):
         cls.ajouter_types(cls.donner_bonus, "Personnage", "str",
                 "Fraction")
+        cls.ajouter_types(cls.donner_bonus_perso, "Personnage", "str",
+                "Fraction", "Fraction")
         cls.ajouter_types(cls.donner_bonus_salle, "Salle", "str",
                 "Fraction", "Fraction")
 
@@ -84,12 +86,51 @@ class ClasseAction(Action):
         personnage.stats[nom_stat].variable = variable + points
 
     @staticmethod
+    def donner_bonus_perso(personnage, adresse, secondes, valeur):
+        """Donne un bonus temporaire au personnage indiqué.
+
+        Cette action permet de créer un bonus temporaire pour le personnage
+        indiqué. La durée en secondes du bonus (un nombre) et la valeur
+        du bonus (un autre nombre) doivent être précisés. L'expiration
+        est géré automatiquement.
+
+        Paramètres à préciser :
+
+          * personnage : le personnage à modifier /
+          * adresse : l'adresse de la modification (une chaîne) ;
+          * secondes : le nombre de secondes du bonus (un nombre) ;
+          * valeur : la valeur du bonus/malus (un nombre).
+
+        Cette action permet de créer des bonus/malus temporaires pour
+        plusieurs choses. Il faut donc préciser la nature de la modification.
+
+        Adresses supportées :
+
+          "temperature" : la température du personnage
+
+        Exemple d'utilisation :
+
+          # Fait un bonus de 10° pour le personnage, durant 5 minutes
+          donner_bonus personnage "temperature" 300 10
+
+        """
+        adresse = supprimer_accents(adresse).lower()
+        if adresse == "temperature":
+            secondes = int(secondes)
+            valeur = round(float(valeur), 1)
+            importeur.bonus.ajouter((personnage, "temperature"), valeur,
+                    secondes)
+        else:
+            raise ErreurExecution("adresse '{}' introuvable.".format(
+                    adresse))
+
+    @staticmethod
     def donner_bonus_salle(salle, adresse, secondes, valeur):
         """Donne un bonus temporaire à la salle indiquée.
 
         Cette action permet de créer un bonus temporaire dans la salle
-        indiquée. La valeur du bonus (un nombre) et la durée du bonus
-        (un nombre en secondes) doivent être précisées. L'expiration
+        indiqué. La durée en secondes du bonus (un nombre) et la valeur
+        du bonus (un autre nombre) doivent être précisés. L'expiration
         est géré automatiquement.
 
         Paramètres à préciser :

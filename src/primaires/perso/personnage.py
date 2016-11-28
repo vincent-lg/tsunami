@@ -366,6 +366,22 @@ class Personnage(BaseObj):
 
         return armure
 
+    @property
+    def temperature(self):
+        """Retourne la température du personnage."""
+        temperature = 0
+        if self.salle:
+            temperature = self.salle.temperature
+
+        # Varie en fonction des objets équipés
+        for objet in self.equipement.equipes:
+            temperature += objet.protection_froid
+
+        # Ajoute les bonus temporaires
+        temperature += importeur.bonus.get(self, "temperature")
+
+        return temperature
+
     def peut_voir(self, personnage):
         """Retourne True si peut voir le personnage, False sinon."""
         if self.est_immortel():
@@ -1483,6 +1499,7 @@ class Personnage(BaseObj):
         structure.niveau = Fraction(self.niveau)
         structure.xp = Fraction(self.xp)
         structure.pk = Fraction(self.pk)
+        structure.temperature = Fraction(self.temperature)
         return structure
 
     def appliquer_structure(self, structure):
