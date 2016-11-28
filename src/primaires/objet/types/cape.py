@@ -40,6 +40,7 @@ class Cape(Vetement):
 
     nom_type = "cape"
     empilable_sur = ["vêtement", "armure"]
+    protection_froid = 2
 
     def __init__(self, cle=""):
         Vetement.__init__(self, cle)

@@ -40,6 +40,7 @@ class Vetement(BaseType):
 
     nom_type = "vêtement"
     empilable_sur = ["vêtement", "armure"]
+    protection_froid = 1
 
     def __init__(self, cle=""):
         """Constructeur de l'objet"""

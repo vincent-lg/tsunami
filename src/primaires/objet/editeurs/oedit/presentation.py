@@ -153,6 +153,19 @@ class EdtPresentation(Presentation):
             "Entrez le poids unitaire de l'objet.\n\nPoids actuel : " \
             "{objet.poids_unitaire}"
 
+        # Protection contre le froid
+        froid = self.ajouter_choix("protection contre le froid", "pr",
+                Flottant, prototype, "protection_froid")
+        froid.parent = self
+        froid.prompt = "Entrez la protection au froid de l'objet : "
+        froid.apercu = "{valeur}°"
+        froid.aide_courte = \
+            "Entrez la |ent|protection contre le froid|ff| de l'objet " \
+            "ou |cmd|/|ff| pour revenir\nà la fenêtre parente.\n\n" \
+            "Entrez la protection du froid en degrés. Vous pouvez " \
+            "utiliser des nombres\nà virgule pour préciser |cmd|0,8|ff|° " \
+            "par exemple.\n\nValeur actuelle : |bc|{valeur}|ff|"
+
         # Extensions
         for extension in prototype._extensions_editeur:
             rac, ligne, editeur, objet, attr, sup = extension

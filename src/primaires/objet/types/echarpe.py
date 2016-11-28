@@ -33,7 +33,10 @@
 from .vetement import Vetement
 
 class Echarpe(Vetement):
+
     nom_type = "écharpe"
+    protection_froid = 2
+
     def __init__(self, cle=""):
         Vetement.__init__(self, cle)
         self.emplacement = "cou"

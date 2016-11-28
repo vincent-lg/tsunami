@@ -81,6 +81,7 @@ class BaseType(BaseObj, metaclass=MetaType):
     # Équipement
     empilable_sur = []
     empilable_sous = []
+    protection_froid = 0
 
     def __init__(self, cle=""):
         """Constructeur d'un type"""

@@ -40,6 +40,7 @@ class Chaussure(Vetement):
 
     nom_type = "chaussure"
     empilable_sur = ["chaussette"]
+    protection_froid = 2
 
     def __init__(self, cle=""):
         Vetement.__init__(self, cle)

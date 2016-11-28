@@ -39,6 +39,7 @@ class Chevillere(Bijou):
     """
 
     nom_type = "chevillère"
+
     def __init__(self, cle=""):
         Bijou.__init__(self, cle)
         self.emplacement = "chevilles"

@@ -80,6 +80,9 @@ class Presentation(Editeur):
         -   l'attribut à éditer : par défaut aucun
 
         """
+        if raccourci is not None and raccourci in self.raccourcis.keys():
+            raccourci = None
+
         if raccourci is None:
             titre = supprimer_accents(nom).lower()
             nb = 1
