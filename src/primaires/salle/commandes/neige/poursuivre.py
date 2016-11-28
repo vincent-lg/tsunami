@@ -30,6 +30,8 @@
 
 """Package contenant le paramètre 'poursuivre' de la commande 'neige'."""
 
+from random import randint
+
 from primaires.interpreteur.masque.parametre import Parametre
 from primaires.perso.exceptions.stat import DepassementStat
 from primaires.salle.bonhomme_neige import BonhommeNeige
@@ -102,3 +104,6 @@ class PrmPoursuivre(Parametre):
                     bonhomme.get_nom(), ponctuation)
             salle.envoyer("{{}} a fabriqué {}.".format(
                     bonhomme.get_nom()), personnage)
+            if bonhomme.complet:
+                personnage.gagner_xp(None, randint(20,
+                        len(bonhomme.prototype.etats) * 100))

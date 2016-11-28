@@ -93,3 +93,7 @@ class PrmFabriquer(Parametre):
                     bonhomme.get_nom())
             salle.envoyer("{{}} a fabriqué {}.".format(
                     bonhomme.get_nom()), personnage)
+
+            if bonhomme.complet:
+                personnage.gagner_xp(None, randint(20,
+                        len(bonhomme.prototype.etats) * 100))
