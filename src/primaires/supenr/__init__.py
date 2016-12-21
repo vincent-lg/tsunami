@@ -132,7 +132,7 @@ class Module(BaseModule):
             sys.exit(1)
 
         # On augmente la limite de récursion
-        sys.setrecursionlimit(12000)
+        sys.setrecursionlimit(20000)
 
         self.pret = True
 
