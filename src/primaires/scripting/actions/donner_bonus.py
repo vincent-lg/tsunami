@@ -124,7 +124,6 @@ class ClasseAction(Action):
             secondes = int(secondes)
             valeur = round(float(valeur), 1)
             adresse = adresse[7:]
-            adresse = supprimer_accents(adresse).lower()
             cle = None
             talent = None
             for t_talent in importeur.perso.talents.values():
@@ -133,7 +132,7 @@ class ClasseAction(Action):
                     cle = talent.cle
                     break
             if talent is None:
-                raise ErreurExecution("talent inconnu : {}".format(repr(nom_talent)))
+                raise ErreurExecution("talent inconnu : {}".format(repr(adresse)))
             importeur.bonus.ajouter((personnage, "talent", cle), valeur, secondes)
         else:
             raise ErreurExecution("adresse '{}' introuvable.".format(

@@ -2,10 +2,10 @@
 
 # Copyright (c) 2010-2016 LE GOFF Vincent
 # All rights reserved.
-# 
+#
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are met:
-# 
+#
 # * Redistributions of source code must retain the above copyright notice, this
 #   list of conditions and the following disclaimer.
 # * Redistributions in binary form must reproduce the above copyright notice,
@@ -14,7 +14,7 @@
 # * Neither the name of the copyright holder nor the names of its contributors
 #   may be used to endorse or promote products derived from this software
 #   without specific prior written permission.
-# 
+#
 # THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
 # AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
 # IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -35,11 +35,11 @@
 from primaires.interpreteur.commande.commande import Commande
 
 class CmdTalents(Commande):
-    
+
     """Commande 'talents'.
-    
+
     """
-    
+
     def __init__(self):
         """Constructeur de la commande"""
         Commande.__init__(self, "talents", "skills")
@@ -47,27 +47,28 @@ class CmdTalents(Commande):
         self.aide_longue = \
             "Cette commande affiche la liste des talents que vous " \
             "connaissez, triés par niveau secondaire."
-    
+
     def interpreter(self, personnage, dic_masques):
         """Interprétation de la commande"""
         talents = personnage.talents
         par_niveaux = {}
-        for talent, connaissance in talents.items():
+        for talent in talents.keys():
+            connaissance = personnage.get_talent(talent)
             talent = importeur.perso.talents[talent]
             if connaissance > 0:
                 if talent.niveau.nom not in par_niveaux:
                     par_niveaux[talent.niveau.nom] = []
-                
+
                 par_niveaux[talent.niveau.nom].append("{} : {:>3}%".format(
                         talent.nom, connaissance))
-        
+
         if par_niveaux:
             msg = "Talents que vous connaissez :\n"
             for niveau, talents in sorted(par_niveaux.items()):
                 msg += "\n* {} :".format(niveau[0].upper() + niveau[1:])
                 for talent in sorted(talents):
                     msg += "\n  " + talent.capitalize()
-            
+
             personnage << msg
         else:
             personnage << "Vous ne maîtrisez pour l'heure aucun " \
