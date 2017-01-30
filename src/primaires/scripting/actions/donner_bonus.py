@@ -120,6 +120,21 @@ class ClasseAction(Action):
             valeur = round(float(valeur), 1)
             importeur.bonus.ajouter((personnage, "temperature"), valeur,
                     secondes)
+        elif adresse.startswith("talent "):
+            secondes = int(secondes)
+            valeur = round(float(valeur), 1)
+            adresse = adresse[7:]
+            adresse = supprimer_accents(adresse).lower()
+            cle = None
+            talent = None
+            for t_talent in importeur.perso.talents.values():
+                if supprimer_accents(t_talent.nom) == adresse:
+                    talent = t_talent
+                    cle = talent.cle
+                    break
+            if talent is None:
+                raise ErreurExecution("talent inconnu : {}".format(repr(nom_talent)))
+            importeur.bonus.ajouter((personnage, "talent", cle), valeur, secondes)
         else:
             raise ErreurExecution("adresse '{}' introuvable.".format(
                     adresse))

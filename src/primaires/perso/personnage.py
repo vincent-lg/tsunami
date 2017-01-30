@@ -876,7 +876,13 @@ class Personnage(BaseObj):
 
     def get_talent(self, cle_talent):
         """Retourne la valeur du talent ou 0 si le talent n'est pas trouvé."""
-        return self.talents.get(cle_talent, 0)
+        valeur = self.talents.get(cle_talent, 0)
+        valeur += importeur.bonus.get(self, "talent", cle_talent)
+        if valeur < 0:
+            valeur = 0
+        elif valeur > 100:
+            valeur = 100
+        return valeur
 
     def pratiquer_talent(self, cle_talent, proba=1):
         """Pratique le talent et peut potentiellement l'apprendre.
@@ -891,11 +897,11 @@ class Personnage(BaseObj):
         if self.points_apprentissage >= self.points_apprentissage_max \
                 or (cle_talent in self.l_talents \
                 and self.l_talents[cle_talent] <= avancement):
-            return avancement
+            return self.get_talent(cle_talent)
 
         if avancement and avancement >= 15 and self._element and \
                 talent.cle_niveau == "combat" and not self.est_immortel():
-            return avancement
+            return self.get_talent(cle_talent)
 
         configuration = type(self).importeur.perso.cfg_talents
         apprendre = talent.estimer_difficulte(configuration, avancement)
@@ -905,7 +911,7 @@ class Personnage(BaseObj):
             self.envoyer("Vous progressez dans l'apprentissage du " \
                     "talent {}.".format(talent.nom))
 
-        return avancement
+        return self.get_talent(cle_talent)
 
     def pratiquer_sort(self, cle_sort):
         """Pratique un sort et peut l'apprendre."""
