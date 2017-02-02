@@ -107,6 +107,8 @@ class ClasseAction(Action):
         Adresses supportées :
 
           "temperature" : la température du personnage
+          "talent nom_du_talent" : un talent du personnage
+          "stat nom_de_la_stat" : une statistique du personnage (il faut renseigner le nom entier de la statistique)
 
         Exemple d'utilisation :
 
@@ -123,7 +125,7 @@ class ClasseAction(Action):
         elif adresse.startswith("talent "):
             secondes = int(secondes)
             valeur = round(float(valeur), 1)
-            adresse = adresse[7:]
+            debut, sep, adresse = adresse.partition(" ")
             cle = None
             talent = None
             for t_talent in importeur.perso.talents.values():
@@ -134,6 +136,11 @@ class ClasseAction(Action):
             if talent is None:
                 raise ErreurExecution("talent inconnu : {}".format(repr(adresse)))
             importeur.bonus.ajouter((personnage, "talent", cle), valeur, secondes)
+        elif adresse.startswith("stat "):
+            secondes = int(secondes)
+            valeur = round(float(valeur), 1)
+            debut, sep, adresse = adresse.partition(" ")
+            importeur.bonus.ajouter((personnage, "stat", adresse), valeur, secondes)
         else:
             raise ErreurExecution("adresse '{}' introuvable.".format(
                     adresse))

@@ -1,0 +1,93 @@
+From e8b3a5a115728f4792f00b6da2dbb7c6ef7dfef1 Mon Sep 17 00:00:00 2001
+From: diamantine <acidblast@yahoo.com>
+Date: Mon, 30 Jan 2017 04:06:06 +0100
+Subject: [PATCH] Grande partie du code concernant les bonus et malus de
+ talents
+
+---
+ src/primaires/perso/personnage.py               | 14 ++++++++++----
+ src/primaires/scripting/actions/donner_bonus.py | 15 +++++++++++++++
+ src/primaires/scripting/fonctions/talent.py     |  2 +-
+ 3 files changed, 26 insertions(+), 5 deletions(-)
+
+diff --git a/src/primaires/perso/personnage.py b/src/primaires/perso/personnage.py
+index d1e7cbf..d8d35f1 100644
+--- a/src/primaires/perso/personnage.py
++++ b/src/primaires/perso/personnage.py
+@@ -876,7 +876,13 @@ class Personnage(BaseObj):
+ 
+     def get_talent(self, cle_talent):
+         """Retourne la valeur du talent ou 0 si le talent n'est pas trouvé."""
+-        return self.talents.get(cle_talent, 0)
++        valeur = self.talents.get(cle_talent, 0)
++        valeur += importeur.bonus.get(self, "talent", cle_talent)
++        if valeur < 0:
++            valeur = 0
++        elif valeur > 100:
++            valeur = 100
++        return valeur
+ 
+     def pratiquer_talent(self, cle_talent, proba=1):
+         """Pratique le talent et peut potentiellement l'apprendre.
+@@ -891,11 +897,11 @@ class Personnage(BaseObj):
+         if self.points_apprentissage >= self.points_apprentissage_max \
+                 or (cle_talent in self.l_talents \
+                 and self.l_talents[cle_talent] <= avancement):
+-            return avancement
++            return self.get_talent(cle_talent)
+ 
+         if avancement and avancement >= 15 and self._element and \
+                 talent.cle_niveau == "combat" and not self.est_immortel():
+-            return avancement
++            return self.get_talent(cle_talent)
+ 
+         configuration = type(self).importeur.perso.cfg_talents
+         apprendre = talent.estimer_difficulte(configuration, avancement)
+@@ -905,7 +911,7 @@ class Personnage(BaseObj):
+             self.envoyer("Vous progressez dans l'apprentissage du " \
+                     "talent {}.".format(talent.nom))
+ 
+-        return avancement
++        return self.get_talent(cle_talent)
+ 
+     def pratiquer_sort(self, cle_sort):
+         """Pratique un sort et peut l'apprendre."""
+diff --git a/src/primaires/scripting/actions/donner_bonus.py b/src/primaires/scripting/actions/donner_bonus.py
+index 63983e3..16dd954 100644
+--- a/src/primaires/scripting/actions/donner_bonus.py
++++ b/src/primaires/scripting/actions/donner_bonus.py
+@@ -120,6 +120,21 @@ class ClasseAction(Action):
+             valeur = round(float(valeur), 1)
+             importeur.bonus.ajouter((personnage, "temperature"), valeur,
+                     secondes)
++        elif adresse.startswith("talent "):
++            secondes = int(secondes)
++            valeur = round(float(valeur), 1)
++            adresse = adresse[7:]
++            adresse = supprimer_accents(adresse).lower()
++            cle = None
++            talent = None
++            for t_talent in importeur.perso.talents.values():
++                if supprimer_accents(t_talent.nom) == adresse:
++                    talent = t_talent
++                    cle = talent.cle
++                    break
++            if talent is None:
++                raise ErreurExecution("talent inconnu : {}".format(repr(nom_talent)))
++            importeur.bonus.ajouter((personnage, "talent", cle), valeur, secondes)
+         else:
+             raise ErreurExecution("adresse '{}' introuvable.".format(
+                     adresse))
+diff --git a/src/primaires/scripting/fonctions/talent.py b/src/primaires/scripting/fonctions/talent.py
+index 7a7a566..ec1fe09 100644
+--- a/src/primaires/scripting/fonctions/talent.py
++++ b/src/primaires/scripting/fonctions/talent.py
+@@ -73,4 +73,4 @@ class ClasseFonction(Fonction):
+             raise ErreurExecution("talent inconnu : {}".format(repr(
+                     nom_talent)))
+ 
+-        return Fraction(personnage.talents.get(cle, 0))
++        return Fraction(personnage.get_talent(cle))
+-- 
+2.10.1.windows.1
+

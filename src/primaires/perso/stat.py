@@ -113,7 +113,15 @@ class Stat(BaseObj):
         return max
 
     def _get_courante(self):
-        return self.__base + self.__variable
+        valeur = self.base + self.variable + importeur.bonus.get(self.parent.parent, "stat", self.nom)
+        if valeur < self.marge_min:
+            valeur = self.marge_min
+        elif valeur > self.marge_max:
+            valeur = self.marge_max
+        if self.max and valeur > self.max:
+            valeur = self.max
+        return valeur
+
     def _set_courante(self, courante):
         """C'est dans cette propriété qu'on change la valeur courante
         de la stat.
