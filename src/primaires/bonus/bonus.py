@@ -88,7 +88,7 @@ class Bonus(BaseObj):
 
         mtn = datetime.now()
         for modification, duree_de_vie in element:
-            if duree_de_vie >= mtn:
+            if not duree_de_vie or duree_de_vie >= mtn:
                 bonus += modification
 
         if precision == None:
@@ -99,12 +99,12 @@ class Bonus(BaseObj):
             return round(bonus, precision)
 
     def ajouter(self, informations, valeur, duree):
-        """Ajoute un bonus/malus temporaire.
+        """Ajoute un bonus/malus temporaire ou permanent.
 
         Paramètres :
             informations : la liste des informations du bonus ;
             valeur : la valeur du bonus (un nombre entier ou flottant) ;
-            duree : la durée de vie en secondes du bonus/malus.
+            duree : la durée de vie en secondes du bonus/malus. Si égale 0, alors essaie de trouver un bonus:malus opposé à supprimer.
 
         """
         if len(informations) < 2:
@@ -115,6 +115,8 @@ class Bonus(BaseObj):
             raise ValueError("l'une des informations après le premier " \
                     "indice n'est pas une chaîne, valeur invalide")
 
+        duree_de_vie = 0
+
         dictionnaire = self.bonus
         for information in informations[:-1]:
             if information not in dictionnaire:
@@ -122,7 +124,7 @@ class Bonus(BaseObj):
 
             dictionnaire = dictionnaire[information]
 
-        # Dernière information, doit contenir une liste
+            # Dernière information, doit contenir une liste
         derniere = informations[-1]
         if derniere not in dictionnaire:
             dictionnaire[derniere] = []
@@ -130,9 +132,17 @@ class Bonus(BaseObj):
         liste = dictionnaire[derniere]
 
         # Ajoute l'information dans la liste
-        mtn = datetime.now()
-        delta = timedelta(seconds=duree)
-        duree_de_vie = mtn + delta
+        if duree != 0:
+            mtn = datetime.now()
+            delta = timedelta(seconds=duree)
+            duree_de_vie = mtn + delta
+        else:
+            if liste == []:
+                duree_de_vie = 0
+                liste.append((valeur, duree_de_vie))
+            else:
+                valeur = liste[0] + valeur
+                liste = [(valeur, 0)]
         liste.append((valeur, duree_de_vie))
 
     def nettoyer(self, dictionnaire=None):
@@ -159,7 +169,7 @@ class Bonus(BaseObj):
         """
         mtn = datetime.now()
         for valeur, duree in list(liste):
-            if mtn >= duree:
+            if duree != 0 and mtn >= duree:
                 liste.remove((valeur, duree))
             elif (mtn - duree).seconds < 60:
                 secondes = (mtn - duree).seconds

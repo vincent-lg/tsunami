@@ -139,7 +139,7 @@ class CmdCuisiner(Commande):
                             recette.resultat.get_nom(qtt))
 
                     # On donne l'expérience relative à la recette au personnage
-                    personnage.gagner_xp("survie", recette.xp)
+                    personnage.gagner_xp("survie", (recette.xp * qtt))
                     return
                 else:
                     etat = "rate"
