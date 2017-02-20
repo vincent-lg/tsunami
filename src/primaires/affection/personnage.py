@@ -102,7 +102,7 @@ class AffectionPersonnage(AffectionAbstraite):
         if self.a_flag("doit être connecté"):
             from primaires.joueur.joueur import Joueur
             personnage = affection.affecte
-            if isinstance(personnage, Joueur) and not joueur.est_connecte():
+            if isinstance(personnage, Joueur) and not personnage.est_connecte():
                 return False
 
         AffectionAbstraite.tick(self, affection)
