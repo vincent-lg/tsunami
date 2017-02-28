@@ -30,6 +30,8 @@
 
 """Fichier contenant la fonction salle."""
 
+import re
+
 from primaires.scripting.fonction import Fonction
 from primaires.scripting.instruction import ErreurExecution
 
@@ -52,10 +54,43 @@ class ClasseFonction(Fonction):
     def salle_chaine(cle):
         """Retourne la salle correspondante à la clé entrée.
 
+        Paramètres à préciser :
+
+          * cle : la clé de la salle (ne chaîne).
+
         La clé doit être la zone de la salle et son mnémonique
         séparés par le signe deux points. Par exemple, "picte:1".
 
+        Vous pouvez utiliser le signe '*' pour dire "n'importe quel
+        groupe de caractère ici". Cela peut être utile si vous ne
+        connaissez pas le nom ou le mnémonique complet. Noez
+        cependant que cette fonction va alors devoir parcourir toutes
+        les salles, ce qui peut être gourmand en ressources. Évitez
+        d'utiliser cette fonction sur des scripts appelés fréquemment
+        et automatiquement par le système.
+
+        Exemple d'utilisation :
+
+          # Retourne la première salle de zone commençant par 'pic'
+          # Et de mnémonique '1' :
+          salle = salle("pic*:1")
+
+        Notez que si vous utilisez un signe '*' dans la recherche, la
+        première salle correspondante (ou une valeur nulle) est retournée.
+
         """
+        if "*" in cle:
+            # On essaye d'optimiser les performances en compilant la regex
+            exp = "^" + re.escape(cle).replace("\\*", ".*") + "$"
+            print("Expression", repr(exp))
+            ident = re.compile(exp, re.I)
+            for t_ident, salle in importeur.salle.salles.items():
+                if ident.search(t_ident):
+                    return salle
+
+            return None
+
+        # Si il n'y a pas de signe '*'
         try:
             salle = importeur.salle[cle]
         except KeyError:
