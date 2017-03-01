@@ -501,7 +501,7 @@ class Navire(Vehicule):
         Une liste de vitesses doit être précisée en paramètre,
         représentant une liste de chaînes dont chaque chaîne est un
         nom de vitesse (par exemple, "lente"). Pour chaque vitesse,
-        on récupère son facteur tel qe défini dans les constantes
+        on récupère son facteur tel que défini dans les constantes
         et le facteur multiplicateur défini dans le modèle.
 
         """
@@ -510,7 +510,7 @@ class Navire(Vehicule):
         facteur_rames = self.modele.facteur_rames
         for vitesse in vitesses:
             facteur_vitesse = VIT_RAMES[vitesse]
-            facteur += (facteur_rames * facteur_vitesse) / len(rames)
+            facteur += (facteur_rames * facteur_vitesse) / (len(rames) / 2)
 
         return facteur
 
@@ -832,7 +832,6 @@ class Navire(Vehicule):
         """Méthode appelée lors d'une collision avec un point."""
         Vehicule.collision(self, salle)
         vitesse = self.vitesse_noeuds
-        print("Collision", contre)
         if contre in type(self).obs_recif:
             if vitesse < 0.05:
                 pass

@@ -68,10 +68,18 @@ class Rejoindre(Objectif):
 
     def afficher(self):
         """Méthode à redéfinir retournant l'affichage de l'objectif."""
-        if self.doit_reculer:
-            return "Doit reculer"
-
         navire = self.navire
+        if self.doit_reculer:
+            x, y = self.doit_reculer
+            p_x = navire.position.x
+            p_y = navire.position.y
+            max_distance = navire.get_max_distance_au_centre()
+            distance = 4 - sqrt((x - p_x) ** 2 + (y - p_y) ** 2) + max_distance
+            if distance < 0:
+                distance = 0
+
+            return "Doit reculer pendant {}".format(distance)
+
         distance = self.get_distance()
         direction = (distance.direction + 90) % 360
         msg_dist = get_nom_distance(distance)
@@ -162,7 +170,8 @@ class Rejoindre(Objectif):
             p_x = navire.position.x
             p_y = navire.position.y
             max_distance = navire.get_max_distance_au_centre()
-            if sqrt((x - p_x) ** 2 + (y - p_y) ** 2) > max_distance + 1:
+            d_min = 4 - sqrt((x - p_x) ** 2 + (y - p_y) ** 2) + max_distance
+            if d_min <= 0:
                 self.doit_reculer = ()
             else:
                 return
@@ -208,7 +217,7 @@ class Rejoindre(Objectif):
         # En fonction de la distance, modifie la vitesse
         if -45 <= min_angle <= 45:
             if min_distance <= 2:
-                self.vitesse = 0.05
+                self.vitesse = 0.1
             elif min_distance < 10:
                 self.vitesse = 0.2
             elif min_distance < 25:

@@ -1,4 +1,5 @@
 # -*-coding:Utf-8 -*
+# -*-coding:Utf-8 -*
 
 # Copyright (c) 2010-2016 LE GOFF Vincent
 # All rights reserved.
@@ -63,31 +64,57 @@ class SuivreCap(Rejoindre):
         """
         equipage = self.equipage
         navire = self.navire
-        if equipage.destination:
+        commandants = equipage.get_matelots_au_poste("commandant", False)
+        if commandants:
+            commandant = commandants[0].personnage
+
+        if equipage.destination and not self.doit_reculer:
             self.x, self.y = equipage.destination
             distance = self.get_distance()
             norme = distance.norme
             vitesse = get_vitesse_noeuds(norme)
-            if vitesse > self.vitesse_max:
-                vitesse = self.vitesse_max
-            elif norme < 25:
+            if norme < 40:
                 vitesse = 0.6
-            elif norme < 10:
+            elif norme < 15:
                 vitesse = 0.2
+            elif vitesse > self.vitesse_max:
+                vitesse = self.vitesse_max
 
             self.vitesse = vitesse
             direction = round(distance.direction)
             if distance.norme <= DISTANCE_MIN:
                 # On cherche le point suivant sur la carte
-                cle = equipage.caps[0]
-                trajet = importeur.navigation.trajets[cle]
-                suivant = trajet.points.get(tuple(equipage.destination))
-                if suivant is None and len(equipage.caps) > 1:
-                    del equipage.caps[0]
+                try:
                     cle = equipage.caps[0]
+                except IndexError:
+                    suivant = None
+                else:
                     trajet = importeur.navigation.trajets[cle]
-                    suivant = trajet.point_depart
+                    suivant = trajet.points.get(tuple(equipage.destination))
+
+                if suivant is None:
+                    del equipage.caps[0]
+                    try:
+                        cle = equipage.caps[0]
+                    except IndexError:
+                        # Le cap n'est pas circulaire
+                        equipage.destination = None
+                        self.vitesse = 0
+                        equipage.demander("relacher_rames",
+                                personnage=commandant)
+                        equipage.demander("relacher_gouvernail",
+                                personnage=commandant)
+                        equipage.demander("plier_voiles", None,
+                                personnage=commandant)
+                        equipage.demander("jeter_ancre", personnage=commandant)
+                        equipage.objectifs.remove(self)
+                        equipage.retirer_controle("vitesse")
+                        return
+                    else:
+                        trajet = importeur.navigation.trajets[cle]
+                        suivant = trajet.point_depart
+
                 equipage.destination = suivant
 
-            # On retransmet les contrôles
-            Rejoindre.trouver_cap(self)
+        # On retransmet les contrôles
+        Rejoindre.trouver_cap(self)
