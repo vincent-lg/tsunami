@@ -510,7 +510,7 @@ class Navire(Vehicule):
         facteur_rames = self.modele.facteur_rames
         for vitesse in vitesses:
             facteur_vitesse = VIT_RAMES[vitesse]
-            facteur += (facteur_rames * facteur_vitesse) / (len(rames) / 2)
+            facteur += (facteur_rames * facteur_vitesse)
 
         return facteur
 
