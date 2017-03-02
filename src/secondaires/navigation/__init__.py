@@ -796,6 +796,9 @@ class Module(BaseModule):
             navire = matelot.navire
             immobilise = getattr(navire, "immobilise", True)
             equipage = matelot.equipage
+            if not navire.modele.peut_conquerir:
+                return
+
             if not immobilise and equipage and not equipage.est_matelot(
                     arrive):
                 matelot.armer()
