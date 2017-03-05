@@ -104,6 +104,8 @@ class ClasseAction(Action):
         Cette action permet de créer des bonus/malus temporaires pour
         plusieurs choses. Il faut donc préciser la nature de la modification.
 
+        Une durée de 0 indique un bonus permanent, qui n'expirera jamais.
+
         Adresses supportées :
 
           "temperature" : la température du personnage
@@ -150,7 +152,7 @@ class ClasseAction(Action):
         """Donne un bonus temporaire à la salle indiquée.
 
         Cette action permet de créer un bonus temporaire dans la salle
-        indiqué. La durée en secondes du bonus (un nombre) et la valeur
+        indiquée. La durée en secondes du bonus (un nombre) et la valeur
         du bonus (un autre nombre) doivent être précisés. L'expiration
         est géré automatiquement.
 
@@ -163,6 +165,8 @@ class ClasseAction(Action):
 
         Cette action permet de créer des bonus/malus temporaires pour
         plusieurs choses. Il faut donc préciser la nature de la modification.
+
+        Une durée de 0 indique un bonus permanent, qui n'expirera jamais.
 
         Adresses supportées :
 

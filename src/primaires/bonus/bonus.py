@@ -104,7 +104,11 @@ class Bonus(BaseObj):
         Paramètres :
             informations : la liste des informations du bonus ;
             valeur : la valeur du bonus (un nombre entier ou flottant) ;
-            duree : la durée de vie en secondes du bonus/malus. Si égale 0, alors essaie de trouver un bonus:malus opposé à supprimer.
+            duree : la durée de vie en secondes du bonus/malus 9[1]).
+
+        Si la durée est 0, alors le bonus est permanent. Il n'est
+        pas nécessaire de retenir plus d'un bonus/malus permanent
+        par liste d'adresse, une seule valeur fluctuante sera modifiée.
 
         """
         if len(informations) < 2:
@@ -114,8 +118,6 @@ class Bonus(BaseObj):
         if any(not isinstance(e, str) for e in informations[1:]):
             raise ValueError("l'une des informations après le premier " \
                     "indice n'est pas une chaîne, valeur invalide")
-
-        duree_de_vie = 0
 
         dictionnaire = self.bonus
         for information in informations[:-1]:
@@ -136,14 +138,13 @@ class Bonus(BaseObj):
             mtn = datetime.now()
             delta = timedelta(seconds=duree)
             duree_de_vie = mtn + delta
+            liste.append((valeur, duree_de_vie))
         else:
-            if liste == []:
-                duree_de_vie = 0
-                liste.append((valeur, duree_de_vie))
-            else:
-                valeur = liste[0] + valeur
-                liste = [(valeur, 0)]
-        liste.append((valeur, duree_de_vie))
+            # Fait la somme des bonus/malus permanents actuels
+            permanent = sum(val for val, dur in liste if dur == 0)
+            permanent += valeur
+            liste[:] = [(v, d) for v, d in liste if d != 0]
+            liste.append((permanent, 0))
 
     def nettoyer(self, dictionnaire=None):
         """Nettoie les mémoires expirées ou presque expirées."""
@@ -169,7 +170,10 @@ class Bonus(BaseObj):
         """
         mtn = datetime.now()
         for valeur, duree in list(liste):
-            if duree != 0 and mtn >= duree:
+            if duree == 0:
+                continue
+
+            if mtn >= duree:
                 liste.remove((valeur, duree))
             elif (mtn - duree).seconds < 60:
                 secondes = (mtn - duree).seconds
