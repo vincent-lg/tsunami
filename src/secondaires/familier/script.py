@@ -40,8 +40,10 @@ class ScriptFiche(Script):
         """Initialisation du script"""
         # Evénement apprivoiser
         evt_appr = self.creer_evenement("apprivoiser")
+        evt_appr_avant = evt_appr.creer_evenement("avant")
         evt_appr_reus = evt_appr.creer_evenement("réussir")
         evt_appr_echoue = evt_appr.creer_evenement("échoue")
+        evt_appr_avant.aide_courte = "avant que le personnage ne tente d'apprivoiser le pnj"
         evt_appr.aide_courte = "un personnage apprivoise le familier"
         evt_appr_reus.aide_courte = "l'apprivoisement réussi"
         evt_appr_echoue.aide_courte = "l'apprivoisement échoue"
@@ -49,6 +51,9 @@ class ScriptFiche(Script):
             "Cet évènement est appelé quand un personnage, joueur ou PNJ, " \
             "apprivoise un familier. Deux sous-évènements différents " \
             "sont appelés si il réussi ou échoue l'apprivoisement."
+        evt_appr_avant.aide_longue = \
+        "Cet évènement est appelé avant que le personnage " \
+        " ne tente d'apprivoiser le pnj."
         evt_appr_reus.aide_longue = \
             "Cet évènement est appelé quand le personnage réussi à " \
             "apprivoiser le familier."

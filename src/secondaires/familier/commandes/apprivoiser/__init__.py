@@ -54,7 +54,7 @@ class CmdApprivoiser(Commande):
             "si vous n'arrivez pas à les apprivoiser."
 
     def peut_executer(self, personnage):
-        """On ne eut exécuter la commande si on a pas apprivoisement."""
+        """On ne peut exécuter la commande si on a pas apprivoisement."""
         return "apprivoisement" in personnage.talents
 
     def interpreter(self, personnage, dic_masques):
@@ -87,7 +87,9 @@ class CmdApprivoiser(Commande):
             return
 
         # On essaye d'apprivoiser le familier
+        fiche.script["apprivoiser"]["avant"].executer(familier=pnj, personnage=personnage)
         min_appr = personnage.talents.get("apprivoisement", 1)
+        
         max_appr = min_appr + int(personnage.stats.charisme / 2)
         appr = max_appr
         if min_appr != max_appr:
