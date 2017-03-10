@@ -57,8 +57,14 @@ class CmdLever(Commande):
         if repos is None:
             repos = personnage.etats.get("allonge")
 
+        if repos:
+            repos.sur.script["lève"]["avant"].executer(personnage=personnage, salle=personnage.salle)
+
         personnage.etats.retirer("assis")
         personnage.etats.retirer("allonge")
         personnage << "Vous vous levez."
         personnage.salle.envoyer("{} se lève.", personnage)
+        
+        if repos:
+            repos.sur.script["lève"]["après"].executer(personnage=personnage, salle=personnage.salle)
 

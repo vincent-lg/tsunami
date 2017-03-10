@@ -173,6 +173,50 @@ class ScriptDetail(Script):
         var_salle = evt_allonge.ajouter_variable("salle", "Salle")
         var_salle.aide = "la salle dans laquelle se trouve le détail"
 
+# Événement lève
+        evt_leve = self.creer_evenement("lève")
+        evt_leve.aide_courte = "un personnage se lève de sur un détail"
+        evt_leve.aide_longue = \
+            "Cet évènement est appelé quand un personnage se lève " \
+            "de sur un détail dans la salle. Sous-évènements disponibles : avant et après." \
+
+        # Configuration des variables de l'évènement lève
+        var_perso = evt_leve.ajouter_variable("personnage", "Personnage")
+        var_perso.aide = "le personnage se levant"
+        var_salle = evt_leve.ajouter_variable("salle", "Salle")
+        var_salle.aide = "la salle dans laquelle se trouve le détail"
+
+# Événement lève.avant
+        evt_leve_avant = evt_leve.creer_evenement("avant")
+        evt_leve_avant.aide_courte = "un personnage veut se lever de sur un détail"
+        evt_leve_avant.aide_longue = \
+            "Cet évènement est appelé quand un personnage cherche à se lever " \
+            "de sur un détail dans la salle. Il se produit avant le " \
+            "message comme quoi le personnage s'est levé. L'état " \
+            "n'a pas encore été retiré."
+
+        # Configuration des variables de l'évènement lève.avant
+        var_perso = evt_leve_avant.ajouter_variable("personnage", "Personnage")
+        var_perso.aide = "le personnage souhaitant se lever"
+        var_salle = evt_leve_avant.ajouter_variable("salle", "Salle")
+        var_salle.aide = "la salle dans laquelle se trouve le détail"
+
+# Événement lève.après
+        evt_leve_apres = evt_leve.creer_evenement("après")
+        evt_leve_apres.aide_courte = "un personnage se lève de sur un détail"
+        evt_leve_apres.aide_longue = \
+            "Cet évènement est appelé quand un personnage se lève " \
+            "de sur un détail dans la salle. Il se produit après le " \
+            "message comme quoi le personnage s'est levé. L'état " \
+            "a déjà été retiré."
+
+        # Configuration des variables de l'évènement lève.après
+        var_perso = evt_leve_apres.ajouter_variable("personnage", "Personnage")
+        var_perso.aide = "le personnage se levant"
+        var_salle = evt_leve_apres.ajouter_variable("salle", "Salle")
+        var_salle.aide = "la salle dans laquelle se trouve le détail"
+
+
         # Événement regarde
         evt_regarde = self.creer_evenement("regarde")
         evt_reg_avant = evt_regarde.creer_evenement("avant")
