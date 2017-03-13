@@ -71,6 +71,7 @@ class CmdAllonger(Commande):
                 personnage << "|err|Toutes les places sont prises ici.|ff|"
                 return
 
+            elt.script["allonge"]["avant"].executer(personnage=personnage, salle=salle)
             personnage.etats.retirer("assis")
             personnage.etats.ajouter("allonge", elt)
             if hasattr(elt, "messages"):
@@ -87,7 +88,7 @@ class CmdAllonger(Commande):
                         elt.connecteur, elt.titre)
                 personnage.salle.envoyer("{{}} s'allonge {} {}.".format(
                         elt.connecteur, elt.titre), personnage)
-                elt.script["allonge"].executer(personnage=personnage,
+                elt.script["allonge"]["après"].executer(personnage=personnage,
                         salle=salle)
         else:
             personnage.etats.retirer("assis")

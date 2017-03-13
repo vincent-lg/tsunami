@@ -200,3 +200,90 @@ class ScriptObjet(Script):
         var_salle = evt_leve_apres.ajouter_variable("salle", "Salle")
         var_salle.aide = "la salle dans laquelle se trouve le personnage"
 
+# Événement asseoit
+        evt_asseoit = self.creer_evenement("asseoit")
+        evt_asseoit.aide_courte = "un personnage s'asseoit sur l'objet"
+        evt_asseoit.aide_longue = \
+            "Cet évènement est appelé quand un personnage s'asseoit " \
+            "sur l'objet. Sous-évènements disponibles : avant et après." \
+
+        # Configuration des variables de l'évènement asseoit
+        var_perso = evt_asseoit.ajouter_variable("personnage", "Personnage")
+        var_perso.aide = "le personnage s'asseyant"
+        var_salle = evt_asseoit.ajouter_variable("salle", "Salle")
+        var_salle.aide = "la salle dans laquelle se trouve le personnage"
+
+# Événement asseoit.avant
+        evt_asseoit_avant = evt_asseoit.creer_evenement("avant")
+        evt_asseoit_avant.aide_courte = "un personnage veut s'asseoir sur l'objet"
+        evt_asseoit_avant.aide_longue = \
+            "Cet évènement est appelé quand un personnage cherche à s'asseoir " \
+            "sur l'objet. Il se produit avant le " \
+            "message comme quoi le personnage s'est assis. L'état " \
+            "n'a pas encore été ajouté."
+
+        # Configuration des variables de l'évènement asseoit.avant
+        var_perso = evt_asseoit_avant.ajouter_variable("personnage", "Personnage")
+        var_perso.aide = "le personnage souhaitant s'asseoir"
+        var_salle = evt_asseoit_avant.ajouter_variable("salle", "Salle")
+        var_salle.aide = "la salle dans laquelle se trouve le personnage"
+
+# Événement asseoit.après
+        evt_asseoit_apres = evt_asseoit.creer_evenement("après")
+        evt_asseoit_apres.aide_courte = "un personnage s'asseoit sur l'objet"
+        evt_asseoit_apres.aide_longue = \
+            "Cet évènement est appelé quand un personnage s'asseoit " \
+            "sur l'objet. Il se produit après le " \
+            "message comme quoi le personnage s'est assis. L'état " \
+            "a déjà été ajouté."
+
+        # Configuration des variables de l'évènement asseoit.après
+        var_perso = evt_asseoit_apres.ajouter_variable("personnage", "Personnage")
+        var_perso.aide = "le personnage se levant"
+        var_salle = evt_asseoit_apres.ajouter_variable("salle", "Salle")
+        var_salle.aide = "la salle dans laquelle se trouve le personnage"
+
+
+# Événement allonge
+        evt_allonge = self.creer_evenement("allonge")
+        evt_allonge.aide_courte = "un personnage s'allonge sur l'objet"
+        evt_allonge.aide_longue = \
+            "Cet évènement est appelé quand un personnage s'allonge " \
+            "sur l'objet. Sous-évènements disponibles : avant et après." \
+
+        # Configuration des variables de l'évènement allonge
+        var_perso = evt_allonge.ajouter_variable("personnage", "Personnage")
+        var_perso.aide = "le personnage s'allongeant"
+        var_salle = evt_allonge.ajouter_variable("salle", "Salle")
+        var_salle.aide = "la salle dans laquelle se trouve le personnage"
+
+# Événement allonge.avant
+        evt_allonge_avant = evt_allonge.creer_evenement("avant")
+        evt_allonge_avant.aide_courte = "un personnage veut s'allonger sur l'objet"
+        evt_allonge_avant.aide_longue = \
+            "Cet évènement est appelé quand un personnage cherche à s'allonger " \
+            "sur l'objet. Il se produit avant le " \
+            "message comme quoi le personnage s'est allongé. L'état " \
+            "n'a pas encore été ajouté."
+
+        # Configuration des variables de l'évènement allonge.avant
+        var_perso = evt_allonge_avant.ajouter_variable("personnage", "Personnage")
+        var_perso.aide = "le personnage souhaitant s'allonger"
+        var_salle = evt_allonge_avant.ajouter_variable("salle", "Salle")
+        var_salle.aide = "la salle dans laquelle se trouve le personnage"
+
+# Événement allonge.après
+        evt_allonge_apres = evt_allonge.creer_evenement("après")
+        evt_allonge_apres.aide_courte = "un personnage s'allonge sur l'objet"
+        evt_allonge_apres.aide_longue = \
+            "Cet évènement est appelé quand un personnage s'allonge " \
+            "sur l'objet. Il se produit après le " \
+            "message comme quoi le personnage s'est allongé. L'état " \
+            "a déjà été ajouté."
+
+        # Configuration des variables de l'évènement allonge.après
+        var_perso = evt_allonge_apres.ajouter_variable("personnage", "Personnage")
+        var_perso.aide = "le personnage s'allongeant"
+        var_salle = evt_allonge_apres.ajouter_variable("salle", "Salle")
+        var_salle.aide = "la salle dans laquelle se trouve le personnage"
+
