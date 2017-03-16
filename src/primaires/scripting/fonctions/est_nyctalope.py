@@ -2,10 +2,10 @@
 
 # Copyright (c) 2010-2016 LE GOFF Vincent
 # All rights reserved.
-# 
+#
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are met:
-# 
+#
 # * Redistributions of source code must retain the above copyright notice, this
 #   list of conditions and the following disclaimer.
 # * Redistributions in binary form must reproduce the above copyright notice,
@@ -14,7 +14,7 @@
 # * Neither the name of the copyright holder nor the names of its contributors
 #   may be used to endorse or promote products derived from this software
 #   without specific prior written permission.
-# 
+#
 # THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
 # AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
 # IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -28,25 +28,34 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Package contenant les commandes du module salle."""
+"""Fichier contenant la fonction est_nyctalope."""
 
-from . import addroom
-from . import carte
-from . import chercherbois
-from . import chsortie
-from . import decor
-from . import deverrouiller
-from . import escalader
-from . import etendue
-from . import fermer
-from . import goto
-from . import mettrefeu
-from . import nager
-from . import neige
-from . import ouvrir
-from . import redit
-from . import regarder
-from . import sorties
-from . import supsortie
-from . import verrouiller
-from . import zone
+from primaires.scripting.fonction import Fonction
+
+class ClasseFonction(Fonction):
+
+    """Retourne vrai si le personnage est nyctalope."""
+
+    @classmethod
+    def init_types(cls):
+        cls.ajouter_types(cls.est_nyctalope, "Personnage")
+
+    @staticmethod
+    def est_nyctalope(personnage):
+        """Retourne vrai si le personnage est nyctalope, faux sinon. Une affection rendant nyctalope modifie ce résultat.
+
+        Paramètres à préciser :
+
+          * personnage : le personnage à tester
+
+
+        Exemple d'utilisation :
+
+          si est_nyctalope(personnage):
+              # ...
+
+        """
+        if personnage.race and personnage.race.a_flag("nyctalope"):
+            return True
+        else:
+            return False

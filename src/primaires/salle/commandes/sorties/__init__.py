@@ -2,10 +2,10 @@
 
 # Copyright (c) 2010-2016 LE GOFF Vincent
 # All rights reserved.
-# 
+#
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are met:
-# 
+#
 # * Redistributions of source code must retain the above copyright notice, this
 #   list of conditions and the following disclaimer.
 # * Redistributions in binary form must reproduce the above copyright notice,
@@ -14,7 +14,7 @@
 # * Neither the name of the copyright holder nor the names of its contributors
 #   may be used to endorse or promote products derived from this software
 #   without specific prior written permission.
-# 
+#
 # THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
 # AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
 # IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -28,25 +28,34 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Package contenant les commandes du module salle."""
+"""Package contenant la commande 'sorties'."""
 
-from . import addroom
-from . import carte
-from . import chercherbois
-from . import chsortie
-from . import decor
-from . import deverrouiller
-from . import escalader
-from . import etendue
-from . import fermer
-from . import goto
-from . import mettrefeu
-from . import nager
-from . import neige
-from . import ouvrir
-from . import redit
-from . import regarder
-from . import sorties
-from . import supsortie
-from . import verrouiller
-from . import zone
+from primaires.interpreteur.commande.commande import Commande
+
+class CmdSorties(Commande):
+
+    """Commande 'sorties'"""
+
+    def __init__(self):
+        """Constructeur de la commande"""
+        Commande.__init__(self, "sorties", "exits")
+        self.nom_categorie = "bouger"
+        self.aide_courte = "affiche les sorties visibles de la salle courante"
+        self.aide_longue = \
+            "Cette commande vous permet de vous déplacer rapidement dans " \
+            "Exemple : %goto% |ent|nom_du_joueur|ff|."
+
+    def interpreter(self, personnage, dic_masques):
+        """Méthode d'interprétation de commande"""
+        retour = "Sorties visibles :"
+        for sortie in personnage.salle.sorties:
+            if not sortie.cachee:
+                if sortie.porte == None or sortie.porte.ouverte:
+                    if sortie.salle_dest.voit_ici(personnage):
+                        retour += "\n {} vers {}".format(sortie.nom_complet, sortie.salle_dest.titre)
+                    else:
+                        retour += "\n il fait trop sombre vers {}...".format(sortie.nom_complet)
+                else:
+                    retour += "\n la sortie est fermée vers {}".format(sortie.nom_complet)
+        
+        personnage.envoyer(retour)

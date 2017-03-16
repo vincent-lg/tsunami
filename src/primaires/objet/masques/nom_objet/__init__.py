@@ -134,7 +134,7 @@ class NomObjet(Masque):
             nb = int(nb)
 
         sensibilite = personnage.stats.sensibilite
-        facteur = (10 + sensibilite / 5) / 100
+        facteur = (20 + sensibilite / 2) / 100
         voit = random.random() <= facteur
         if not voit and not salle.voit_ici(personnage):
             raise ErreurValidation(

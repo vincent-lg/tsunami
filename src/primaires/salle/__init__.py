@@ -318,6 +318,7 @@ class Module(BaseModule):
             commandes.ouvrir.CmdOuvrir(),
             commandes.redit.CmdRedit(),
             commandes.regarder.CmdRegarder(),
+                        commandes.sorties.CmdSorties(),
             commandes.supsortie.CmdSupsortie(),
             commandes.verrouiller.CmdVerrouiller(),
             commandes.zone.CmdZone(),
