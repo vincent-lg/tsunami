@@ -40,22 +40,29 @@ class CmdSorties(Commande):
         """Constructeur de la commande"""
         Commande.__init__(self, "sorties", "exits")
         self.nom_categorie = "bouger"
-        self.aide_courte = "affiche les sorties visibles de la salle courante"
+        self.aide_courte = "Affiche les sorties autour de vous"
         self.aide_longue = \
-            "Cette commande vous permet de vous déplacer rapidement dans " \
-            "Exemple : %goto% |ent|nom_du_joueur|ff|."
+            "Cette commande vous permet de voir les sorties disponibles " \
+            "autour de vous. C'est une commande très utile pour " \
+            "l'exploration, qui peut s'avérer plus que pratique si " \
+            "vous êtes perdus sans lumière et que vous ne trouvez " \
+            "pas la sortie par laquelle vous êtes entrés."
 
     def interpreter(self, personnage, dic_masques):
         """Méthode d'interprétation de commande"""
         retour = "Sorties visibles :"
         for sortie in personnage.salle.sorties:
-            if not sortie.cachee:
-                if sortie.porte == None or sortie.porte.ouverte:
+            if personnage.est_immortel() or not sortie.cachee:
+                if sortie.porte is None or sortie.porte.ouverte:
                     if sortie.salle_dest.voit_ici(personnage):
-                        retour += "\n {} vers {}".format(sortie.nom_complet, sortie.salle_dest.titre)
+                        retour += "\n  {} vers {}".format(
+                                sortie.nom_complet.capitalize(),
+                                sortie.salle_dest.titre.lower())
                     else:
-                        retour += "\n il fait trop sombre vers {}...".format(sortie.nom_complet)
+                        retour += "\n  Il fait trop sombre vers {}...".format(
+                                sortie.nom_complet)
                 else:
-                    retour += "\n la sortie est fermée vers {}".format(sortie.nom_complet)
-        
+                    retour += "\n  La sortie est fermée vers {}.".format(
+                            sortie.nom_complet)
+
         personnage.envoyer(retour)
