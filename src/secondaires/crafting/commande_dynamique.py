@@ -196,6 +196,9 @@ class CommandeDynamique(BaseObj):
 
                 var = evt.ajouter_variable(nom, "list")
                 var.aide = "la liste des objets entrée"
+            elif n_type == "personnage_present":
+                var = evt.ajouter_variable(masque.nom, "Personnage")
+                var.aide = "le personnage présent spécifié dans la commande"
 
     def ajouter(self):
         """Ajoute la commande dans l'interpréteur.
@@ -276,6 +279,9 @@ class CommandeDynamique(BaseObj):
                     nom = "objets"
 
                 variables[nom] = masque.objets
+            elif n_type == "personnage_present":
+                nom = masque.nom
+                variables[nom] = masque.personnage
 
         evenement = self.script["exécute"]
         for nom in evenement.variables:
