@@ -62,6 +62,7 @@ class ClasseAction(Action):
             if objet.contenu:
                 objet.contenu.retirer(objet)
             conteneur.potion = objet
+            conteneur.onces = conteneur.onces_max
             return
         if not conteneur.est_de_type("conteneur de nourriture"):
             raise ErreurExecution("{} n'est pas un conteneur".format(
@@ -94,6 +95,7 @@ class ClasseAction(Action):
                         conteneur.get_nom()))
             objet = importeur.objet.creer_objet(prototype)
             conteneur.potion = objet
+            conteneur.onces = conteneur.onces_max
             return
         if not conteneur.est_de_type("conteneur de nourriture"):
             raise ErreurExecution("{} n'est pas un conteneur".format(

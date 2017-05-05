@@ -84,7 +84,7 @@ class CmdPoint(Commande):
         personnage.salle.envoyer("{{}} étudie le ciel grâce à {}.".format(
                 sextant.get_nom()), personnage)
         personnage.etats.ajouter("faire_point")
-        yield 60
+        yield sextant.calcul
         if "faire_point" not in personnage.etats:
             return
 

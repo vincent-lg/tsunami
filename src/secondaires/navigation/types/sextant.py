@@ -51,7 +51,9 @@ class Sextant(Instrument):
         self.emplacement = "mains"
         self.positions = (1, 2)
         self.precision = 10
+        self.calcul = 60
         self.etendre_editeur("r", "précision", Uniligne, self, "precision")
+        self.etendre_editeur("ca", "temps de calcul", Uniligne, self, "calcul")
 
     def travailler_enveloppes(self, enveloppes):
         """Travail sur les enveloppes"""
@@ -68,6 +70,17 @@ class Sextant(Instrument):
             "parente.\n\n" \
             "Précision actuelle : {objet.precision}"
         precision.type = int
+
+        # Temps de calcul
+        calcul = enveloppes["ca"]
+        calcul.apercu = "{objet.calcul} secondes"
+        calcul.prompt = "Temps de calcul nécessaire (en secondes) : "
+        calcul.aide_courte = \
+            "Entrez le |ent|temps de calcul|ff| du sextant en secondes.\n" \
+            "Entrez |cmd|/|ff| pour revenir à la fenêtre " \
+            "parente.\n\n" \
+            "Temps actuelle : {objet.calcul} secondes"
+        calcul.type = int
 
     # Actions sur les objets
     def regarder(self, personnage):
