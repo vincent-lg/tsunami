@@ -104,6 +104,7 @@ class ClasseFonction(Fonction):
           * terrain : le nom du terrain de la salle ;
           * interieur : 0 pour extérieur, 1 pour intérieur ;
           * illuminee : 0 pour obscure, 1 pour illuminée ;
+          * flags : la liste des noms des flags actifs sur cette salle ;
           * coordonnees : 0 pour coordonnées invalides, 1 sinon ;
           * x : coordonnée X ;
           * y : coordonnée Y ;

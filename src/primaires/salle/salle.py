@@ -59,6 +59,8 @@ FLAGS = Flags()
 FLAGS.ajouter("anti combat", 1)
 FLAGS.ajouter("anti magie", 2)
 FLAGS.ajouter("invisible à distance", 4)
+FLAGS.ajouter("peut boire", 64)
+FLAGS.ajouter("ne peut pas boire", 128)
 
 class Salle(BaseObj):
 
@@ -894,6 +896,13 @@ class Salle(BaseObj):
         structure.mod_temperature = Fraction(self.mod_temperature)
         structure.bonus_temperature = Fraction(importeur.bonus.get(
                 self, "temperature", precision=1))
+        # Flags
+        flags = []
+        for nom, valeur in FLAGS.items():
+            if self.flags & valeur != 0:
+                flags.append(nom)
+
+        structure.flags = flags
         return structure
 
     def appliquer_structure(self, structure):
@@ -924,3 +933,8 @@ class Salle(BaseObj):
                 self.coords.z = int(valeur)
             elif cle == "mod_temperature":
                 self.mod_temperature = int(valeur)
+            elif cle == "flags":
+                self.flags = 0
+                for nom, val in FLAGS.items():
+                    if nom in valeur:
+                        self.flags += val

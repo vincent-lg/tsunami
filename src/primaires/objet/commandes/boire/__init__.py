@@ -66,8 +66,9 @@ class CmdBoire(Commande):
             # On regarde si il n'y a pas une fontaine dans les détails
             fontaine = salle.a_detail_flag("fontaine")
             peut = importeur.hook["objet:peut_boire"].executer(personnage)
-            if any(peut) or fontaine or salle.terrain.nom in ("rive",
-                    "aquatique", "subaquatique"):
+            if (any(peut) or fontaine or salle.terrain.nom in ("rive",
+                    "aquatique", "subaquatique") or salle.a_flag(
+                    "peut boire")) and not salle.a_flag("ne peut pas boire"):
                 if personnage.estomac <= 2.9:
                     personnage << "Vous buvez à longues gorgées."
                     personnage.salle.envoyer("{} boit à longues gorgées.",
