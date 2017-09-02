@@ -118,10 +118,10 @@ class Module(BaseModule):
         # se connecte
         self.importeur.hook["joueur:connecte"].ajouter_evenement(
                 self.joueur_connecte)
-        
+
         # diffact pour psutil
         if psutil:
-            importeur.diffact.ajouter_action(60, self.surveiller_memoire)
+            importeur.diffact.ajouter_action("ver_mem", 60, self.surveiller_memoire)
 
         BaseModule.init(self)
 
@@ -347,17 +347,15 @@ class Module(BaseModule):
     def surveiller_memoire(self):
         """Surveille la mémoire, programme un reboot si besoin."""
         if psutil:
-            importeur.diffact.ajouter_action(60, self.surveiller_memoire)
+            importeur.diffact.ajouter_action("ver_mem", 60, self.surveiller_memoire)
             mem = psutil.virtual_memory()
             pourcentage = mem.percent
-            print("Surveille la mémoire...", pourcentage)
-            if pourcentage > 80:
+            if pourcentage > 80 and self.reboot is None:
                 # Shutdown immédiat, sans appel
-                serveur = importeur.serveur
-                serveur.lance = False
-            elif pourcentage > 60 and self.reboot is None:
-                self.programmer_reboot(30 * 60)
-        
+                self.programmer_reboot(180)
+            elif pourcentage > 70 and self.reboot is None:
+                self.programmer_reboot(2 * 60 * 60)
+
     def detruire(self):
         """Destruction du module."""
         BaseModule.detruire(self)
