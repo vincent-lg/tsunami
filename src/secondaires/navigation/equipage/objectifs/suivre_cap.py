@@ -1,5 +1,4 @@
 # -*-coding:Utf-8 -*
-# -*-coding:Utf-8 -*
 
 # Copyright (c) 2010-2016 LE GOFF Vincent
 # All rights reserved.
@@ -84,6 +83,7 @@ class SuivreCap(Rejoindre):
             direction = round(distance.direction)
             if distance.norme <= DISTANCE_MIN:
                 # On cherche le point suivant sur la carte
+                print("changement de point")
                 try:
                     cle = equipage.caps[0]
                 except IndexError:
@@ -92,6 +92,7 @@ class SuivreCap(Rejoindre):
                     trajet = importeur.navigation.trajets[cle]
                     suivant = trajet.points.get(tuple(equipage.destination))
 
+                print("suivant", suivant)
                 if suivant is None:
                     del equipage.caps[0]
                     try:
