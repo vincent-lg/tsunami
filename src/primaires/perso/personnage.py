@@ -81,6 +81,7 @@ class Personnage(BaseObj):
         self.equipement = None
         self._race = None
         self.genre = "aucun"
+        self.etat_personnalise = ""
 
         # Faim et soif
         self.soif = 0
@@ -401,7 +402,8 @@ class Personnage(BaseObj):
         """Retourne l'état visible du personnage."""
         if self.etat:
             return self.etat.message_visible()
-
+        if self.etat_personnalise != "":
+                    return self.etat_personnalise
         return "est là"
 
     def get_armes(self):

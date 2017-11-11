@@ -28,7 +28,7 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-"""Fichier contenant le type masque, soit un accessoire porté sur le visage et censé cacher l'identité du porteur."""
+"""Fichier contenant le type masque, soit un accessoire porté sur le visage."""
 
 from .vetement import Vetement
 

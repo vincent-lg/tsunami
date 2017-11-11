@@ -57,7 +57,7 @@ interagir (si vous interagissez avec un personnage présent, n'écrivez
 pas la réaction pour lui, laissez-le libre de réagir comme il le semble
 convenable).
 
-Enfin, vous pouvez utiliser une syntaxe étendue pour inclure des noms
+Vous pouvez utiliser une syntaxe étendue pour inclure des noms
 de personnages, objets ou détails de la salle. Dans votre emote, vous
 pouvez précéder un nom du signe dollar ($). Le nom donné (la partie
 se trouvant entre le signe dollar et un espace ou une ponctuation) sera
@@ -94,6 +94,11 @@ class CmdEmote(Commande):
         message = dic_masques["message"].message
         message = message.rstrip(" \n")
         message = echapper_accolades(message)
+        # On vérifie la présence d'un / (barre oblique), qui signifie que le joueur souhaite entrer un état pour son personnage
+        if "/" in message:
+            message, etat = message.split("/", 1)
+            personnage.etat_personnalise = etat
+
 
         # On traite les détails
         observable = importeur.interpreteur.masques["element_observable"]()
