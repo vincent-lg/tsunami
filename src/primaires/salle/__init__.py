@@ -721,7 +721,10 @@ class Module(BaseModule):
         importeur.diffact.ajouter_action("repop_salles", 900,
                 self.repop_salles)
         for s in self.salles.values():
-            s.repop()
+            try:
+                s.repop()
+            except Exception:
+                pass
 
     def allumer_feu(self, salle, puissance=10):
         """Allume un feu dans salle."""

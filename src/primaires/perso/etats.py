@@ -122,6 +122,9 @@ class Etats(BaseObj):
         exemple).
 
         """
+        if self.personnage:
+            self.personnage.etat_personnalise = ""
+
         if vider:
             self.vider()
 
@@ -145,6 +148,8 @@ class Etats(BaseObj):
         le flag supprimer à False pour éviter une récursion infinie.
 
         """
+        if self.personnage:
+            self.personnage.etat_personnalise = ""
         for i, etat in enumerate(list(self.__etats)):
             if etat.cle == cle_etat:
                 if supprimer:

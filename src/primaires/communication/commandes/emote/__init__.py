@@ -47,7 +47,7 @@ ou |ent|emote sourit|ff|.
 
 Les messages que vous envoyez doivent être RP et réalistes, formattés
 à la troisième personne du singulier, pour les autres joueurs présents
-dans la salle. Qaund vous entrez |cmd|emote chatonne d'un air distrait|ff|,
+dans la salle. Quand vous entrez |cmd|emote chatonne d'un air distrait|ff|,
 les autres personnages présents verront votre nom suivit du message
 |ent|chantonne d'un air distrait.|ff|. Les règles de RP et de réalisme
 impliquent que vous ne devez pas envoyer de message qui dépasse les
@@ -72,6 +72,12 @@ Si ils ont associé un nom à la distinction visible du personnage, ils
 verront ce nom. Cette syntaxe peut être également utilisée pour les
 objets (ceux au sol ou ceux dans votre inventaire) ainsi que les
 détails de la salle, décors et autres informations.
+
+Enfin, vous pouvez également affecter l'état de votre personnage avec cette
+commande. L'état représente ce que les autres joueurs verront en regardant
+la salle. Par exemple : se trouve ici, est assis au coin du feu, ronfle
+bruyamment... Vous pouvez préciser votre état après un signe |ent|/|ff|.
+Par exemple : |cmd|emote se met à chantonner / chantonne ici|ff|.
 """.strip()
 
 class CmdEmote(Commande):
@@ -94,11 +100,14 @@ class CmdEmote(Commande):
         message = dic_masques["message"].message
         message = message.rstrip(" \n")
         message = echapper_accolades(message)
-        # On vérifie la présence d'un / (barre oblique), qui signifie que le joueur souhaite entrer un état pour son personnage
+
+        # On vérifie la présence d'un / (barre oblique), qui signifie que
+        # le joueur souhaite entrer un état pour son personnage
         if "/" in message:
             message, etat = message.split("/", 1)
+            message = message.rstrip()
+            etat = etat.rstrip(" .,?!").lstrip()
             personnage.etat_personnalise = etat
-
 
         # On traite les détails
         observable = importeur.interpreteur.masques["element_observable"]()
@@ -128,5 +137,9 @@ class CmdEmote(Commande):
 
         personnage.salle.envoyer("{{}} {}".format(message), personnage,
                 *elements, ignore=False, lisser=True)
+        if personnage.etat_personnalise:
+            personnage.envoyer("{{}} {}".format(personnage.etat_personnalise),
+                    personnage)
+
         importeur.communication.rapporter_conversation("emote",
                 personnage, message)
