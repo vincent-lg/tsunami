@@ -1,6 +1,6 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2010-2016 CORTIER Benoît
+# Copyright (c) 2010-2017 CORTIER Benoît
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without

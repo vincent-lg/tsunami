@@ -1,6 +1,6 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2010-2016 AYDIN Ali-Kémal
+# Copyright (c) 2010-2017 AYDIN Ali-Kémal
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
