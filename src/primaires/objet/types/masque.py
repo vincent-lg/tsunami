@@ -39,6 +39,7 @@ class Masque(Vetement):
     """
 
     nom_type = "masque"
+
     def __init__(self, cle=""):
         Vetement.__init__(self, cle)
         self.emplacement = "visage"

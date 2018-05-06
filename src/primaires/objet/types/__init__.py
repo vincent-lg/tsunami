@@ -95,6 +95,7 @@ from .chemise import Chemise
 from .ceinture import Ceinture
 from .gant import Gant
 from .jupe import Jupe
+from .masque import Masque
 from .pantalon import Pantalon
 from .robe import Robe
 from .tunique import Tunique
