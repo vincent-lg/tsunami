@@ -1,6 +1,6 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2010-2017 LE GOFF Vincent
+# Copyright (c) 2010-2016 LE GOFF Vincent
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -50,6 +50,7 @@ class Lumiere(BaseType):
     """Type d'objet: lumière."""
 
     nom_type = "lumière"
+    empilable_sur = ["vêtement"]
 
     def __init__(self, cle=""):
         """Constructeur de l'objet"""

@@ -1,6 +1,6 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2010-2017 LE GOFF Vincent
+# Copyright (c) 2010-2016 LE GOFF Vincent
 # All rights reserved.
 # 
 # Redistribution and use in source and binary forms, with or without
@@ -39,3 +39,4 @@ class Clef(BaseType):
     """
     
     nom_type = "clef"
+    empilable_sur = ["vêtement"]
