@@ -1,6 +1,6 @@
 # -*-coding:Utf-8 -*
 
-# Copyright (c) 2010-2017 LE GOFF Vincent
+# Copyright (c) 2010-2016 LE GOFF Vincent
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -206,8 +206,7 @@ class Module(BaseModule):
             if pnj is None:
                 familier.detruire()
 
-            niveau = pnj.niveau
-            familier.gagner_tours(niveau)
+            familier.gagner_tours(pnj.niveau)
 
         for joueur in importeur.joueur.joueurs.values():
             if "chevauche" in joueur.etats:
@@ -271,6 +270,7 @@ class Module(BaseModule):
 
         familier = Familier(pnj)
         self.ajouter_familier(familier)
+        familier.gagner_tours(pnj.niveau)
         return familier
 
     def ajouter_familier(self, familier):
