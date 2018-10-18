@@ -217,6 +217,10 @@ class CommandeChantierNaval(BaseObj):
     def cmd_renommer(self):
         """Renomme un navire."""
         navire = self.navire
+        if navire is None or navire.position is None:
+            raise CommandeInterrompue("Le navire n'est plus dans le " \
+                    "chantier naval")
+
         x, y, z = int(navire.position.x), int(navire.position.y), \
                 int(navire.position.z)
         if (x, y, z) not in self.chantier.points:
