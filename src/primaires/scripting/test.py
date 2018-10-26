@@ -416,7 +416,7 @@ class Test(BaseObj):
                         evenement, tests)
                 importeur.scripting.scripts_gourmands[ligne] = diff
 
-    def executer_instructions(self, evenement, jeton=None):
+    def executer_instructions(self, evenement, jeton=None, exc_interruption=True):
         """Convertit et exécute la suite d'instructions.
 
         Pour plus de facilité, on convertit le script en Python pour l'heure
@@ -437,7 +437,7 @@ class Test(BaseObj):
             self.erreur_execution(str(err))
         else:
             code = globales['script']()
-            self.executer_code(evenement, code, jeton=jeton)
+            self.executer_code(evenement, code, jeton=jeton, exc_interruption=exc_interruption)
 
         # Si le test est relié à une quête
         if etape and self.acteur:

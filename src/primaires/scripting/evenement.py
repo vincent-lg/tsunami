@@ -330,7 +330,7 @@ class Evenement(BaseObj):
         evt.nom = nouveau
         self.__evenements[nouveau] = evt
 
-    def executer(self, forcer=False, **variables):
+    def executer(self, forcer=False, exc_interruption=True, **variables):
         """Exécution de l'évènement."""
         self.espaces = Espaces(self)
         self.espaces.variables.update(variables)
@@ -343,10 +343,10 @@ class Evenement(BaseObj):
         # On cherche le bon test
         for test in self.__tests:
             if test.tester(self, forcer):
-                test.executer_instructions(self)
+                test.executer_instructions(self, exc_interruption=exc_interruption)
                 return 1
 
         if self.sinon and self.sinon.tester(self, forcer):
-            self.sinon.executer_instructions(self)
+            self.sinon.executer_instructions(self, exc_interruption=exc_interruption)
 
         return 0

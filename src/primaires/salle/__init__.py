@@ -923,7 +923,7 @@ class Module(BaseModule):
         for salle in self.ch_heure:
             salle.script["changer"]["heure"].executer(salle=salle,
                     minute=minute, heure=heure, jour=jour, mois=mois,
-                    annee=annee)
+                    annee=annee, exc_interruption=False)
 
     def changer_jour(self, temps):
         """Hook appelé à chaque changement de jour."""
