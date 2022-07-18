@@ -31,7 +31,7 @@
 
 driver = True
 
-from cgi import escape
+from html import escape
 import re
 
 try:
